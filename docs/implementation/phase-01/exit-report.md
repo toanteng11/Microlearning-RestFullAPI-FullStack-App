@@ -10,7 +10,8 @@
 | Local quality gates | Pass |
 | Docker integration | Pass trong phiên kiểm chứng |
 | Security dependency audit | Pass, `0 vulnerabilities` |
-| Remote Pull Request CI | Pending vì repository chưa có remote |
+| Secret scan | Configured in CI; remote run evidence pending |
+| Remote Pull Request CI | Pending remote PR evidence |
 | Trạng thái tổng thể | `Implemented locally - external CI verification pending` |
 
 Phase 01 đã tạo nền tảng chạy được cho React Web, Express API, MongoDB, Swagger, Docker Compose và CI workflow. Chưa triển khai authentication hoặc nghiệp vụ Student/Teacher/Admin; các phần đó thuộc Phase 02 trở đi.
@@ -27,7 +28,7 @@ Phase 01 đã tạo nền tảng chạy được cho React Web, Express API, Mon
 | MongoDB | Mongoose connection lifecycle, readiness và Compose service |
 | API documentation | OpenAPI `3.0.3`, Swagger UI và machine-readable JSON |
 | Containers | Multi-stage Web/API Dockerfiles, non-root API runtime và Compose |
-| CI | `.github/workflows/ci.yml` và Pull Request template |
+| CI | `.github/workflows/ci.yml` gồm quality gate, dependency audit, secret scan và Pull Request template |
 | Documentation | Root README, architecture overview, ADRs và infrastructure notes |
 
 ## 3. Automated Verification
@@ -42,7 +43,7 @@ Phase 01 đã tạo nền tảng chạy được cho React Web, Express API, Mon
 - API production build.
 - Web production build bằng Vite.
 
-Production dependency audit trả `0 vulnerabilities` tại thời điểm kiểm chứng.
+Production dependency audit trả `0 vulnerabilities` tại thời điểm kiểm chứng. Secret scan đã được bổ sung vào GitHub Actions bằng Gitleaks và cần được xác nhận bằng Pull Request run trên remote.
 
 ## 4. Runtime Verification
 
@@ -93,9 +94,9 @@ Hai mục pending không phải lỗi source code. Chúng là governance evidenc
 
 | Action ID | Hành động | Owner | Thời điểm |
 | --- | --- | --- | --- |
-| P01-OA-001 | Tạo/chọn GitHub remote và push branch `main` | Repository Owner | Trước Pull Request đầu tiên |
-| P01-OA-002 | Bật branch protection và required CI jobs | Repository Owner/DevOps | Ngay sau khi có remote |
-| P01-OA-003 | Chạy Pull Request pass/fail evidence | Developer/DevOps | Trước merge Phase 02 đầu tiên |
+| P01-OA-001 | Tạo/chọn GitHub remote và push branch `main` | Repository Owner | Done |
+| P01-OA-002 | Bật branch protection và required CI jobs | Repository Owner/DevOps | Done; cần thêm `Secret scan` vào required checks sau khi job xuất hiện |
+| P01-OA-003 | Chạy Pull Request pass/fail evidence cho quality, dependency audit và secret scan | Developer/DevOps | Trước merge Phase 02 đầu tiên |
 | P01-OA-004 | Onboarding dry run từ clean clone | Developer/QA khác | Trước công nhận Phase Exit hoàn chỉnh |
 | P01-OA-005 | Browser visual/console review trang System Status và Swagger | Frontend/QA | Khi browser test runtime sẵn sàng |
 

@@ -72,8 +72,9 @@ Mỗi task phải có owner, dependency, output và evidence. Estimate dưới �
 | P01-T032 | Pull Request quality workflow | CI YAML | 0.75 | Done locally |
 | P01-T033 | npm cache/artifact handling | CI optimization | 0.25 | Done |
 | P01-T034 | Dependency audit/security gate | Security job | 0.5 | Done locally |
-| P01-T035 | Branch protection requirements | Governance document | 0.25 | Pending remote |
+| P01-T035 | Branch protection requirements | Governance document | 0.25 | Done |
 | P01-T036 | Pull Request run evidence | Remote evidence | 0.5 | Pending remote |
+| P01-T037 | Secret scan CI job | DevSecOps workflow | 0.25 | Done; required check evidence pending |
 
 ## 9. P01-E08 - Documentation And Exit
 
@@ -86,4 +87,4 @@ Mỗi task phải có owner, dependency, output và evidence. Estimate dưới �
 
 ## 10. Remaining External Work
 
-`P01-T035` và `P01-T036` chỉ hoàn tất khi GitHub remote tồn tại. Chúng không được đổi thành `Done` dựa trên local workflow file; bằng chứng cần gồm repository settings và URL/kết quả workflow run.
+`P01-T036` chỉ hoàn tất khi GitHub Pull Request evidence tồn tại. `P01-T037` đã có workflow, nhưng cần một lần chạy remote để GitHub cho phép chọn `Secret scan` trong required checks.

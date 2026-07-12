@@ -21,7 +21,7 @@
 | P01-AC-015 | Web/API image build được | Docker build evidence | Pass |
 | P01-AC-016 | Compose Web/API/MongoDB healthy | `docker compose ps` verification | Pass |
 | P01-AC-017 | Web tích hợp API/system status | Local/Compose HTTP và UI tests | Pass |
-| P01-AC-018 | CI thực hiện quality gates | Workflow có sẵn, local equivalent pass | Local pass; remote pending |
+| P01-AC-018 | CI thực hiện quality/security gates | Workflow có quality gate, dependency audit, secret scan; local equivalent pass | Local pass; remote pending |
 | P01-AC-019 | Gate chặn lỗi | Intentional lint failure exit code `1` | Local pass; remote pending |
 | P01-AC-020 | Người mới chạy được từ clean clone | README/setup đã có | Independent verification pending |
 

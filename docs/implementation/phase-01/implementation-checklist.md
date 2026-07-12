@@ -46,9 +46,10 @@
 - [x] Health/dependency ordering và internal DB network.
 - [x] Pull Request CI workflow.
 - [x] Dependency audit job.
+- [x] Secret scan job.
 - [x] Pull Request template.
-- [ ] GitHub remote configured.
-- [ ] Branch protection enabled.
+- [x] GitHub remote configured.
+- [x] Branch protection enabled.
 - [ ] Remote CI pass/fail evidence captured.
 
 ## 6. Documentation And Evidence

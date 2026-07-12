@@ -49,5 +49,5 @@ Các quyết định dưới đây được `Accepted` cho Phase 01. Thay đổi
 ## ADR-008 - GitHub Actions CI Direction
 
 - Context: Cần Pull Request quality gate và project hướng tới GitHub workflow.
-- Decision: Cung cấp GitHub Actions workflow cho locked install, lint, format, typecheck, test, build và production dependency audit.
+- Decision: Cung cấp GitHub Actions workflow cho locked install, lint, format, typecheck, test, build, production dependency audit và secret scan bằng Gitleaks.
 - Consequence: Branch protection phải được bật trên remote GitHub; nếu chọn provider khác, giữ nguyên quality gates và chuyển syntax workflow.

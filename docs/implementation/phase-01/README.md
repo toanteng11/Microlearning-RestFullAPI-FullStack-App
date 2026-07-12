@@ -13,7 +13,7 @@ Thư mục này là hồ sơ triển khai đầy đủ của `P01 - Project Foun
 | Implementation | Hoàn thành ở local |
 | Quality gates | Pass |
 | Docker integration | Pass trong phiên kiểm chứng |
-| External CI | Chờ GitHub remote và Pull Request evidence |
+| External CI | GitHub remote/branch protection đã cấu hình; chờ Pull Request evidence và required check `Secret scan` sau lần chạy đầu tiên |
 | Phase tiếp theo | `P02 - Authentication and Users` |
 
 ## 3. Danh mục tài liệu
