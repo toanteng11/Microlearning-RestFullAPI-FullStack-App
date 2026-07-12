@@ -16,16 +16,21 @@ Checkout
 
 `npm run check` gồm lint, format check, typecheck, tests và production build.
 
-## 3. Security Job
+## 3. Security Jobs
 
-Production dependency audit chạy `npm audit --omit=dev --audit-level=critical`. Local verification tại Phase 01 trả `0 vulnerabilities`.
+CI có hai lớp kiểm tra security bắt buộc:
+
+- `Production dependency audit` chạy `npm audit --omit=dev --audit-level=critical` để chặn dependency production có critical vulnerability.
+- `Secret scan` dùng `gitleaks/gitleaks-action@v3` để quét hardcoded secret như token, private key, password, API key hoặc credential bị commit.
+
+Local verification tại Phase 01 cho dependency audit trả `0 vulnerabilities`. Secret scan cần được xác nhận trên GitHub Actions sau khi workflow mới được push và chạy trên Pull Request.
 
 ## 4. Pull Request Governance
 
 PR template yêu cầu Task ID, BA trace, verification, contract/data impact, UI evidence, risk và rollback. Sau khi có GitHub remote, branch protection cần:
 
 - Không push trực tiếp `main`.
-- Yêu cầu quality/security jobs pass.
+- Yêu cầu `Lint, test and build`, `Production dependency audit` và `Secret scan` pass.
 - Ít nhất một reviewer approve.
 - Dismiss approval khi có thay đổi quan trọng mới.
 - Hạn chế force push/delete protected branch.

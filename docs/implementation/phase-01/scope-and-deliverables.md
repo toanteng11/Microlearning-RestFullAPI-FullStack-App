@@ -10,7 +10,7 @@
 - MongoDB/Mongoose connection, shutdown và readiness status.
 - Health, readiness, version, OpenAPI JSON và Swagger UI endpoints.
 - Web/API Dockerfiles và Docker Compose Local/Integration.
-- Pull Request CI workflow, dependency audit và PR template.
+- Pull Request CI workflow, dependency audit, secret scan và PR template.
 - Automated tests, root README, ADR, architecture và exit evidence.
 
 ## 2. Out Of Scope

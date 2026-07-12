@@ -11,6 +11,7 @@
 | P01-EV-005 | Production builds | API/Web pass | TypeScript/Vite output |
 | P01-EV-006 | Dependency security | 0 vulnerabilities | npm audit output |
 | P01-EV-007 | Negative lint gate | Exit 1 on intentional violation | ESLint output |
+| P01-EV-029 | Secret scan CI configuration | Configured | `.github/workflows/ci.yml` |
 
 ## 2. Runtime Evidence
 
@@ -47,6 +48,7 @@
 | P01-EV-026 | Branch protection screenshot/settings record | Repository Owner | Sau khi bật required checks |
 | P01-EV-027 | Clean-clone onboarding record | QA/Developer khác | Trước full phase closure |
 | P01-EV-028 | Browser screenshot/console/network review | Frontend/QA | Khi browser runtime sẵn sàng |
+| P01-EV-030 | Secret scan successful run URL | DevOps | Sau khi workflow mới chạy trên GitHub |
 
 ## 5. Evidence Retention
 

@@ -46,4 +46,4 @@ docker compose up --build -d
 
 - Browser visual/console review bị chặn bởi Windows browser runtime permission trong phiên tự động.
 - Independent clean-clone onboarding chưa có người thứ hai thực hiện.
-- Remote GitHub CI run chưa có vì repository chưa có remote.
+- Remote GitHub CI run còn cần evidence trên Pull Request, bao gồm quality gate, dependency audit và secret scan.

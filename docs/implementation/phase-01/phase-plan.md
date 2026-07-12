@@ -49,7 +49,7 @@ Phase 01 không tạo feature giả để minh họa. Authentication, Classroom,
 | M2 - Applications Build | Web và API typecheck/build thành công |
 | M3 - Operational Contract | Health/readiness/version/Swagger hoạt động |
 | M4 - Local Integration | Docker Compose hoặc local development flow chạy end-to-end |
-| M5 - Quality Automated | `npm run check` và dependency audit pass |
+| M5 - Quality Automated | `npm run check`, dependency audit và secret scan CI configured |
 | M6 - Exit Reviewed | Acceptance, evidence, risk và Phase 02 readiness được cập nhật |
 
 ## 5. Dependency
@@ -72,4 +72,4 @@ All workstreams --------------------> Exit review
 
 ## 7. Kết quả hiện tại
 
-Implementation local đã hoàn thành. GitHub remote, branch protection, remote CI run và independent clean-clone onboarding vẫn là external evidence cần bổ sung trước khi đóng phase theo nghĩa governance đầy đủ.
+Implementation local đã hoàn thành. GitHub remote và branch protection đã được cấu hình. Remote CI run, required check `Secret scan` sau lần chạy đầu tiên và independent clean-clone onboarding vẫn là external evidence cần bổ sung trước khi đóng phase theo nghĩa governance đầy đủ.
