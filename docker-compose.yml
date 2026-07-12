@@ -1,0 +1,78 @@
+name: microlearning-local
+
+services:
+  mongodb:
+    image: mongo:8.0
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - microlearning_network
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: development
+      APP_VERSION: ${APP_VERSION:-0.1.0}
+      COMMIT_SHA: ${COMMIT_SHA:-local-compose}
+      BUILD_TIME: ${BUILD_TIME:-local}
+      PORT: 4000
+      MONGODB_URI: mongodb://mongodb:27017/microlearning
+      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - '127.0.0.1:4000:4000'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4000/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - microlearning_network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:4000
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3000:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1/health']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - microlearning_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  microlearning_network:
+    driver: bridge
