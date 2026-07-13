@@ -21,14 +21,13 @@
 | P01-AC-015 | Web/API image build được | Docker build evidence | Pass |
 | P01-AC-016 | Compose Web/API/MongoDB healthy | `docker compose ps` verification | Pass |
 | P01-AC-017 | Web tích hợp API/system status | Local/Compose HTTP và UI tests | Pass |
-| P01-AC-018 | CI thực hiện quality/security gates | Workflow có quality gate, dependency audit, secret scan; local equivalent pass | Local pass; remote pending |
-| P01-AC-019 | Gate chặn lỗi | Intentional lint failure exit code `1` | Local pass; remote pending |
-| P01-AC-020 | Người mới chạy được từ clean clone | README/setup đã có | Independent verification pending |
+| P01-AC-018 | CI thực hiện quality/security gates | Pull Request #1 pass `Lint, test and build`, `Production dependency audit`, `Secret scan` | Pass |
+| P01-AC-019 | Gate chặn lỗi | `verify-negative-lint-gate.mjs` xác nhận intentional violation bị ESLint từ chối; kiểm tra nằm trong `check:ci` | Pass |
+| P01-AC-020 | Người mới chạy được từ clean clone | Fresh clone commit `d425e0b`, `npm ci` và full quality gate pass ngày `2026-07-13` | Pass |
 
 ## 2. Quy tắc Kết Luận
 
-- `Pass`: có evidence local/automated tương ứng.
-- `Local pass; remote pending`: implementation đạt nhưng cần Git provider evidence.
-- `Independent verification pending`: không tự xác nhận thay cho onboarding reviewer.
+- `Pass`: có evidence local, independent hoặc remote tương ứng và truy vết được trong `evidence-register.md`.
+- Thay đổi làm mất một acceptance evidence phải mở lại tiêu chí liên quan; không giữ trạng thái `Pass` chỉ dựa trên kết quả lịch sử.
 
-Phase 01 đủ điều kiện bắt đầu planning Phase 02, nhưng chưa được đóng governance hoàn toàn cho đến khi P01-AC-018..020 có external evidence.
+Kết quả cuối cùng: `20/20` acceptance criteria đạt `Pass`. Phase 01 được đóng với trạng thái `Completed`.

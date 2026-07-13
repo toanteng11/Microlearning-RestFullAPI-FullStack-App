@@ -45,8 +45,10 @@ Microlearning-RESFULL-API-devOps/
 | `npm run format:check` | Kiểm tra format |
 | `npm run typecheck` | TypeScript strict check |
 | `npm run test` | Toàn bộ automated tests |
+| `npm run test:coverage` | Automated tests và coverage report |
 | `npm run build` | Production build Web/API |
 | `npm run check` | Quality gate tổng hợp |
+| `npm run check:ci` | Quality gate CI gồm negative gate và coverage threshold |
 
 ## 4. Dependency Direction
 
