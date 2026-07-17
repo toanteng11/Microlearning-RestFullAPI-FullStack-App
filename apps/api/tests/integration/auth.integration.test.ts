@@ -26,6 +26,13 @@ const registration = {
   confirmPassword: 'StrongPassword123!',
 };
 
+function getCookie(response: request.Response): string {
+  const setCookie = response.headers['set-cookie'];
+  const value = Array.isArray(setCookie) ? setCookie[0] : setCookie;
+  if (!value) throw new Error('Expected Set-Cookie response header');
+  return value.split(';')[0]!;
+}
+
 describe('Authentication API integration', () => {
   beforeAll(async () => {
     await mongoose.connect(integrationUri, { serverSelectionTimeoutMS: 15_000 });
@@ -149,5 +156,92 @@ describe('Authentication API integration', () => {
 
     expect(wrongPassword.body.error).toEqual(missingUser.body.error);
     expect(wrongPassword.body.error.code).toBe('INVALID_CREDENTIALS');
+  });
+
+  it('rotates refresh tokens, keeps grace races safe and revokes reuse outside grace', async () => {
+    await request(app).post('/api/v1/auth/register').send(registration).expect(201);
+    const login = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: registration.email, password: registration.password })
+      .expect(200);
+    const oldCookie = getCookie(login);
+
+    const refreshed = await request(app)
+      .post('/api/v1/auth/refresh-token')
+      .set('Origin', 'http://localhost:5173')
+      .set('Cookie', oldCookie)
+      .expect(200);
+    const newCookie = getCookie(refreshed);
+    expect(newCookie).not.toBe(oldCookie);
+
+    const race = await request(app)
+      .post('/api/v1/auth/refresh-token')
+      .set('Origin', 'http://localhost:5173')
+      .set('Cookie', oldCookie)
+      .expect(409);
+    expect(race.body.error.code).toBe('REFRESH_RACE_RETRY');
+    expect(race.headers['set-cookie']).toBeUndefined();
+
+    await AuthSessionModel.updateOne(
+      { status: 'ROTATED' },
+      { $set: { rotatedAt: new Date(Date.now() - 10_000) } },
+    );
+    const reuse = await request(app)
+      .post('/api/v1/auth/refresh-token')
+      .set('Origin', 'http://localhost:5173')
+      .set('Cookie', oldCookie)
+      .expect(409);
+    expect(reuse.body.error.code).toBe('REFRESH_TOKEN_REUSE_DETECTED');
+    expect(String(reuse.headers['set-cookie'])).toContain('ml_refresh=;');
+    expect(await AuthSessionModel.countDocuments({ status: { $ne: 'REVOKED' } })).toBe(0);
+
+    await request(app)
+      .get('/api/v1/users/me')
+      .set('Authorization', `Bearer ${refreshed.body.data.accessToken}`)
+      .expect(401);
+  });
+
+  it('requires an approved origin and logs out idempotently', async () => {
+    await request(app).post('/api/v1/auth/register').send(registration).expect(201);
+    const login = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: registration.email, password: registration.password })
+      .expect(200);
+    const cookie = getCookie(login);
+
+    const forbidden = await request(app)
+      .post('/api/v1/auth/refresh-token')
+      .set('Origin', 'https://attacker.example')
+      .set('Cookie', cookie)
+      .expect(403);
+    expect(forbidden.body.error.code).toBe('ORIGIN_NOT_ALLOWED');
+
+    const logout = await request(app)
+      .post('/api/v1/auth/logout')
+      .set('Origin', 'http://localhost:5173')
+      .set('Cookie', cookie)
+      .expect(204);
+    expect(String(logout.headers['set-cookie'])).toContain('ml_refresh=;');
+    expect(await AuthSessionModel.countDocuments({ status: 'REVOKED' })).toBe(1);
+
+    await request(app)
+      .post('/api/v1/auth/logout')
+      .set('Origin', 'http://localhost:5173')
+      .expect(204);
+  });
+
+  it('enforces identity cooldown after five failed credential attempts', async () => {
+    await request(app).post('/api/v1/auth/register').send(registration).expect(201);
+    for (let attempt = 1; attempt <= 5; attempt += 1) {
+      await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: registration.email, password: 'WrongPassword123!' })
+        .expect(401);
+    }
+    const locked = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: registration.email, password: registration.password })
+      .expect(429);
+    expect(locked.body.error.code).toBe('RATE_LIMITED');
   });
 });

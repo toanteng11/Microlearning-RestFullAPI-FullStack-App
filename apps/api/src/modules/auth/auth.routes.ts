@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 
-import { getRefreshCookieOptions } from '../../shared/auth/cookie-policy.js';
+import {
+  getClearRefreshCookieOptions,
+  getRefreshCookieOptions,
+} from '../../shared/auth/cookie-policy.js';
 import type { AppConfig } from '../../shared/config/environment.js';
 import { AppError } from '../../shared/errors/app-error.js';
+import { validateBrowserOrigin } from '../../shared/middleware/validate-origin.js';
 import { parseWithSchema } from '../../shared/validation/parse.js';
 import { loginSchema, registerSchema } from './auth.schemas.js';
 import type { AuthService } from './auth.service.js';
@@ -55,6 +59,52 @@ export function createAuthRouter(config: AppConfig, authService: AuthService) {
           user: result.user,
         },
       });
+    },
+  );
+
+  router.post(
+    '/refresh-token',
+    validateBrowserOrigin(config.allowedOrigins),
+    createLimiter(config.rateLimits.windowSeconds, config.rateLimits.refreshMax),
+    async (request, response) => {
+      try {
+        const result = await authService.refresh(request.cookies[config.refreshCookieName]);
+        response.cookie(
+          config.refreshCookieName,
+          result.refreshToken,
+          getRefreshCookieOptions(config),
+        );
+        response.setHeader('Cache-Control', 'no-store');
+        response.json({
+          success: true,
+          data: {
+            accessToken: result.accessToken,
+            expiresInSeconds: result.expiresInSeconds,
+            user: result.user,
+          },
+        });
+      } catch (error) {
+        if (!(error instanceof AppError) || error.code !== 'REFRESH_RACE_RETRY') {
+          response.clearCookie(config.refreshCookieName, getClearRefreshCookieOptions(config));
+        }
+        throw error;
+      }
+    },
+  );
+
+  router.post(
+    '/logout',
+    validateBrowserOrigin(config.allowedOrigins),
+    async (request, response) => {
+      if (request.body && Object.keys(request.body as object).length > 0) {
+        throw new AppError(422, 'VALIDATION_ERROR', 'Logout does not accept a request body');
+      }
+      try {
+        await authService.logout(request.cookies[config.refreshCookieName]);
+      } finally {
+        response.clearCookie(config.refreshCookieName, getClearRefreshCookieOptions(config));
+      }
+      response.status(204).end();
     },
   );
 

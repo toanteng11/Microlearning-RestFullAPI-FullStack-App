@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { type ClientSession, Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AuthService } from '../src/modules/auth/auth.service.js';
@@ -32,9 +32,15 @@ describe('AuthService', () => {
   const users = {
     create: vi.fn(),
     findCredentialByEmail: vi.fn(),
+    findById: vi.fn(),
     updateLastLogin: vi.fn(),
   };
-  const sessions = { create: vi.fn() };
+  const sessions = {
+    create: vi.fn(),
+    findByTokenHash: vi.fn(),
+    revokeFamily: vi.fn(),
+    rotate: vi.fn(),
+  };
   const loginStates = {
     getLockedUntil: vi.fn(),
     recordFailure: vi.fn(),
@@ -42,12 +48,15 @@ describe('AuthService', () => {
   };
 
   function createService() {
+    const transaction = async <T>(operation: (session: ClientSession) => Promise<T>) =>
+      operation({} as ClientSession);
     return new AuthService(
       testConfig,
       users as unknown as UserRepository,
       sessions as unknown as AuthSessionRepository,
       loginStates as unknown as AuthLoginStateRepository,
       () => now,
+      transaction,
     );
   }
 
@@ -57,6 +66,8 @@ describe('AuthService', () => {
     loginStates.recordFailure.mockResolvedValue(null);
     loginStates.reset.mockResolvedValue(undefined);
     users.updateLastLogin.mockResolvedValue(undefined);
+    sessions.revokeFamily.mockResolvedValue(1);
+    sessions.rotate.mockResolvedValue(true);
   });
 
   it('registers only an ACTIVE Student and returns no capabilities or credential', async () => {
@@ -137,5 +148,66 @@ describe('AuthService', () => {
     );
     expect(result.refreshToken).not.toBe(result.accessToken);
     expect(result.user.capabilities).toEqual(['profile.update_own', 'profile.view_own']);
+  });
+
+  it('distinguishes refresh race from token reuse and revokes only outside grace', async () => {
+    sessions.findByTokenHash.mockResolvedValue({
+      _id: new Types.ObjectId(),
+      userId,
+      familyId: 'family-id',
+      status: 'ROTATED',
+      rotatedAt: now,
+      expiresAt: new Date(now.getTime() + 60_000),
+    });
+    await expect(createService().refresh('old-refresh-token')).rejects.toMatchObject({
+      code: 'REFRESH_RACE_RETRY',
+    });
+    expect(sessions.revokeFamily).not.toHaveBeenCalled();
+
+    sessions.findByTokenHash.mockResolvedValue({
+      _id: new Types.ObjectId(),
+      userId,
+      familyId: 'family-id',
+      status: 'ROTATED',
+      rotatedAt: new Date(now.getTime() - 6_000),
+      expiresAt: new Date(now.getTime() + 60_000),
+    });
+    await expect(createService().refresh('old-refresh-token')).rejects.toMatchObject({
+      code: 'REFRESH_TOKEN_REUSE_DETECTED',
+    });
+    expect(sessions.revokeFamily).toHaveBeenCalledWith(
+      'family-id',
+      'REUSE',
+      now,
+      expect.anything(),
+    );
+  });
+
+  it('rotates an ACTIVE refresh session and rejects missing tokens', async () => {
+    await expect(createService().refresh(undefined)).rejects.toMatchObject({ statusCode: 401 });
+    sessions.findByTokenHash.mockResolvedValue({
+      _id: new Types.ObjectId(),
+      userId,
+      familyId: 'family-id',
+      status: 'ACTIVE',
+      expiresAt: new Date(now.getTime() + 60_000),
+    });
+    users.findById.mockResolvedValue(buildUser());
+    sessions.create.mockResolvedValue({ _id: new Types.ObjectId() });
+
+    const result = await createService().refresh('active-refresh-token');
+    expect(sessions.rotate).toHaveBeenCalledOnce();
+    expect(result.refreshToken).toEqual(expect.any(String));
+    expect(result.accessToken).toEqual(expect.any(String));
+  });
+
+  it('logs out idempotently and revokes a known token family', async () => {
+    await expect(createService().logout(undefined)).resolves.toBeUndefined();
+    sessions.findByTokenHash.mockResolvedValue(null);
+    await expect(createService().logout('unknown')).resolves.toBeUndefined();
+
+    sessions.findByTokenHash.mockResolvedValue({ familyId: 'family-id' });
+    await createService().logout('known');
+    expect(sessions.revokeFamily).toHaveBeenCalledWith('family-id', 'LOGOUT', now);
   });
 });
