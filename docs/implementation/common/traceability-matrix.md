@@ -8,8 +8,13 @@ Tài liệu này ánh xạ kế hoạch code với BA baseline và bằng chứn
 
 | Phase | BA source chính | Capability | Implementation evidence | Test evidence | Trạng thái |
 | --- | --- | --- | --- | --- | --- |
+<<<<<<< Updated upstream
 | P01 | `14-solution-architecture/`, `15-devops-deployment/`, NFR, API standards | Technical foundation | `apps/`, `docker-compose.yml`, `.github/workflows/ci.yml` | `npm run check`, Docker/API smoke evidence trong `../phase-01/evidence-register.md` | Implemented locally |
 | P02 | Authentication, User Roles, FR-001..019, business rules liên quan | Identity, RBAC, user administration, Teacher invitation | Chưa có | Chưa có | Planned |
+=======
+| P01 | `14-solution-architecture/`, `15-devops-deployment/`, NFR, API standards | Technical foundation | `apps/`, `docker-compose.yml`, `.github/workflows/ci.yml` | `npm run check:ci`, Docker/API/browser/remote CI evidence trong `../phase-01/evidence-register.md` | Completed |
+| P02 | Authentication, User Roles, FR-001..010/064/065/067/069, business rules liên quan | Identity, RBAC, user administration, Teacher invitation | Kế hoạch code đã khóa trong `../phase-02/`; source chưa triển khai | Test/evidence catalog trong `../phase-02/testing-strategy.md` và `../phase-02/evidence-register.md` | Ready for implementation |
+>>>>>>> Stashed changes
 | P03 | Classroom processes, FR-020..025 | Classroom and enrollment | Chưa có | Chưa có | Planned |
 | P04 | Course/content requirements, FR-026..035 | Learning content and deadline | Chưa có | Chưa có | Planned |
 | P05 | Assessment requirements, FR-036..048 | Quiz, assignment and grading | Chưa có | Chưa có | Planned |

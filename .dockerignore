@@ -1,6 +1,7 @@
 .git
 .github
 .agents
+artifacts
 node_modules
 **/node_modules
 dist

@@ -26,3 +26,7 @@ Thumbs.db
 # Local runtime data
 .data/
 .cache/
+
+# Local tooling and generated deliverables
+.agents/
+artifacts/
