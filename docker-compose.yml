@@ -3,15 +3,36 @@ name: microlearning-local
 services:
   mongodb:
     image: mongo:8.0
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
     restart: unless-stopped
     volumes:
       - mongodb_data:/data/db
     healthcheck:
-      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
-      interval: 10s
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --eval "const hello = db.adminCommand(''hello''); quit(hello.isWritablePrimary ? 0 : 1)"',
+        ]
+      interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
+      retries: 20
+      start_period: 5s
+    networks:
+      - microlearning_network
+
+  mongodb-init:
+    image: mongo:8.0
+    restart: 'no'
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        until mongosh "mongodb://mongodb:27017/admin?directConnection=true" --quiet --eval "quit(db.adminCommand('ping').ok ? 0 : 1)"; do sleep 2; done
+        exec mongosh "mongodb://mongodb:27017/admin?directConnection=true" --quiet --file /scripts/init-replica-set.js
+    volumes:
+      - ./infrastructure/docker/mongodb/init-replica-set.js:/scripts/init-replica-set.js:ro
+    depends_on:
+      mongodb:
+        condition: service_started
     networks:
       - microlearning_network
 
@@ -26,14 +47,28 @@ services:
       COMMIT_SHA: ${COMMIT_SHA:-local-compose}
       BUILD_TIME: ${BUILD_TIME:-local}
       PORT: 4000
-      MONGODB_URI: mongodb://mongodb:27017/microlearning
+      MONGODB_URI: mongodb://mongodb:27017/microlearning?replicaSet=rs0
+      PUBLIC_WEB_URL: http://localhost:3000
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      ACCESS_TOKEN_SECRET: local-development-access-token-secret-not-production
+      ACCESS_TOKEN_ISSUER: microlearning-api
+      ACCESS_TOKEN_AUDIENCE: microlearning-web
+      ACCESS_TOKEN_TTL_SECONDS: 900
+      REFRESH_TOKEN_TTL_SECONDS: 604800
+      REFRESH_REUSE_GRACE_SECONDS: 5
+      REFRESH_COOKIE_NAME: ml_refresh
+      REFRESH_COOKIE_SECURE: 'false'
+      AUTH_IDENTITY_PEPPER: local-development-identity-pepper-not-production
+      TEACHER_INVITATION_TTL_DAYS: 7
+      BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
       - '127.0.0.1:4000:4000'
     depends_on:
       mongodb:
         condition: service_healthy
+      mongodb-init:
+        condition: service_completed_successfully
     healthcheck:
       test:
         [

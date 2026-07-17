@@ -69,16 +69,16 @@ docs/implementation/
 
 ## 3. Phase Catalog
 
-| Folder | Phase | Outcome | Trạng thái |
-| --- | --- | --- | --- |
-| `phase-01/` | Project Foundation | Web/API/MongoDB/Swagger/Docker/CI foundation | Completed |
-| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | Ready for implementation |
-| `phase-03/` | Classroom Management | Classroom, enrollment, class code/link và roster | Planned |
-| `phase-04/` | Learning Content | Course/module/lesson/resource/deadline | Planned |
-| `phase-05/` | Assessments and Grading | Quiz/assignment/submission/grade/feedback | Planned |
-| `phase-06/` | Reporting and Analytics | To-do/progress/process score/ranking/report | Planned |
-| `phase-07/` | DevOps and Deployment | Registry, Cloud, CI/CD, monitoring, backup/rollback | Planned |
-| `phase-08/` | Testing and Release | System/E2E/UAT/hardening/MVP release | Planned |
+| Folder      | Phase                    | Outcome                                                           | Trạng thái           |
+| ----------- | ------------------------ | ----------------------------------------------------------------- | -------------------- |
+| `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                      | Completed            |
+| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | In progress - PR-02A |
+| `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link và roster                  | Planned              |
+| `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                            | Planned              |
+| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                         | Planned              |
+| `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                       | Planned              |
+| `phase-07/` | DevOps and Deployment    | Registry, Cloud, CI/CD, monitoring, backup/rollback               | Planned              |
+| `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                              | Planned              |
 
 ## 4. Trình tự sử dụng
 
@@ -92,14 +92,14 @@ docs/implementation/
 
 ## 5. Document Ownership
 
-| Document group | Owner chính | Reviewer |
-| --- | --- | --- |
-| Common standards | Technical Lead | Development/QA/DevOps |
-| Scope/plan | Technical Lead/BA | Product Owner |
-| Web/API/Data design | Area Lead | Technical Lead/QA |
-| Docker/CI/Cloud | DevOps | Technical Lead/Security |
-| Test/acceptance/evidence | QA | Technical Lead/BA |
-| Risk/exit | Technical Lead | Product Owner/QA/DevOps |
+| Document group           | Owner chính       | Reviewer                |
+| ------------------------ | ----------------- | ----------------------- |
+| Common standards         | Technical Lead    | Development/QA/DevOps   |
+| Scope/plan               | Technical Lead/BA | Product Owner           |
+| Web/API/Data design      | Area Lead         | Technical Lead/QA       |
+| Docker/CI/Cloud          | DevOps            | Technical Lead/Security |
+| Test/acceptance/evidence | QA                | Technical Lead/BA       |
+| Risk/exit                | Technical Lead    | Product Owner/QA/DevOps |
 
 ## 6. Quy tắc Tài liệu Theo Phase
 
@@ -118,13 +118,13 @@ Không tạo nhiều file rỗng chỉ để đủ cấu trúc. File được t�
 
 ## 7. Document Status
 
-| Trạng thái | Ý nghĩa |
-| --- | --- |
-| `Draft` | Đang soạn, chưa dùng làm cam kết |
-| `Ready for review` | Đủ nội dung để review |
-| `Baseline` | Đã thống nhất làm cơ sở thực hiện |
-| `Ready for execution` | Có task/dependency/acceptance rõ |
-| `In progress` | Đang triển khai |
+| Trạng thái            | Ý nghĩa                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| `Draft`               | Đang soạn, chưa dùng làm cam kết                                   |
+| `Ready for review`    | Đủ nội dung để review                                              |
+| `Baseline`            | Đã thống nhất làm cơ sở thực hiện                                  |
+| `Ready for execution` | Có task/dependency/acceptance rõ                                   |
+| `In progress`         | Đang triển khai                                                    |
 | `Implemented locally` | Source/local evidence đạt; có thể còn external governance evidence |
-| `Completed` | Exit criteria đầy đủ và được phê duyệt |
-| `Blocked` | Không thể tiếp tục vì dependency/decision cụ thể |
+| `Completed`           | Exit criteria đầy đủ và được phê duyệt                             |
+| `Blocked`             | Không thể tiếp tục vì dependency/decision cụ thể                   |

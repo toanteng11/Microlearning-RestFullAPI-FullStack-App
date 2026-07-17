@@ -45,6 +45,17 @@ export default tseslint.config(
     },
   },
   {
+    files: ['infrastructure/docker/mongodb/*.js'],
+    languageOptions: {
+      globals: {
+        db: 'readonly',
+        print: 'readonly',
+        quit: 'readonly',
+        sleep: 'readonly',
+      },
+    },
+  },
+  {
     files: ['**/*.{test,spec}.{ts,tsx}'],
     languageOptions: {
       globals: {

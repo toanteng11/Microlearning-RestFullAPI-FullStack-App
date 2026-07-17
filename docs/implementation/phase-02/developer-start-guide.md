@@ -7,7 +7,7 @@ Tài liệu này là entry point để chuyển Phase 02 từ planning sang impl
 ## 2. Baseline Bắt Buộc
 
 - Planning status: `READY_FOR_IMPLEMENTATION`.
-- Implementation status: `NOT_STARTED`.
+- Implementation status: `IN_PROGRESS` từ PR-02A.
 - Must scope: Student registration, session/auth, profile, RBAC, role-specific Admin lists và manual Teacher Invitation.
 - Conditional Should không được đưa vào PR nếu chưa có Change Control: Forgot/Reset Password và Advanced Cross-role Search.
 - OpenAPI, automated test và evidence phải đi cùng capability; không để cuối phase mới bổ sung.
@@ -85,16 +85,16 @@ Ngoài các lệnh trên, PR-02A phải chứng minh MongoDB là primary và tra
 
 ## 8. Chuỗi PR Tiếp Theo
 
-| PR | Branch đề xuất | Outcome |
-| --- | --- | --- |
-| PR-02P | `docs/phase-02-planning-baseline` | Decisions, contracts, WBS, test và readiness baseline |
-| PR-02A | `phase-02-contract-runtime` | Config, dependencies, replica set, test harness |
-| PR-02B | `phase-02-identity-backend` | User/session models, security primitives, register/login/me |
-| PR-02C | `phase-02-session-rbac` | Refresh race/reuse, logout, active family, RBAC/rate control |
-| PR-02D | `phase-02-auth-web` | AuthProvider, multi-tab coordinator, Login/Register/Profile/guards |
-| PR-02E | `phase-02-admin-users` | Role lists/detail/status/role/SystemGuard |
-| PR-02F | `phase-02-teacher-invitations` | Create/copy/revoke/preview/accept and concurrency |
-| PR-02G | `phase-02-hardening-exit` | OpenAPI completion, Playwright, security, evidence và exit |
+| PR     | Branch đề xuất                    | Outcome                                                            |
+| ------ | --------------------------------- | ------------------------------------------------------------------ |
+| PR-02P | `docs/phase-02-planning-baseline` | Decisions, contracts, WBS, test và readiness baseline              |
+| PR-02A | `phase-02-contract-runtime`       | Config, dependencies, replica set, test harness                    |
+| PR-02B | `phase-02-identity-backend`       | User/session models, security primitives, register/login/me        |
+| PR-02C | `phase-02-session-rbac`           | Refresh race/reuse, logout, active family, RBAC/rate control       |
+| PR-02D | `phase-02-auth-web`               | AuthProvider, multi-tab coordinator, Login/Register/Profile/guards |
+| PR-02E | `phase-02-admin-users`            | Role lists/detail/status/role/SystemGuard                          |
+| PR-02F | `phase-02-teacher-invitations`    | Create/copy/revoke/preview/accept and concurrency                  |
+| PR-02G | `phase-02-hardening-exit`         | OpenAPI completion, Playwright, security, evidence và exit         |
 
 Không tạo một branch chứa toàn bộ Phase 02. Mỗi PR phải merge theo dependency, rebase/update từ `main` và giữ required checks xanh.
 

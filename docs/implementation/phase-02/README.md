@@ -8,16 +8,16 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 
 ## 2. Trạng thái
 
-| Thuộc tính | Giá trị |
-| --- | --- |
-| Phase ID | `P02` |
-| Tên | `Authentication and Users` |
-| Dependency | `P01 - Project Foundation` đã hoàn thành |
-| Planning status | `Ready for implementation` |
-| Implementation status | `Not started` |
-| Phase owner đề xuất | Technical Lead |
-| Review bắt buộc | BA/Product Owner, Backend, Frontend, QA, DevOps, Security Reviewer |
-| Phase tiếp theo | `P03 - Classroom Management` |
+| Thuộc tính            | Giá trị                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| Phase ID              | `P02`                                                              |
+| Tên                   | `Authentication and Users`                                         |
+| Dependency            | `P01 - Project Foundation` đã hoàn thành                           |
+| Planning status       | `Ready for implementation`                                         |
+| Implementation status | `In progress - PR-02A contract/runtime foundation`                 |
+| Phase owner đề xuất   | Technical Lead                                                     |
+| Review bắt buộc       | BA/Product Owner, Backend, Frontend, QA, DevOps, Security Reviewer |
+| Phase tiếp theo       | `P03 - Classroom Management`                                       |
 
 ## 3. Kết quả nghiệp vụ cần đạt
 
@@ -32,29 +32,29 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 
 ## 4. Danh mục tài liệu
 
-| File | Trách nhiệm chính | Owner đề xuất |
-| --- | --- | --- |
-| `phase-plan.md` | Mục tiêu, milestone, dependency và governance | Technical Lead |
-| `scope-and-deliverables.md` | In scope, out of scope và deliverable | BA/Technical Lead |
-| `technical-decisions.md` | Quyết định kỹ thuật P02-ADR-001 đến P02-ADR-015 | Technical Lead/Security |
-| `development-readiness-review.md` | Kết quả Gate A và baseline bắt đầu development | Project Owner/Technical Lead |
-| `developer-start-guide.md` | Hướng dẫn PR-02P, branch PR-02A, verification và merge gate | Technical Lead/Developers |
-| `architecture-and-module-design.md` | Module boundary, dependency và request flow | Backend/Frontend Lead |
-| `security-session-and-rbac.md` | Password, token, cookie, session, rate limit và RBAC | Backend/Security |
-| `data-model-and-indexes.md` | Collection, field, state, index và transaction | Backend |
-| `api-contract.md` | Endpoint, request/response, error và authorization | Backend/QA/Frontend |
-| `backend-implementation-plan.md` | Cấu trúc source và thứ tự code API | Backend Lead |
-| `frontend-implementation-plan.md` | Route, auth bootstrap, page, component và state | Frontend Lead |
-| `teacher-invitation-and-admin-users.md` | Hai workflow quản trị trọng tâm | BA/Backend/Frontend |
-| `devops-environment-and-seeding.md` | Mongo replica set, env, bootstrap Admin và CI | DevOps/Backend |
-| `work-breakdown-structure.md` | Epic, task, dependency, estimate và output | Technical Lead |
-| `testing-strategy.md` | Test pyramid, security matrix, E2E và CI | QA/Security |
-| `acceptance-criteria.md` | Tiêu chí P02-AC có thể kiểm chứng | QA/BA |
-| `traceability-matrix.md` | BA -> task -> API/UI -> test/evidence | BA/QA |
-| `risk-and-issues.md` | Risk, trigger, mitigation và contingency | Technical Lead |
-| `implementation-checklist.md` | Checklist thực thi theo gate | Technical Lead/QA |
-| `evidence-register.md` | Nơi đăng ký bằng chứng khi code | QA/DevOps |
-| `exit-report.md` | Mẫu báo cáo đóng phase | Technical Lead/QA |
+| File                                    | Trách nhiệm chính                                           | Owner đề xuất                |
+| --------------------------------------- | ----------------------------------------------------------- | ---------------------------- |
+| `phase-plan.md`                         | Mục tiêu, milestone, dependency và governance               | Technical Lead               |
+| `scope-and-deliverables.md`             | In scope, out of scope và deliverable                       | BA/Technical Lead            |
+| `technical-decisions.md`                | Quyết định kỹ thuật P02-ADR-001 đến P02-ADR-015             | Technical Lead/Security      |
+| `development-readiness-review.md`       | Kết quả Gate A và baseline bắt đầu development              | Project Owner/Technical Lead |
+| `developer-start-guide.md`              | Hướng dẫn PR-02P, branch PR-02A, verification và merge gate | Technical Lead/Developers    |
+| `architecture-and-module-design.md`     | Module boundary, dependency và request flow                 | Backend/Frontend Lead        |
+| `security-session-and-rbac.md`          | Password, token, cookie, session, rate limit và RBAC        | Backend/Security             |
+| `data-model-and-indexes.md`             | Collection, field, state, index và transaction              | Backend                      |
+| `api-contract.md`                       | Endpoint, request/response, error và authorization          | Backend/QA/Frontend          |
+| `backend-implementation-plan.md`        | Cấu trúc source và thứ tự code API                          | Backend Lead                 |
+| `frontend-implementation-plan.md`       | Route, auth bootstrap, page, component và state             | Frontend Lead                |
+| `teacher-invitation-and-admin-users.md` | Hai workflow quản trị trọng tâm                             | BA/Backend/Frontend          |
+| `devops-environment-and-seeding.md`     | Mongo replica set, env, bootstrap Admin và CI               | DevOps/Backend               |
+| `work-breakdown-structure.md`           | Epic, task, dependency, estimate và output                  | Technical Lead               |
+| `testing-strategy.md`                   | Test pyramid, security matrix, E2E và CI                    | QA/Security                  |
+| `acceptance-criteria.md`                | Tiêu chí P02-AC có thể kiểm chứng                           | QA/BA                        |
+| `traceability-matrix.md`                | BA -> task -> API/UI -> test/evidence                       | BA/QA                        |
+| `risk-and-issues.md`                    | Risk, trigger, mitigation và contingency                    | Technical Lead               |
+| `implementation-checklist.md`           | Checklist thực thi theo gate                                | Technical Lead/QA            |
+| `evidence-register.md`                  | Nơi đăng ký bằng chứng khi code                             | QA/DevOps                    |
+| `exit-report.md`                        | Mẫu báo cáo đóng phase                                      | Technical Lead/QA            |
 
 ## 5. Trình tự sử dụng
 

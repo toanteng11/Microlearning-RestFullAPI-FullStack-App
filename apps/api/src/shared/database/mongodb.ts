@@ -3,10 +3,38 @@ import type { Logger } from 'pino';
 
 export type DatabaseStatus = 'UP' | 'DOWN' | 'CONNECTING';
 
-export function getDatabaseStatus(): DatabaseStatus {
+interface MongoHelloResponse {
+  isWritablePrimary?: boolean;
+  setName?: string;
+}
+
+async function readReplicaSetHello(): Promise<MongoHelloResponse> {
+  const database = mongoose.connection.db;
+
+  if (!database) {
+    throw new Error('MongoDB connection does not expose a database handle');
+  }
+
+  return (await database.admin().command({ hello: 1 })) as MongoHelloResponse;
+}
+
+export async function assertMongoDBPrimary(): Promise<void> {
+  const hello = await readReplicaSetHello();
+
+  if (!hello.isWritablePrimary || !hello.setName) {
+    throw new Error('MongoDB is not a writable replica-set primary');
+  }
+}
+
+export async function getDatabaseStatus(): Promise<DatabaseStatus> {
   switch (mongoose.connection.readyState) {
     case 1:
-      return 'UP';
+      try {
+        await assertMongoDBPrimary();
+        return 'UP';
+      } catch {
+        return 'DOWN';
+      }
     case 2:
       return 'CONNECTING';
     default:
@@ -22,7 +50,17 @@ export async function connectToMongoDB(uri: string, logger: Logger): Promise<voi
     connectTimeoutMS: 10_000,
   });
 
-  logger.info({ event: 'mongodb.connected' }, 'MongoDB connection established');
+  try {
+    await assertMongoDBPrimary();
+  } catch (error) {
+    await mongoose.disconnect();
+    throw error;
+  }
+
+  logger.info(
+    { event: 'mongodb.connected', topology: 'replica-set-primary' },
+    'MongoDB connection established',
+  );
 }
 
 export async function disconnectFromMongoDB(logger: Logger): Promise<void> {

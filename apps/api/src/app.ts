@@ -59,8 +59,8 @@ export function createApp(options: AppOptions) {
     });
   });
 
-  app.get('/ready', (_request, response) => {
-    const mongodb = options.dependencies.getDatabaseStatus();
+  app.get('/ready', async (_request, response) => {
+    const mongodb = await options.dependencies.getDatabaseStatus();
     const isReady = mongodb === 'UP';
 
     response.status(isReady ? 200 : 503).json({

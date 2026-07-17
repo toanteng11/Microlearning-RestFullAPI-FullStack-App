@@ -12,7 +12,7 @@ function buildTestApp(databaseStatus: 'UP' | 'DOWN' | 'CONNECTING' = 'UP') {
     config: testConfig,
     logger: pino({ level: 'silent' }),
     runtimeInfo: testRuntimeInfo,
-    dependencies: { getDatabaseStatus: () => databaseStatus },
+    dependencies: { getDatabaseStatus: async () => databaseStatus },
   });
 }
 

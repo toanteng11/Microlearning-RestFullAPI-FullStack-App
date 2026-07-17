@@ -19,6 +19,7 @@
     "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "test:integration": "npm run test:integration --workspaces --if-present",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
     "verify:negative-gate": "node scripts/verify-negative-lint-gate.mjs",
     "build": "npm run build --workspaces --if-present",
