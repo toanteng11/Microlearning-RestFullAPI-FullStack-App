@@ -39,6 +39,26 @@ docs/implementation/
 |   |-- phase-02-readiness.md
 |   `-- exit-report.md
 |-- phase-02/
+|   |-- README.md
+|   |-- phase-plan.md
+|   |-- scope-and-deliverables.md
+|   |-- technical-decisions.md
+|   |-- architecture-and-module-design.md
+|   |-- security-session-and-rbac.md
+|   |-- data-model-and-indexes.md
+|   |-- api-contract.md
+|   |-- backend-implementation-plan.md
+|   |-- frontend-implementation-plan.md
+|   |-- teacher-invitation-and-admin-users.md
+|   |-- devops-environment-and-seeding.md
+|   |-- work-breakdown-structure.md
+|   |-- testing-strategy.md
+|   |-- acceptance-criteria.md
+|   |-- traceability-matrix.md
+|   |-- risk-and-issues.md
+|   |-- implementation-checklist.md
+|   |-- evidence-register.md
+|   `-- exit-report.md
 |-- phase-03/
 |-- phase-04/
 |-- phase-05/
@@ -51,8 +71,8 @@ docs/implementation/
 
 | Folder | Phase | Outcome | Trạng thái |
 | --- | --- | --- | --- |
-| `phase-01/` | Project Foundation | Web/API/MongoDB/Swagger/Docker/CI foundation | Implemented locally |
-| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | Planned |
+| `phase-01/` | Project Foundation | Web/API/MongoDB/Swagger/Docker/CI foundation | Completed |
+| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | Ready for implementation |
 | `phase-03/` | Classroom Management | Classroom, enrollment, class code/link và roster | Planned |
 | `phase-04/` | Learning Content | Course/module/lesson/resource/deadline | Planned |
 | `phase-05/` | Assessments and Grading | Quiz/assignment/submission/grade/feedback | Planned |
