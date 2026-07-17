@@ -42,7 +42,7 @@ describe('App routing', () => {
 
   afterEach(async () => {
     vi.unstubAllGlobals();
-    await router.navigate('/');
+    await router.navigate('/system-status');
   });
 
   it('renders the system status route through the application shell', async () => {
