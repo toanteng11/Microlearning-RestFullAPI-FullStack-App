@@ -38,7 +38,7 @@ userSchema.index(
   { studentCode: 1 },
   {
     unique: true,
-    sparse: true,
+    partialFilterExpression: { studentCode: { $type: 'string' } },
     name: 'uq_users_student_code',
   },
 );

@@ -3,6 +3,9 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { ApplicationProviders } from './providers';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
+import { AdminUserDetailPage } from '../features/admin-users/pages/AdminUserDetailPage';
+import { AdminUserListPage } from '../features/admin-users/pages/AdminUserListPage';
+import { AdminUsersPage } from '../features/admin-users/pages/AdminUsersPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import {
   AdminHomePage,
@@ -57,6 +60,46 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
                 <AdminHomePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/users',
+            element: (
+              <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
+                <AdminUsersPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/users/students',
+            element: (
+              <RoleRoute permission="user.view_students">
+                <AdminUserListPage scope="students" />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/users/teachers',
+            element: (
+              <RoleRoute permission="user.view_teachers">
+                <AdminUserListPage scope="teachers" />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/users/admins',
+            element: (
+              <RoleRoute permission="user.view_admins">
+                <AdminUserListPage scope="admins" />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/users/:userId',
+            element: (
+              <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
+                <AdminUserDetailPage />
               </RoleRoute>
             ),
           },

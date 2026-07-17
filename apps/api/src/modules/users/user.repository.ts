@@ -109,11 +109,12 @@ export class UserRepository {
     userId: string,
     expectedUpdatedAt: Date,
     status: UserStatus,
+    now: Date,
     session: ClientSession,
   ) {
     return UserModel.findOneAndUpdate(
       { _id: userId, updatedAt: expectedUpdatedAt, status: { $ne: 'DELETED' } },
-      { $set: { status, ...(status === 'DELETED' ? { deletedAt: new Date() } : {}) } },
+      { $set: { status, ...(status === 'DELETED' ? { deletedAt: now } : {}) } },
       { returnDocument: 'after', session, runValidators: true },
     ).exec();
   }
