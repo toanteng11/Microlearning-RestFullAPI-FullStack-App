@@ -34,4 +34,4 @@ OpenAPI đã có schema cho Basic Health, Readiness, Detailed Health, Version v�
 - `@apidevtools/swagger-parser` validation pass.
 - `/api-docs/` trả HTTP 200.
 - `/api/v1/openapi.json` trả `openapi=3.0.3`.
-- Visual browser automation chưa có evidence vì Windows chặn browser runtime; action còn mở trong `exit-report.md`.
+- Visual browser verification đã pass trên desktop/mobile; Swagger load OpenAPI 3.0 với 4 operational endpoints và không có console error. Evidence nằm trong `phase-exit-evidence.md`.

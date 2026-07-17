@@ -19,7 +19,7 @@ Xây dựng increment Identity and User Administration chạy được end-to-en
 
 | Milestone | Outcome bắt buộc | Exit signal |
 | --- | --- | --- |
-| P02-M1 - Contract Ready | Scope, decision, data model, API và threat model được review | Gate A `Pass`; P02-T001..T009 đạt `Done` sau khi baseline được merge trong PR-02A |
+| P02-M1 - Contract Ready | Scope, decision, data model, API và threat model được review | Gate A `Pass`; P02-T001..T009 đạt `Done` sau khi planning baseline được merge trong PR-02P |
 | P02-M2 - Identity Backend Ready | Register, login, refresh, logout, current user, session rotation và rate control chạy bằng API | API integration/security test pass |
 | P02-M3 - Auth Web Ready | Login/Register/Auth bootstrap/Protected Route/Profile và role redirect dùng API thật | Component + browser auth flow pass |
 | P02-M4 - Admin And Invitation Ready | Role-specific lists, status/role guard, invitation create/copy/revoke/accept và AuditLog tích hợp | Admin/Teacher E2E pass |
@@ -61,7 +61,8 @@ Một người có thể giữ nhiều vai trò trong đồ án, nhưng trách n
 
 | PR đề xuất | Nội dung | Dependency |
 | --- | --- | --- |
-| PR-02A | Decisions, dependencies, config, Mongo replica set và test harness | P02-M1 |
+| PR-02P | Planning baseline: decisions, contracts, WBS, test, risk và evidence templates | P01 completed |
+| PR-02A | Dependencies, config, Mongo replica set và test harness | PR-02P/P02-M1 |
 | PR-02B | User/session model, password/token utilities, register/login/me | PR-02A |
 | PR-02C | Refresh rotation, logout, rate limit/cooldown, auth middleware/RBAC | PR-02B |
 | PR-02D | React API client, AuthProvider, Login/Register/Profile/guards | PR-02B contract; tích hợp sau PR-02C |

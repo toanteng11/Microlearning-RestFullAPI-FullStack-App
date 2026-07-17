@@ -72,11 +72,13 @@ npm run lint
 npm run format:check
 npm run typecheck
 npm run test
+npm run test:coverage
 npm run build
 npm run check
+npm run check:ci
 ```
 
-`npm run check` là quality gate đầy đủ tương đương Pull Request CI.
+`npm run check` là quality gate đầy đủ dành cho local. `npm run check:ci` thay test thông thường bằng coverage test, áp dụng coverage threshold, kiểm tra negative lint gate và là lệnh được Pull Request CI sử dụng.
 
 ## Environment Variables
 

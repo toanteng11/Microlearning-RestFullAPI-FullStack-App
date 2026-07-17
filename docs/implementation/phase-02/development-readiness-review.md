@@ -13,7 +13,7 @@
 
 `READY_FOR_IMPLEMENTATION` chỉ xác nhận rằng developer có contract, decision, task, test và acceptance baseline đủ rõ để code. Trạng thái này không thay thế code review, security review, CI hoặc evidence khi triển khai.
 
-Milestone P02-M1 chỉ đóng sau khi baseline cùng các thay đổi runtime khởi đầu được merge qua PR-02A; trước thời điểm đó P02-T001..T009 giữ trạng thái `Ready`.
+Milestone P02-M1 chỉ đóng sau khi planning baseline được merge qua PR-02P; trước thời điểm đó P02-T001..T009 giữ trạng thái `Ready`. PR-02A là implementation gate đầu tiên và chỉ bắt đầu từ `main` đã chứa PR-02P.
 
 ## 2. Gate A Result
 

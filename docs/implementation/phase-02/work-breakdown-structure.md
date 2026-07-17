@@ -5,7 +5,7 @@
 - Status ban đầu: `Ready` khi decision/dependency đã đủ; `Backlog` khi còn phụ thuộc.
 - Estimate là ngày công tham khảo gồm code + test + tài liệu của task, chưa gồm thời gian chờ review.
 - Mỗi task Done cần PR/commit, test và evidence theo Definition of Done.
-- Gate A có thể đạt `Pass` khi hồ sơ đã đủ để bắt đầu development; P02-T001..T009 vẫn giữ `Ready` cho đến khi baseline được merge trong PR-02A và có evidence tương ứng.
+- Gate A có thể đạt `Pass` khi hồ sơ đã đủ để bắt đầu development; P02-T001..T009 vẫn giữ `Ready` cho đến khi planning baseline được merge trong PR-02P và có evidence tương ứng.
 
 ## 2. P02-E01 - Baseline And Design
 

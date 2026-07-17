@@ -10,9 +10,9 @@
 | Swagger/OpenAPI contract foundation | Ready |
 | Docker local integration | Ready |
 | CI workflow file | Ready |
-| GitHub required checks | Branch protection configured; `Secret scan` cần được thêm vào required checks sau khi workflow xuất hiện |
+| GitHub required checks | Ready; quality, dependency audit và secret scan đã pass và được bảo vệ |
 
-Phase 02 có thể bắt đầu analysis/technical design và local implementation. Merge governance trên remote chỉ hoàn chỉnh sau khi Pull Request đầu tiên chạy đủ `Lint, test and build`, `Production dependency audit` và `Secret scan`.
+Phase 02 có thể bắt đầu analysis, technical design và implementation. Mọi thay đổi tiếp tục đi qua Pull Request với `Lint, test and build`, `Production dependency audit` và `Secret scan` là required checks.
 
 ## 2. Decisions Phải Chốt Trước Auth Code
 
@@ -47,4 +47,4 @@ Các câu hỏi trên đã được khóa thành implementation baseline tại `
 - [x] Frontend protected route/session restore/multi-tab design được review.
 - [x] Audit events cho invitation/account actions được xác định.
 - [x] GitHub remote/branch protection được cấu hình trước merge đầu tiên.
-- [ ] Required check `Secret scan` được thêm vào branch rule sau khi job xuất hiện trên GitHub.
+- [x] Required check `Secret scan` được thêm vào branch rule sau khi job xuất hiện trên GitHub.

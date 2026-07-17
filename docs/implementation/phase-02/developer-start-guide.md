@@ -12,7 +12,9 @@ Tài liệu này là entry point để chuyển Phase 02 từ planning sang impl
 - Conditional Should không được đưa vào PR nếu chưa có Change Control: Forgot/Reset Password và Advanced Cross-role Search.
 - OpenAPI, automated test và evidence phải đi cùng capability; không để cuối phase mới bổ sung.
 
-## 3. Branch Và Pull Request Đầu Tiên
+## 3. Branch Và Pull Request Implementation Đầu Tiên
+
+PR-02P lưu planning baseline và phải được merge vào `main` trước khi tạo branch code. PR-02A là Pull Request implementation đầu tiên của Phase 02.
 
 Tạo branch không dùng tiền tố `codex/`:
 
@@ -85,6 +87,7 @@ Ngoài các lệnh trên, PR-02A phải chứng minh MongoDB là primary và tra
 
 | PR | Branch đề xuất | Outcome |
 | --- | --- | --- |
+| PR-02P | `docs/phase-02-planning-baseline` | Decisions, contracts, WBS, test và readiness baseline |
 | PR-02A | `phase-02-contract-runtime` | Config, dependencies, replica set, test harness |
 | PR-02B | `phase-02-identity-backend` | User/session models, security primitives, register/login/me |
 | PR-02C | `phase-02-session-rbac` | Refresh race/reuse, logout, active family, RBAC/rate control |

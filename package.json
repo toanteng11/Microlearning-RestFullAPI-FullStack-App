@@ -20,8 +20,10 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "verify:negative-gate": "node scripts/verify-negative-lint-gate.mjs",
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build"
+    "check": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test && npm run build",
+    "check:ci": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test:coverage && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

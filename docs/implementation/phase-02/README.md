@@ -38,7 +38,7 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 | `scope-and-deliverables.md` | In scope, out of scope và deliverable | BA/Technical Lead |
 | `technical-decisions.md` | Quyết định kỹ thuật P02-ADR-001 đến P02-ADR-015 | Technical Lead/Security |
 | `development-readiness-review.md` | Kết quả Gate A và baseline bắt đầu development | Project Owner/Technical Lead |
-| `developer-start-guide.md` | Hướng dẫn branch, PR-02A, verification và merge gate | Technical Lead/Developers |
+| `developer-start-guide.md` | Hướng dẫn PR-02P, branch PR-02A, verification và merge gate | Technical Lead/Developers |
 | `architecture-and-module-design.md` | Module boundary, dependency và request flow | Backend/Frontend Lead |
 | `security-session-and-rbac.md` | Password, token, cookie, session, rate limit và RBAC | Backend/Security |
 | `data-model-and-indexes.md` | Collection, field, state, index và transaction | Backend |
