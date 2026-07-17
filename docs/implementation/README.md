@@ -58,7 +58,8 @@ docs/implementation/
 |   |-- risk-and-issues.md
 |   |-- implementation-checklist.md
 |   |-- evidence-register.md
-|   `-- exit-report.md
+|   |-- exit-report.md
+|   `-- phase-exit-evidence.md
 |-- phase-03/
 |-- phase-04/
 |-- phase-05/
@@ -72,7 +73,7 @@ docs/implementation/
 | Folder      | Phase                    | Outcome                                                           | Trạng thái           |
 | ----------- | ------------------------ | ----------------------------------------------------------------- | -------------------- |
 | `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                      | Completed            |
-| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | In progress - PR-02A |
+| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | Local verified; remote validation |
 | `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link và roster                  | Planned              |
 | `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                            | Planned              |
 | `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                         | Planned              |

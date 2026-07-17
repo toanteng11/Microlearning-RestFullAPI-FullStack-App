@@ -2,7 +2,7 @@
 
 Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ cho Student, Teacher và Admin. Repository sử dụng ReactJS, Node.js/ExpressJS, MongoDB, Swagger/OpenAPI, Docker và CI/CD.
 
-Hiện tại repository đã hoàn thành nền tảng kỹ thuật Phase 01. Các chức năng nghiệp vụ được triển khai từ Phase 02 theo [Implementation Plan](docs/implementation/common/technical-implementation-plan.md).
+Repository đã hoàn thành Phase 01 và có implementation Phase 02 chạy end-to-end cho Student registration, secure session, RBAC, Admin User Management và manual Teacher Invitation. Phase 02 đã vượt qua toàn bộ local gate; trạng thái chính thức đang chờ remote GitHub Actions và reviewer sign-off theo [Phase 02 Exit Evidence](docs/implementation/phase-02/phase-exit-evidence.md).
 
 ## Prerequisites
 
@@ -73,12 +73,16 @@ npm run format:check
 npm run typecheck
 npm run test
 npm run test:coverage
+npm run test:integration
+npm run test:e2e
 npm run build
 npm run check
 npm run check:ci
 ```
 
 `npm run check` là quality gate đầy đủ dành cho local. `npm run check:ci` thay test thông thường bằng coverage test, áp dụng coverage threshold, kiểm tra negative lint gate và là lệnh được Pull Request CI sử dụng.
+
+`npm run test:integration` yêu cầu `MONGODB_INTEGRATION_URI` trỏ tới test database trên replica set. `npm run test:e2e` yêu cầu Web/API/MongoDB đang healthy và `E2E_DEMO_PASSWORD` trùng với password dùng cho synthetic seed; xem [Phase 02 DevOps Guide](docs/implementation/phase-02/devops-environment-and-seeding.md).
 
 ## Environment Variables
 
@@ -123,5 +127,7 @@ Web image đã có Nginx SPA fallback. Nếu lỗi còn xảy ra, kiểm tra ima
 - [Business Analysis](business-analysis/)
 - [Implementation Documentation](docs/implementation/README.md)
 - [Phase 01 Documentation](docs/implementation/phase-01/README.md)
+- [Phase 02 Documentation](docs/implementation/phase-02/README.md)
+- [Phase 02 Exit Evidence](docs/implementation/phase-02/phase-exit-evidence.md)
 - [Architecture Overview](docs/implementation/phase-01/architecture-overview.md)
 - [Architecture Decision Records](docs/implementation/phase-01/technical-decisions.md)

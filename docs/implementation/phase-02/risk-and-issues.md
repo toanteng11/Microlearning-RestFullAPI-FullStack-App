@@ -59,3 +59,23 @@ P02 có thể chấp nhận với ghi chú:
 - Forgot/reset password chờ delivery decision nếu chưa được scope vào.
 
 Không chấp nhận residual risk về password/token raw exposure, privilege escalation, invalid account access hoặc invitation partial transaction.
+
+## 6. Verification Outcome - 2026-07-17
+
+| Nhóm | Kết quả |
+| --- | --- |
+| Credential/token exposure | Không phát hiện qua unit/integration/runtime log scan |
+| Privilege/account-state bypass | Negative API matrix pass |
+| Refresh/invitation concurrency | Integration và two-tab E2E pass |
+| Data partial/duplicate | Transaction, unique index và concurrency tests pass |
+| Critical/High defect mở | `0` trong local verification |
+
+Residual được chấp nhận theo baseline: `P02-R11` (single API replica), `P02-R13` (Forgot Password không claim), `P02-R15` (Teacher ownership nối P03). `P02-R01..R10`, `R12`, `R14`, `R16..R19` có mitigation và automated evidence local; remote CI phải xác nhận lại trên artifact PR.
+
+## 7. Open Issue Register
+
+| Issue | Severity | Owner | Trạng thái | Next action |
+| --- | --- | --- | --- | --- |
+| P02-I01 - Chưa có remote CI URL cho commit cuối | Release gate | Repository owner | Open | Push branch, mở PR, chờ required checks và ghi URL vào evidence |
+
+Không có issue code/runtime đã biết cần waiver. `P02-I01` không được đóng bằng screenshot của local terminal.

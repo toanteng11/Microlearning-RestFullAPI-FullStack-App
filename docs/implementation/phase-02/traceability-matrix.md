@@ -1,5 +1,7 @@
 # Phase 02 Traceability Matrix
 
+Kết quả thực thi ngày `2026-07-17`: mọi mapping requirement -> implementation -> local test đã có evidence; `38/39` acceptance criteria pass. Remote GitHub Actions của `P02-AC-033` còn chờ Pull Request và không làm thay đổi mapping nghiệp vụ bên dưới.
+
 ## 1. Requirement To Implementation
 
 | BA source | Capability | P02 tasks | API/UI | Acceptance/Test |

@@ -26,6 +26,14 @@ Xây dựng increment Identity and User Administration chạy được end-to-en
 | P02-M5 - Hardening Ready | Negative authorization, concurrency, token redaction, Swagger và Mongo transaction test pass | CI quality/security jobs xanh |
 | P02-M6 - Phase Exit | Compose demo, clean-clone onboarding, evidence và traceability hoàn tất | P02 exit review được ký |
 
+### Milestone Result - 2026-07-17
+
+| Milestone | Result |
+| --- | --- |
+| P02-M1..M4 | Pass |
+| P02-M5 | Local Pass; workflow remote chưa chạy trên PR cuối |
+| P02-M6 | Local evidence complete; remote CI và reviewer sign-off pending |
+
 ## 4. Delivery Sequence
 
 ```text

@@ -13,8 +13,8 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 | Phase ID              | `P02`                                                              |
 | Tên                   | `Authentication and Users`                                         |
 | Dependency            | `P01 - Project Foundation` đã hoàn thành                           |
-| Planning status       | `Ready for implementation`                                         |
-| Implementation status | `In progress - PR-02A contract/runtime foundation`                 |
+| Planning status       | `Completed`                                                        |
+| Implementation status | `Local verified - remote CI and sign-off pending`                  |
 | Phase owner đề xuất   | Technical Lead                                                     |
 | Review bắt buộc       | BA/Product Owner, Backend, Frontend, QA, DevOps, Security Reviewer |
 | Phase tiếp theo       | `P03 - Classroom Management`                                       |
@@ -55,6 +55,7 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 | `implementation-checklist.md`           | Checklist thực thi theo gate                                | Technical Lead/QA            |
 | `evidence-register.md`                  | Nơi đăng ký bằng chứng khi code                             | QA/DevOps                    |
 | `exit-report.md`                        | Mẫu báo cáo đóng phase                                      | Technical Lead/QA            |
+| `phase-exit-evidence.md`                | Kết quả test/runtime/clean-clone đã khử dữ liệu nhạy cảm     | QA/DevOps                    |
 
 ## 5. Trình tự sử dụng
 
