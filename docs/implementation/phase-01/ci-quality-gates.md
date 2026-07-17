@@ -10,20 +10,29 @@ Workflow `.github/workflows/ci.yml` chạy khi Pull Request hoặc push vào `ma
 Checkout
   -> Setup pinned Node with npm cache
   -> npm ci
-  -> npm run check
-  -> upload coverage artifact when present
+  -> npm run check:ci
+  -> upload mandatory coverage artifact
 ```
 
-`npm run check` gồm lint, format check, typecheck, tests và production build.
+`npm run check:ci` gồm lint, automated negative lint assertion, format check, typecheck, coverage tests và production build. Workflow fail nếu coverage không đạt threshold hoặc không sinh ra `apps/*/coverage`.
+
+Mọi GitHub Action dependency được pin bằng full commit SHA và ghi chú version để giảm rủi ro tag bị thay đổi trong chuỗi cung ứng CI.
+
+Coverage regression floor:
+
+| Area | Statements | Branches | Functions | Lines |
+| --- | ---: | ---: | ---: | ---: |
+| API | 75% | 45% | 70% | 75% |
+| Web | 80% | 70% | 80% | 80% |
 
 ## 3. Security Jobs
 
 CI có hai lớp kiểm tra security bắt buộc:
 
-- `Production dependency audit` chạy `npm audit --omit=dev --audit-level=critical` để chặn dependency production có critical vulnerability.
+- `Production dependency audit` chạy `npm audit --omit=dev --audit-level=high` để chặn dependency production có High hoặc Critical vulnerability.
 - `Secret scan` dùng `gitleaks/gitleaks-action@v3` để quét hardcoded secret như token, private key, password, API key hoặc credential bị commit.
 
-Local verification tại Phase 01 cho dependency audit trả `0 vulnerabilities`. Secret scan cần được xác nhận trên GitHub Actions sau khi workflow mới được push và chạy trên Pull Request.
+Local verification tại Phase 01 cho dependency audit trả `0 vulnerabilities`. Secret scan đã pass trên Pull Request #1 và được cấu hình làm required check.
 
 ## 4. Pull Request Governance
 
@@ -37,7 +46,7 @@ PR template yêu cầu Task ID, BA trace, verification, contract/data impact, UI
 
 ## 5. Negative Gate Evidence
 
-Local lint được chạy với đoạn code cố ý có unused variable và trả exit code `1` cùng `@typescript-eslint/no-unused-vars`. Remote Pull Request fail evidence vẫn cần sau khi repository có GitHub remote.
+`scripts/verify-negative-lint-gate.mjs` gọi ESLint bằng một đoạn TypeScript có unused variable cố ý. Script chỉ pass khi nhận error `@typescript-eslint/no-unused-vars`; nếu lint không còn từ chối violation, quality job sẽ fail. Cách này duy trì negative evidence ở mọi Pull Request mà không cần giữ branch chứa code lỗi.
 
 ## 6. Chưa Thuộc Phase 01
 

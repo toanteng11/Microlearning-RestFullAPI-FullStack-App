@@ -47,10 +47,14 @@
 - [x] Pull Request CI workflow.
 - [x] Dependency audit job.
 - [x] Secret scan job.
+- [x] Dependency audit chặn `High` và `Critical` vulnerabilities.
+- [x] Coverage thresholds và mandatory coverage artifact.
+- [x] Automated negative lint gate.
+- [x] GitHub Actions dependencies pinned bằng immutable commit SHA.
 - [x] Pull Request template.
 - [x] GitHub remote configured.
 - [x] Branch protection enabled.
-- [ ] Remote CI pass/fail evidence captured.
+- [x] Remote CI và required checks evidence captured.
 
 ## 6. Documentation And Evidence
 
@@ -59,9 +63,9 @@
 - [x] Architecture overview và ADRs.
 - [x] Phase documents tách theo area.
 - [x] Local acceptance/evidence/exit report.
-- [ ] Independent clean-clone onboarding.
-- [ ] Browser visual/console verification evidence.
+- [x] Independent clean-clone onboarding.
+- [x] Browser visual/console verification evidence.
 
 ## 7. Completion Rule
 
-Checkbox pending phải có owner trong `exit-report.md`; không xóa hoặc đánh dấu hoàn thành chỉ để đóng phase. Khi external evidence có sẵn, cập nhật checklist, acceptance, evidence register và exit report trong cùng Pull Request.
+Tất cả checkbox Phase 01 đã có evidence tương ứng. Nếu một gate hoặc evidence mất hiệu lực, tiêu chí liên quan phải được mở lại trong `exit-report.md`; không duy trì trạng thái hoàn thành bằng xác nhận miệng.

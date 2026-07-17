@@ -10,10 +10,11 @@ Thư mục này là hồ sơ triển khai đầy đủ của `P01 - Project Foun
 | --- | --- |
 | Phase ID | `P01` |
 | Tên | `Project Foundation` |
-| Implementation | Hoàn thành ở local |
-| Quality gates | Pass |
-| Docker integration | Pass trong phiên kiểm chứng |
-| External CI | GitHub remote/branch protection đã cấu hình; chờ Pull Request evidence và required check `Secret scan` sau lần chạy đầu tiên |
+| Implementation | Completed |
+| Quality gates | Pass, gồm coverage threshold và negative lint gate |
+| Docker integration | Pass |
+| External CI | Pass trên Pull Request #1; ba required checks và branch protection đã được xác nhận |
+| Phase status | `Completed` ngày `2026-07-13` |
 | Phase tiếp theo | `P02 - Authentication and Users` |
 
 ## 3. Danh mục tài liệu
@@ -24,8 +25,8 @@ Thư mục này là hồ sơ triển khai đầy đủ của `P01 - Project Foun
 | --- | --- | --- | --- |
 | `phase-plan.md` | Mục tiêu, dependency, milestone và governance | Technical Lead | Baseline |
 | `scope-and-deliverables.md` | In scope, out of scope và deliverables | Technical Lead/BA | Completed |
-| `work-breakdown-structure.md` | Epic, task, dependency và output | Technical Lead | Completed locally |
-| `implementation-checklist.md` | Checklist thực hiện và external action | Technical Lead/QA | Local complete |
+| `work-breakdown-structure.md` | Epic, task, dependency và output | Technical Lead | Completed |
+| `implementation-checklist.md` | Checklist thực hiện và external action | Technical Lead/QA | Completed |
 
 ### Thiết kế kỹ thuật
 
@@ -50,12 +51,13 @@ Thư mục này là hồ sơ triển khai đầy đủ của `P01 - Project Foun
 | File | Nội dung | Owner đề xuất | Trạng thái |
 | --- | --- | --- | --- |
 | `docker-local-environment.md` | Dockerfiles, Compose, health và local operations | DevOps | Implemented |
-| `ci-quality-gates.md` | CI jobs, branch protection và negative gate | DevOps/Technical Lead | Workflow ready |
-| `testing-strategy.md` | Test level, cases, command và evidence | QA/Developers | Pass locally |
-| `acceptance-criteria.md` | Acceptance result P01-AC-001..020 | QA/Technical Lead | 18 local pass; 2 external pending |
+| `ci-quality-gates.md` | CI jobs, branch protection và negative gate | DevOps/Technical Lead | Implemented |
+| `testing-strategy.md` | Test level, cases, command và evidence | QA/Developers | Pass |
+| `acceptance-criteria.md` | Acceptance result P01-AC-001..020 | QA/Technical Lead | 20/20 Pass |
 | `risk-and-issues.md` | Risk, issue, mitigation và residual risk | Technical Lead/DevOps | Reviewed |
 | `evidence-register.md` | Danh mục bằng chứng kiểm chứng | QA/DevOps | Updated |
-| `exit-report.md` | Kết luận phase và open actions | Technical Lead/QA | External verification pending |
+| `phase-exit-evidence.md` | Evidence remote CI, clean clone, runtime và browser | QA/DevOps | Completed |
+| `exit-report.md` | Kết luận phase và closed actions | Technical Lead/QA | Completed |
 | `phase-02-readiness.md` | Điều kiện và quyết định trước Authentication | Technical Lead/Security | Ready for planning |
 
 ## 4. Trình tự review
@@ -64,7 +66,7 @@ Thư mục này là hồ sơ triển khai đầy đủ của `P01 - Project Foun
 2. Review `technical-decisions.md`, `architecture-overview.md` và `repository-structure.md`.
 3. Review từng application/DevOps document theo vai trò.
 4. Đối chiếu `testing-strategy.md`, `acceptance-criteria.md` và `evidence-register.md`.
-5. Chỉ xác nhận phase exit sau khi đọc `exit-report.md` và xử lý external actions.
+5. Xác nhận phase exit bằng cách đối chiếu `phase-exit-evidence.md` với `exit-report.md`.
 
 ## 5. Nguồn chuẩn
 
