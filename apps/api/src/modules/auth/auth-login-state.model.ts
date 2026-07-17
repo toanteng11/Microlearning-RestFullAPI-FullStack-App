@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model, type Types } from 'mongoose';
+import mongoose, { Schema, model, type Model, type Types } from 'mongoose';
 
 export interface AuthLoginStateRecord {
   _id: Types.ObjectId;
@@ -36,5 +36,5 @@ authLoginStateSchema.index(
 );
 
 export const AuthLoginStateModel: Model<AuthLoginStateRecord> =
-  (models.AuthLoginState as Model<AuthLoginStateRecord> | undefined) ??
+  (mongoose.models.AuthLoginState as Model<AuthLoginStateRecord> | undefined) ??
   model<AuthLoginStateRecord>('AuthLoginState', authLoginStateSchema);

@@ -43,13 +43,13 @@ Yêu cầu:
 
 ## 4. Bootstrap Super Admin
 
-Command target:
+Command target (PowerShell; password đi qua stdin, không nằm trong process argument):
 
 ```text
-npm run bootstrap:admin --workspace @microlearning/api -- --email admin@example.test
+$password | npm run bootstrap:admin --workspace @microlearning/api -- admin@example.test "System Super Admin"
 ```
 
-Password nhập qua hidden prompt hoặc stdin bảo mật; không truyền trong command argument, URL, file hoặc log.
+Khi chạy trực tiếp trong terminal, CLI dùng hidden prompt. Khi dùng pipe như CI/PowerShell ở trên, CLI tự đọc stdin. Email và full name là positional non-secret arguments; password trong argument bị từ chối.
 
 CLI behavior:
 

@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model, type Types } from 'mongoose';
+import mongoose, { Schema, model, type Model, type Types } from 'mongoose';
 
 export interface AuditLogRecord {
   _id: Types.ObjectId;
@@ -53,5 +53,5 @@ auditLogSchema.index(
 );
 
 export const AuditLogModel: Model<AuditLogRecord> =
-  (models.AuditLog as Model<AuditLogRecord> | undefined) ??
+  (mongoose.models.AuditLog as Model<AuditLogRecord> | undefined) ??
   model<AuditLogRecord>('AuditLog', auditLogSchema);

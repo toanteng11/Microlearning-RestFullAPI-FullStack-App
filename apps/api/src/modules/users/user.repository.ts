@@ -73,6 +73,14 @@ export class UserRepository {
     return UserModel.findOne({ email, role: 'TEACHER', status: 'ACTIVE' }).exec();
   }
 
+  async findActiveSuperAdmin(
+    session?: ClientSession,
+  ): Promise<HydratedDocument<UserRecord> | null> {
+    return UserModel.findOne({ role: 'SUPER_ADMIN', status: 'ACTIVE' })
+      .session(session ?? null)
+      .exec();
+  }
+
   async updateLastLogin(userId: Types.ObjectId, now: Date): Promise<void> {
     await UserModel.updateOne({ _id: userId }, { $set: { lastLoginAt: now } }).exec();
   }

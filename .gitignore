@@ -30,3 +30,5 @@ Thumbs.db
 # Local tooling and generated deliverables
 .agents/
 artifacts/
+playwright-report/
+test-results/

@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model } from 'mongoose';
+import mongoose, { Schema, model, type Model } from 'mongoose';
 
 import { REGISTRATION_SOURCES, USER_ROLES, USER_STATUSES, type UserRecord } from './user.types.js';
 
@@ -44,4 +44,4 @@ userSchema.index(
 );
 
 export const UserModel: Model<UserRecord> =
-  (models.User as Model<UserRecord> | undefined) ?? model<UserRecord>('User', userSchema);
+  (mongoose.models.User as Model<UserRecord> | undefined) ?? model<UserRecord>('User', userSchema);

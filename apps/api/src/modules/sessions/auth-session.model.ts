@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model, type Types } from 'mongoose';
+import mongoose, { Schema, model, type Model, type Types } from 'mongoose';
 
 export const AUTH_SESSION_STATUSES = ['ACTIVE', 'ROTATED', 'REVOKED'] as const;
 export type AuthSessionStatus = (typeof AUTH_SESSION_STATUSES)[number];
@@ -65,5 +65,5 @@ authSessionSchema.index(
 );
 
 export const AuthSessionModel: Model<AuthSessionRecord> =
-  (models.AuthSession as Model<AuthSessionRecord> | undefined) ??
+  (mongoose.models.AuthSession as Model<AuthSessionRecord> | undefined) ??
   model<AuthSessionRecord>('AuthSession', authSessionSchema);

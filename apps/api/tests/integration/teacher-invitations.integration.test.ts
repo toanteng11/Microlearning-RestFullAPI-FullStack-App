@@ -150,6 +150,28 @@ describe('Teacher Invitation API integration', () => {
     expect(duplicate.body.error.code).toBe('INVITATION_ALREADY_PENDING');
   });
 
+  it('allows only one concurrent normalized invitation for the same Teacher email', async () => {
+    const admin = await createActor('ADMIN');
+    const [first, second] = await Promise.all([
+      request(app)
+        .post('/api/v1/admin/teacher-invitations')
+        .set('Authorization', bearer(admin.accessToken))
+        .send({ email: `  ${activation.email.toUpperCase()}  ` }),
+      request(app)
+        .post('/api/v1/admin/teacher-invitations')
+        .set('Authorization', bearer(admin.accessToken))
+        .send({ email: activation.email }),
+    ]);
+
+    expect([first.status, second.status].sort()).toEqual([201, 409]);
+    const conflict = first.status === 409 ? first : second;
+    expect(conflict.body.error.code).toBe('INVITATION_ALREADY_PENDING');
+    expect(
+      await TeacherInvitationModel.countDocuments({ email: activation.email, status: 'PENDING' }),
+    ).toBe(1);
+    expect(await AuditLogModel.countDocuments({ action: 'TEACHER_INVITATION_CREATED' })).toBe(1);
+  });
+
   it('records copy idempotently and revokes only a pending invitation', async () => {
     const admin = await createActor('ADMIN');
     const created = await request(app)

@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model, type Types } from 'mongoose';
+import mongoose, { Schema, model, type Model, type Types } from 'mongoose';
 
 export const INVITATION_STATUSES = ['PENDING', 'ACCEPTED', 'EXPIRED', 'REVOKED'] as const;
 export type InvitationStatus = (typeof INVITATION_STATUSES)[number];
@@ -86,5 +86,5 @@ teacherInvitationSchema.index(
 );
 
 export const TeacherInvitationModel: Model<TeacherInvitationRecord> =
-  (models.TeacherInvitation as Model<TeacherInvitationRecord> | undefined) ??
+  (mongoose.models.TeacherInvitation as Model<TeacherInvitationRecord> | undefined) ??
   model<TeacherInvitationRecord>('TeacherInvitation', teacherInvitationSchema);

@@ -1,4 +1,4 @@
-import { Schema, model, models, type Model } from 'mongoose';
+import mongoose, { Schema, model, type Model } from 'mongoose';
 
 export interface SystemGuardRecord {
   _id: string;
@@ -19,5 +19,5 @@ const systemGuardSchema = new Schema<SystemGuardRecord>(
 );
 
 export const SystemGuardModel: Model<SystemGuardRecord> =
-  (models.SystemGuard as Model<SystemGuardRecord> | undefined) ??
+  (mongoose.models.SystemGuard as Model<SystemGuardRecord> | undefined) ??
   model<SystemGuardRecord>('SystemGuard', systemGuardSchema);

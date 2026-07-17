@@ -111,6 +111,115 @@ jobs:
         if: always()
         run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml down --volumes --remove-orphans
 
+  openapi-contract:
+    name: OpenAPI contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate parser and Phase 02 operation coverage
+        run: npm run test:openapi
+
+  browser-e2e:
+    name: Phase 02 browser E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      APP_ENV: test
+      APP_VERSION: 0.2.0
+      COMMIT_SHA: ${{ github.sha }}
+      BUILD_TIME: ci
+      PORT: 4000
+      MONGODB_URI: mongodb://127.0.0.1:27018/microlearning-e2e?replicaSet=rs0&directConnection=true
+      PUBLIC_WEB_URL: http://localhost:3000
+      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      ACCESS_TOKEN_SECRET: ci-e2e-access-token-secret-with-32-byte-minimum
+      AUTH_IDENTITY_PEPPER: ci-e2e-identity-pepper-with-32-byte-minimum
+      REFRESH_COOKIE_SECURE: 'false'
+      BOOTSTRAP_ADMIN_ENABLED: 'false'
+      LOG_LEVEL: silent
+      E2E_WEB_URL: http://localhost:3000
+      E2E_API_URL: http://localhost:4000
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate integrated Compose configuration
+        run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml config --quiet
+
+      - name: Build integrated images deterministically
+        run: |
+          docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml build api
+          docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml build web
+
+      - name: Start integrated stack
+        run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml up -d --no-build
+
+      - name: Wait for API and Web readiness
+        run: |
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4000/ready >/dev/null && curl --fail --silent http://127.0.0.1:3000/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml ps
+          exit 1
+
+      - name: Generate masked E2E credential
+        run: |
+          password="$(openssl rand -base64 24 | tr -d '\n')Aa1!"
+          echo "::add-mask::$password"
+          echo "E2E_DEMO_PASSWORD=$password" >> "$GITHUB_ENV"
+
+      - name: Seed synthetic role identities
+        run: printf '%s' "$E2E_DEMO_PASSWORD" | npm run seed:demo --workspace @microlearning/api
+
+      - name: Run critical browser journeys
+        run: npm run test:e2e:ci
+
+      - name: Show integrated stack diagnostics
+        if: failure()
+        run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml logs --no-color mongodb mongodb-init api web
+
+      - name: Upload failed E2E report
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-02-e2e-report
+          path: playwright-report
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Stop integrated services
+        if: always()
+        run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml down --volumes --remove-orphans
+
   secret-security:
     name: Secret scan
     runs-on: ubuntu-latest
