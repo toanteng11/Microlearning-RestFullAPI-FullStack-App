@@ -4,34 +4,37 @@
 
 File này được cập nhật khi triển khai. Không đưa password, access/refresh token, invitation link, cookie value, Mongo URI hoặc dữ liệu cá nhân thật vào evidence.
 
+Baseline local được kiểm chứng ngày `2026-07-17` trên branch `phase-02-quality-release`, commit code `ff0e5fd`. Chi tiết command/result đã khử dữ liệu nhạy cảm nằm trong `phase-exit-evidence.md`.
+
 ## 2. Evidence Catalog
 
-| Evidence ID | Nội dung cần chứng minh | Nguồn dự kiến | Trạng thái | Link/path/result |
-| --- | --- | --- | --- | --- |
-| P02-EVD-API-001 | Register/login/profile API tests | Vitest/Supertest | Pending | |
-| P02-EVD-API-002 | Refresh/logout/reuse tests | Integration report | Pending | |
-| P02-EVD-API-003 | Admin user list/status/role tests | Integration report | Pending | |
-| P02-EVD-API-004 | Invitation state/concurrency transaction | Integration report | Pending | |
-| P02-EVD-API-005 | Pending invitation and final Super Admin concurrency invariants | Transaction/index report | Pending | |
-| P02-EVD-DATA-001 | Required indexes and unique constraints | Index verification | Pending | |
-| P02-EVD-DATA-002 | Replica set transaction behavior | Mongo/Compose/CI | Pending | |
-| P02-EVD-WEB-001 | Login/Register/Profile component tests | Vitest report | Pending | |
-| P02-EVD-WEB-002 | Admin lists/invitation component tests | Vitest report | Pending | |
-| P02-EVD-WEB-003 | Student/Admin/Teacher E2E journeys | Playwright report | Pending | |
-| P02-EVD-WEB-004 | Desktop/mobile/accessibility review | Screenshots/report | Pending | |
-| P02-EVD-WEB-005 | Multi-tab refresh and race-grace browser behavior | Playwright trace/report | Pending | |
-| P02-EVD-SEC-001 | Password/hash/token DB inspection | Sanitized assertion/report | Pending | |
-| P02-EVD-SEC-002 | Cookie attributes and browser storage | Browser security evidence | Pending | |
-| P02-EVD-SEC-003 | Negative role/status/permission matrix | Security test report | Pending | |
-| P02-EVD-SEC-004 | Rate limit/cooldown boundaries | API test report | Pending | |
-| P02-EVD-SEC-005 | Log/AuditLog redaction | Sanitized log assertion | Pending | |
-| P02-EVD-DOC-001 | OpenAPI parse and route coverage | CI artifact | Pending | |
-| P02-EVD-OPS-001 | Docker build/non-root/Compose health | Command record | Pending | |
-| P02-EVD-OPS-002 | Remote CI required checks | GitHub Actions URL | Pending | |
-| P02-EVD-OPS-003 | Bootstrap/seed idempotency | Sanitized command result | Pending | |
-| P02-EVD-OPS-004 | Clean-clone onboarding | Independent record | Pending | |
-| P02-EVD-DOC-002 | Traceability/checklist/exit approvals | Document review | Pending | |
-| P02-EVD-DOC-003 | Development readiness Gate A baseline | Readiness review | Complete | `development-readiness-review.md` (`2026-07-15`) |
+| Evidence ID | Nội dung cần chứng minh | Trạng thái | Link/path/result |
+| --- | --- | --- | --- |
+| P02-EVD-API-001 | Register/login/profile API | Local Pass | `tests/integration/auth.integration.test.ts`; API unit total `73/73` |
+| P02-EVD-API-002 | Refresh/logout/reuse | Local Pass | Auth integration: rotation, grace race, outside-grace reuse, logout |
+| P02-EVD-API-003 | Admin list/status/role | Local Pass | `admin-users.integration.test.ts`: role separation, atomic status/role |
+| P02-EVD-API-004 | Invitation state/concurrency transaction | Local Pass | `teacher-invitations.integration.test.ts`: `6/6` |
+| P02-EVD-API-005 | Invitation/final Super Admin invariants | Local Pass | Concurrent create/accept và concurrent Super Admin block tests |
+| P02-EVD-DATA-001 | Required indexes/unique/partial/TTL | Local Pass | `data-indexes.integration.test.ts`: `2/2`, named index + duplicate behavior |
+| P02-EVD-DATA-002 | Replica set transaction behavior | Local Pass | Integration total `21/21`; commit/rollback; Mongo `rs0` primary |
+| P02-EVD-WEB-001 | Login/Register/Profile components | Local Pass | Web test total `48/48`; auth/profile suites pass |
+| P02-EVD-WEB-002 | Admin list/invitation components | Local Pass | Loading/empty/error/filter/detail/copy/revoke/activate states pass |
+| P02-EVD-WEB-003 | Student/Admin/Teacher E2E | Local Pass | `tests/e2e/phase-02-critical-journeys.spec.ts`: `4/4` |
+| P02-EVD-WEB-004 | Desktop/mobile/accessibility review | Local Pass | Browser review: no horizontal overflow; labeled controls; no console error |
+| P02-EVD-WEB-005 | Multi-tab refresh/race grace | Local Pass | Two-tab reload E2E + outside-grace API reuse test |
+| P02-EVD-SEC-001 | Password/hash/token DB safety | Local Pass | Argon2id/hash-only assertions in auth/invitation integration suites |
+| P02-EVD-SEC-002 | Cookie attributes/browser storage | Local Pass | E2E confirms HttpOnly, SameSite=Lax, auth path, no persistent token |
+| P02-EVD-SEC-003 | Negative role/status/permission matrix | Local Pass | `authenticate.test.ts`, Admin/Invitation direct API denial tests |
+| P02-EVD-SEC-004 | Rate/cooldown boundaries | Local Pass | Five failures then cooldown; password boundary unit/integration tests |
+| P02-EVD-SEC-005 | Log/AuditLog redaction | Local Pass | `logger.test.ts`; runtime log scan found no password/bearer/raw invitation token |
+| P02-EVD-DOC-001 | OpenAPI parse/route coverage | Local Pass | `app.test.ts`: `6/6`; 19 P02 operations mapped; Swagger shows 24 total |
+| P02-EVD-OPS-001 | Docker build/non-root/health | Local Pass | Web/API build; Web/API/Mongo healthy; API `uid=1000(node)` |
+| P02-EVD-OPS-002 | Remote required checks | Remote Pass | [PR #4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4); [Actions run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819): `6/6` jobs success |
+| P02-EVD-OPS-003 | Bootstrap/seed idempotency | Local Pass | Bootstrap `created true -> false`; seed `5/0 -> 0/5`; no credential output |
+| P02-EVD-OPS-004 | Clean-clone onboarding | Local Pass | `npm ci`, check/build, replica init, bootstrap, seed, integration/E2E pass |
+| P02-EVD-OPS-005 | Auth environment fail-fast | Local Pass | `environment.test.ts`: `10/10`; Production/origin/secret/range guards |
+| P02-EVD-DOC-002 | Traceability/checklist/exit package | Complete | Local/remote evidence đã cập nhật; formal reviewer sign-off và merge còn chờ |
+| P02-EVD-DOC-003 | Development readiness Gate A | Complete | `development-readiness-review.md` ngày `2026-07-15` |
 
 ## 3. Evidence Quality
 
@@ -40,3 +43,11 @@ File này được cập nhật khi triển khai. Không đưa password, access/
 - CI evidence link đúng run/PR, không chỉ Actions homepage.
 - Test artifact phải truy ngược được tới build/commit.
 - DB evidence dùng synthetic data và chỉ show hash presence/type, không raw credential.
+
+## 4. Remote Closure Result
+
+- Pull Request: [#4 - feat: complete phase 02 authentication and users](https://github.com/toanteng11/Microlearning-RestFull-API-FullStack-App/pull/4).
+- Verified commit: `e1c5479`.
+- GitHub Actions: [run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819), `6/6` jobs success.
+- Required checks: Lint, test and build; MongoDB replica-set transaction; OpenAPI contract; Phase 02 browser E2E; Production dependency audit; Secret scan.
+- Reviewer/approval/merge vẫn phải hoàn tất theo branch protection và được ghi trong `exit-report.md`; đây là bước quản trị, không phải test còn thiếu.

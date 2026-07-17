@@ -9,5 +9,5 @@ export interface RuntimeInfo {
 }
 
 export interface SystemDependencies {
-  getDatabaseStatus: () => DatabaseStatus;
+  getDatabaseStatus: () => Promise<DatabaseStatus>;
 }

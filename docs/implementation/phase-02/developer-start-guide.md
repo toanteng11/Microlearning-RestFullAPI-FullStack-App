@@ -6,8 +6,8 @@ Tài liệu này là entry point để chuyển Phase 02 từ planning sang impl
 
 ## 2. Baseline Bắt Buộc
 
-- Planning status: `READY_FOR_IMPLEMENTATION`.
-- Implementation status: `NOT_STARTED`.
+- Planning status: `COMPLETED`.
+- Implementation status: `39/39_PASS`; chỉ còn reviewer approval/merge để đóng phase.
 - Must scope: Student registration, session/auth, profile, RBAC, role-specific Admin lists và manual Teacher Invitation.
 - Conditional Should không được đưa vào PR nếu chưa có Change Control: Forgot/Reset Password và Advanced Cross-role Search.
 - OpenAPI, automated test và evidence phải đi cùng capability; không để cuối phase mới bổ sung.
@@ -85,25 +85,27 @@ Ngoài các lệnh trên, PR-02A phải chứng minh MongoDB là primary và tra
 
 ## 8. Chuỗi PR Tiếp Theo
 
-| PR | Branch đề xuất | Outcome |
-| --- | --- | --- |
-| PR-02P | `docs/phase-02-planning-baseline` | Decisions, contracts, WBS, test và readiness baseline |
-| PR-02A | `phase-02-contract-runtime` | Config, dependencies, replica set, test harness |
-| PR-02B | `phase-02-identity-backend` | User/session models, security primitives, register/login/me |
-| PR-02C | `phase-02-session-rbac` | Refresh race/reuse, logout, active family, RBAC/rate control |
-| PR-02D | `phase-02-auth-web` | AuthProvider, multi-tab coordinator, Login/Register/Profile/guards |
-| PR-02E | `phase-02-admin-users` | Role lists/detail/status/role/SystemGuard |
-| PR-02F | `phase-02-teacher-invitations` | Create/copy/revoke/preview/accept and concurrency |
-| PR-02G | `phase-02-hardening-exit` | OpenAPI completion, Playwright, security, evidence và exit |
+| PR     | Branch đề xuất                    | Outcome                                                            |
+| ------ | --------------------------------- | ------------------------------------------------------------------ |
+| PR-02P | `docs/phase-02-planning-baseline` | Decisions, contracts, WBS, test và readiness baseline              |
+| PR-02A | `phase-02-contract-runtime`       | Config, dependencies, replica set, test harness                    |
+| PR-02B | `phase-02-identity-backend`       | User/session models, security primitives, register/login/me        |
+| PR-02C | `phase-02-session-rbac`           | Refresh race/reuse, logout, active family, RBAC/rate control       |
+| PR-02D | `phase-02-auth-web`               | AuthProvider, multi-tab coordinator, Login/Register/Profile/guards |
+| PR-02E | `phase-02-admin-users`            | Role lists/detail/status/role/SystemGuard                          |
+| PR-02F | `phase-02-teacher-invitations`    | Create/copy/revoke/preview/accept and concurrency                  |
+| PR-02G | `phase-02-quality-release`        | OpenAPI completion, Playwright, security, evidence và exit         |
 
 Không tạo một branch chứa toàn bộ Phase 02. Mỗi PR phải merge theo dependency, rebase/update từ `main` và giữ required checks xanh.
 
+Chuỗi branch trên đã được triển khai đến PR-02G. Khi tiếp tục từ baseline hiện tại, không khởi động lại PR-02A; mở Pull Request cho `phase-02-quality-release`, theo dõi required checks và cập nhật remote URL vào hồ sơ exit.
+
 ## 9. Developer Handoff Checklist
 
-- [ ] Đọc Gate A result và ADR baseline.
-- [ ] Chọn Task ID và xác nhận dependency đã `Ready/Done`.
-- [ ] Tạo branch đúng tên, không dùng `codex/`.
-- [ ] Viết hoặc cập nhật test trước/cùng implementation.
-- [ ] Cập nhật OpenAPI cho mọi route thay đổi.
-- [ ] Gắn evidence path/CI URL sau khi remote checks pass.
-- [ ] Không check Gate B-F khi chưa có source chạy thật.
+- [x] Đọc Gate A result và ADR baseline.
+- [x] Chọn Task ID và xác nhận dependency đã `Ready/Done`.
+- [x] Tạo branch đúng tên, không dùng `codex/`.
+- [x] Viết hoặc cập nhật test trước/cùng implementation.
+- [x] Cập nhật OpenAPI cho mọi route thay đổi.
+- [x] Gắn evidence path/CI URL sau khi remote checks pass.
+- [x] Không check Gate B-F khi chưa có source chạy thật.

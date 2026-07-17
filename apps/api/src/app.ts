@@ -1,4 +1,5 @@
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import helmet from 'helmet';
 import type { Logger } from 'pino';
@@ -6,6 +7,7 @@ import { pinoHttp } from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
 
 import { createOpenApiDocument } from './docs/openapi.js';
+import { createPhaseTwoRouter } from './modules/phase-two.router.js';
 import { createSystemRouter } from './modules/system/system.routes.js';
 import type { RuntimeInfo, SystemDependencies } from './modules/system/system.types.js';
 import type { AppConfig } from './shared/config/environment.js';
@@ -46,6 +48,7 @@ export function createApp(options: AppOptions) {
       credentials: true,
     }),
   );
+  app.use(cookieParser());
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/health', (_request, response) => {
@@ -59,8 +62,8 @@ export function createApp(options: AppOptions) {
     });
   });
 
-  app.get('/ready', (_request, response) => {
-    const mongodb = options.dependencies.getDatabaseStatus();
+  app.get('/ready', async (_request, response) => {
+    const mongodb = await options.dependencies.getDatabaseStatus();
     const isReady = mongodb === 'UP';
 
     response.status(isReady ? 200 : 503).json({
@@ -88,6 +91,7 @@ export function createApp(options: AppOptions) {
   );
 
   app.use('/api/v1', createSystemRouter(options.runtimeInfo, options.dependencies));
+  app.use('/api/v1', createPhaseTwoRouter(options.config));
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(options.logger, options.config.appEnvironment === 'development'));

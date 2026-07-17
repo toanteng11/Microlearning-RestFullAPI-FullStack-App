@@ -4,7 +4,7 @@ import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
 import { createApp } from '../src/app.js';
-import { createOpenApiDocument } from '../src/docs/openapi.js';
+import { createOpenApiDocument, PHASE_TWO_OPENAPI_OPERATIONS } from '../src/docs/openapi.js';
 import { testConfig, testRuntimeInfo } from './test-fixtures.js';
 
 function buildTestApp(databaseStatus: 'UP' | 'DOWN' | 'CONNECTING' = 'UP') {
@@ -12,7 +12,7 @@ function buildTestApp(databaseStatus: 'UP' | 'DOWN' | 'CONNECTING' = 'UP') {
     config: testConfig,
     logger: pino({ level: 'silent' }),
     runtimeInfo: testRuntimeInfo,
-    dependencies: { getDatabaseStatus: () => databaseStatus },
+    dependencies: { getDatabaseStatus: async () => databaseStatus },
   });
 }
 
@@ -63,5 +63,87 @@ describe('system API', () => {
     const response = await request(buildTestApp()).get('/api/v1/openapi.json').expect(200);
     expect(response.body.openapi).toBe('3.0.3');
     expect(response.body.paths['/health']).toBeDefined();
+  });
+
+  it('keeps every Phase 02 route covered by a secure, testable OpenAPI operation', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expectedRoutes = new Map([
+      ['POST /api/v1/auth/register', 'registerStudent'],
+      ['POST /api/v1/auth/login', 'loginUser'],
+      ['POST /api/v1/auth/refresh-token', 'refreshSession'],
+      ['POST /api/v1/auth/logout', 'logoutUser'],
+      ['GET /api/v1/users/me', 'getCurrentUser'],
+      ['PATCH /api/v1/users/me', 'updateCurrentUser'],
+      ['GET /api/v1/admin/users/students', 'listStudents'],
+      ['GET /api/v1/admin/users/teachers', 'listTeachers'],
+      ['GET /api/v1/admin/users/admins', 'listAdmins'],
+      ['GET /api/v1/admin/users/{userId}', 'getAdminUserDetail'],
+      ['PATCH /api/v1/admin/users/{userId}/status', 'changeAdminUserStatus'],
+      ['PATCH /api/v1/admin/users/{userId}/role', 'changeAdminUserRole'],
+      ['POST /api/v1/admin/teacher-invitations', 'createTeacherInvitation'],
+      ['GET /api/v1/admin/teacher-invitations', 'listTeacherInvitations'],
+      ['GET /api/v1/admin/teacher-invitations/{invitationId}', 'getTeacherInvitation'],
+      [
+        'POST /api/v1/admin/teacher-invitations/{invitationId}/copy-events',
+        'recordTeacherInvitationCopy',
+      ],
+      ['POST /api/v1/admin/teacher-invitations/{invitationId}/revoke', 'revokeTeacherInvitation'],
+      ['POST /api/v1/teacher/invitations/preview', 'previewTeacherInvitation'],
+      ['POST /api/v1/teacher/invitations/accept', 'acceptTeacherInvitation'],
+    ]);
+    const documentedOperations = new Map<string, string>();
+
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (!pathItem) continue;
+      for (const method of ['get', 'post', 'patch', 'put', 'delete'] as const) {
+        const operation = pathItem[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_TWO_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_TWO_OPENAPI_OPERATIONS)[number],
+          )
+        ) {
+          continue;
+        }
+
+        const routeKey = `${method.toUpperCase()} ${path}`;
+        documentedOperations.set(routeKey, operation.operationId);
+        expect(operation.security, `${routeKey} security`).toBeDefined();
+
+        const responseCodes = Object.keys(operation.responses);
+        const successCode = responseCodes.find((code) => /^2\d\d$/u.test(code));
+        expect(successCode, `${routeKey} success response`).toBeDefined();
+        expect(
+          responseCodes.some((code) => /^4\d\d$/u.test(code)),
+          `${routeKey} error response`,
+        ).toBe(true);
+
+        const successResponse = successCode ? operation.responses[successCode] : undefined;
+        const responseExample =
+          successResponse && 'content' in successResponse
+            ? successResponse.content?.['application/json']?.example
+            : undefined;
+        const bodyExample =
+          operation.requestBody && 'content' in operation.requestBody
+            ? operation.requestBody.content['application/json']?.example
+            : undefined;
+        expect(
+          operation.operationId === 'logoutUser' || responseExample || bodyExample,
+          `${routeKey} example`,
+        ).toBeTruthy();
+
+        if (operation.operationId !== 'logoutUser') {
+          expect(
+            successResponse && 'content' in successResponse,
+            `${routeKey} success schema`,
+          ).toBe(true);
+        }
+      }
+    }
+
+    expect(documentedOperations).toEqual(expectedRoutes);
+    expect([...documentedOperations.values()].sort()).toEqual(
+      [...PHASE_TWO_OPENAPI_OPERATIONS].sort(),
+    );
   });
 });

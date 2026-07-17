@@ -1,6 +1,6 @@
 # Docker Operations
 
-Docker Compose ở root dùng cho Local/Integration, gồm `web`, `api` và `mongodb`.
+Docker Compose ở root dùng cho Local/Integration, gồm `web`, `api`, `mongodb` và one-shot service `mongodb-init`. MongoDB chạy single-node replica set `rs0`; API chỉ start sau khi init exit `0` và primary healthcheck pass.
 
 ## Commands
 
@@ -10,10 +10,20 @@ docker compose build
 docker compose up -d
 docker compose ps
 docker compose logs api
+docker compose logs mongodb-init
 docker compose down
 ```
 
 Không dùng `docker compose down --volumes` trừ khi chủ động reset MongoDB local data.
+
+Chạy transaction integration test qua host port chỉ bật trong CI override:
+
+```powershell
+docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml up -d mongodb
+docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml run --rm mongodb-init
+$env:MONGODB_INTEGRATION_URI='mongodb://127.0.0.1:27018/microlearning-ci?replicaSet=rs0&directConnection=true'
+npm run test:integration --workspace @microlearning/api
+```
 
 ## Smoke Checks
 

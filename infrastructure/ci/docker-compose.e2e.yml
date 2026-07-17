@@ -1,0 +1,4 @@
+services:
+  api:
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/${E2E_DATABASE_NAME:-microlearning-e2e}?replicaSet=rs0

@@ -18,8 +18,8 @@ export function createSystemRouter(runtimeInfo: RuntimeInfo, dependencies: Syste
     });
   });
 
-  router.get('/system/health', (_request, response) => {
-    const mongodb = dependencies.getDatabaseStatus();
+  router.get('/system/health', async (_request, response) => {
+    const mongodb = await dependencies.getDatabaseStatus();
     const status = mongodb === 'UP' ? 'UP' : 'DEGRADED';
 
     response.status(status === 'UP' ? 200 : 503).json({
