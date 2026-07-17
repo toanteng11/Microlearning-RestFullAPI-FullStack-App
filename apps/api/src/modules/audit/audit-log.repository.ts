@@ -19,4 +19,15 @@ export class AuditLogRepository {
     const audit = new AuditLogModel(input);
     return audit.save({ session });
   }
+
+  async findIdempotent(
+    actorId: Types.ObjectId,
+    action: string,
+    idempotencyKey: string,
+    session?: ClientSession,
+  ) {
+    return AuditLogModel.findOne({ actorId, action, idempotencyKey })
+      .session(session ?? null)
+      .exec();
+  }
 }

@@ -46,8 +46,13 @@ export class UserRepository {
     return user.save({ session });
   }
 
-  async findByEmail(email: string): Promise<HydratedDocument<UserRecord> | null> {
-    return UserModel.findOne({ email }).exec();
+  async findByEmail(
+    email: string,
+    session?: ClientSession,
+  ): Promise<HydratedDocument<UserRecord> | null> {
+    return UserModel.findOne({ email })
+      .session(session ?? null)
+      .exec();
   }
 
   async findCredentialByEmail(email: string): Promise<HydratedDocument<UserRecord> | null> {

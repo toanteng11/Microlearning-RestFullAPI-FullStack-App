@@ -10,6 +10,12 @@ import { createAuthRouter } from './auth/auth.routes.js';
 import { AuthService } from './auth/auth.service.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { SystemGuardRepository } from './system-guards/system-guard.repository.js';
+import { TeacherInvitationRepository } from './teacher-invitations/teacher-invitation.repository.js';
+import {
+  createTeacherInvitationAdminRouter,
+  createTeacherInvitationPublicRouter,
+} from './teacher-invitations/teacher-invitation.routes.js';
+import { TeacherInvitationService } from './teacher-invitations/teacher-invitation.service.js';
 import { createCurrentUserRouter } from './users/current-user.routes.js';
 import { UserRepository } from './users/user.repository.js';
 
@@ -20,8 +26,10 @@ export function createPhaseTwoRouter(config: AppConfig) {
   const loginStates = new AuthLoginStateRepository();
   const audits = new AuditLogRepository();
   const systemGuards = new SystemGuardRepository();
+  const invitations = new TeacherInvitationRepository();
   const authService = new AuthService(config, users, sessions, loginStates);
   const adminUserService = new AdminUserService(users, sessions, audits, systemGuards);
+  const teacherInvitationService = new TeacherInvitationService(config, invitations, users, audits);
   const authenticate = createAuthenticateMiddleware(
     authService.accessTokenService,
     users,
@@ -31,6 +39,15 @@ export function createPhaseTwoRouter(config: AppConfig) {
   router.use('/auth', createAuthRouter(config, authService));
   router.use('/users', authenticate, createCurrentUserRouter(users));
   router.use('/admin/users', authenticate, createAdminUserRouter(adminUserService));
+  router.use(
+    '/admin/teacher-invitations',
+    authenticate,
+    createTeacherInvitationAdminRouter(config, teacherInvitationService),
+  );
+  router.use(
+    '/teacher/invitations',
+    createTeacherInvitationPublicRouter(config, teacherInvitationService),
+  );
 
   return router;
 }

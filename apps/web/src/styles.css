@@ -763,6 +763,24 @@ button:disabled {
   background: #fff8dd;
 }
 
+.status-badge--accepted {
+  border-color: #65a37a;
+  color: #166534;
+  background: #eff8f1;
+}
+
+.status-badge--expired {
+  border-color: #9aa8ae;
+  color: #46555d;
+  background: #f1f4f5;
+}
+
+.status-badge--revoked {
+  border-color: #d4918b;
+  color: #9f241b;
+  background: #fff2f0;
+}
+
 .mobile-user-list {
   display: none;
 }
@@ -859,6 +877,159 @@ button:disabled {
   color: #66767f;
 }
 
+.invitation-create {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.65fr) minmax(420px, 1fr);
+  gap: 28px;
+  margin-bottom: 24px;
+  border-top: 1px solid #cbd5d9;
+  border-bottom: 1px solid #cbd5d9;
+  padding: 22px 0;
+}
+
+.invitation-create .panel-title,
+.invitation-create .form-field {
+  margin-bottom: 0;
+}
+
+.invitation-create-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 150px auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.invitation-form-feedback {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.one-time-link {
+  margin-bottom: 24px;
+  border: 1px solid #d3a735;
+  border-left-width: 5px;
+  border-radius: 7px;
+  padding: 20px;
+  background: #fffdf3;
+}
+
+.one-time-link-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.one-time-link-heading h2 {
+  margin-bottom: 7px;
+  font-size: 1.15rem;
+}
+
+.one-time-link-heading p {
+  margin-bottom: 16px;
+  color: #52616a;
+}
+
+.one-time-link-value {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 180px auto;
+  gap: 10px;
+}
+
+.one-time-link-value input {
+  font-family: 'Cascadia Code', Consolas, monospace;
+  font-size: 0.83rem;
+}
+
+.one-time-link-value button,
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.one-time-link .notice {
+  margin: 14px 0 0;
+}
+
+.audit-retry {
+  width: auto;
+  min-height: 32px;
+  margin-top: 7px;
+  padding: 0 8px;
+}
+
+.invitation-filter {
+  grid-template-columns: minmax(240px, 1fr) 190px auto auto;
+}
+
+.invitation-table {
+  min-width: 1040px;
+}
+
+.security-note {
+  margin: 18px 0 0;
+  border-left: 4px solid #0e7490;
+  padding: 12px 14px;
+  color: #52616a;
+  background: #edf5f6;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.danger-button {
+  width: 100%;
+  background: #b42318;
+}
+
+.danger-button:hover {
+  background: #8f1d15;
+}
+
+.teacher-activation .product-mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.invitation-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 22px;
+  border-left: 4px solid #15803d;
+  padding: 12px 14px;
+  color: #166534;
+  background: #edf8f0;
+}
+
+.invitation-preview span,
+.invitation-preview small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.invitation-preview small {
+  margin-top: 5px;
+  color: #52616a;
+}
+
+.invitation-invalid {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  color: #52616a;
+  text-align: center;
+}
+
+.invitation-invalid p {
+  margin-bottom: 4px;
+}
+
 @media (max-width: 900px) {
   .management-grid,
   .detail-layout {
@@ -870,6 +1041,20 @@ button:disabled {
   }
 
   .filter-search {
+    grid-column: 1 / -1;
+  }
+
+  .invitation-create {
+    grid-template-columns: 1fr;
+  }
+
+  .invitation-create-form,
+  .one-time-link-value {
+    grid-template-columns: minmax(0, 1fr) 180px;
+  }
+
+  .invitation-create-form .form-field:first-child,
+  .one-time-link-value input {
     grid-column: 1 / -1;
   }
 }
@@ -947,6 +1132,21 @@ button:disabled {
 
   .filter-bar select {
     grid-column: 1 / -1;
+  }
+
+  .invitation-create-form,
+  .one-time-link-value,
+  .invitation-filter {
+    grid-template-columns: 1fr;
+  }
+
+  .invitation-create-form .form-field:first-child,
+  .one-time-link-value input {
+    grid-column: auto;
+  }
+
+  .one-time-link-heading {
+    gap: 10px;
   }
 
   .primary-button--compact {

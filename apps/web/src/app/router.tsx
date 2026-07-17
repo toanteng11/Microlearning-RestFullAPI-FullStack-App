@@ -7,6 +7,9 @@ import { AdminUserDetailPage } from '../features/admin-users/pages/AdminUserDeta
 import { AdminUserListPage } from '../features/admin-users/pages/AdminUserListPage';
 import { AdminUsersPage } from '../features/admin-users/pages/AdminUsersPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
+import { AdminTeacherInvitationDetailPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationDetailPage';
+import { AdminTeacherInvitationsPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationsPage';
+import { TeacherInvitationActivationPage } from '../features/teacher-invitations/pages/TeacherInvitationActivationPage';
 import {
   AdminHomePage,
   StudentHomePage,
@@ -23,6 +26,10 @@ export const router = createBrowserRouter([
   {
     path: '/system-status',
     element: <SystemStatusPage />,
+  },
+  {
+    path: '/teacher/invite',
+    element: <TeacherInvitationActivationPage />,
   },
   {
     element: <ApplicationProviders />,
@@ -100,6 +107,22 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
                 <AdminUserDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/teacher-invitations',
+            element: (
+              <RoleRoute permission="teacher_invitation.view">
+                <AdminTeacherInvitationsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/teacher-invitations/:invitationId',
+            element: (
+              <RoleRoute permission="teacher_invitation.view">
+                <AdminTeacherInvitationDetailPage />
               </RoleRoute>
             ),
           },
