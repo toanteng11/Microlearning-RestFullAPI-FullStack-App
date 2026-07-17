@@ -6,10 +6,11 @@
 | --- | --- |
 | Ngày kiểm chứng local | `2026-07-17` |
 | Branch/commit code | `phase-02-quality-release` / `ff0e5fd` |
-| Kết quả | `38/39 Pass`; `P02-AC-033` chờ GitHub Actions trên Pull Request |
+| Kết quả | `39/39 Pass`; local và remote required checks đều đạt |
+| Remote evidence | [PR #4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4), [Actions run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819) |
 | Hồ sơ chi tiết | `phase-exit-evidence.md`, `evidence-register.md` |
 
-`Pass` dưới đây có nghĩa là behavior, trạng thái dữ liệu và side effect bảo mật đều đã được kiểm chứng. Không dùng local result thay cho remote CI URL của `P02-AC-033`.
+`Pass` dưới đây có nghĩa là behavior, trạng thái dữ liệu và side effect bảo mật đều đã được kiểm chứng. `P02-AC-033` dùng trực tiếp GitHub Actions run gắn với Pull Request, không dùng local result thay thế.
 
 ## 1. Authentication And Profile
 
@@ -62,7 +63,7 @@
 | P02-AC-030 | Index bắt buộc tồn tại và duplicate/query behavior đúng | Index integration test | Pass |
 | P02-AC-031 | Bootstrap Admin chủ động/idempotent, password không qua argument/log | CLI test/review | Pass |
 | P02-AC-032 | Docker images build, Compose healthy, API non-root và auth smoke pass | DevOps evidence | Pass |
-| P02-AC-033 | CI required quality/integration/E2E/security/OpenAPI jobs pass | Remote CI URL/artifacts | Not Run (Remote) |
+| P02-AC-033 | CI required quality/integration/E2E/security/OpenAPI jobs pass | Remote CI URL/artifacts | Pass |
 | P02-AC-034 | Login/Register/Profile/Admin/Invitation responsive, accessible và không overlap | Browser screenshots/checks | Pass |
 | P02-AC-035 | Clean clone có thể install, configure, init replica set, bootstrap/seed và chạy P02 demo | Onboarding record | Pass |
 | P02-AC-036 | Traceability, risk, checklist, evidence và exit report đầy đủ; P03 readiness rõ | Document review | Pass |
@@ -77,4 +78,4 @@
 - `Blocked`: dependency bên ngoài cụ thể, có owner/next action; không dùng thay cho `Not Run`.
 - Must criterion không được waiver nếu làm lộ credential/token, cho privilege escalation hoặc tạo data partial.
 
-Phase hiện ở trạng thái `Ready for remote validation`: code/runtime local đạt `38/39`, không có criterion `Fail`. Chỉ chuyển thành `Completed` sau khi `P02-AC-033` có URL GitHub Actions xanh và exit report được reviewer ký.
+Phase hiện ở trạng thái `Ready for sign-off`: `39/39` criterion đạt `Pass`, không có criterion `Fail/Blocked/Not Run`. Chỉ chuyển trạng thái quản trị thành `Completed` sau khi exit report được reviewer có thẩm quyền ký và Pull Request được merge theo branch protection.

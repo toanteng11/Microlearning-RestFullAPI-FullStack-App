@@ -70,12 +70,12 @@ Không chấp nhận residual risk về password/token raw exposure, privilege e
 | Data partial/duplicate | Transaction, unique index và concurrency tests pass |
 | Critical/High defect mở | `0` trong local verification |
 
-Residual được chấp nhận theo baseline: `P02-R11` (single API replica), `P02-R13` (Forgot Password không claim), `P02-R15` (Teacher ownership nối P03). `P02-R01..R10`, `R12`, `R14`, `R16..R19` có mitigation và automated evidence local; remote CI phải xác nhận lại trên artifact PR.
+Residual được chấp nhận theo baseline: `P02-R11` (single API replica), `P02-R13` (Forgot Password không claim), `P02-R15` (Teacher ownership nối P03). `P02-R01..R10`, `R12`, `R14`, `R16..R19` có mitigation và automated evidence local/remote; PR #4 Actions run #8 đã xác nhận `6/6` jobs success.
 
-## 7. Open Issue Register
+## 7. Issue Register
 
 | Issue | Severity | Owner | Trạng thái | Next action |
 | --- | --- | --- | --- | --- |
-| P02-I01 - Chưa có remote CI URL cho commit cuối | Release gate | Repository owner | Open | Push branch, mở PR, chờ required checks và ghi URL vào evidence |
+| P02-I01 - Chưa có remote CI URL cho commit cuối | Release gate | Repository owner | Closed `2026-07-17` | [PR #4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4) và [Actions run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819) đã pass `6/6` jobs |
 
-Không có issue code/runtime đã biết cần waiver. `P02-I01` không được đóng bằng screenshot của local terminal.
+Không có issue code/runtime/release gate đang mở cần waiver. Reviewer approval và merge là bước quản trị còn lại, không được ghi nhận như defect kỹ thuật.

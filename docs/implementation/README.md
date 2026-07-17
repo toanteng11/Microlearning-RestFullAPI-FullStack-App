@@ -73,7 +73,7 @@ docs/implementation/
 | Folder      | Phase                    | Outcome                                                           | Trạng thái           |
 | ----------- | ------------------------ | ----------------------------------------------------------------- | -------------------- |
 | `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                      | Completed            |
-| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | Local verified; remote validation |
+| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | `39/39` Pass; sign-off pending |
 | `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link và roster                  | Planned              |
 | `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                            | Planned              |
 | `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                         | Planned              |

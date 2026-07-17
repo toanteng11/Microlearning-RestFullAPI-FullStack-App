@@ -29,11 +29,11 @@ Baseline local được kiểm chứng ngày `2026-07-17` trên branch `phase-02
 | P02-EVD-SEC-005 | Log/AuditLog redaction | Local Pass | `logger.test.ts`; runtime log scan found no password/bearer/raw invitation token |
 | P02-EVD-DOC-001 | OpenAPI parse/route coverage | Local Pass | `app.test.ts`: `6/6`; 19 P02 operations mapped; Swagger shows 24 total |
 | P02-EVD-OPS-001 | Docker build/non-root/health | Local Pass | Web/API build; Web/API/Mongo healthy; API `uid=1000(node)` |
-| P02-EVD-OPS-002 | Remote required checks | Remote Pending | Điền Pull Request run URL sau khi push/open PR |
+| P02-EVD-OPS-002 | Remote required checks | Remote Pass | [PR #4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4); [Actions run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819): `6/6` jobs success |
 | P02-EVD-OPS-003 | Bootstrap/seed idempotency | Local Pass | Bootstrap `created true -> false`; seed `5/0 -> 0/5`; no credential output |
 | P02-EVD-OPS-004 | Clean-clone onboarding | Local Pass | `npm ci`, check/build, replica init, bootstrap, seed, integration/E2E pass |
 | P02-EVD-OPS-005 | Auth environment fail-fast | Local Pass | `environment.test.ts`: `10/10`; Production/origin/secret/range guards |
-| P02-EVD-DOC-002 | Traceability/checklist/exit package | Local Complete | Tài liệu cập nhật; formal reviewer sign-off chờ remote CI |
+| P02-EVD-DOC-002 | Traceability/checklist/exit package | Complete | Local/remote evidence đã cập nhật; formal reviewer sign-off và merge còn chờ |
 | P02-EVD-DOC-003 | Development readiness Gate A | Complete | `development-readiness-review.md` ngày `2026-07-15` |
 
 ## 3. Evidence Quality
@@ -44,11 +44,10 @@ Baseline local được kiểm chứng ngày `2026-07-17` trên branch `phase-02
 - Test artifact phải truy ngược được tới build/commit.
 - DB evidence dùng synthetic data và chỉ show hash presence/type, không raw credential.
 
-## 4. Remote Closure Slot
+## 4. Remote Closure Result
 
-Sau khi Pull Request chạy xong, bổ sung đúng bốn trường sau mà không sửa local result:
-
-- Pull Request URL.
-- GitHub Actions run URL gắn đúng commit tài liệu cuối.
-- Tên và trạng thái các required checks.
-- Reviewer/approval/date trong `exit-report.md`.
+- Pull Request: [#4 - feat: complete phase 02 authentication and users](https://github.com/toanteng11/Microlearning-RestFull-API-FullStack-App/pull/4).
+- Verified commit: `e1c5479`.
+- GitHub Actions: [run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819), `6/6` jobs success.
+- Required checks: Lint, test and build; MongoDB replica-set transaction; OpenAPI contract; Phase 02 browser E2E; Production dependency audit; Secret scan.
+- Reviewer/approval/merge vẫn phải hoàn tất theo branch protection và được ghi trong `exit-report.md`; đây là bước quản trị, không phải test còn thiếu.

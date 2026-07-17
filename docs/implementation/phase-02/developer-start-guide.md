@@ -7,7 +7,7 @@ Tài liệu này là entry point để chuyển Phase 02 từ planning sang impl
 ## 2. Baseline Bắt Buộc
 
 - Planning status: `COMPLETED`.
-- Implementation status: `LOCAL_VERIFIED`; chỉ còn remote CI/approval để đóng phase.
+- Implementation status: `39/39_PASS`; chỉ còn reviewer approval/merge để đóng phase.
 - Must scope: Student registration, session/auth, profile, RBAC, role-specific Admin lists và manual Teacher Invitation.
 - Conditional Should không được đưa vào PR nếu chưa có Change Control: Forgot/Reset Password và Advanced Cross-role Search.
 - OpenAPI, automated test và evidence phải đi cùng capability; không để cuối phase mới bổ sung.
@@ -107,5 +107,5 @@ Chuỗi branch trên đã được triển khai đến PR-02G. Khi tiếp tục 
 - [x] Tạo branch đúng tên, không dùng `codex/`.
 - [x] Viết hoặc cập nhật test trước/cùng implementation.
 - [x] Cập nhật OpenAPI cho mọi route thay đổi.
-- [ ] Gắn evidence path/CI URL sau khi remote checks pass.
+- [x] Gắn evidence path/CI URL sau khi remote checks pass.
 - [x] Không check Gate B-F khi chưa có source chạy thật.

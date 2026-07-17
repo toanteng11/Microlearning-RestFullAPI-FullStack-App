@@ -14,7 +14,7 @@ Phase 02 chỉ được xem là hoàn thành khi Web, API, MongoDB, Swagger, Doc
 | Tên                   | `Authentication and Users`                                         |
 | Dependency            | `P01 - Project Foundation` đã hoàn thành                           |
 | Planning status       | `Completed`                                                        |
-| Implementation status | `Local verified - remote CI and sign-off pending`                  |
+| Implementation status | `39/39 Pass - reviewer sign-off pending`                            |
 | Phase owner đề xuất   | Technical Lead                                                     |
 | Review bắt buộc       | BA/Product Owner, Backend, Frontend, QA, DevOps, Security Reviewer |
 | Phase tiếp theo       | `P03 - Classroom Management`                                       |

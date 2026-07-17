@@ -59,11 +59,11 @@
 - [x] Unit, integration, transaction, component, E2E và security suites pass local.
 - [x] Coverage không thấp hơn P01 thresholds.
 - [x] Docker Web/API build, non-root và Compose healthy.
-- [ ] Remote Secret scan/dependency audit/quality/integration/E2E/OpenAPI jobs pass và có URL.
+- [x] Remote Secret scan/dependency audit/quality/integration/E2E/OpenAPI jobs pass và có URL.
 - [x] Browser desktop/mobile/accessibility/storage/cookie review pass.
 - [x] Clean-clone onboarding pass.
-- [ ] `acceptance-criteria.md` đạt `39/39`; hiện `38/39`, chỉ chờ `P02-AC-033`.
-- [x] Traceability, risk, evidence và exit report đã cập nhật theo local result.
+- [x] `acceptance-criteria.md` đạt `39/39`; `P02-AC-033` có PR và Actions run evidence.
+- [x] Traceability, risk, evidence và exit report đã cập nhật theo local/remote result.
 - [x] Phase 03 readiness ghi stable auth/user contract và residual dependency.
 
 ## 7. Không Được Check Done Khi

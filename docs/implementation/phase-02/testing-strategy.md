@@ -163,6 +163,6 @@ Không giảm coverage threshold P01 để “làm xanh” P02. Có thể tăng 
 | OpenAPI | Parser + exact P02 route/method coverage pass |
 | Docker/clean clone | Build, health, non-root, bootstrap/seed, E2E pass |
 | Dependency audit | `0 vulnerabilities` |
-| Remote GitHub Actions | Chờ Pull Request |
+| Remote GitHub Actions | [PR #4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4), [run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819): `6/6` jobs success |
 
 Không có suite Must bị skip hoặc dùng `continue-on-error`.

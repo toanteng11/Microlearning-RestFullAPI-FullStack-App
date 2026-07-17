@@ -14,10 +14,10 @@ Các trạng thái trong bảng chi tiết bên dưới là planning baseline t�
 | Phạm vi task | Kết quả hiện tại | Evidence |
 | --- | --- | --- |
 | `P02-T001..T064`, `P02-T066`, `P02-T068` | Done/local verified | Source, unit/integration/component/E2E và clean-clone pass |
-| `P02-T065` | Implemented/local verified; remote run pending | `.github/workflows/ci.yml`; chờ GitHub Actions URL |
-| `P02-T067` | Done locally; formal sign-off pending | Acceptance/evidence/risk/exit docs đã cập nhật |
+| `P02-T065` | Done; local and remote verified | `.github/workflows/ci.yml`; PR #4 Actions run #8 `6/6` jobs success |
+| `P02-T067` | Done; formal sign-off pending | Acceptance/evidence/risk/exit docs đã cập nhật theo remote result |
 
-Implementation accounting là `68/68` task đã có output local. Phase accounting vẫn là `38/39` AC vì remote CI không được thay bằng local result.
+Implementation accounting là `68/68` task Done và phase accounting là `39/39` acceptance criteria Pass. Reviewer sign-off và merge còn chờ theo branch protection.
 
 ## 2. P02-E01 - Baseline And Design
 
@@ -144,7 +144,7 @@ Frontend auth có thể bắt đầu sau contract T005 và chạy song song, nh�
 
 Baseline gồm `68` task với tổng estimate tham khảo `58.0` ngày công kỹ thuật. Estimate không phải lịch cam kết và phải được phân bổ theo capacity thực tế trước khi đặt target date.
 
-Kết quả ngày `2026-07-17`: `68/68` task có implementation/output local; `P02-AC-033` và reviewer sign-off còn chờ Pull Request remote.
+Kết quả ngày `2026-07-17`: `68/68` task Done và `39/39` acceptance criteria Pass; chỉ còn reviewer sign-off và merge Pull Request theo branch protection.
 
 Không dùng phần trăm cảm tính. Báo cáo tiến độ gồm:
 
