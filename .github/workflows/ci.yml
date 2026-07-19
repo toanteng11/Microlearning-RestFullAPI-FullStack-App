@@ -148,6 +148,13 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27018/microlearning-e2e?replicaSet=rs0&directConnection=true
       PUBLIC_WEB_URL: http://localhost:3000
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      CLASSROOM_CODE_LENGTH: '8'
+      CLASSROOM_INVITE_TOKEN_BYTES: '32'
+      CLASSROOM_INVITE_DEFAULT_TTL_DAYS: '30'
+      CLASSROOM_JOIN_IP_LIMIT: '20'
+      CLASSROOM_JOIN_IDENTITY_LIMIT: '10'
+      CLASSROOM_JOIN_WINDOW_SECONDS: '900'
+      CLASSROOM_PREVIEW_IP_LIMIT: '30'
       REFRESH_COOKIE_SECURE: 'false'
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: silent
