@@ -125,11 +125,11 @@ Không có file upload bắt buộc. Lesson Markdown, Flashcard và Announcement
 
 | Nhóm quyết định | Reviewer tối thiểu | Trạng thái hiện tại |
 | --- | --- | --- |
-| Scope/priority/metric | Product Owner/BA | Pending Gate A |
-| API/data/lifecycle | Technical Lead/Backend | Pending Gate A |
-| Security/resource | Security/DevOps | Pending Gate A |
-| UX/navigation/accessibility | Frontend/QA | Pending Gate A |
-| Acceptance/evidence | QA/Product Owner | Pending Gate A |
+| Scope/priority/metric | Product Owner/BA | Accepted via PR `#8` |
+| API/data/lifecycle | Technical Lead/Backend | Accepted via PR `#8` |
+| Security/resource | Security/DevOps | Accepted via PR `#8` |
+| UX/navigation/accessibility | Frontend/QA | Accepted via PR `#8` |
+| Acceptance/evidence | QA/Product Owner | Accepted via PR `#8` |
 
 Repository owner merge planning PR là bằng chứng phê duyệt cho dự án cá nhân. Không ghi nhận chữ ký của role không thực sự review.
 

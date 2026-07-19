@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `P04 - Learning Content` |
-| Planning | `READY_FOR_REVIEW` |
+| Planning | `READY_TO_CODE` |
 | Implementation | `NOT_STARTED` |
 | Exit decision | `NOT ELIGIBLE` |
 | Must acceptance | `0/66 Pass`, `66 Not Run` |
@@ -21,16 +21,17 @@ Khi hoàn tất, Phase 04 phải chứng minh luồng Teacher tạo/publish cont
 - Scope, lifecycle, visibility, deadline và phased metric đã được đề xuất.
 - Data/API/backend/frontend/security/DevOps/test contracts đã được soạn.
 - WBS 100 task, 68 acceptance criteria, risk/evidence/checklist đã được chuẩn bị.
+- Planning PR `#8` và required CI đã pass; baseline merge vào `main` tại `66f400d`.
+- Gate A đã phê duyệt, 36 ADR ở trạng thái `Accepted` và `P04-T001..T008` hoàn thành.
 
 Các mục trên là planning output, không phải implementation evidence.
 
-## 4. Pending Before Code
+## 4. Next Implementation Step
 
-1. Review/chấp thuận scope và phased metric.
-2. Accept/disposition 36 ADRs.
-3. Planning PR required CI pass.
-4. Merge planning PR vào `main`.
-5. Update Gate A thành `READY_TO_CODE`.
+1. Merge hồ sơ Gate A vào `main`.
+2. Tạo branch `feature/phase-04-content-foundation` từ latest `main`.
+3. Thực hiện `P04-T009..T018` và phần env cần thiết của `P04-T094`.
+4. Chạy focused tests và toàn bộ `npm run check:ci` trước PR implementation đầu tiên.
 
 ## 5. Pending For Phase Exit
 

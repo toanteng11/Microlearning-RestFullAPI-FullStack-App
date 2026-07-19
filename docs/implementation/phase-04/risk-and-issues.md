@@ -40,7 +40,7 @@
 
 | ID | Issue | Impact | Owner | Resolution condition | Status |
 | --- | --- | --- | --- | --- | --- |
-| P04-I001 | Planning Gate A chưa review/merge | Chưa được bắt đầu implementation | PO/TL | Planning PR CI xanh và merge | Open |
+| P04-I001 | Planning Gate A chưa review/merge | Chưa được bắt đầu implementation | PO/TL | PR `#8`, CI `#18`, merge `66f400d` | Closed |
 | P04-I002 | Conditional Resource/GCS execution chưa quyết định | Không chặn Must; ảnh hưởng FR-032 Should | PO/DevOps | Decision tại T073 | Open |
 
 Không có implementation defect vì code P04 chưa bắt đầu.

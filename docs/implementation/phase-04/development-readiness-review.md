@@ -7,30 +7,30 @@
 | Review date | `2026-07-19` |
 | Planning branch | `docs/phase-04-planning-baseline` |
 | Dependency | P03 completed/merged at `d9de828` |
-| Planning package | Complete draft, awaiting review |
-| Planning status | `READY_FOR_REVIEW` |
-| Gate A | `PENDING` |
-| Code authorization | `NOT_APPROVED` |
+| Planning package | Approved baseline, merged through PR `#8` |
+| Planning status | `READY_TO_CODE` |
+| Gate A | `APPROVED` |
+| Code authorization | `APPROVED` |
 | Implementation | `NOT_STARTED` |
 
 ## 2. Readiness Assessment
 
 | Area | Assessment | Evidence | Remaining action |
 | --- | --- | --- | --- |
-| BA scope/traceability | Prepared | Scope + BA alignment + matrix | PO/BA review |
-| Phase boundary | Prepared | P04/P05/P06 handoff explicit | Approve phased metric |
-| Lifecycle/visibility | Prepared | State machines/invariants | TL/Security review |
-| Deadline/progress | Prepared | Derived-state/transaction contract | BA/BE/QA review |
-| API/OpenAPI | Prepared | Endpoint/error/projection contract | BE/QA review |
-| Data/index/transaction | Prepared | 8 collections + named indexes | BE/DB review |
-| Security/privacy | Prepared | Permission/IDOR/XSS/GCS/audit | Security review |
-| Frontend UX | Prepared | Routes/screens/states/a11y | FE/QA review |
-| DevOps/seed/CI | Prepared | Env/feature gate/seed/pipeline | DevOps review |
-| Testing/acceptance | Prepared | 68 AC + multi-layer plan | QA review |
-| WBS/dependency | Prepared | 100 tasks + critical path | Capacity review |
-| Risk/evidence/exit | Prepared | Registers/templates | Owner review |
+| BA scope/traceability | Approved | Scope + BA alignment + matrix | None |
+| Phase boundary | Approved | P04/P05/P06 handoff explicit | None |
+| Lifecycle/visibility | Approved | State machines/invariants + accepted ADRs | None |
+| Deadline/progress | Approved | Derived-state/transaction contract | None |
+| API/OpenAPI | Approved | Endpoint/error/projection contract | None |
+| Data/index/transaction | Approved | 8 collections + named indexes | None |
+| Security/privacy | Approved | Permission/IDOR/XSS/GCS/audit | None |
+| Frontend UX | Approved | Routes/screens/states/a11y | None |
+| DevOps/seed/CI | Approved | Env/feature gate/seed/pipeline | None |
+| Testing/acceptance | Approved | 68 AC + multi-layer plan | None |
+| WBS/dependency | Approved | 100 tasks + critical path | None |
+| Risk/evidence/exit | Approved | Registers/templates | None |
 
-Không có design gap được biết làm tài liệu không thể review. Gate A vẫn Pending vì review/merge evidence chưa tồn tại.
+Không có design gap đã biết chặn implementation. Repository owner đã review baseline và merge PR `#8` sau khi toàn bộ required CI checks pass.
 
 ## 3. Strengths
 
@@ -46,16 +46,16 @@ Không có design gap được biết làm tài liệu không thể review. Gate
 
 | ID | Condition | Owner | Status | Evidence required |
 | --- | --- | --- | --- | --- |
-| P04-GA-001 | Approve Must/Conditional/Out scope | PO/BA | Pending | Review/merge record |
-| P04-GA-002 | Approve lesson metric/To-do v1 | PO/BA | Pending | ADR/PR approval |
-| P04-GA-003 | Accept or disposition all 36 ADRs | TL | Pending | Updated decision register |
-| P04-GA-004 | Approve API/data/transaction contract | BE/QA | Pending | Review record |
-| P04-GA-005 | Approve permission/security/resource policy | Security/DevOps | Pending | Review record |
-| P04-GA-006 | Approve UI/accessibility plan | FE/QA | Pending | Review record |
-| P04-GA-007 | Approve 68 AC/WBS/evidence model | QA/PO | Pending | Review record |
-| P04-GA-008 | Planning PR required CI pass | DevOps | Pending | GitHub Actions URL |
-| P04-GA-009 | Planning PR merge to `main` | Repository owner | Pending | PR + merge commit |
-| P04-GA-010 | Update status to `READY_TO_CODE` | TL/Owner | Pending | Post-merge doc update |
+| P04-GA-001 | Approve Must/Conditional/Out scope | PO/BA | Passed | PR `#8` approved baseline |
+| P04-GA-002 | Approve lesson metric/To-do v1 | PO/BA | Passed | `P04-ADR-020/021` + PR `#8` |
+| P04-GA-003 | Accept or disposition all 36 ADRs | TL | Passed | `technical-decisions.md` |
+| P04-GA-004 | Approve API/data/transaction contract | BE/QA | Passed | PR `#8` merged review package |
+| P04-GA-005 | Approve permission/security/resource policy | Security/DevOps | Passed | PR `#8` merged review package |
+| P04-GA-006 | Approve UI/accessibility plan | FE/QA | Passed | PR `#8` merged review package |
+| P04-GA-007 | Approve 68 AC/WBS/evidence model | QA/PO | Passed | PR `#8` merged review package |
+| P04-GA-008 | Planning PR required CI pass | DevOps | Passed | Actions run `29692181077` |
+| P04-GA-009 | Planning PR merge to `main` | Repository owner | Passed | Merge commit `66f400d` |
+| P04-GA-010 | Update status to `READY_TO_CODE` | TL/Owner | Passed | This post-merge Gate A record |
 
 ## 5. Non-Blocking Decisions
 
@@ -71,19 +71,19 @@ Các mục này không được dùng làm lý do trì hoãn Gate A Must impleme
 ## 6. Start Decision
 
 ```text
-Current decision: DO NOT START IMPLEMENTATION YET
-Reason: planning baseline is ready for review but Gate A has no approval/merge evidence.
-Next action: review -> CI -> merge planning PR -> update ADR/status -> create first feature branch.
+Current decision: START IMPLEMENTATION AUTHORIZED
+Reason: Gate A baseline was reviewed, required CI passed, and PR #8 was merged to main at 66f400d.
+Next action: merge this Gate A record, then create feature/phase-04-content-foundation and implement P04-T009..T018.
 ```
 
 ## 7. Approval Record
 
 | Role | Reviewer | Decision | Date | Evidence |
 | --- | --- | --- | --- | --- |
-| Product Owner/BA | Pending | Pending | - | - |
-| Technical Lead/Backend | Pending | Pending | - | - |
-| Frontend/QA | Pending | Pending | - | - |
-| Security/DevOps | Pending | Pending | - | - |
-| Repository Owner | Pending | Pending | - | - |
+| Product Owner/BA | toanteng11 | Approved | 2026-07-19 | Owner review and PR `#8` merge |
+| Technical Lead/Backend | toanteng11 | Approved | 2026-07-19 | Accepted ADR/API/data baseline |
+| Frontend/QA | toanteng11 | Approved | 2026-07-19 | Accepted UI/AC/test baseline |
+| Security/DevOps | toanteng11 | Approved | 2026-07-19 | Required CI `#18` passed |
+| Repository Owner | toanteng11 | Approved | 2026-07-19 | Merge commit `66f400d` |
 
 Với dự án cá nhân, cùng một người có thể giữ nhiều role; chỉ ghi approval sau hành động review/merge có thật.

@@ -2,7 +2,7 @@
 
 ## 1. Khi Nào Được Bắt Đầu
 
-Chỉ bắt đầu implementation sau khi `development-readiness-review.md` chuyển Gate A thành `READY_TO_CODE` và planning PR đã merge vào `main`. Hiện tại baseline là `READY_FOR_REVIEW`.
+Implementation được bắt đầu sau khi `development-readiness-review.md` chuyển Gate A thành `READY_TO_CODE` và planning PR `#8` đã merge vào `main` tại `66f400d`. Điều kiện này đã đạt; implementation bắt đầu từ `P04-T009..T018`.
 
 ## 2. Chuẩn Bị Local
 
