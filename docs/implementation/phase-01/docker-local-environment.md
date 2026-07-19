@@ -49,4 +49,4 @@ Không chạy `down --volumes` trừ khi chủ động reset dữ liệu local.
 
 ## 6. Production Boundary
 
-Compose không phải Production architecture. Phase 07 phải dùng static hosting/CDN hoặc frontend container phù hợp, stateless API runtime, managed MongoDB, secret manager, registry và observability.
+Compose không phải Production architecture. Theo ADR-010, Phase 07 dùng một Google Cloud Run application container phục vụ React/API/Swagger cùng origin, MongoDB Atlas, Artifact Registry, Secret Manager và Cloud Logging/Monitoring.

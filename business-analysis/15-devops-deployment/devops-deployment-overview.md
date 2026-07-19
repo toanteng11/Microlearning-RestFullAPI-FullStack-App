@@ -18,8 +18,8 @@ DevOps trong dự án này không chỉ là “đưa website lên Cloud”. DevO
 | Trong phạm vi | Ngoài phạm vi MVP mặc định |
 | --- | --- |
 | Docker/Compose, CI/CD, image registry, environment/secret, Cloud runtime, HTTPS/domain, monitoring/logging, backup/restore, release/rollback runbook | Kubernetes, service mesh, multi-region active-active, tự xây CI/CD platform, tự vận hành mail server, SRE 24/7 SLA enterprise |
-| Local, CI/Test, Staging, Production direction | Chọn sẵn một Cloud/CI vendor cụ thể khi Product Owner chưa phê duyệt |
-| React static hosting, Node.js API container, MongoDB managed direction, private Object Storage | Lưu file production trên local disk của container |
+| Local, CI/Test, Staging, Production direction; GitHub Actions, Cloud Run, Atlas, Artifact Registry, Secret Manager và Cloud Monitoring baseline | Firebase, Kubernetes, multi-region và vendor khác nếu không có Change Control |
+| Một Cloud Run application image chứa React static build, Node.js API và Swagger; MongoDB Atlas; private Object Storage khi được duyệt | Lưu file production trên local disk của container hoặc binary trong MongoDB |
 
 ## Chu Trình DevOps Của Dự Án
 

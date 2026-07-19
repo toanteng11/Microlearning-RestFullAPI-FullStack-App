@@ -37,30 +37,31 @@ Tài liệu này liệt kê các RESTful API endpoints cần có cho **Microlear
 | GET | `/api/v1/admin/teacher-invitations/{invitationId}` | Admin xem chi tiết invitation | Required | Admin | UC-027 |
 | POST | `/api/v1/admin/teacher-invitations/{invitationId}/copy-events` | Ghi nhận copy link nếu tracking | Required | Admin | UC-027 |
 | POST | `/api/v1/admin/teacher-invitations/{invitationId}/revoke` | Revoke invitation chưa accept | Required | Admin | UC-027 |
-| GET | `/api/v1/teacher/invitations/{token}` | Teacher preview invitation bằng token | Public | Teacher | UC-051 |
-| POST | `/api/v1/teacher/invitations/{token}/accept` | Teacher kích hoạt account và tự tạo password | Public | Teacher | UC-051 |
+| POST | `/api/v1/teacher/invitations/preview` | Teacher preview invitation; token chỉ nằm trong strict request body | Public | Teacher | UC-051 |
+| POST | `/api/v1/teacher/invitations/accept` | Teacher kích hoạt account và tự tạo password; token nằm trong strict request body | Public | Teacher | UC-051 |
 
 ## Classroom APIs
 
 | Method | Endpoint | Mô tả | Auth | Actor | Related UC |
 | --- | --- | --- | --- | --- | --- |
-| GET | `/api/v1/classrooms` | Lấy Classroom theo current user role | Required | Student/Teacher/Admin | UC-053 |
+| GET | `/api/v1/classrooms` | Lấy Classroom theo current Student Enrollment hoặc Teacher ownership; Admin dùng namespace governance riêng | Required | Student/Teacher | UC-053 |
 | POST | `/api/v1/classrooms` | Teacher tạo Classroom | Required | Teacher | UC-003 |
-| GET | `/api/v1/classrooms/{classroomId}` | Lấy chi tiết Classroom | Required | Student/Teacher/Admin | UC-053 |
+| GET | `/api/v1/classrooms/{classroomId}` | Lấy chi tiết Classroom theo Enrollment/ownership; Admin dùng namespace governance riêng | Required | Student/Teacher | UC-053 |
 | PATCH | `/api/v1/classrooms/{classroomId}` | Cập nhật Classroom | Required | Teacher | UC-003 |
-| DELETE | `/api/v1/classrooms/{classroomId}` | Archive Classroom | Required | Teacher/Admin | UC-003 |
+| DELETE | `/api/v1/classrooms/{classroomId}` | Owner Teacher archive mềm Classroom bằng reason và optimistic concurrency | Required | Teacher | UC-003 |
 | GET | `/api/v1/classrooms/{classroomId}/students` | Xem roster Student trong Classroom | Required | Teacher | UC-064 |
 | PATCH | `/api/v1/classrooms/{classroomId}/settings` | Cập nhật Classroom settings | Required | Teacher | UC-024 |
 | POST | `/api/v1/classrooms/{classroomId}/class-code/regenerate` | Generate/regenerate Class Code | Required | Teacher | UC-004 |
 | POST | `/api/v1/classrooms/{classroomId}/invite-links` | Tạo Invite Link | Required | Teacher | UC-005 |
-| PATCH | `/api/v1/classrooms/{classroomId}/invite-links/{linkId}` | Disable/regenerate Invite Link status | Required | Teacher | UC-005 |
+| POST | `/api/v1/classrooms/{classroomId}/invite-links/{linkId}/regenerate` | Regenerate Invite Link và trả raw link mới đúng một lần | Required | Teacher | UC-005 |
+| POST | `/api/v1/classrooms/{classroomId}/invite-links/{linkId}/disable` | Vô hiệu hóa Invite Link | Required | Teacher | UC-005 |
 
 ## Classroom Join APIs
 
 | Method | Endpoint | Mô tả | Auth | Actor | Related UC |
 | --- | --- | --- | --- | --- | --- |
 | POST | `/api/v1/classrooms/join-by-code` | Student join Classroom bằng Class Code | Required | Student | UC-006 |
-| GET | `/api/v1/classrooms/invitations/{token}` | Preview Classroom Invite Link token | Public/Optional | Guest/Student | UC-052 |
+| POST | `/api/v1/classrooms/invite-links/preview` | Preview Invite Link bằng strict body `{ token }`; response tối thiểu và `no-store` | Public | Guest/Student | UC-052 |
 | POST | `/api/v1/classrooms/join-by-token` | Student join bằng Invite Link token | Required | Student | UC-007 |
 
 ## Student APIs
@@ -198,8 +199,8 @@ Tài liệu này liệt kê các RESTful API endpoints cần có cho **Microlear
 | PATCH | `/api/v1/admin/settings/notification-policy` | Cập nhật Notification Policy | Required | Admin | UC-035 |
 | GET | `/api/v1/admin/classrooms` | Admin xem tất cả Classroom | Required | Admin | UC-032 |
 | GET | `/api/v1/admin/classrooms/{classroomId}` | Admin xem Classroom governance detail | Required | Admin | UC-032 |
-| PATCH | `/api/v1/admin/classrooms/{classroomId}/ownership` | Transfer ownership | Required | Admin | UC-033 |
-| PATCH | `/api/v1/admin/classrooms/{classroomId}/enrollment-lock` | Lock/unlock enrollment | Required | Admin | UC-069 |
+| PATCH | `/api/v1/admin/classrooms/{classroomId}/ownership` | Transfer ownership; Conditional Should và chỉ expose sau phê duyệt | Required | Admin | UC-033 |
+| PATCH | `/api/v1/admin/classrooms/{classroomId}/enrollment-lock` | Lock/unlock enrollment; Conditional Should và chỉ expose sau phê duyệt | Required | Admin | UC-069 |
 | GET | `/api/v1/admin/reports/usage` | Usage report | Required | Admin | UC-036 |
 | GET | `/api/v1/admin/reports/progress` | Learning progress report | Required | Admin | UC-036 |
 | GET | `/api/v1/admin/reports/export` | Export reports | Required | Admin | UC-038 |
@@ -220,6 +221,8 @@ Tài liệu này liệt kê các RESTful API endpoints cần có cho **Microlear
 ## Endpoint Design Notes
 
 - Admin User Management phải dùng role-specific endpoints, không dùng một API tải tất cả users làm mặc định.
+- Student/Teacher dùng `/classrooms`; Admin chỉ đọc Classroom qua `/admin/classrooms`. Admin không được gọi Teacher route để bypass ownership.
+- Admin ownership transfer và enrollment lock là **Conditional Should** của Phase 03; route phải absent hoặc deny mặc định cho đến khi có Change Control, permission và test được duyệt.
 - Teacher Course Dashboard có endpoint riêng vì cần aggregate nhiều domain.
 - Student To-do có endpoint riêng vì là màn hình quan trọng sau login.
 - Question Media API phải optional: Question không có media vẫn hợp lệ.

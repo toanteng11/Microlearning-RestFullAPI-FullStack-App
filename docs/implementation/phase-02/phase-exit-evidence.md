@@ -10,6 +10,7 @@
 | Code commit | `ff0e5fd` |
 | Evidence commit | `e1c5479` |
 | Pull Request | [#4](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/4) |
+| Main merge commit | `61aa049` |
 | Remote CI | [Actions run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819): `6/6` jobs success |
 | Environment | Windows 11, Node `24`, npm `11`, Docker Desktop, MongoDB `8.0` replica set `rs0` |
 | Data policy | Chỉ dùng identity synthetic; không lưu password/token/cookie value vào tài liệu |
@@ -74,4 +75,4 @@ Browser review covered Login, Register, Admin Dashboard, Profile, Student List, 
 | Not Run | `0` |
 | Blocked | `0` |
 
-Implementation, local verification và remote required checks đã hoàn tất. Formal phase closure chỉ còn reviewer sign-off và merge PR theo branch protection; không còn acceptance criterion hoặc release gate kỹ thuật chưa chạy.
+Implementation, local verification và remote required checks đã hoàn tất; PR #4 đã merge vào `main` tại commit `61aa049`. Phase 02 được đóng với `39/39` acceptance criteria đạt và không còn release gate kỹ thuật chưa chạy.

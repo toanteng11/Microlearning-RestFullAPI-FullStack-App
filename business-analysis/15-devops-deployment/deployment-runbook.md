@@ -2,7 +2,7 @@
 
 ## Mục Đích
 
-Runbook này là checklist thao tác cho DevOps/Technical Lead khi deploy hoặc phục hồi hệ thống. Provider command cụ thể được bổ sung sau khi Cloud/CI provider được chọn; trước đó, quy trình và điểm kiểm soát dưới đây vẫn bắt buộc.
+Runbook này là checklist thao tác cho DevOps/Technical Lead khi deploy hoặc phục hồi hệ thống theo Google Cloud Run, MongoDB Atlas và GitHub Actions. Command/project identifier cụ thể được bổ sung ở Phase 07 và không được chứa credential.
 
 ## Vai Trò Và Precondition
 
@@ -20,7 +20,7 @@ Precondition bắt buộc: approved release candidate, exact artifact version/di
 ### 1. Pre-Deploy
 
 - [ ] Xác nhận target là **Staging**, domain/project/database/bucket/secret namespace đúng.
-- [ ] Xác nhận artifact frontend/backend immutable tag/digest, commit SHA và CI quality pass.
+- [ ] Xác nhận `microlearning-app` immutable tag/digest, commit SHA và CI quality pass.
 - [ ] Kiểm tra config reference: API base URL, `PUBLIC_WEB_URL`, allowed CORS origin, database, storage, monitoring; không hiển thị secret value.
 - [ ] Review API/Data/Migration change: backward compatibility, index/build/recalculation task, test data impact.
 - [ ] Nếu risky change, tạo/verify Staging snapshot và rollback/forward-fix plan.
@@ -31,8 +31,8 @@ Precondition bắt buộc: approved release candidate, exact artifact version/di
 - [ ] Trigger protected CI/CD Staging deployment dùng artifact đã chọn, không build source mới ngoài pipeline release candidate.
 - [ ] Theo dõi deploy/job log; không copy secret/log nhạy cảm vào ticket.
 - [ ] Áp dụng migration/index theo runbook (nếu có), ghi start/end/result.
-- [ ] Deploy Backend/API runtime, đợi readiness/health.
-- [ ] Deploy Frontend static artifact/container, cấu hình cache invalidation/SPAs fallback theo provider.
+- [ ] Deploy đúng application image digest lên Cloud Run, đợi readiness/health và ghi revision.
+- [ ] Xác minh React asset/cache/SPA fallback cùng API/Swagger routes trong chính revision đó.
 
 ### 3. Verify
 
@@ -68,8 +68,8 @@ Precondition bắt buộc: approved release candidate, exact artifact version/di
 
 - [ ] Start protected Production pipeline; record pipeline run/deployment ID/time/operator.
 - [ ] Apply migration/index only as approved; no destructive manual DB action without explicit authorization/runbook.
-- [ ] Deploy Backend image and wait for provider readiness/health; verify API version/commit/environment.
-- [ ] Deploy Frontend artifact; invalidate cache according to release plan; ensure API compatibility.
+- [ ] Deploy `microlearning-app` digest và đợi Cloud Run readiness/health; verify Web/API/Swagger version/commit/environment cùng revision.
+- [ ] Xác minh static cache/SPA fallback và API compatibility; không deploy frontend artifact riêng trong baseline.
 - [ ] Do not change multiple unrelated config/secret/resource manually during release unless recorded/approved.
 
 ### 3. Post-Deploy Monitoring Window
@@ -111,7 +111,7 @@ Manual provider console/CLI action is allowed only for incident mitigation when 
 | --- | --- |
 | Deployment ID / environment | Pipeline/provider reference and Staging/Production |
 | Date/window/operator | Start/end and responsible operator |
-| Artifact | Frontend/backend version, tag/digest, commit SHA |
+| Artifact | `microlearning-app` version, tag/digest, commit SHA và Cloud Run revision |
 | Config/migration | Config reference version, migration/index/rebuild result (no secret) |
 | Backup/rollback | Backup ID/decision, prior stable artifact, recovery plan |
 | Verification | Health/version/API/UI/smoke/monitoring results |
@@ -121,7 +121,7 @@ Manual provider console/CLI action is allowed only for incident mitigation when 
 
 ## Runbook Maintenance
 
-- DevOps updates provider-specific command, screenshot-free access steps, ownership/contact and environment identifier after provider selection.
+- DevOps cập nhật Google Cloud/Atlas command, screenshot-free access steps, ownership/contact và environment identifier khi Phase 07 setup hoàn thành.
 - Every release/incident/restore rehearsal that exposes an unclear/missing step creates a runbook improvement task.
 - Review the runbook before high-risk release and at least once per project milestone; stale credential/value must never be embedded in it.
 

@@ -32,7 +32,7 @@ Xây dựng increment Identity and User Administration chạy được end-to-en
 | --- | --- |
 | P02-M1..M4 | Pass |
 | P02-M5 | Pass; local suites và remote CI `6/6` jobs xanh |
-| P02-M6 | `39/39` acceptance criteria Pass; reviewer sign-off và merge pending |
+| P02-M6 | Pass; `39/39` acceptance criteria đạt, PR #4 đã merge vào `main` |
 
 ## 4. Delivery Sequence
 

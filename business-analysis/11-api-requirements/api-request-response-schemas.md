@@ -35,6 +35,54 @@ Tài liệu này mô tả các schema request/response quan trọng để Fronte
 }
 ```
 
+Business notes:
+
+- `memberCount` là số Enrollment có `status = ACTIVE` tại thời điểm query; backend tính từ Enrollment source of truth, client không được gửi field này trong mutation.
+- Public Invite preview không được dùng `ClassroomSummary` vì không được lộ `memberCount`, description đầy đủ hoặc dữ liệu membership.
+
+### ArchiveClassroomRequest
+
+```json
+{
+  "reason": "Kết thúc học kỳ 1",
+  "expectedUpdatedAt": "2026-07-19T08:00:00.000Z"
+}
+```
+
+- Request dùng với `DELETE /api/v1/classrooms/{classroomId}`; `reason` và `expectedUpdatedAt` là bắt buộc.
+- Chỉ owner Teacher được gọi trong Must baseline. Đây là archive mềm; không xóa Enrollment, credential history hoặc AuditLog.
+
+### PreviewClassroomInviteRequest
+
+```json
+{
+  "token": "<opaque-classroom-invite-token>"
+}
+```
+
+- Request dùng với `POST /api/v1/classrooms/invite-links/preview`.
+- Token không nằm trong API path/query; response dùng `Cache-Control: no-store` và chỉ trả projection tối thiểu.
+
+### AdminClassroomGovernanceSummary
+
+```json
+{
+  "id": "64f000000000000000000010",
+  "name": "Node.js Microlearning",
+  "ownerTeacher": {
+    "id": "64f000000000000000000001",
+    "fullName": "Nguyen Van A"
+  },
+  "status": "ACTIVE",
+  "enrollmentStatus": "OPEN",
+  "memberCount": 32,
+  "createdAt": "2026-07-01T08:00:00.000Z",
+  "updatedAt": "2026-07-19T08:00:00.000Z"
+}
+```
+
+`memberCount` là required trong Admin governance list/detail của Phase 03. `contentCount` không thuộc contract Phase 03 vì Course/Lesson/Classwork được triển khai từ Phase 04.
+
 ### ActivitySummary
 
 ```json
@@ -66,7 +114,6 @@ Tài liệu này mô tả các schema request/response quan trọng để Fronte
   "success": true,
   "data": {
     "accessToken": "jwt-access-token",
-    "refreshToken": "jwt-refresh-token",
     "user": {
       "id": "64f000000000000000000001",
       "email": "student@example.com",
@@ -77,6 +124,8 @@ Tài liệu này mô tả các schema request/response quan trọng để Fronte
   }
 }
 ```
+
+Refresh token không xuất hiện trong JSON. Backend đặt opaque refresh token trong cookie `HttpOnly`, `Secure` ở Staging/Production và `SameSite=Lax`; frontend chỉ giữ access token trong memory theo security baseline.
 
 ## Student Dashboard Schemas
 

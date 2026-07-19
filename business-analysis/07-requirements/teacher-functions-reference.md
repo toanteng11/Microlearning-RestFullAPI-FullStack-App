@@ -73,7 +73,7 @@ Cho phép Teacher tạo và quản lý Classroom hoặc Course để tổ chức
 | Archive Classroom | Teacher lưu trữ lớp sau khi kết thúc học kỳ hoặc khóa học. | Should |
 | Delete Classroom | Teacher xóa Classroom nếu chưa có dữ liệu học tập quan trọng hoặc theo quyền được cấp. | Could |
 | Open/Close Classroom | Teacher mở hoặc đóng quyền truy cập Classroom. | Must |
-| Xem Invite Link | Teacher xem link tham gia của Classroom. | Must |
+| Quản lý Invite Link | Teacher tạo/copy raw link đúng một lần; các lần xem sau chỉ thấy metadata, trạng thái và thời hạn, không tái tạo raw link. | Must |
 | Tạo Course trong Classroom | Teacher tạo khóa học/mạch nội dung bên trong Classroom. | Must |
 | Mở Course Detail Dashboard | Khi bấm vào Course, Teacher xem dashboard riêng của Course. | Must |
 | Xem danh sách bài học trong Course | Dashboard hiển thị tất cả Lesson/Activity Teacher đã tạo trong Course. | Must |
@@ -156,7 +156,7 @@ Cho phép Teacher mời Student tham gia Classroom và quản lý danh sách Stu
 | Chức năng con | Mô tả | Priority |
 | --- | --- | --- |
 | Chia sẻ Class Code | Teacher chia sẻ mã lớp để Student tự join. | Must |
-| Chia sẻ Invite Link | Teacher copy link tham gia Classroom. | Must |
+| Chia sẻ Invite Link | Teacher copy link ngay sau create/regenerate; nếu không còn raw link thì phải regenerate thay vì xem lại token cũ. | Must |
 | Xem roster | Teacher xem danh sách Student đã tham gia Classroom. | Must |
 | Tìm kiếm Student | Tìm theo họ tên, email hoặc mã Student. | Must |
 | Lọc trạng thái Student | Lọc active, invited, removed hoặc blocked. | Should |

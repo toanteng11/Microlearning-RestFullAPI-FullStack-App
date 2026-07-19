@@ -30,8 +30,8 @@ Các yếu tố này ảnh hưởng trực tiếp đến scope, planning, archit
 | ASM-010 | Frontend dùng ReactJS | Nếu đổi frontend framework, UI implementation scope thay đổi | Technical Lead | Confirmed |
 | ASM-011 | Swagger/OpenAPI dùng để document API | Nếu không dùng Swagger, QA/frontend khó test và tích hợp | Technical Lead | Confirmed |
 | ASM-012 | Docker/Docker Compose dùng cho local/dev setup | Nếu bỏ Docker, DevOps scope và onboarding dev thay đổi | DevOps | Confirmed |
-| ASM-013 | CI/CD pipeline cơ bản sẽ có trong MVP hoặc demo release | Nếu không có CI/CD, production readiness giảm | DevOps | Open |
-| ASM-014 | Cloud provider chưa cố định tại BA stage | Cần cập nhật deployment docs khi chọn provider | DevOps | Open |
+| ASM-013 | GitHub Actions là CI/CD baseline; CI đã có và CD được hoàn thiện ở Phase 07 | Nếu CD không được triển khai/evidence, Cloud release readiness giảm | DevOps | Confirmed; CD evidence pending |
+| ASM-014 | Cloud baseline là Google Cloud Run + MongoDB Atlas + GitHub Actions, không dùng Firebase | Nếu thay provider/topology phải cập nhật ADR, security, cost và deployment docs | DevOps | Confirmed 2026-07-17 |
 | ASM-015 | File upload có thể được triển khai cơ bản hoặc bằng link/resource URL trước | Nếu cần storage provider đầy đủ, scope tăng | Tech Lead | Open |
 | ASM-016 | Email provider không bắt buộc cho Teacher invitation MVP | Nếu cần auto email notification, integration scope tăng | Product Owner | Confirmed |
 | ASM-017 | UAT có đại diện Student, Teacher và Admin | Nếu thiếu đại diện, validation nghiệp vụ yếu | QA Lead | Open |
@@ -88,11 +88,11 @@ Các yếu tố này ảnh hưởng trực tiếp đến scope, planning, archit
 | ID | Dependency | Mô tả | Owner | Risk |
 | --- | --- | --- | --- | --- |
 | DEP-DEVOPS-001 | Docker runtime | Local/dev container setup | DevOps | Medium |
-| DEP-DEVOPS-002 | CI/CD provider | Build/test/deploy pipeline | DevOps | Medium |
-| DEP-DEVOPS-003 | Cloud provider account | Staging/demo deployment | DevOps / PO | High |
+| DEP-DEVOPS-002 | GitHub Actions CD configuration | Build/test/publish/deploy pipeline và protected environments | DevOps | Medium |
+| DEP-DEVOPS-003 | Google Cloud và MongoDB Atlas accounts | Staging/demo deployment, quota/billing và database | DevOps / PO | High |
 | DEP-DEVOPS-004 | Domain and SSL | Public deployment access | DevOps | Medium |
 | DEP-DEVOPS-005 | Environment variables/secrets management | Secure config | DevOps / Tech Lead | High |
-| DEP-DEVOPS-006 | Monitoring/logging tool | Operational visibility | DevOps | Medium |
+| DEP-DEVOPS-006 | Cloud Logging/Monitoring configuration | Operational visibility, dashboard và alert | DevOps | Medium |
 
 ### External Service Dependencies
 
@@ -120,7 +120,7 @@ Các yếu tố này ảnh hưởng trực tiếp đến scope, planning, archit
 | Assumption | Cách xác minh | Thời điểm |
 | --- | --- | --- |
 | Teacher invitation dùng manual copy link | Product Owner xác nhận và BA baseline | Đã xác nhận trong scope |
-| Cloud provider chưa được lựa chọn | DevOps đề xuất provider và Product Owner chấp thuận ADR | Trước deployment planning |
+| Cloud provider baseline | Đã xác nhận tại ADR-010; Phase 07 phải tạo account, identity, quota/budget và deployment evidence | Trước Staging Cloud |
 | Student/Teacher/Admin UAT có đại diện | QA/PO xác nhận danh sách UAT users | Trước UAT |
 | File upload scope cơ bản | PO/Tech Lead quyết định local/cloud storage | Trước development module Resource/Submission |
 | Notification scope | PO xác nhận in-app/email level | Trước development notification |

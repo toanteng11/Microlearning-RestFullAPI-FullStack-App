@@ -55,7 +55,7 @@
 | BR-041 | Deactivate/block/delete mềm account không được xóa Submission, Grade, Progress, Enrollment history hoặc AuditLog liên quan. | Must | Data Governance |
 | BR-042 | Email dùng cho Teacher Invitation phải normalize và validate; không tạo invitation mới cho Teacher account đang `ACTIVE` nếu không có override policy. | Must | Invitation |
 | BR-043 | Một email chỉ có tối đa một Teacher Invitation `PENDING` còn hiệu lực; Admin phải revoke/expire invitation cũ trước khi tạo invitation mới. | Must | Invitation |
-| BR-044 | Raw invitation token/link chỉ trả cho Admin ở thời điểm tạo/copy theo permission; database chỉ lưu token hash, không lưu raw token. | Must | Invitation/Security |
+| BR-044 | Raw Teacher invitation link chỉ trả trong one-time create response cho Admin có permission; clipboard copy dùng link đang ở client memory và copy-event API không tái tạo link. Database/list/detail/log/audit chỉ giữ token hash hoặc safe metadata, không lưu raw token. | Must | Invitation/Security |
 | BR-045 | Accept invitation là atomic: token/email/password validation, create/activate Teacher và mark invitation `ACCEPTED` cùng thành công hoặc không trạng thái nào bị cập nhật. | Must | Invitation |
 | BR-046 | Invitation chỉ revoke được khi `PENDING`; invitation `ACCEPTED`, `EXPIRED` hoặc `REVOKED` không được accept lại. | Must | Invitation |
 | BR-047 | Invitation hết hạn phải bị từ chối tại thời điểm mở/accept và được thể hiện `EXPIRED` để audit, không gia hạn ngầm. | Must | Invitation |
@@ -63,7 +63,7 @@
 | BR-049 | Error của invitation không được lộ raw token, password hoặc trạng thái account không cần thiết cho Guest. | Must | Invitation/Security |
 | BR-050 | Chỉ Student `ACTIVE` mới join Classroom; Classroom phải `ACTIVE` và enrollment policy phải cho phép. | Must | Join |
 | BR-051 | Thứ tự policy join là system policy -> Classroom setting -> token/code state/expiry -> Student/enrollment state; policy phía trước phủ định thì không xét tiếp. | Must | Join |
-| BR-052 | Class Code hoặc Invite Link token chỉ hợp lệ khi đúng Classroom, active, chưa hết hạn nếu có expiry và đúng join method. | Must | Join |
+| BR-052 | Class Code/Invite Link chỉ hợp lệ khi đúng Classroom, active, chưa hết hạn nếu có expiry và đúng join method; database chỉ lưu digest/hash, raw credential chỉ trả ở create/regenerate one-time response và không xuất hiện trong list/detail/log/audit. | Must | Join/Security |
 | BR-053 | Không được có hai Enrollment `ACTIVE` cho cùng cặp Student và Classroom. | Must | Join/Data |
 | BR-054 | Student có Enrollment `REMOVED`/`LEFT` không tự join lại theo mặc định; Teacher/Admin chỉ được mở lại quyền rejoin, sau đó Student vẫn phải dùng Class Code hoặc Invite Link hợp lệ. | Should | Join |
 | BR-055 | Enrollment thành công phải lưu `joinedBy`, time, source token/code reference an toàn khi có và AuditLog/event phù hợp. | Must | Join/Audit |

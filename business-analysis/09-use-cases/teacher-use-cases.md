@@ -76,7 +76,7 @@ Tài liệu này đặc tả các use case chính của **Teacher** trên web ap
 | Priority | Must |
 | Related FR | FR-022, FR-025 |
 | UI Touchpoints | Classroom Settings |
-| API Touchpoints | `POST /api/v1/classrooms/:id/invite-links` |
+| API Touchpoints | `POST /api/v1/classrooms/:id/invite-links`, `POST /api/v1/classrooms/:id/invite-links/:linkId/regenerate`, `POST /api/v1/classrooms/:id/invite-links/:linkId/disable` |
 
 ### Main Flow
 
@@ -85,15 +85,15 @@ Tài liệu này đặc tả các use case chính của **Teacher** trên web ap
 | 1 | Teacher | Mở Classroom Settings. |
 | 2 | Teacher | Chọn tạo Invite Link. |
 | 3 | System | Kiểm tra policy và quyền owner. |
-| 4 | System | Tạo token và Invite Link. |
-| 5 | System | Hiển thị copy action. |
+| 4 | System | Tạo token ngẫu nhiên, chỉ lưu hash/metadata và trả raw Invite Link đúng một lần. |
+| 5 | System | Hiển thị copy action và cảnh báo link không thể xem lại; lần load sau chỉ trả metadata. |
 
 ### Alternative Flows
 
 | Mã | Tình huống | Luồng |
 | --- | --- | --- |
-| ALT-001 | Teacher disable link | Link cũ không còn join được, Student cũ không bị remove. |
-| ALT-002 | Teacher regenerate link | Token cũ bị vô hiệu, token mới được tạo. |
+| ALT-001 | Teacher disable link | Gọi action-specific disable endpoint; link cũ không còn join được, Student cũ không bị remove. |
+| ALT-002 | Teacher regenerate link | Token cũ bị vô hiệu, token mới được tạo và raw link mới chỉ trả một lần. |
 
 ## UC-024 - Quản Lý Classroom Settings
 

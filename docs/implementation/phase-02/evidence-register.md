@@ -33,7 +33,7 @@ Baseline local được kiểm chứng ngày `2026-07-17` trên branch `phase-02
 | P02-EVD-OPS-003 | Bootstrap/seed idempotency | Local Pass | Bootstrap `created true -> false`; seed `5/0 -> 0/5`; no credential output |
 | P02-EVD-OPS-004 | Clean-clone onboarding | Local Pass | `npm ci`, check/build, replica init, bootstrap, seed, integration/E2E pass |
 | P02-EVD-OPS-005 | Auth environment fail-fast | Local Pass | `environment.test.ts`: `10/10`; Production/origin/secret/range guards |
-| P02-EVD-DOC-002 | Traceability/checklist/exit package | Complete | Local/remote evidence đã cập nhật; formal reviewer sign-off và merge còn chờ |
+| P02-EVD-DOC-002 | Traceability/checklist/exit package | Complete | Local/remote evidence đã cập nhật; PR #4 đã merge vào `main` tại `61aa049` |
 | P02-EVD-DOC-003 | Development readiness Gate A | Complete | `development-readiness-review.md` ngày `2026-07-15` |
 
 ## 3. Evidence Quality
@@ -48,6 +48,7 @@ Baseline local được kiểm chứng ngày `2026-07-17` trên branch `phase-02
 
 - Pull Request: [#4 - feat: complete phase 02 authentication and users](https://github.com/toanteng11/Microlearning-RestFull-API-FullStack-App/pull/4).
 - Verified commit: `e1c5479`.
+- Main merge commit: `61aa049`.
 - GitHub Actions: [run #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29577811819), `6/6` jobs success.
 - Required checks: Lint, test and build; MongoDB replica-set transaction; OpenAPI contract; Phase 02 browser E2E; Production dependency audit; Secret scan.
-- Reviewer/approval/merge vẫn phải hoàn tất theo branch protection và được ghi trong `exit-report.md`; đây là bước quản trị, không phải test còn thiếu.
+- Phase được đóng theo bằng chứng repository: required checks đạt và PR #4 đã merge vào `main`. Không suy diễn chữ ký riêng của các vai trò khi repository không lưu bằng chứng đó.

@@ -24,7 +24,7 @@ Checkout locked source
   -> Unit / integration / API contract tests
   -> Build frontend + backend
   -> Dependency / secret / image security scan
-  -> Build and push immutable frontend/backend artifacts/images
+  -> Build and push one immutable Cloud Run application image
   -> Deploy Staging
   -> Health + version + API/UI smoke tests
   -> QA/UAT / approval
@@ -41,9 +41,9 @@ Checkout locked source
 | 2. Dependency install | Manifest + lock file | Deterministic install; cache safe | Fail if lock/dependency unresolved | CI/Developer |
 | 3. Static quality | Source | Lint/type check/format policy | Fail on configured error threshold | Developer |
 | 4. Automated tests | Buildable source | Unit; integration/API contract where available | Test report; fail pipeline on Must test failure | Developer/QA |
-| 5. Build | Source/config public values only | Frontend static build, backend build | Versioned build output | CI |
+| 5. Build | Source/config public values only | React static build, backend build và multi-stage production image | Versioned application image | CI |
 | 6. Security checks | Source/dependency/image | Secret scan, dependency vulnerability, container scan | Block/triage critical finding per policy | DevOps/Technical Lead |
-| 7. Artifact publish | Build pass | Image labels/tag/digest/registry permission | Private immutable artifact; no deploy if publish fails | CI/DevOps |
+| 7. Artifact publish | Build pass | Push immutable commit tag/digest vào Google Artifact Registry | Private immutable artifact; no deploy if publish fails | CI/DevOps |
 | 8. Staging deploy | Artifact digest + Staging config | Config/secret reference correct, migration review | Deploy record; fail/stop on error | DevOps |
 | 9. Verification | Staging runtime | `/health`, version, API/UI/role smoke, monitoring receipt | Mark candidate verified or rollback/forward-fix | QA/DevOps |
 | 10. Production approval | Staging evidence | Release scope/known issue/rollback/backups approved | Approval record | Technical Lead/PO |
@@ -103,9 +103,17 @@ Smoke test mutation phải dùng test data isolated, idempotent hoặc cleanup r
 
 Mỗi release candidate cần lưu hoặc link được các bằng chứng: commit SHA, PR/code review, test report, scan result, artifact tag/digest, environment deploy time, config version/reference (không secret), health/version/smoke result, approval, release note và rollback/incident nếu có.
 
-## Provider Independence
+## Accepted Provider Pipeline
 
-GitHub Actions, GitLab CI, Azure DevOps, Jenkins hoặc provider khác đều có thể hiện thực pipeline này. Lựa chọn provider phải được chốt theo khả năng protected environment, secret management, registry/cloud integration, log retention, approval/audit và chi phí; workflow không đổi vì đổi vendor.
+GitHub Actions là CI/CD provider đã chọn. Workflow mục tiêu gồm:
+
+1. Pull Request chạy required checks hiện có và không có quyền deploy.
+2. Merge vào `main` build một lần, scan và push `microlearning-app:sha-<commit>` vào Google Artifact Registry.
+3. Staging job xác thực Google Cloud bằng Workload Identity Federation, deploy đúng image digest lên Cloud Run và chạy health/version/API/UI smoke.
+4. Production job chỉ nhận cùng digest đã pass Staging, dùng GitHub protected environment và approval bắt buộc.
+5. Deployment record lưu workflow run, commit SHA, image digest, Cloud Run revision, smoke result và approver.
+
+Không lưu service-account JSON key, Atlas URI hoặc JWT secret trong workflow YAML/log. Nếu phải dùng credential dài hạn tạm thời, cần exception có owner, expiry và kế hoạch chuyển sang identity ngắn hạn.
 
 ## Liên Kết
 

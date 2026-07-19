@@ -22,7 +22,7 @@ Risk Management áp dụng cho toàn bộ vòng đời từ BA baseline đến C
 | Khái niệm | Ý nghĩa | Ví dụ trong dự án | Nơi quản lý chính |
 | --- | --- | --- | --- |
 | Risk | Sự kiện **có thể** xảy ra trong tương lai, chưa xảy ra hoặc chưa được xác nhận. | Invitation token có thể bị implement sai expiry/revoke. | `risk-register.md` |
-| Issue | Vấn đề **đã tồn tại** và cần action/decision. | Cloud provider chưa được chọn trước Staging. | `issue-decision-log.md` |
+| Issue | Vấn đề **đã tồn tại** và cần action/decision. | Cloud account/deployment evidence chưa được tạo trước Staging. | `issue-decision-log.md` |
 | Defect | Hành vi implementation khác requirement/acceptance đã xác định. | Student xem được grade ngoài scope. | `../18-acceptance-criteria/defect-waiver-management.md` |
 | Incident | Sự kiện vận hành/bảo mật/dữ liệu đã gây hoặc có nguy cơ gây ảnh hưởng thực tế. | Production API DOWN sau deploy. | `incident-management.md` + DevOps runbook |
 | Change Request | Đề xuất thay đổi baseline đã có. | Thêm system email delivery cho Teacher invitation. | `../04-scope/change-control.md` |

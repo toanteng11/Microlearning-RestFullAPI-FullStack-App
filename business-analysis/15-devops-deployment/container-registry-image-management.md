@@ -8,11 +8,21 @@ Container registry là nơi lưu Docker image đã build để Staging và Produ
 
 | Image | Producer | Consumer | Nội dung không được có |
 | --- | --- | --- | --- |
-| `microlearning-frontend` | CI frontend build | Static/container runtime | Secret, local `.env`, source không cần runtime. |
-| `microlearning-backend` | CI backend build | Cloud API runtime | Secret, Production config, database dump, test artifact không cần thiết. |
+| `microlearning-app` | GitHub Actions multi-stage build | Google Cloud Run | Secret, local `.env`, Production config, database dump, source/test artifact không cần runtime. Image chứa React build, Node.js API và Swagger assets cần thiết. |
+| `microlearning-web` / `microlearning-api` | Local/CI build khi cần | Docker Compose và test harness | Không promote trực tiếp lên Production; không chứa secret hoặc local `.env`. |
 | `microlearning-worker` (future) | CI nếu async worker được duyệt | Worker runtime | Không tạo image khi chưa có worker module/use case. |
 
 MongoDB Production/backup không phải registry image artifact. Local MongoDB image chỉ phục vụ Compose/test theo policy.
+
+## Accepted Registry Baseline
+
+- Registry: **Google Artifact Registry** private Docker repository.
+- Region: cùng region `asia-southeast1` với Cloud Run để giảm latency và cross-region image transfer.
+- Repository logical name: `microlearning`.
+- Production image logical path: `microlearning-app`.
+- GitHub Actions là image publisher; Cloud Run service account chỉ cần pull/read.
+- Dùng cleanup policy nhưng luôn giữ current Production digest và ít nhất một prior stable digest.
+- Free storage allowance không được coi là bảo đảm vĩnh viễn; Phase 07 phải kiểm tra quota/pricing hiện hành, giới hạn số image và ghi cost evidence.
 
 ## Tagging Policy
 
@@ -28,7 +38,7 @@ Ví dụ logical mapping:
 
 ```text
 commit abc1234
-  -> microlearning-backend:sha-abc1234 (digest sha256:...)
+  -> microlearning-app:sha-abc1234 (digest sha256:...)
   -> tested in Staging
   -> release v1.3.0 points to same digest
   -> Production deploy pins digest sha256:...
@@ -81,7 +91,7 @@ Không cleanup image đang được deployment manifest/release record/reference
 - Chỉ promote image đã pass CI cho commit xác định.
 - Staging và Production phải dùng cùng image digest khi không có lý do kỹ thuật được review.
 - Rebuild cùng commit tạo digest khác phải được coi là artifact mới và ghi lý do; mục tiêu là build reproducible.
-- Release note phải chứa frontend/backend version, commit/tag/digest và change/migration note.
+- Release note phải chứa application version, commit/tag/digest, Web/API change và migration note.
 - Rollback chọn prior stable digest đã biết, không chọn “image cũ bất kỳ” theo cảm tính.
 
 ## Evidence Checklist

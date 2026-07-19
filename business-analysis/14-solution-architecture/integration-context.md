@@ -32,7 +32,7 @@ Future optional: Email provider, SSO/Identity Provider, HR/SIS/LMS, Analytics pl
 | INT-003 | Object Storage | API -> Storage | Provider SDK/HTTPS | File, image/video optional trong Question, attachment/resource | Required khi upload/media trong MVP |
 | INT-004 | Swagger UI/OpenAPI | Developer/QA -> API contract | OpenAPI 3.x, HTTPS | Khám phá, test, review API | Required |
 | INT-005 | CI/CD + Container Registry | Repository -> build artifact -> Cloud runtime | Provider authenticated integration | Build/test/scan/publish/deploy/smoke test | Required |
-| INT-006 | Cloud runtime/static hosting | Browser/CI-CD -> runtime | HTTPS, container/static artifact | Chạy frontend/API theo environment | Required cho Cloud deployment |
+| INT-006 | Google Cloud Run runtime | Browser/GitHub Actions -> Cloud Run | HTTPS, immutable application container | Chạy React/API/Swagger cùng origin theo environment | Required cho Cloud deployment |
 | INT-007 | Monitoring/Alerting | Runtime -> monitoring platform | log/metrics/health probe | Uptime, error/latency, alert, debugging | Required direction; vendor cần chốt |
 | INT-008 | Manual communication channel | Admin -> Teacher | Copy invitation URL qua email/Zalo/Facebook/Messenger/Teams/... | Admin tự gửi link mời Teacher | Required business process, không phải system-to-system API |
 | INT-009 | Email service | API -> email provider | Provider API/SMTP | Gửi email tự động/recovery/notification | Out of scope MVP trừ khi scope thay đổi |

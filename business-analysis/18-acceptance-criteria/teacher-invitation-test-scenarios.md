@@ -17,7 +17,7 @@ Tài liệu này kiểm tra quy trình Admin mời Teacher bằng invitation lin
 | ID | Scenario | Preconditions | Expected result | Priority | Rule/criterion |
 | --- | --- | --- | --- | --- | --- |
 | TS-INV-001 | Admin tạo invitation cho email Teacher hợp lệ | Admin authorized, no active Teacher/pending invitation | Invitation `PENDING`, `MANUAL_COPY`, expiry; authorized Admin copy link. | Must | AC-INV-001 |
-| TS-INV-002 | Admin copy invitation link để gửi thủ công | Valid pending invitation | Link copy action works; no system auto-email/Gmail dependency or “email sent” claim. | Must | BR-014A/014C/048 |
+| TS-INV-002 | Admin copy invitation link để gửi thủ công | Vừa tạo invitation và raw link còn trong one-time client state | Clipboard works; copy-event dùng UUID idempotent, không gửi/trả raw link; no auto-email/Gmail dependency hoặc “email sent” claim. | Must | BR-014A/014C/044/048 |
 | TS-INV-003 | Teacher mở invitation link hợp lệ | Pending/unexpired token | Safe activation form appears; no protected Admin detail/raw token exposed. | Must | BR-012/049 |
 | TS-INV-004 | Teacher nhập matching email/password hợp lệ | Pending/unexpired invitation | Atomic activation: Teacher ACTIVE/role TEACHER, invitation ACCEPTED, password hash only, AuditLog. | Must | AC-INV-002 |
 | TS-INV-005 | Teacher nhập email không khớp | Pending invitation | Safe mismatch error; invitation remains usable pending policy; no account activation. | Must | BR-014B/045 |
@@ -31,7 +31,7 @@ Tài liệu này kiểm tra quy trình Admin mời Teacher bằng invitation lin
 | TS-INV-013 | Invitation for existing ACTIVE Teacher | Teacher already ACTIVE | Create denied unless explicit override policy; no duplicate account. | Must | BR-042 |
 | TS-INV-014 | Invalid/malformed token | Random/malformed URL token | Generic safe invalid invitation response; no internal lookup/detail. | Must | BR-049 |
 | TS-INV-015 | Invitation create/accept race/failure simulation | Valid invitation, controlled failure before commit | No half-created active Teacher or consumed token; retry follows consistent state. | Must | BR-045 |
-| TS-INV-016 | Raw token storage/log redaction | Invitation created/copied/accepted | Database/log/AuditLog contains hash/safe metadata only; evidence does not show raw link/token. | Must | BR-044/102 |
+| TS-INV-016 | Raw token one-time/redaction contract | Invitation created/copied/listed/accepted | Raw link chỉ có trong create response/client memory; list/detail/copy-event/database/log/AuditLog chỉ chứa hash hoặc safe metadata, evidence phải sanitize working token. | Must | BR-044/102 |
 | TS-INV-017 | Unauthorized user create/copy/revoke invitation | Student/Teacher/non-permitted Admin | API/UI action denied; no invitation/link disclosure. | Must | Access rules |
 | TS-INV-018 | Invitation expiry boundary server time | Token at/before/after expiry | Server time determines result consistently; client clock cannot bypass. | Should | BR-047 |
 | TS-INV-019 | Account status after accepted link | Teacher activation successful | Teacher can login/use Teacher allowed functions; no Admin privileges gained. | Must | BR-013/036 |
@@ -40,7 +40,7 @@ Tài liệu này kiểm tra quy trình Admin mời Teacher bằng invitation lin
 ## Pass Conditions
 
 - All Must scenarios pass in Staging/UAT with synthetic emails and no real automatic email integration.
-- No raw password/token is present in UI/API/log/database/audit evidence.
+- Plain password không xuất hiện; raw invitation token chỉ được phép trong one-time create response/client memory và phải được sanitize khỏi evidence. List/detail/copy-event/log/database/audit không chứa raw token.
 - Invitation state transition and account activation are atomic and traceable.
 - External manual delivery remains Admin responsibility; no test assumes Gmail/Zalo/Facebook API integration.
 

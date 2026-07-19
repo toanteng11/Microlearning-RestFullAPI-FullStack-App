@@ -19,12 +19,12 @@ IaC không chứa secret value. IaC chỉ tham chiếu secret ID/secret store/ru
 
 | Resource | Nên đưa IaC? | Ghi chú |
 | --- | --- | --- |
-| Static frontend hosting/CDN/DNS routing | Should | Provider-specific; domain certificate validation có thể cần thao tác controlled. |
-| API runtime/service/load balancer | Must khi infrastructure phức tạp | Image digest/config/scale/health path phải trace được. |
+| Cloud Run application service/DNS routing | Should, tiến tới Must cho Production | `microlearning-app` digest, config, scale, health path và custom domain mapping phải trace được. |
+| Artifact Registry/IAM/Workload Identity | Should | Repository, deploy/runtime identity và least-privilege binding; không đưa credential value vào state. |
 | Network/security group/firewall | Must | Ngăn public database/management port sai. |
 | Storage bucket/policy/lifecycle | Should | Private-by-default, prefix/lifecycle/versioning. |
 | Monitoring alert/dashboard | Should | Có thể versioned qua provider integration nếu hỗ trợ. |
-| Managed MongoDB | Should | Provider support khác nhau; thường IaC cho project/network/user/backup config, không hard-code credential. |
+| MongoDB Atlas | Should | Có thể quản lý project/cluster/network/backup policy khi tier/tool hỗ trợ; không hard-code database credential. |
 | Secret values | No | Chỉ tạo/reference policy, không commit value. |
 | Backup data | No | Backup là artifact vận hành, không phải IaC state. |
 

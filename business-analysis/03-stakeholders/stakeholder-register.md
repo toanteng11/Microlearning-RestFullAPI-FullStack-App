@@ -47,7 +47,7 @@ Stakeholder trong dự án được chia thành 5 nhóm chính:
 | STK-017 | DevOps Engineer | Delivery/Operations | Chủ sở hữu deployment | Docker, CI/CD, environment, Cloud deployment, rollback, monitoring foundation | High | High | Phê duyệt deployment readiness |
 | STK-018 | Security / Privacy Reviewer | Operations | Review bảo mật và privacy | Review authentication, authorization, RBAC, password, invitation token, audit log, data privacy | High | Medium | Phê duyệt security/privacy readiness nếu được chỉ định |
 | STK-019 | Support / Operations Staff | Operations | Hỗ trợ vận hành | Xử lý user support, account issue, classroom issue, incident và operational monitoring | Medium | Medium | Đề xuất cải tiến vận hành |
-| STK-020 | Cloud Provider | External | Hạ tầng triển khai | Cung cấp compute, storage, network, domain, SSL hoặc managed services | Medium | Low | Không quyết định sản phẩm, ảnh hưởng kỹ thuật |
+| STK-020 | Google Cloud Platform / MongoDB Atlas | External | Hạ tầng triển khai đã chọn | Cloud Run cung cấp application runtime; Atlas cung cấp managed MongoDB; supporting services gồm Artifact Registry, Secret Manager và Cloud Logging/Monitoring | Medium | Low | Không quyết định sản phẩm, ảnh hưởng kỹ thuật, quota, security và availability |
 | STK-021 | Notification / Email Provider | External | Gửi thông báo hệ thống nếu được tích hợp | Hỗ trợ reset password hoặc notification tự động; không bắt buộc cho Teacher invitation trong MVP | Medium | Low | Không quyết định sản phẩm, ảnh hưởng delivery |
 | STK-022 | Storage Provider | External | Lưu file upload | Lưu attachment, image, video, resource hoặc submission file | Medium | Low | Không quyết định sản phẩm, ảnh hưởng NFR |
 
@@ -109,7 +109,7 @@ Các stakeholder cần được quản lý sát nhất trong MVP:
 - Product Owner có quyền quyết định cuối cùng về MVP scope.
 - Teacher, Student và Admin Representative có thể không phải là toàn bộ người dùng thật, nhưng cần đại diện đủ cho UAT.
 - Super Admin có thể được gộp với Admin trong MVP nếu hệ thống nhỏ, nhưng vẫn cần mô tả quyền trong BA.
-- External providers như Cloud, Notification/Email và Storage chưa được chọn cụ thể ở giai đoạn BA, nhưng Teacher invitation trong MVP không phụ thuộc email provider vì dùng manual copy link.
+- Cloud runtime/database/CI-CD đã được chọn theo ADR-010: Google Cloud Run, MongoDB Atlas và GitHub Actions. Notification/Email và object storage provider chưa được chọn; Teacher invitation trong MVP không phụ thuộc email provider vì dùng manual copy link.
 - Security/Privacy Reviewer có thể là Technical Lead kiêm nhiệm nếu dự án nhỏ.
 
 ## Kết Luận

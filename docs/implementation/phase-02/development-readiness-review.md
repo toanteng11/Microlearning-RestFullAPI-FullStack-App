@@ -67,4 +67,4 @@ Các nội dung sau không chặn Must implementation nhưng không được cla
 - Thay đổi ADR phải cập nhật API, data, test, risk và traceability trong cùng Pull Request.
 - `implementation-checklist.md` là execution gate; chỉ Gate A được đóng tại thời điểm readiness review.
 - Gate B đến Gate F chỉ được check khi có source chạy thật và evidence trong `evidence-register.md`.
-- `exit-report.md` giữ `IN_PROGRESS/Pending`; chỉ chuyển acceptance/evidence sang `Pass/Complete` khi có source chạy thật và remote CI tương ứng.
+- Tại thời điểm Gate A, `exit-report.md` phải giữ `IN_PROGRESS/Pending`; sau khi có source chạy thật, remote CI và merge evidence mới được chuyển sang `Pass/Complete`. Điều kiện này đã được thỏa mãn bởi PR #4 và merge commit `61aa049`.

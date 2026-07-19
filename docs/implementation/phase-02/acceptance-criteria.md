@@ -78,4 +78,4 @@
 - `Blocked`: dependency bên ngoài cụ thể, có owner/next action; không dùng thay cho `Not Run`.
 - Must criterion không được waiver nếu làm lộ credential/token, cho privilege escalation hoặc tạo data partial.
 
-Phase hiện ở trạng thái `Ready for sign-off`: `39/39` criterion đạt `Pass`, không có criterion `Fail/Blocked/Not Run`. Chỉ chuyển trạng thái quản trị thành `Completed` sau khi exit report được reviewer có thẩm quyền ký và Pull Request được merge theo branch protection.
+Phase hiện ở trạng thái `Completed`: `39/39` criterion đạt `Pass`, không có criterion `Fail/Blocked/Not Run`; PR #4 đã merge vào `main` tại commit `61aa049` sau khi remote required checks đạt.

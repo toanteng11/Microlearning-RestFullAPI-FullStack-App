@@ -61,8 +61,8 @@ Chấm điểm, feedback, return work
 | US-TCH-002 | Là Teacher, tôi muốn tạo Class Code để Student tham gia Classroom của tôi. | Must | FR-021 | System tạo Class Code duy nhất cho Classroom active; code hoạt động nếu Admin policy cho phép. |
 | US-TCH-030 | Là Teacher, tôi muốn copy Class Code để gửi cho Student qua kênh phù hợp. | Must | FR-021, FR-057 | Copy action rõ ràng; UI hiển thị success state; code không lộ nếu Teacher không có quyền. |
 | US-TCH-031 | Là Teacher, tôi muốn reset/regenerate Class Code khi code cũ bị lộ hoặc dùng sai. | Must | FR-021, FR-025 | Code cũ vô hiệu; code mới join được; action được audit nếu cần. |
-| US-TCH-003 | Là Teacher, tôi muốn tạo Invite Link để chia sẻ quyền truy cập Classroom dễ dàng. | Must | FR-022 | System tạo link hợp lệ nếu policy cho phép; link có thể copy. |
-| US-TCH-032 | Là Teacher, tôi muốn tắt hoặc regenerate Invite Link khi không muốn Student mới dùng link cũ. | Must | FR-022, FR-025 | Link cũ không join được sau khi disabled/regenerated; Student cũ không bị remove. |
+| US-TCH-003 | Là Teacher, tôi muốn tạo Invite Link để chia sẻ quyền truy cập Classroom dễ dàng. | Must | FR-022 | System tạo link nếu policy cho phép, hiển thị raw link/copy action đúng một lần; lần xem sau chỉ có metadata. |
+| US-TCH-032 | Là Teacher, tôi muốn tắt hoặc regenerate Invite Link khi không muốn Student mới dùng link cũ. | Must | FR-022, FR-025 | Action dùng endpoint riêng; link cũ không join được, regenerate trả raw link mới một lần và Student cũ không bị remove. |
 | US-TCH-033 | Là Teacher, tôi muốn biết join method nào bị Admin policy tắt để không hướng dẫn Student sai. | Must | FR-011, FR-025 | UI hiển thị disabled state nếu Class Code/Invite Link bị Admin tắt; Teacher không bật vượt policy. |
 
 ## Epic TCH-04 - Roster Và Student Management

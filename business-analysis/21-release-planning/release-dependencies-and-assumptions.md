@@ -12,7 +12,7 @@ Một scope có thể đúng trên giấy nhưng chưa thể commit vào release
 | REL-ASM-002 | REL-0/1/2 có thể dùng Local/Development/Staging với synthetic test data, không phải release end-user. | Nếu không có shared environment, integration/UAT plan thay đổi. | Technical Lead + DevOps | Before integration / Open |
 | REL-ASM-003 | Teacher invitation MVP dùng `MANUAL_COPY`, không cần Gmail/SMTP provider. | Auto delivery thêm provider/security/retry/privacy/operation scope. | Product Owner | Baseline recorded |
 | REL-ASM-005 | `processScore = progressPercentage` là default MVP. | Weighted score đổi data/report/fairness/recalculation scope. | Product Owner + Backend Lead | Before any formula change / Recorded baseline |
-| REL-ASM-006 | Cloud provider có thể chọn sau BA baseline nhưng trước Staging Cloud. | Không có account/quota/region/secret/monitoring thì Cloud release không commit được. | DevOps + Product Owner | Before REL-MVP-1 RC / Open |
+| REL-ASM-006 | Cloud baseline dùng Google Cloud Run, MongoDB Atlas và GitHub Actions; Firebase không sử dụng. | Account/quota/region/secret/monitoring vẫn cần runtime evidence trước Cloud release. | DevOps + Product Owner | Recorded baseline 2026-07-17; implementation pending Phase 07 |
 
 ## Critical Dependencies
 
@@ -21,8 +21,8 @@ Một scope có thể đúng trên giấy nhưng chưa thể commit vào release
 | REL-DEP-002 | Token/session storage/refresh/CSRF security ADR. Affects REL-0/REL-1 auth/invitation. | Technical Lead + Security Reviewer | Accepted ADR and security test direction. | ISS-003, R-006 | Open; before auth release |
 | REL-DEP-003 | API/data contracts for Enrollment, Progress, Deadline, Submission, Grade, Audit/read-model. Affects REL-1/REL-2. | Backend Lead + Technical Lead | Schema/index/validation/API/Swagger/reconciliation plan. | TR-GAP-001/002, R-008/R-009 | Open; before integration |
 | REL-DEP-004 | ReactJS API integration and P0 role pages. Affects REL-1/REL-2/UAT. | Frontend Lead + QA Lead | Route/API/state/accessibility/responsive/E2E evidence. | TR-GAP-003, R-013/R-023 | Pending implementation evidence |
-| REL-DEP-005 | CI/CD provider, protected checks, registry/artifact identity and environment deploy permission. Affects RC/MVP. | DevOps + Technical Lead | Pipeline run/configuration/artifact evidence. | ISS-002, R-012/R-023 | Open; before RC |
-| REL-DEP-006 | Cloud provider/account/region/quota/DNS-SSL/secret/monitoring selection. Affects Staging Cloud/MVP. | DevOps + Product Owner | ADR/environment readiness checklist and access confirmation. | ISS-001, R-003/R-020 | Open; before Staging Cloud |
+| REL-DEP-005 | GitHub Actions CD, protected deployment environments, Artifact Registry digest/provenance và deploy permission. Affects RC/MVP. | DevOps + Technical Lead | Pipeline run/configuration/artifact/deployment evidence. | ISS-002, R-012/R-023 | Provider selected; CD implementation open before RC |
+| REL-DEP-006 | Google Cloud/Atlas account, `asia-southeast1`, quota/budget, DNS-TLS, Secret Manager và Monitoring readiness. Affects Staging Cloud/MVP. | DevOps + Product Owner | ADR-010, environment readiness checklist and access confirmation. | ISS-001, R-003/R-020 | Architecture resolved; infrastructure evidence open before Staging Cloud |
 | REL-DEP-007 | UAT representatives, safe test accounts/data and sign-off authority. Affects UAT/MVP. | Product Owner + QA Lead + BA | Participant/schedule/test data/access confirmation. | ISS-005, R-002/R-023 | Open; before UAT planning |
 | REL-DEP-008 | Backup scope, restore rehearsal and rollback/forward-fix readiness. Affects risky release/MVP. | DevOps + Technical Lead | Backup/rehearsal/version/rollback evidence. | R-010/R-011 | Open; before high-risk RC/deploy |
 | REL-DEP-009 | Resource/media/upload decision and storage/access/policy if enhancement is pulled forward. | Product Owner + Technical Lead + DevOps | Feature gate or provider/policy/validation/backup decision. | ISS-004, R-017 | Open; before REL-1.1/media scope |
@@ -40,7 +40,7 @@ Scope/priority + token policy
   -> REL-MVP-1 Go decision and controlled deployment
 ```
 
-Cloud provider and UAT representative are not reasons to delay all Local/Integration work, but they are hard dependencies for the corresponding Staging/Cloud/UAT gate. Team must surface this distinction in status reports.
+Cloud provider selection no longer blocks Local/Integration planning. Google Cloud/Atlas account setup and deployment evidence remain hard dependencies for the Staging/Cloud gate; UAT representatives remain a separate UAT dependency. Team must surface this distinction in status reports.
 
 ## Dependency Management Rules
 

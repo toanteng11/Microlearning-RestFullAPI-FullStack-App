@@ -51,7 +51,9 @@ Các route cần test bằng cách refresh trực tiếp:
 - `/admin/dashboard`
 - `/admin/users/students`
 - `/teacher/invite?token=test`
-- `/join/invite/test`
+- `/join/invite`
+
+Classroom Invite token nằm trong URL fragment nên không được gửi tới hosting server. Browser E2E có thể mở `/join/invite#token=<synthetic-token>` để test capture/cleanup, nhưng SPA fallback chỉ cần phục vụ path `/join/invite`.
 
 Nếu refresh các route này bị 404 từ web server, deployment chưa đạt.
 
