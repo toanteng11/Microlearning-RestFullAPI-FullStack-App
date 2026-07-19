@@ -64,8 +64,9 @@ Không chấp nhận residual raw credential exposure, IDOR, duplicate active me
 | P03-I03 - Login giữ `returnUrl` khác role có thể điều hướng sai scope | High | Frontend | Closed | Thêm role-aware sanitizer và ma trận `13` return URL security cases |
 | P03-I04 - Roster/governance table từng ẩn dữ liệu ở mobile | Medium | Frontend | Closed | Chuyển responsive table thành labeled row-card; browser review pass |
 | P03-I05 - E2E database từng lệch fixture credential | Environment | QA/DevOps | Closed | Dùng database tách biệt, seed lại hai lần và chạy `9/9` journeys pass |
+| P03-I06 - Browser E2E seed thiếu Phase 03 numeric environment | CI | DevOps | Closed | Bổ sung bảy biến `CLASSROOM_*` vào browser E2E env; PR run #14 và main run #15 đều `6/6` |
 
-Không còn issue Critical/High mở ở local exit candidate. Remote CI hoặc review phát hiện regression mới phải mở issue tương ứng trước merge.
+Không còn issue Critical/High hoặc release blocker mở khi đóng Phase 03. Regression phát hiện sau merge phải được ghi thành issue mới và xử lý theo severity.
 
 ## 6. Issue Handling
 

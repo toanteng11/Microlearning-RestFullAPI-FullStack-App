@@ -34,8 +34,8 @@
 | P03-EVD-OPS-001  | Docker build/health/non-root                | Compose evidence         | Complete (local) |
 | P03-EVD-OPS-002  | Seed/policy bootstrap idempotency           | Command result           | Complete (local) |
 | P03-EVD-OPS-003  | Clean Git clone onboarding                  | Rehearsal record         | Complete (local) |
-| P03-EVD-OPS-004  | Remote required checks                      | PR/Actions URL           | Pending |
-| P03-EVD-DOC-004  | AC + traceability/checklist/exit package    | Exit package             | Complete local; remote pending |
+| P03-EVD-OPS-004  | Remote required checks                      | PR/Actions URL           | Complete |
+| P03-EVD-DOC-004  | AC + traceability/checklist/exit package    | Exit package             | Complete |
 
 ## 3. Local Exit Evidence
 
@@ -54,7 +54,7 @@
 - Browser review desktop/mobile xác nhận Teacher roster, Student join/detail và Admin governance/policy không overflow/overlap; console không có error/warning.
 - Clean Git clone rehearsal: snapshot sanitized được commit tạm tại `5bf8dbe`, clone sang `C:\tmp\microlearning-phase3-git-clone-20260719`; `npm ci`, `npm run check:ci` và Compose config đều Pass. Repository tạm không chứa `.env`, dependency hoặc artifact cũ và không ảnh hưởng lịch sử repository chính.
 - Chi tiết foundation: `runtime-data-foundation-evidence.md`; kết quả tổng hợp: `phase-exit-evidence.md`.
-- Remote PR/CI/Gitleaks URL và reviewer evidence vẫn Pending; không được thay bằng kết quả local.
+- Remote evidence đã đóng: [PR #6](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/6), [PR run #14](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689514790), [main run #15](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689670564) và merge commit `7d2c10c`; cả hai run đều `6/6` jobs success.
 
 ## 4. Evidence Quality Gate
 
@@ -63,4 +63,4 @@
 - Real Mongo evidence identifies replica set.
 - Browser evidence includes desktop/mobile and storage/URL scan.
 - Remote CI contains quality, Mongo, OpenAPI, E2E, audit, secret jobs.
-- Reviewer/sign-off record is named/date/decision, không chỉ screenshot merge.
+- Với dự án cá nhân, repository owner merge là sign-off có thể kiểm chứng. Nếu có reviewer độc lập thì phải lưu name/date/decision; hiện PR #6 không có review submission và tài liệu không suy diễn chữ ký đó.

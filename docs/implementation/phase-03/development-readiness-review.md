@@ -74,4 +74,4 @@ Planning status = COMPLETED
 Implementation status at Gate A approval = NOT_STARTED
 ```
 
-Tại thời điểm Gate A, PR-03A được phép bắt đầu trên branch `feature/phase-03-data-foundation` theo `developer-start-guide.md`. Sau implementation, trạng thái đã chuyển sang `LOCAL_EXIT_CANDIDATE`; xem `phase-exit-evidence.md` để tránh dùng snapshot này như báo cáo tiến độ hiện tại.
+Tại thời điểm Gate A, PR-03A được phép bắt đầu trên branch `feature/phase-03-data-foundation` theo `developer-start-guide.md`. Đây là snapshot lịch sử của readiness review; Phase 03 sau đó đã hoàn tất, merge qua PR #6 tại `7d2c10c` và đạt `45/45` acceptance criteria. Xem `phase-exit-evidence.md` cho trạng thái cuối.

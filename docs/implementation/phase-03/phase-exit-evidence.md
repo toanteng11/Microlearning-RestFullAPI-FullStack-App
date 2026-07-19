@@ -5,7 +5,7 @@
 | Field             | Value                                                                  |
 | ----------------- | ---------------------------------------------------------------------- |
 | Phase             | `P03 - Classroom Management`                                           |
-| Branch/commit     | `feature/phase-03-data-foundation`; commit chờ tạo qua Pull Request     |
+| Branch/commit     | `main`; merge commit `7d2c10c`                                         |
 | Verification date | `2026-07-19`                                                           |
 | Environment       | Node.js 24; MongoDB 8 replica set `rs0`; Docker Compose; Chromium       |
 | Data policy       | Chỉ synthetic data; evidence không chứa raw credential, secret hoặc PII |
@@ -22,7 +22,7 @@
 | OpenAPI contract                          | Pass: `7/7`; exact `22` P03 operations                                     |
 | Production dependency audit               | Pass: `0` vulnerabilities ở mức High trở lên                               |
 | Runtime log/raw credential scan           | Pass: `0` sensitive pattern match                                          |
-| Remote GitHub Actions/Gitleaks             | Not Run: chờ branch push và Pull Request                                    |
+| Remote GitHub Actions/Gitleaks             | Pass: PR run #14 và post-merge main run #15 đều `6/6` jobs                   |
 
 ## 3. Security And Data
 
@@ -41,7 +41,7 @@
 - Synthetic seed run 1 tạo `10` users và `8` Phase 03 entities; run 2 reuse `10` và `8`, không tạo duplicate.
 - E2E dùng database tách biệt `microlearning-e2e-phase3-final`; không dùng dữ liệu thật.
 - Clean Git clone rehearsal: tạo sanitized temporary repository, commit snapshot `5bf8dbe`, rồi clone sang `C:\tmp\microlearning-phase3-git-clone-20260719`. Clone không chứa `.env`, dependency hoặc artifact cũ; `npm ci`, `npm run check:ci` và `docker compose ... config --quiet` đều Pass.
-- Remote image/CI evidence chưa có cho commit hiện tại; thuộc P03-AC-045.
+- Remote evidence: [PR #6](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/6) merge tại `7d2c10c`; [PR run #14](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689514790) và [main run #15](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689670564) đều đạt `6/6` jobs.
 
 ## 5. Browser Review
 
@@ -56,9 +56,9 @@
 
 | Result  | Count |
 | ------- | ----- |
-| Pass    | `44`  |
+| Pass    | `45`  |
 | Fail    | `0`   |
-| Not Run | `1`   |
+| Not Run | `0`   |
 | Blocked | `0`   |
 
-`P03-AC-045` là criterion duy nhất `Not Run`. Phase 03 đạt local exit candidate nhưng chưa đạt repository Definition of Done cho đến khi Pull Request, required GitHub Actions checks, Gitleaks và reviewer sign-off đều có bằng chứng thật.
+`P03-AC-045` đã đạt `Pass`. Phase 03 hoàn thành repository Definition of Done với PR đã merge, required GitHub Actions checks và Gitleaks xanh trên cả PR lẫn `main`, không có Critical/High defect mở và exit package truy ngược tới commit. PR #6 không lưu review submission độc lập; quyết định merge của repository owner được ghi nhận là sign-off của dự án cá nhân, không được diễn giải thành chữ ký của BA/QA/Security độc lập.

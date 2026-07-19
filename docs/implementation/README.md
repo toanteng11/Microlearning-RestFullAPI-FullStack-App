@@ -99,7 +99,7 @@ docs/implementation/
 | ----------- | ------------------------ | ------------------------------------------------------------------- | ------------------------------- |
 | `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                        | Completed                       |
 | `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation   | Merged; `39/39` Pass            |
-| `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | Local exit candidate; `44/45` Pass |
+| `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | Completed; `45/45` Pass; PR #6 merged |
 | `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                              | Planned                         |
 | `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Planned                         |
 | `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                         | Planned                         |

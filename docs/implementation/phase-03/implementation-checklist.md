@@ -81,11 +81,11 @@
 - [x] Docker images/Compose/API non-root healthy.
 - [x] Seed/bootstrap idempotent và safe.
 - [x] Dependency audit và runtime log/raw credential scan pass.
-- [ ] Secret scan trên commit Phase 03 pass; chờ job Gitleaks của remote PR.
+- [x] Secret scan trên commit Phase 03 pass ở PR run #14 và post-merge main run #15.
 - [x] Clean Git clone onboarding pass từ repository snapshot không có secret/dependency/artifact cũ.
-- [ ] `45/45` P03 acceptance criteria Pass; hiện `44/45`, còn remote AC-045.
-- [x] Traceability/risk/evidence/exit report đã cập nhật cho local exit candidate.
-- [ ] Remote CI URL và reviewer sign-off có thật.
+- [x] `45/45` P03 acceptance criteria Pass; không còn Fail/Blocked/Not Run.
+- [x] Traceability/risk/evidence/exit report đã cập nhật cho trạng thái `Completed`.
+- [x] Remote CI URL, PR merge và repository-owner sign-off có bằng chứng thật.
 
 ## 8. Không Được Check Done Khi
 
