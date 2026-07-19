@@ -5,23 +5,23 @@
 - Checklist này theo dõi gate execution; WBS theo dõi task chi tiết.
 - Chỉ tick `[x]` khi có evidence kiểm chứng.
 - Conditional item ghi `[N/A - reason/evidence]` nếu được defer chính thức.
-- Planning hiện chưa phê duyệt, vì vậy tất cả mục giữ unchecked.
+- Gate A đã được phê duyệt bằng PR `#8`, CI `#18` và merge commit `66f400d`; các gate implementation vẫn giữ unchecked cho tới khi có evidence tương ứng.
 
 ## 2. Gate A - Planning Baseline
 
-- [ ] BA scope `FR-026..035` và overlap `FR-049/050/052/053/057` đã review.
-- [ ] Must, Conditional Should và Out of scope đã chấp thuận.
-- [ ] Lesson-only To-do/dashboard metric v1 đã chấp thuận.
-- [ ] 36 technical decisions đổi thành `Accepted` hoặc có disposition.
-- [ ] Lifecycle/visibility/deadline rules đã chấp thuận.
-- [ ] Data/index/transaction contract đã review.
-- [ ] API/OpenAPI contract đã review.
-- [ ] Permission/object authorization matrix đã review.
-- [ ] Frontend routes/states/accessibility đã review.
-- [ ] Testing/68 AC/evidence model đã review.
-- [ ] WBS 100 task/critical path đã review.
-- [ ] Planning PR CI xanh và merge vào `main`.
-- [ ] `development-readiness-review.md` ghi `READY_TO_CODE` trung thực.
+- [x] BA scope `FR-026..035` và overlap `FR-049/050/052/053/057` đã review.
+- [x] Must, Conditional Should và Out of scope đã chấp thuận.
+- [x] Lesson-only To-do/dashboard metric v1 đã chấp thuận.
+- [x] 36 technical decisions đổi thành `Accepted` hoặc có disposition.
+- [x] Lifecycle/visibility/deadline rules đã chấp thuận.
+- [x] Data/index/transaction contract đã review.
+- [x] API/OpenAPI contract đã review.
+- [x] Permission/object authorization matrix đã review.
+- [x] Frontend routes/states/accessibility đã review.
+- [x] Testing/68 AC/evidence model đã review.
+- [x] WBS 100 task/critical path đã review.
+- [x] Planning PR CI xanh và merge vào `main`.
+- [x] `development-readiness-review.md` ghi `READY_TO_CODE` trung thực.
 
 ## 3. Gate B - Domain And Data Foundation
 
@@ -121,11 +121,11 @@
 
 | Gate | Status | Blocking reason |
 | --- | --- | --- |
-| A | Pending | Planning baseline chưa review/merge |
-| B | Not Started | Chờ Gate A |
+| A | Completed | PR `#8`, CI `#18`, merge `66f400d` |
+| B | Not Started | Sẵn sàng bắt đầu `P04-T009..T018` |
 | C | Not Started | Chờ foundation |
 | D | Not Started | Chờ authoring/content APIs |
 | Conditional Resource | Not Decided | Không chặn Must |
 | E | Not Started | Chờ implementation |
 
-Current overall status: `READY_FOR_REVIEW`, không phải `READY_TO_CODE` hay `COMPLETED`.
+Current overall status: `READY_TO_CODE`, chưa phải `COMPLETED`.

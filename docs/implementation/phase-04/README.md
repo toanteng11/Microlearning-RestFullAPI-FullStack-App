@@ -14,13 +14,13 @@ Phase này triển khai Course Dashboard và Student To-do theo phạm vi **Less
 | Tên | `Learning Content` |
 | Dependency | Phase 03 đã merge vào `main` tại `d9de828` |
 | Planning branch | `docs/phase-04-planning-baseline` |
-| Planning status | `READY_FOR_REVIEW` |
+| Planning status | `READY_TO_CODE` |
 | Implementation status | `NOT_STARTED` |
-| Gate A | `PENDING` - cần review, CI xanh và merge planning baseline |
+| Gate A | `APPROVED` - PR `#8`, CI `#18` và merge commit `66f400d` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P05 - Assessments and Grading` |
 
-`READY_FOR_REVIEW` không đồng nghĩa `READY_TO_CODE`. Chỉ đổi trạng thái sau khi các decision, API/data contract và acceptance criteria được chấp thuận trong Gate A.
+Planning baseline đã được repository owner review và merge qua protected workflow. `READY_TO_CODE` cho phép bắt đầu `P04-T009`; trạng thái này không đồng nghĩa Phase 04 đã hoàn thành.
 
 ## 3. Business Outcome
 

@@ -11,14 +11,14 @@
 
 | ID | Task | Owner | Dependency | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| P04-T001 | Review BA FR/US/UC/BR/AC P04 | BA/TL | P03 exit | 0.5d | Backlog |
-| P04-T002 | Approve phased To-do/dashboard metric | PO/BA | T001 | 0.5d | Backlog |
-| P04-T003 | Review 36 ADR decisions | TL | T001 | 0.5d | Backlog |
-| P04-T004 | Review API/data contracts | BE/QA | T003 | 0.5d | Backlog |
-| P04-T005 | Review UI/accessibility plan | FE/QA | T003 | 0.5d | Backlog |
-| P04-T006 | Review security/GCS boundary | Security/DevOps | T003 | 0.5d | Backlog |
-| P04-T007 | Run planning docs quality/CI | DevOps | T001-T006 | 0.25d | Backlog |
-| P04-T008 | Merge planning PR and mark Gate A | PO/TL | T007 | 0.25d | Backlog |
+| P04-T001 | Review BA FR/US/UC/BR/AC P04 | BA/TL | P03 exit | 0.5d | Done |
+| P04-T002 | Approve phased To-do/dashboard metric | PO/BA | T001 | 0.5d | Done |
+| P04-T003 | Review 36 ADR decisions | TL | T001 | 0.5d | Done |
+| P04-T004 | Review API/data contracts | BE/QA | T003 | 0.5d | Done |
+| P04-T005 | Review UI/accessibility plan | FE/QA | T003 | 0.5d | Done |
+| P04-T006 | Review security/GCS boundary | Security/DevOps | T003 | 0.5d | Done |
+| P04-T007 | Run planning docs quality/CI | DevOps | T001-T006 | 0.25d | Done |
+| P04-T008 | Merge planning PR and mark Gate A | PO/TL | T007 | 0.25d | Done |
 
 ## 3. E02 - Permissions, Ports And Domain Policies
 

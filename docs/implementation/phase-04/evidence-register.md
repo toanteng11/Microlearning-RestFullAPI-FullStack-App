@@ -10,11 +10,11 @@
 
 | ID | Evidence | Required | Location | Status |
 | --- | --- | --- | --- | --- |
-| P04-EV-001 | Planning PR | Có | Pending URL | Planned |
-| P04-EV-002 | Planning CI all required checks | Có | Pending run URL | Planned |
-| P04-EV-003 | Planning merge commit | Có | Pending SHA | Planned |
-| P04-EV-004 | Gate A accepted decision register | Có | `technical-decisions.md` | Planned |
-| P04-EV-005 | Readiness approval record | Có | `development-readiness-review.md` | Planned |
+| P04-EV-001 | Planning PR | Có | [PR #8](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/8) | Verified |
+| P04-EV-002 | Planning CI all required checks | Có | [Actions run #29692181077](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29692181077) | Verified |
+| P04-EV-003 | Planning merge commit | Có | [`66f400d`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/commit/66f400d727174efbafbbb58e10b0f00fb28840ed) | Verified |
+| P04-EV-004 | Gate A accepted decision register | Có | `technical-decisions.md` | Collected |
+| P04-EV-005 | Readiness approval record | Có | `development-readiness-review.md` | Collected |
 
 ## 3. Source And Automated Test Evidence
 
