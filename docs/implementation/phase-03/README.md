@@ -13,12 +13,12 @@ Phase này chỉ tạo container Classroom và quan hệ Enrollment. Course, Mod
 | Phase ID              | `P03`                                                                         |
 | Tên                   | `Classroom Management`                                                        |
 | Dependency            | Phase 02 Authentication and Users đã merge vào `main` tại `61aa049`           |
-| Planning status       | `APPROVED_PENDING_PR_MERGE`                                                   |
+| Planning status       | `READY_TO_CODE`                                                               |
 | Implementation status | `NOT_STARTED`                                                                 |
-| Remaining Gate A      | `P03-GA-07`: planning PR checks pass và merge vào `main`                      |
+| Gate A closure        | PR #5; Actions run #11 `6/6`; merge commit `1e8ad41`                         |
 | Phase tiếp theo       | `P04 - Learning Content`                                                      |
 
-Không đổi `Implementation status` thành `IN_PROGRESS` trước khi planning PR merge và `development-readiness-review.md` đạt `READY_TO_CODE`.
+Phase 03 được phép bắt đầu development. Chỉ đổi `Implementation status` thành `IN_PROGRESS` khi task code đầu tiên thực sự bắt đầu và được liên kết với WBS/evidence.
 
 ## 3. Business Outcome
 

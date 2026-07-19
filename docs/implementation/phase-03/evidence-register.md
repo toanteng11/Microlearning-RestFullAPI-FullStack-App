@@ -11,7 +11,7 @@
 
 | Evidence ID      | Nội dung                                    | Expected source          | Status  |
 | ---------------- | ------------------------------------------- | ------------------------ | ------- |
-| P03-EVD-DOC-001  | Scope/decision/Gate A approval              | Readiness review + planning PR | Partial: review approved; PR merge pending |
+| P03-EVD-DOC-001  | Scope/decision/Gate A approval              | PR #5; run #11; merge `1e8ad41` | Complete |
 | P03-EVD-DOC-002  | BA/API change record preview POST           | Revision 1.41/DEC-016/ADR-007 | Complete |
 | P03-EVD-DATA-001 | Models/exact indexes                        | Real Mongo index test    | Pending |
 | P03-EVD-DATA-002 | Enrollment uniqueness/concurrency           | Integration report       | Pending |

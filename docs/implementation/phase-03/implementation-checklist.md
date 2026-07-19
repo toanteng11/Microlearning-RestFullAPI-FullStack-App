@@ -13,7 +13,7 @@
 - [x] BA/Product Owner duyệt scope và API transport refinement ngày `2026-07-19`.
 - [x] Technical decision review hoàn tất; P03-ADR-001..018 ở trạng thái `Accepted`.
 - [x] QA/Security/DevOps perspectives đã review test, secrets, runtime và quality gates.
-- [ ] Planning PR merge và Gate A đổi `READY_TO_CODE`.
+- [x] PR #5 merge tại `1e8ad41`, Actions run #11 đạt `6/6`; Gate A là `READY_TO_CODE`.
 
 ## 2. Gate B - Runtime And Data Foundation
 

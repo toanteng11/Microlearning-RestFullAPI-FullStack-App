@@ -2,7 +2,7 @@
 
 Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ cho Student, Teacher và Admin. Repository sử dụng ReactJS, Node.js/ExpressJS, MongoDB, Swagger/OpenAPI, Docker và CI/CD.
 
-Repository đã hoàn thành Phase 01; implementation Phase 02 cho Student registration, secure session, RBAC, Admin User Management và manual Teacher Invitation đã merge vào `main` với `39/39` acceptance criteria và post-merge CI xanh. Baseline Phase 03 Classroom Management hiện ở trạng thái `READY_FOR_REVIEW` trong [Phase 03 Implementation Plan](docs/implementation/phase-03/README.md).
+Repository đã hoàn thành Phase 01 và Phase 02. Planning baseline Phase 03 Classroom Management đã merge bằng PR #5 tại `1e8ad41`, remote CI đạt `6/6` jobs và hiện ở trạng thái `READY_TO_CODE` trong [Phase 03 Implementation Plan](docs/implementation/phase-03/README.md).
 
 ## Prerequisites
 

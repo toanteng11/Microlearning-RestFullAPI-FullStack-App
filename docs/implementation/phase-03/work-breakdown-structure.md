@@ -5,47 +5,47 @@
 - Status: `Backlog`, `Ready`, `In progress`, `In review`, `Blocked`, `Done`.
 - Estimate là ngày công kỹ thuật tham khảo gồm code + test + docs, không phải lịch cam kết.
 - Task Done phải có source/output, tests và evidence/PR.
-- Planning review đã được chấp thuận; T010 đang `In progress` cho tới khi planning PR merge. Implementation chưa bắt đầu nên không được đổi task code sang Done.
+- Planning tasks `P03-T001..T010` đã Done theo PR #5, Actions run #11 và merge commit `1e8ad41`. Implementation tasks vẫn ở Backlog/Ready cho tới khi source và test tương ứng bắt đầu.
 
 ## 2. P03-E01 - Baseline And Design
 
 | Task     | Nội dung                                             | Dependency | Output               | Est. | Status    |
 | -------- | ---------------------------------------------------- | ---------- | -------------------- | ---- | --------- |
-| P03-T001 | Review FR/US/UC/BR/AC Must scope                     | P02        | Scope review         | 0.5  | In review |
-| P03-T002 | Review lifecycle Classroom/Enrollment/credential     | T001       | Domain baseline      | 0.5  | In review |
-| P03-T003 | Approve Code format/HMAC/pepper                      | T001       | Security decision    | 0.25 | In review |
-| P03-T004 | Approve Invite token/expiry/one-time UX              | T001       | Security/UX decision | 0.25 | In review |
-| P03-T005 | Approve API catalog and preview transport refinement | T001       | API baseline         | 0.5  | In review |
-| P03-T006 | Review data/index/transaction/concurrency            | T002..T005 | Data baseline        | 0.5  | In review |
-| P03-T007 | Review permission/object-scope matrix                | T001/T002  | Security baseline    | 0.5  | In review |
-| P03-T008 | Review React routes/states/join context              | T004/T005  | UI baseline          | 0.5  | In review |
-| P03-T009 | Review test/acceptance/evidence strategy             | T001..T008 | QA baseline          | 0.5  | In review |
-| P03-T010 | Gate A approval and planning PR merge                | T001..T009 | READY_TO_CODE        | 0.25 | In progress |
+| P03-T001 | Review FR/US/UC/BR/AC Must scope                     | P02        | Scope review         | 0.5  | Done |
+| P03-T002 | Review lifecycle Classroom/Enrollment/credential     | T001       | Domain baseline      | 0.5  | Done |
+| P03-T003 | Approve Code format/HMAC/pepper                      | T001       | Security decision    | 0.25 | Done |
+| P03-T004 | Approve Invite token/expiry/one-time UX              | T001       | Security/UX decision | 0.25 | Done |
+| P03-T005 | Approve API catalog and preview transport refinement | T001       | API baseline         | 0.5  | Done |
+| P03-T006 | Review data/index/transaction/concurrency            | T002..T005 | Data baseline        | 0.5  | Done |
+| P03-T007 | Review permission/object-scope matrix                | T001/T002  | Security baseline    | 0.5  | Done |
+| P03-T008 | Review React routes/states/join context              | T004/T005  | UI baseline          | 0.5  | Done |
+| P03-T009 | Review test/acceptance/evidence strategy             | T001..T008 | QA baseline          | 0.5  | Done |
+| P03-T010 | Gate A approval and planning PR merge                | T001..T009 | READY_TO_CODE        | 0.25 | Done |
 
 ## 3. P03-E02 - Runtime And Data Foundation
 
 | Task     | Nội dung                                                | Dependency     | Output                      | Est. | Status  |
 | -------- | ------------------------------------------------------- | -------------- | --------------------------- | ---- | ------- |
-| P03-T011 | Add P03 environment schema/fail-fast tests              | T003/T004      | Config contract             | 0.5  | Backlog |
-| P03-T012 | Add Classroom model/types/indexes                       | T006/T010      | classrooms collection       | 0.75 | Backlog |
-| P03-T013 | Add Enrollment model/types/indexes                      | T006/T010      | enrollments collection      | 0.75 | Backlog |
-| P03-T014 | Add ClassCode/InviteLink models/indexes                 | T003/T004/T006 | credential collections      | 1.0  | Backlog |
-| P03-T015 | Implement shared pagination/search/sort parser          | T005/T006      | Safe list query             | 0.75 | Backlog |
+| P03-T011 | Add P03 environment schema/fail-fast tests              | T003/T004      | Config contract             | 0.5  | Ready   |
+| P03-T012 | Add Classroom model/types/indexes                       | T006/T010      | classrooms collection       | 0.75 | Ready   |
+| P03-T013 | Add Enrollment model/types/indexes                      | T006/T010      | enrollments collection      | 0.75 | Ready   |
+| P03-T014 | Add ClassCode/InviteLink models/indexes                 | T003/T004/T006 | credential collections      | 1.0  | Ready   |
+| P03-T015 | Implement shared pagination/search/sort parser          | T005/T006      | Safe list query             | 0.75 | Ready   |
 | P03-T016 | Add Classroom repository                                | T012/T015      | CRUD/query port             | 1.0  | Backlog |
 | P03-T017 | Add Enrollment/credential repositories                  | T013/T014      | Membership/credential ports | 1.25 | Backlog |
-| P03-T018 | Add SystemSetting/EnrollmentPolicy repository/bootstrap | T006           | Policy singleton            | 0.75 | Backlog |
-| P03-T019 | Add P03 audit writer event allowlists                   | T007           | Safe audit port             | 0.5  | Backlog |
+| P03-T018 | Add SystemSetting/EnrollmentPolicy repository/bootstrap | T006           | Policy singleton            | 0.75 | Ready   |
+| P03-T019 | Add P03 audit writer event allowlists                   | T007           | Safe audit port             | 0.5  | Ready   |
 | P03-T020 | Verify exact indexes/transactions on real rs0           | T012..T019     | Data integration tests      | 1.0  | Backlog |
 
 ## 4. P03-E03 - Security And Shared Domain
 
 | Task     | Nội dung                                               | Dependency     | Output        | Est. | Status  |
 | -------- | ------------------------------------------------------ | -------------- | ------------- | ---- | ------- |
-| P03-T021 | Extend permission catalog/role capabilities            | T007/T010      | P03 RBAC      | 0.5  | Backlog |
+| P03-T021 | Extend permission catalog/role capabilities            | T007/T010      | P03 RBAC      | 0.5  | Ready   |
 | P03-T022 | Implement Class Code normalization/generator/HMAC      | T003/T011      | Code crypto   | 0.75 | Backlog |
 | P03-T023 | Implement Invite token/hash/link builder               | T004/T011      | Link crypto   | 0.75 | Backlog |
 | P03-T024 | Implement policy precedence/lifecycle domain functions | T002/T018      | Domain policy | 0.75 | Backlog |
-| P03-T025 | Add strict P03 path/query/body schemas                 | T005           | Validation    | 0.75 | Backlog |
+| P03-T025 | Add strict P03 path/query/body schemas                 | T005           | Validation    | 0.75 | Ready   |
 | P03-T026 | Harden logger/error/audit credential redaction         | T019/T022/T023 | Safe logs     | 0.75 | Backlog |
 | P03-T027 | Add join/preview rate limiter adapters/tests           | T007/T011      | Abuse control | 0.75 | Backlog |
 

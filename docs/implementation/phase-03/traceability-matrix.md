@@ -64,5 +64,5 @@
 
 - BA ID thay đổi phải review task/API/data/AC/test cùng lúc.
 - Không ghi `Implemented` nếu chỉ có source nhưng chưa test/evidence.
-- API preview POST body/fragment transport tại BA revision `1.40` và `DEC-016` đã được chấp thuận qua `P03-ADR-007`; code chỉ bắt đầu sau planning PR merge.
+- API preview POST body/fragment transport tại BA revision `1.40` và `DEC-016` đã được chấp thuận qua `P03-ADR-007`; planning PR #5 đã merge tại `1e8ad41`, nên contract được phép triển khai.
 - Requirement chuyển phase phải có reason, owner, impact và Product Owner/BA approval.

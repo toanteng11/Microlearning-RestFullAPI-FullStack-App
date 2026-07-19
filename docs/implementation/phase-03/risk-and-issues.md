@@ -59,7 +59,7 @@ Không chấp nhận residual raw credential exposure, IDOR, duplicate active me
 
 | Issue                                                                | Severity      | Owner                               | Status | Next action                                              |
 | -------------------------------------------------------------------- | ------------- | ----------------------------------- | ------ | -------------------------------------------------------- |
-| P03-I01 - Phase 03 decisions từng chưa được reviewer phê duyệt       | Planning gate | Product Owner/TL/QA/Security/DevOps | Closed | P03-ADR-001..018 Accepted ngày `2026-07-19`; P03-GA-07 theo dõi riêng |
+| P03-I01 - Phase 03 decisions từng chưa được reviewer phê duyệt       | Planning gate | Product Owner/TL/QA/Security/DevOps | Closed | ADR Accepted; P03-GA-07 đóng bởi PR #5/run #11/merge `1e8ad41` |
 | P03-I02 - BA/API transport từng chưa thống nhất | Contract | BA + TL | Closed | Revision 1.40/DEC-016 và P03-ADR-007 đã Accepted ngày `2026-07-19` |
 
 Không bắt đầu implementation PR-03A khi P03-I01/I02 còn chặn Gate A.

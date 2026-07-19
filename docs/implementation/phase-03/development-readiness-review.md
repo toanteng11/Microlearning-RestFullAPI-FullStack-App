@@ -2,13 +2,15 @@
 
 ## 1. Review Status
 
-| Field              | Value                                           |
-| ------------------ | ----------------------------------------------- |
-| Review date        | `2026-07-19`                                    |
-| Branch             | `docs/phase-03-planning-baseline`               |
-| Planning package   | Approved; pending planning PR merge             |
-| Gate A status      | `APPROVED_PENDING_PR_MERGE`                     |
-| Code authorization | `NOT_APPROVED` until `P03-GA-07` is closed      |
+| Field              | Value                                               |
+| ------------------ | --------------------------------------------------- |
+| Review date        | `2026-07-19`                                        |
+| Planning branch    | `docs/phase-03-planning-baseline`                   |
+| Planning package   | Completed; PR #5 merged into `main`                 |
+| Merge commit       | `1e8ad41`                                           |
+| Remote CI          | Actions run #11 (`29676070257`), `6/6` jobs success |
+| Gate A status      | `READY_TO_CODE`                                     |
+| Code authorization | `APPROVED`                                          |
 
 ## 2. Readiness Assessment
 
@@ -34,7 +36,7 @@
 - P02 offboarding integration được giải quyết qua port, không import model chéo.
 - Acceptance criteria có bằng chứng dự kiến và giữ `Not Run` trung thực.
 
-## 4. Conditions Before `READY_TO_CODE`
+## 4. Gate A Closure Conditions
 
 | ID        | Condition                                                        | Owner                   | Status | Closure evidence                                      |
 | --------- | ---------------------------------------------------------------- | ----------------------- | ------ | ----------------------------------------------------- |
@@ -44,7 +46,7 @@
 | P03-GA-04 | Duyệt unique membership + no automatic rejoin                    | BA/TL/QA                | Closed | `P03-ADR-009/010/014` Accepted                        |
 | P03-GA-05 | Duyệt permission catalog và offboarding integration              | Security/TL/Admin owner | Closed | Permission matrix + `P03-ADR-018` Accepted            |
 | P03-GA-06 | QA/DevOps duyệt real rs0 concurrency, seed and CI gates          | QA/DevOps               | Closed | Test/CI plan reviewed; `npm run check:ci` Pass        |
-| P03-GA-07 | Planning PR checks pass và merge                                 | Repository owner        | Open   | Chưa có planning PR/Actions/merge evidence            |
+| P03-GA-07 | Planning PR checks pass và merge                                 | Repository owner        | Closed | PR #5, Actions run #11, merge commit `1e8ad41`         |
 
 ## 5. Non-Blocking Future Decisions
 
@@ -59,9 +61,9 @@ Không đưa các decision này vào critical path Must nếu chưa Change Contr
 
 ## 6. Gate Decision
 
-Project Owner đã chấp thuận scope và toàn bộ `P03-ADR-001..018`. Gate A chỉ còn `P03-GA-07`: commit, mở planning PR, required checks pass và merge vào `main`. Không bắt đầu code trên branch tài liệu hoặc trước merge.
+Toàn bộ `P03-GA-01..07` đã đóng. Project Owner đã chấp thuận scope và `P03-ADR-001..018`; PR #5 đã merge vào `main` tại `1e8ad41` sau khi Actions run #11 đạt `6/6` jobs.
 
-Sau khi `P03-GA-07` đóng, cập nhật:
+Trạng thái có hiệu lực:
 
 ```text
 Gate A status = READY_TO_CODE
@@ -70,4 +72,4 @@ Planning status = COMPLETED
 Implementation status = NOT_STARTED
 ```
 
-Sau đó PR-03A có thể bắt đầu theo `developer-start-guide.md`. Việc đổi trạng thái trước khi có PR/Actions/merge evidence bị xem là sai lệch governance.
+PR-03A được phép bắt đầu trên branch `feature/phase-03-data-foundation` theo `developer-start-guide.md`. Chỉ chuyển Implementation sang `IN_PROGRESS` khi task code đầu tiên thực sự bắt đầu; việc chỉ tạo branch không được tính là implementation progress.
