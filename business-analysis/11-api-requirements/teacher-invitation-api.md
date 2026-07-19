@@ -29,8 +29,8 @@ Trong MVP:
 | GET | `/api/v1/admin/teacher-invitations/{invitationId}` | Xem chi tiết invitation | Admin | `teacher_invitation.view` |
 | POST | `/api/v1/admin/teacher-invitations/{invitationId}/copy-events` | Ghi nhận copy link nếu tracking | Admin | `teacher_invitation.copy_link` |
 | POST | `/api/v1/admin/teacher-invitations/{invitationId}/revoke` | Revoke invitation | Admin | `teacher_invitation.revoke` |
-| GET | `/api/v1/teacher/invitations/{token}` | Teacher preview invitation | Public | Token valid |
-| POST | `/api/v1/teacher/invitations/{token}/accept` | Teacher accept và tạo password | Public | Token valid |
+| POST | `/api/v1/teacher/invitations/preview` | Teacher preview invitation; token nằm trong strict body | Public | Token valid + rate limit |
+| POST | `/api/v1/teacher/invitations/accept` | Teacher accept và tạo password; token nằm trong strict body | Public | Token valid + rate limit |
 
 ## Create Teacher Invitation
 
@@ -56,17 +56,23 @@ Trong MVP:
 {
   "success": true,
   "data": {
-    "invitationId": "64f000000000000000000701",
-    "email": "teacher@example.com",
-    "role": "TEACHER",
-    "status": "PENDING",
-    "deliveryMethod": "MANUAL_COPY",
-    "invitationLink": "https://microlearning.app/teacher/invite?token=abc123xyz",
-    "expiresAt": "2026-07-17T00:00:00.000Z",
-    "createdAt": "2026-07-10T00:00:00.000Z"
+    "invitation": {
+      "id": "64f000000000000000000701",
+      "email": "teacher@example.com",
+      "status": "PENDING",
+      "deliveryMethod": "MANUAL_COPY",
+      "invitationLink": "https://microlearning.app/teacher/invite?token=<opaque-token>",
+      "expiresAt": "2026-07-17T00:00:00.000Z",
+      "copyCount": 0,
+      "lastCopiedAt": null,
+      "createdAt": "2026-07-10T00:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z"
+    }
   }
 }
 ```
+
+`invitationLink` chỉ có trong response `201` này và response phải `Cache-Control: no-store`; list/detail không trả hoặc tái tạo field đó.
 
 ## List Teacher Invitations
 
@@ -85,7 +91,6 @@ Trong MVP:
 {
   "id": "64f000000000000000000701",
   "email": "teacher@example.com",
-  "role": "TEACHER",
   "status": "PENDING",
   "deliveryMethod": "MANUAL_COPY",
   "expiresAt": "2026-07-17T00:00:00.000Z",
@@ -101,9 +106,12 @@ Trong MVP:
 
 ```json
 {
+  "eventId": "019c5cb4-0b51-7000-8000-000000000002",
   "channelHint": "ZALO"
 }
 ```
+
+`eventId` là UUID bắt buộc để retry idempotent. API này chỉ ghi nhận clipboard success, không nhận hoặc trả raw link.
 
 ### Response
 
@@ -111,26 +119,34 @@ Trong MVP:
 {
   "success": true,
   "data": {
-    "invitationId": "64f000000000000000000701",
-    "copyCount": 2,
-    "lastCopiedAt": "2026-07-10T09:30:00.000Z",
-    "lastCopyChannelHint": "ZALO"
+    "copyEventId": "64f000000000000000000902",
+    "recordedAt": "2026-07-10T09:30:00.000Z"
   }
 }
 ```
 
 ## Preview Invitation
 
+### Request
+
+```json
+{
+  "token": "<opaque-teacher-invitation-token>"
+}
+```
+
 ### Response
 
 ```json
 {
   "success": true,
   "data": {
-    "email": "teacher@example.com",
-    "role": "TEACHER",
-    "status": "PENDING",
-    "expiresAt": "2026-07-17T00:00:00.000Z"
+    "invitation": {
+      "email": "teacher@example.com",
+      "status": "PENDING",
+      "deliveryMethod": "MANUAL_COPY",
+      "expiresAt": "2026-07-17T00:00:00.000Z"
+    }
   }
 }
 ```
@@ -149,6 +165,7 @@ invitedBy internal data
 
 ```json
 {
+  "token": "<opaque-teacher-invitation-token>",
   "fullName": "Nguyen Van A",
   "email": "teacher@example.com",
   "password": "NewPassword123!",
@@ -162,11 +179,14 @@ invitedBy internal data
 {
   "success": true,
   "data": {
-    "userId": "64f000000000000000000001",
-    "email": "teacher@example.com",
-    "fullName": "Nguyen Van A",
-    "role": "TEACHER",
-    "status": "ACTIVE"
+    "user": {
+      "id": "64f000000000000000000001",
+      "email": "teacher@example.com",
+      "fullName": "Nguyen Van A",
+      "role": "TEACHER",
+      "status": "ACTIVE"
+    },
+    "nextAction": "LOGIN"
   }
 }
 ```
@@ -187,9 +207,12 @@ invitedBy internal data
 {
   "success": true,
   "data": {
-    "invitationId": "64f000000000000000000701",
-    "status": "REVOKED",
-    "revokedAt": "2026-07-10T10:00:00.000Z"
+    "invitation": {
+      "id": "64f000000000000000000701",
+      "status": "REVOKED",
+      "revokedAt": "2026-07-10T10:00:00.000Z"
+    },
+    "auditId": "64f000000000000000000903"
   }
 }
 ```
@@ -221,7 +244,7 @@ invitedBy internal data
 ## Security Notes
 
 - Database chỉ lưu `tokenHash`.
-- Raw token chỉ nằm trong link trả về cho Admin có quyền hoặc Teacher route.
+- Raw token chỉ được trả trong one-time create response, sau đó chỉ tồn tại tạm thời trong activation request memory; list/detail không tái tạo được link.
 - Không log raw token.
 - Accept invitation phải kiểm token, status, expiry và email matching.
 - Admin không bao giờ nhập hoặc biết password Teacher.

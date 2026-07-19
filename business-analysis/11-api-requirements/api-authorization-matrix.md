@@ -41,7 +41,7 @@ Tài liệu này xác định quyền truy cập API theo role và object-level 
 | Endpoint | Student | Teacher | Admin | Rule |
 | --- | --- | --- | --- | --- |
 | `POST /classrooms/join-by-code` | Có | No | No | Student active, policy cho phép |
-| `GET /classrooms/invitations/{token}` | Public/Student | Có preview hạn chế | Có preview hạn chế | Không lộ dữ liệu riêng tư |
+| `POST /classrooms/invite-links/preview` | Public/Student | Public preview hạn chế | Public preview hạn chế | Token trong strict body; rate limit, `no-store`, không lộ dữ liệu riêng tư |
 | `POST /classrooms/join-by-token` | Có | No | No | Student active, token hợp lệ |
 
 ## Teacher APIs
@@ -50,7 +50,7 @@ Tài liệu này xác định quyền truy cập API theo role và object-level 
 | --- | --- | --- | --- |
 | `POST /classrooms` | Có | No | Teacher active và policy cho phép |
 | `PATCH /classrooms/{id}` | Owned | Governance only | Teacher owner |
-| `DELETE /classrooms/{id}` | Owned | Governance only | Archive, không hard delete |
+| `DELETE /classrooms/{id}` | Owned | No mặc định | Owner Teacher archive mềm với reason và CAS; Admin governance action phải dùng route riêng nếu được duyệt |
 | `GET /teacher/courses/{courseId}/dashboard` | Owned | Governance only | Teacher owner hoặc permission đặc biệt |
 | `GET /teacher/courses/{courseId}/progress` | Owned | Governance only | Sort/processScore từ backend |
 | `PATCH /teacher/lessons/{lessonId}/deadline` | Owned | No | Teacher owner Course; reason bắt buộc khi reset Lesson đã publish/assigned |
@@ -71,7 +71,7 @@ Tài liệu này xác định quyền truy cập API theo role và object-level 
 | `PATCH /admin/users/{id}/roles` | Giới hạn | Có | `role.assign_limited` hoặc `admin.full_access` |
 | `POST /admin/teacher-invitations` | Có | Có | `teacher_invitation.create` |
 | `POST /admin/teacher-invitations/{id}/revoke` | Có | Có | `teacher_invitation.revoke` |
-| `PATCH /admin/settings/enrollment-policy` | Có | Có | `policy.enrollment.update` |
+| `PATCH /admin/settings/enrollment-policy` | Có | Có | `enrollment_policy.update` |
 | `GET /admin/audit-logs` | Có | Có | `audit_log.view` |
 | `GET /admin/reports/usage` | Có | Có | `report.view_all` |
 | `GET /admin/system-settings` | Có giới hạn | Có | `system_setting.view` |

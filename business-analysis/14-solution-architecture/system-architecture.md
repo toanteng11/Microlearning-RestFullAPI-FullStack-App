@@ -11,22 +11,20 @@ Student / Teacher / Admin Browser
               |
               | HTTPS
               v
-  Frontend Hosting / CDN / Reverse Proxy
+       Google Cloud Run HTTPS Ingress
               |
-              | Static ReactJS assets; /api proxy hoặc API URL
               v
-       ReactJS Single Page Application
-              |
-              | HTTPS JSON REST API + Bearer access token
-              v
-     Node.js + ExpressJS Modular API Service
+  Single-origin Application Container
+       |-- ReactJS Single Page Application
+       |-- Node.js + ExpressJS Modular API Service
+       |-- Swagger/OpenAPI
        |          |              |             |
-       |          |              |             +--> Swagger/OpenAPI (controlled access in non-public environments)
+       |          |              |             +--> Cloud Logging / Monitoring
        |          |              +--> Structured log / metrics / health endpoint
        |          +--> Object Storage (file, image, video metadata/object)
-       +--> MongoDB (transactional data, progress summary, audit log)
+       +--> MongoDB Atlas (transactional data, progress summary, audit log)
 
-CI/CD Pipeline --> build/test/scan --> container registry --> cloud runtime
+GitHub Actions --> build/test/scan --> Artifact Registry --> Cloud Run revision
 Monitoring / Alerting <---------------- logs, metrics, health checks
 ```
 
@@ -35,7 +33,7 @@ Monitoring / Alerting <---------------- logs, metrics, health checks
 | Lớp | Thành phần | Trách nhiệm | Không được làm |
 | --- | --- | --- | --- |
 | Presentation | ReactJS SPA, React Router, page/component/state | Hiển thị màn hình, điều hướng, form validation UX, gọi API, xử lý loading/empty/error state | Tin rằng hidden button là kiểm soát quyền; lưu secret; tự tính điểm chính thức |
-| Edge/Delivery | CDN, static hosting, reverse proxy, TLS | Phục vụ asset frontend, HTTPS, route SPA fallback, có thể rate limit/WAF | Chứa business rule hoặc database credential |
+| Edge/Delivery | Cloud Run managed HTTPS ingress và application static middleware | Phục vụ HTTPS, React asset, SPA fallback và route API/Swagger/health đúng thứ tự | Chứa database credential trong frontend bundle hoặc rewrite API lỗi thành `index.html` |
 | Application/API | Express route, controller, service/use case, repository, middleware | Xác thực, phân quyền, business rule, validation, API response, audit, orchestration | Truy cập MongoDB trực tiếp từ controller không kiểm soát; trả raw model nhạy cảm |
 | Data | MongoDB, indexes, backup; object storage | Lưu dữ liệu nghiệp vụ, file/media object, read model, audit log | Lưu plain password/raw token hoặc public object mặc định |
 | Operations | Docker, CI/CD, registry, cloud runtime, monitoring | Build, cấu hình, deploy, health check, backup, rollback, alert | Đưa secret vào source code/image/log |
@@ -44,8 +42,8 @@ Monitoring / Alerting <---------------- logs, metrics, health checks
 
 | From | To | Giao thức / dữ liệu | Quy tắc bắt buộc |
 | --- | --- | --- | --- |
-| Browser | Frontend host | HTTPS | Chỉ tải static asset; HTTPS ở Staging/Production. |
-| ReactJS SPA | REST API | HTTPS, JSON, `Authorization: Bearer <accessToken>` khi protected | Base URL theo environment; lỗi API theo chuẩn mục 11. |
+| Browser | Cloud Run application origin | HTTPS | Tải React asset và gọi cùng origin; HTTPS ở Staging/Production. |
+| ReactJS SPA | REST API cùng origin | HTTPS, JSON, `Authorization: Bearer <accessToken>` khi protected | Relative API base `/api/v1`; lỗi API theo chuẩn mục 11; refresh cookie `SameSite=Lax`. |
 | API | MongoDB | TLS/connection string từ secret | Chỉ repository/data access layer truy cập database. |
 | API | Object storage | SDK/HTTPS, credential runtime | Validate ownership/type/size trước upload; lưu metadata và object key, không tin URL do client tự gửi. |
 | API | Monitoring/log platform | Structured logs/metrics/health | Mask secret/token/password; gắn requestId/correlationId. |

@@ -26,7 +26,7 @@ ReactJS application nên được chia thành 4 shell chính:
 | `/forgot-password` | Forgot Password | Gửi yêu cầu reset password. |
 | `/reset-password` | Reset Password | Đặt mật khẩu mới bằng token hợp lệ. |
 | `/teacher/invite` | Teacher Invitation Accept | Teacher mở link mời, nhập thông tin và tự tạo mật khẩu. |
-| `/join/invite/:token` | Invite Link Join Landing | Student mở link tham gia Classroom/Course. |
+| `/join/invite#token=...` | Invite Link Join Landing | React đọc fragment một lần, xóa token khỏi URL rồi dùng clean route `/join/invite` cho preview/auth/join. |
 | `/join/code` | Join By Code | Student nhập Class Code. |
 
 ### Student Routes

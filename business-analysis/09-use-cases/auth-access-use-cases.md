@@ -212,7 +212,7 @@ Tài liệu này đặc tả các use case liên quan đến authentication, ses
 | Related FR | FR-006, FR-007, FR-008 |
 | Related User Stories | US-TCH-INV-001 đến US-TCH-INV-004 |
 | UI Touchpoints | `/teacher/invite?token=...` |
-| API Touchpoints | `GET /api/v1/teacher-invitations/:token`, `POST /api/v1/teacher-invitations/accept` |
+| API Touchpoints | `POST /api/v1/teacher/invitations/preview`, `POST /api/v1/teacher/invitations/accept`; token nằm trong strict body |
 
 ### Preconditions
 
@@ -249,20 +249,21 @@ Tài liệu này đặc tả các use case liên quan đến authentication, ses
 | Priority | Must |
 | Related FR | FR-001, FR-002, FR-022, FR-023 |
 | Related User Stories | US-AUTH-020 |
-| UI Touchpoints | `/join/invite/:token` |
-| API Touchpoints | `GET /api/v1/classrooms/invitations/:token`, `POST /api/v1/classrooms/join-by-token` |
+| UI Touchpoints | `/join/invite#token=...`, sau capture dùng clean route `/join/invite` |
+| API Touchpoints | `POST /api/v1/classrooms/invite-links/preview`, `POST /api/v1/classrooms/join-by-token`; token nằm trong strict body |
 
 ### Main Flow
 
 | Step | Actor/System | Hành động |
 | --- | --- | --- |
-| 1 | Guest/Student | Mở Invite Link. |
-| 2 | System | Validate sơ bộ token/policy để trả preview tối thiểu, không cấp quyền Classroom. |
-| 3 | System | Nếu chưa login, redirect Login; cung cấp link Student Register nếu Guest chưa có account và giữ join context an toàn. |
-| 4 | Guest/Student | Register nếu cần; sau registration quay lại Login và đăng nhập bằng account `STUDENT`. |
-| 5 | System | Sau Login, khôi phục context và validate lại token, policy, Classroom, account status và Enrollment. |
-| 6 | Student | Confirm join. |
-| 7 | System | Tạo đúng một Enrollment nếu hợp lệ và redirect Classroom detail. |
+| 1 | Guest/Student | Mở Invite Link `/join/invite#token=...`. |
+| 2 | Frontend | Capture token một lần, xóa fragment bằng `history.replaceState`, sau đó gọi preview bằng POST body. |
+| 3 | System | Validate sơ bộ token/policy để trả preview tối thiểu với `Cache-Control: no-store`, không cấp quyền Classroom. |
+| 4 | System | Nếu chưa login, redirect Login; cung cấp link Student Register nếu Guest chưa có account và giữ join context an toàn. |
+| 5 | Guest/Student | Register nếu cần; sau registration quay lại Login và đăng nhập bằng account `STUDENT`. |
+| 6 | System | Sau Login, khôi phục context và validate lại token, policy, Classroom, account status và Enrollment. |
+| 7 | Student | Confirm join. |
+| 8 | System | Tạo đúng một Enrollment nếu hợp lệ, xóa join context và redirect Classroom detail. |
 
 ### Exception Flows
 

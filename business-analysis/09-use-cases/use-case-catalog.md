@@ -28,7 +28,7 @@ Tài liệu này là danh mục use case chính thức của hệ thống **Micr
 | UC-004 | Generate / Regenerate Class Code | Teacher | Must | FR-021, FR-025 | US-TCH-002, US-TCH-031 | `/teacher/classrooms/:id/settings` |
 | UC-005 | Generate Invite Link | Teacher | Must | FR-022, FR-025 | US-TCH-003, US-TCH-032 | `/teacher/classrooms/:id/settings` |
 | UC-006 | Join Classroom bằng Class Code | Student | Must | FR-021, FR-023 | US-STU-002 | `/join/code` |
-| UC-007 | Join Classroom bằng Invite Link | Student | Must | FR-022, FR-023 | US-STU-003 | `/join/invite/:token` |
+| UC-007 | Join Classroom bằng Invite Link | Student | Must | FR-022, FR-023 | US-STU-003 | `/join/invite#token=...` |
 | UC-009 | Hoàn thành Lesson | Student | Must | FR-052, FR-059 | US-STU-006, US-STU-030 | `/student/lessons/:lessonId` |
 | UC-010 | Làm Quiz | Student | Must | FR-036 đến FR-040 | US-STU-007, US-STU-036 đến US-STU-042 | `/student/quizzes/:quizId` |
 | UC-011 | Tạo Course | Teacher | Must | FR-026 | US-TCH-005 | `/teacher/classrooms/:id/courses/new` |
@@ -72,7 +72,7 @@ Tài liệu này là danh mục use case chính thức của hệ thống **Micr
 | UC-049 | View / Update Profile | User | Should | FR-005 | US-AUTH-015, US-AUTH-016 | `/profile` |
 | UC-050 | Route Authorization Guard | System/User | Must | FR-005 | US-AUTH-006, US-AUTH-007 | All protected routes |
 | UC-051 | Accept Teacher Invitation | Teacher | Must | FR-007 | US-TCH-INV-001 đến US-TCH-INV-004 | `/teacher/invite?token=...` |
-| UC-052 | Open Public Join Link Before Login | Guest/Student | Must | FR-022, FR-023 | US-AUTH-020 | `/join/invite/:token` |
+| UC-052 | Open Public Join Link Before Login | Guest/Student | Must | FR-022, FR-023 | US-AUTH-020 | `/join/invite#token=...` |
 | UC-053 | Xem Classroom Detail Và Classwork | Student | Must | FR-051 | US-STU-025 đến US-STU-029 | `/student/classrooms/:id` |
 | UC-054 | Học Flashcard | Student | Must | FR-053 | US-STU-033 | `/student/lessons/:lessonId/flashcards` |
 | UC-055 | Mở Learning Resource | Student | Should | FR-032, FR-068 | US-STU-034, US-STU-035 | Resource viewer |

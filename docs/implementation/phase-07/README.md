@@ -2,7 +2,17 @@
 
 ## Trạng thái
 
-`Planned`. Kế hoạch chi tiết được baseline sau khi Cloud/provider decisions được chốt.
+`PROVIDER_BASELINE_ACCEPTED`; Phase 07 vẫn `Planned` và chưa có deployment evidence.
+
+Cloud/provider decision đã được chốt ngày `2026-07-17`:
+
+- Google Cloud Run cho một application service phục vụ React, REST API và Swagger cùng origin.
+- MongoDB Atlas cho managed MongoDB.
+- GitHub Actions cho CI/CD.
+- Google Artifact Registry, Secret Manager và Cloud Logging/Monitoring là supporting services.
+- Không sử dụng Firebase.
+
+Implementation baseline: [cloud-provider-baseline.md](cloud-provider-baseline.md).
 
 ## Mục tiêu sơ bộ
 
@@ -19,4 +29,4 @@ Nâng CI baseline thành CI/CD hoàn chỉnh, đóng gói artifact bất biến,
 
 ## Dependency
 
-Cloud account/provider, domain/TLS, budget, registry, managed MongoDB và toàn bộ application increment.
+Provider architecture đã resolved. Dependency còn lại là Google Cloud/Atlas account, billing/budget, domain/TLS decision, Production Atlas tier/backup/network policy, service identity, registry/runtime configuration và toàn bộ application increment.

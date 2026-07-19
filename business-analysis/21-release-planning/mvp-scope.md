@@ -77,7 +77,7 @@ Các item sau chỉ đưa vào `REL-MVP-1` khi Must capability đã không bị 
 | Deadline Calendar | Deadline creation/reset/To-do propagation là Must; standalone Calendar view là Should. | Không defer deadline logic vì Calendar UI chưa ready. |
 | Process score | MVP default is backend `processScore = progressPercentage`; weighted formula là Post-MVP decision. | Change formula cần BR/metric/recalculation/report/UAT impact analysis. |
 | Resource/upload | Resource may use safe link/basic support; full upload/storage provider chưa assumed. | Decide feature-gate or provider/policy before accepting media/upload scope. |
-| Cloud release | Cloud provider/account chưa selected ở BA stage. | Resolve ISS-001/ADR/environment readiness before Staging Cloud commitment. |
+| Cloud release | Provider baseline đã chọn; account/billing/quota/domain và remote deployment evidence chưa có. | Implement ADR-010/ISS-001 và pass Phase 07 environment readiness trước Staging Cloud commitment. |
 
 ## MVP Acceptance Summary
 

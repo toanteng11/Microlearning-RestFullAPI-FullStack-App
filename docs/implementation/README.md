@@ -61,25 +61,50 @@ docs/implementation/
 |   |-- exit-report.md
 |   `-- phase-exit-evidence.md
 |-- phase-03/
+|   |-- README.md
+|   |-- scope-and-deliverables.md
+|   |-- phase-plan.md
+|   |-- technical-decisions.md
+|   |-- architecture-and-module-design.md
+|   |-- classroom-lifecycle-and-enrollment.md
+|   |-- security-ownership-and-governance.md
+|   |-- data-model-and-indexes.md
+|   |-- api-contract.md
+|   |-- backend-implementation-plan.md
+|   |-- frontend-implementation-plan.md
+|   |-- devops-environment-and-seeding.md
+|   |-- testing-strategy.md
+|   |-- work-breakdown-structure.md
+|   |-- acceptance-criteria.md
+|   |-- traceability-matrix.md
+|   |-- risk-and-issues.md
+|   |-- implementation-checklist.md
+|   |-- developer-start-guide.md
+|   |-- development-readiness-review.md
+|   |-- evidence-register.md
+|   |-- phase-exit-evidence.md
+|   `-- exit-report.md
 |-- phase-04/
 |-- phase-05/
 |-- phase-06/
 |-- phase-07/
+|   |-- README.md
+|   `-- cloud-provider-baseline.md
 `-- phase-08/
 ```
 
 ## 3. Phase Catalog
 
-| Folder      | Phase                    | Outcome                                                           | Trạng thái           |
-| ----------- | ------------------------ | ----------------------------------------------------------------- | -------------------- |
-| `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                      | Completed            |
-| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation | `39/39` Pass; sign-off pending |
-| `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link và roster                  | Planned              |
-| `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                            | Planned              |
-| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                         | Planned              |
-| `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                       | Planned              |
-| `phase-07/` | DevOps and Deployment    | Registry, Cloud, CI/CD, monitoring, backup/rollback               | Planned              |
-| `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                              | Planned              |
+| Folder      | Phase                    | Outcome                                                             | Trạng thái                      |
+| ----------- | ------------------------ | ------------------------------------------------------------------- | ------------------------------- |
+| `phase-01/` | Project Foundation       | Web/API/MongoDB/Swagger/Docker/CI foundation                        | Completed                       |
+| `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation   | Merged; `39/39` Pass            |
+| `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | `APPROVED_PENDING_PR_MERGE`; Not Started |
+| `phase-04/` | Learning Content         | Course/module/lesson/resource/deadline                              | Planned                         |
+| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Planned                         |
+| `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                         | Planned                         |
+| `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Provider accepted; Planned      |
+| `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                                | Planned                         |
 
 ## 4. Trình tự sử dụng
 

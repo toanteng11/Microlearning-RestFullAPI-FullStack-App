@@ -8,7 +8,7 @@ Docker tạo runtime nhất quán cho ReactJS Frontend và Node.js/ExpressJS Bac
 
 | ID | Yêu cầu | Lý do |
 | --- | --- | --- |
-| DKR-001 | Frontend và Backend có Dockerfile độc lập. | Build/cache/deploy/rollback riêng theo component. |
+| DKR-001 | Frontend/Backend giữ Dockerfile độc lập cho Local/CI; Cloud Run có thêm multi-stage application Dockerfile. | Không phá Local Compose nhưng Cloud deploy một image/digest cùng origin. |
 | DKR-002 | Dùng base image Node.js LTS đã pin major/version theo policy. | Build tái lập và giảm khác biệt runtime. |
 | DKR-003 | Multi-stage build cho Production khi phù hợp. | Image nhỏ hơn, không mang dev dependency/source dư thừa. |
 | DKR-004 | Không COPY `.env`, secret, key hoặc Production config vào image. | Secret phải inject tại runtime/secret manager. |
@@ -21,8 +21,9 @@ Docker tạo runtime nhất quán cho ReactJS Frontend và Node.js/ExpressJS Bac
 
 | Service | Image responsibility | Port Local ví dụ | Persistent data | Production direction |
 | --- | --- | --- | --- | --- |
-| frontend | Build React static bundle và phục vụ qua static web server hoặc tạo artifact static | `3000`/`80` tùy dev/prod mode | Không | Static hosting/CDN hoặc frontend container nếu platform yêu cầu. |
+| frontend | Build React static bundle và phục vụ qua static web server cho Local/CI | `3000`/`80` tùy local mode | Không | React `dist` được copy vào `microlearning-app` image khi Cloud deploy. |
 | backend | Chạy Node.js/ExpressJS REST API | `4000` hoặc port được config | Không | Stateless container/service, có thể scale replicas. |
+| application | Build React + API và chạy Node.js phục vụ SPA/API/Swagger | `PORT` do Cloud Run inject | Không | Image `microlearning-app` duy nhất cho Cloud Run. |
 | mongodb | Database cho Local/test integration | `27017` nội bộ Compose | Named volume Local | Managed MongoDB ở Staging/Production direction. |
 | mongo-express (optional) | Debug Local MongoDB | Chỉ bind local/private | Không | Không deploy Production. |
 | worker (future) | Async summary/notification/media task nếu cần | Không public | Queue/data source riêng | Không đưa vào MVP nếu chưa có use case/load chứng minh. |
@@ -54,12 +55,26 @@ Build stage:
   - build React static bundle with PUBLIC API base URL for target environment
 
 Delivery stage:
-  - publish static artifact to CDN/static host
-  OR serve from a minimal static web server container
+  - Local/CI: serve from the existing minimal static web server container
+  - Cloud: copy static artifact into the Cloud Run application image
   - configure SPA history fallback so direct refresh on protected route does not return 404
 ```
 
 `VITE_*`, `REACT_APP_*` hoặc prefix public tương đương được embedded vào bundle lúc build và phải được xem là public. Không để JWT secret, database URI hoặc storage credential vào frontend build.
+
+### Cloud Run Application Image
+
+```text
+Build stages:
+  - build React static bundle
+  - build Node.js API
+
+Runtime stage:
+  - copy API runtime output and React dist
+  - run one non-root Node.js process on Cloud Run PORT
+  - route API/Swagger/health before SPA fallback
+  - inject config/secret at runtime
+```
 
 ## Docker Compose Local Development
 

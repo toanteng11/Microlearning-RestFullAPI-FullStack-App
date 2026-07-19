@@ -8,7 +8,7 @@ Rollback là đưa application/static artifact về bản ổn định trước 
 
 | ID | Nguyên tắc | Quy tắc áp dụng |
 | --- | --- | --- |
-| RBK-01 | Roll back immutable artifact | Chọn prior stable frontend/backend image digest/version đã được verify, không chọn tag mutable `latest`. |
+| RBK-01 | Roll back immutable artifact | Chọn prior stable `microlearning-app` image digest/Cloud Run revision đã verify, không chọn tag mutable `latest`. |
 | RBK-02 | Stop harmful rollout first | Pause/cancel deployment concurrency trước khi rollback để tránh version bị ghi đè. |
 | RBK-03 | Measure impact | Xác định environment, affected role/flow/data, start time, recent deploy/migration trước action. |
 | RBK-04 | Database safety first | Không chạy destructive down-migration/restore chỉ vì API rollback; review schema/data compatibility. |
@@ -30,9 +30,9 @@ Rollback là đưa application/static artifact về bản ổn định trước 
 
 | Change type | Frontend rollback | Backend rollback | Database action | Preferred recovery |
 | --- | --- | --- | --- | --- |
-| Static UI bug, API contract unchanged | Usually safe | Not required | None | Re-publish prior frontend artifact. |
-| Backend bug, backward-compatible data/API | Check UI compatibility | Usually safe | None | Roll API image to prior stable digest. |
-| API breaking change | Check old frontend contract | May be unsafe alone | None/compat layer | Prefer compatibility/forward fix; roll both components if tested. |
+| Static UI bug, API contract unchanged | Whole application revision rollback or forward fix | API cùng revision bị rollback dù không lỗi | None | Ưu tiên forward fix nhỏ; nếu critical thì rollback prior stable application digest. |
+| Backend bug, backward-compatible data/API | React cùng revision bị rollback | Usually safe | None | Roll Cloud Run application to prior stable digest. |
+| API breaking change | Web/API bundled nhưng vẫn phải kiểm contract | Whole revision rollback có thể an toàn nếu data compatible | None/compat layer | Prefer compatibility/forward fix; rollback whole tested revision khi phù hợp. |
 | Additive DB field/index | Usually safe | Usually safe if old code tolerates field | Keep new field/index | Roll app only; do not remove data. |
 | Destructive schema/data migration | Unknown | Unsafe without analysis | High risk | Prefer forward fix or restore approved backup; do not automatic rollback. |
 | Progress/grade formula change | UI likely safe | May change output | Recalculate/read model risk | Disable/forward fix/rebuild summary, preserve source data/audit. |
@@ -44,7 +44,7 @@ Rollback là đưa application/static artifact về bản ổn định trước 
 1. Detect alert/user report/smoke failure and declare incident owner.
 2. Confirm environment, severity, release version/digest, deployment time and any migration/config change.
 3. Pause rollout and preserve logs/metrics/evidence.
-4. Decide: rollback frontend, backend, both, configuration reversal, forward fix, or data recovery escalation.
+4. Decide: rollback whole Cloud Run application revision, configuration reversal, forward fix, or data recovery escalation.
 5. Select last known-good artifact identity and verify compatibility matrix.
 6. Execute protected rollback through CI/CD/platform, not an untracked manual replacement where possible.
 7. Verify health/version, API/UI/role smoke, error/latency and monitoring recovery.
@@ -52,16 +52,16 @@ Rollback là đưa application/static artifact về bản ổn định trước 
 9. Create root-cause/follow-up; re-enable rollout only after approval.
 ```
 
-## Frontend Rollback
+## Frontend Defect Trong Combined Image
 
 | Step | Check |
 | --- | --- |
-| Select artifact | Use prior verified static bundle/release version; retain version/digest record. |
-| Deploy | Publish/invalidate CDN/cache according to provider; do not leave half old/half new asset mismatches. |
-| Verify | Load app in clean browser, refresh protected route, login and representative Student/Teacher/Admin pages. |
-| Compatibility | Confirm API still supports prior frontend contract; otherwise coordinated backend rollback/compatibility fix. |
+| Select action | Ưu tiên forward fix nếu API/data ổn; nếu lỗi critical, chọn prior stable application digest. |
+| Deploy | Roll back Cloud Run revision; không thay static file thủ công trong running container. |
+| Verify | Load app in clean browser, refresh protected route, login và representative Student/Teacher/Admin pages; smoke API cùng revision. |
+| Compatibility | Confirm prior whole revision vẫn tương thích database/config hiện tại. |
 
-## Backend Rollback
+## Cloud Run Application Rollback
 
 | Step | Check |
 | --- | --- |
@@ -95,7 +95,7 @@ Rollback là đưa application/static artifact về bản ổn định trước 
 
 ## Acceptance Criteria
 
-- Last known-good frontend/backend artifact identity remains available under registry/static release retention policy.
+- Last known-good `microlearning-app` digest và Cloud Run revision còn sẵn trong registry/runtime retention policy.
 - Deployment record includes migration/config compatibility and clear rollback/forward-fix choice.
 - Rollback does not blindly restore/delete learning data, progress, submission, grade or audit records.
 - Health/version/role smoke and monitoring verification occur after rollback.

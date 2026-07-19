@@ -28,11 +28,19 @@ Việc phê duyệt áp dụng cho các nhóm tài liệu sau:
 
 | Role | Tên | Trách nhiệm | Ngày phê duyệt | Trạng thái | Ghi chú |
 | --- | --- | --- | --- | --- | --- |
-| Product Owner | [Chưa chỉ định] | Phê duyệt product scope, business value, priorities và release readiness | [Chờ phê duyệt] | Pending | Phê duyệt nghiệp vụ cuối cùng |
+| Product Owner | Project Owner (repository owner) | Phê duyệt product scope, business value, priorities và release readiness | 2026-07-19 | Approved | Phê duyệt working baseline; release sign-off thực hiện ở release gate |
 | Business Analyst | [Chưa chỉ định] | Chịu trách nhiệm chất lượng BA documentation, requirement traceability và change control | 2026-07-07 | Drafted | Đã chuẩn bị phần Document Control |
 | Technical Lead | [Chưa chỉ định] | Review API, architecture, data model, security và deployment feasibility | [Chờ phê duyệt] | Pending | Cần technical review |
 | QA Lead | [Chưa chỉ định] | Review acceptance criteria, UAT plan và test scenario readiness | [Chờ phê duyệt] | Pending | Cần QA review |
 | DevOps Engineer | [Chưa chỉ định] | Review Docker, CI/CD, cloud deployment, environment và rollback requirements | [Chờ phê duyệt] | Pending | Cần DevOps review |
+
+## Phase 03 Working Baseline Approval
+
+| Scope | Decision authority | Review date | Decision | Remaining condition |
+| --- | --- | --- | --- | --- |
+| BA revision `1.41`, `DEC-016/017` và `P03-ADR-001..018` | Project Owner theo governance đồ án cá nhân | `2026-07-19` | Approved for planning baseline | Planning PR required checks pass và merge vào `main` (`P03-GA-07`) |
+
+Approval này cho phép đóng review nội dung Phase 03 nhưng chưa cho phép code trên branch tài liệu. `READY_TO_CODE` chỉ có hiệu lực sau khi repository lưu được PR, Actions và merge evidence.
 
 ## Tiêu Chí Phê Duyệt
 

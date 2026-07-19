@@ -4,6 +4,17 @@
 
 Tài liệu này quy định cách quản lý configuration và secret để ứng dụng chạy đúng ở từng environment mà không làm lộ thông tin nhạy cảm. Sai secret/config có thể làm lộ database, cho phép token giả, mở CORS quá rộng hoặc deploy nhầm environment; vì vậy đây là phần bắt buộc của DevOps, không phải việc “để sau”.
 
+## Accepted Cloud Secret Baseline
+
+| Nơi quản lý | Dữ liệu được phép chứa | Quy tắc |
+| --- | --- | --- |
+| Google Secret Manager | `MONGODB_URI`, JWT/session signing material và runtime credential nhạy cảm | Cloud Run service account chỉ có `secretAccessor` trên đúng secret cần dùng; tách Staging/Production. |
+| GitHub Environments/Actions | Non-secret deploy metadata và bootstrap reference tối thiểu | Ưu tiên Workload Identity Federation; không lưu service-account JSON key dài hạn. |
+| Cloud Run environment variables | Config không nhạy cảm như environment, log level, public URL, TTL/rate settings | Secret phải được map từ Secret Manager, không paste plain value vào revision config nếu tránh được. |
+| MongoDB Atlas | Database user/role/network policy | Password/URI chỉ đi qua Secret Manager; không ghi vào BA, runbook, screenshot hoặc GitHub log. |
+
+Firebase configuration và Firebase secret không thuộc baseline. Free Tier/plan limit của Secret Manager phải được kiểm tra lại ở Phase 07; chỉ giữ active secret versions cần thiết và phá hủy version cũ sau rotation grace đã phê duyệt.
+
 ## Phân Loại
 
 | Loại | Ví dụ | Có thể vào frontend bundle? | Có thể commit repository? | Cách quản lý |

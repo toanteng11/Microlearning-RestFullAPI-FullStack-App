@@ -12,7 +12,7 @@ Incident Management áp dụng khi một Risk đã gây hoặc có dấu hiệu 
 | --- | --- | --- |
 | Nguy cơ chưa xảy ra | Risk | Chưa có restore rehearsal. |
 | Lỗi được phát hiện trong test, chưa ảnh hưởng user thực tế | Defect + linked Risk nếu có | UAT test phát hiện Student xem sai To-do. |
-| Blocker/decision/task đã biết nhưng không phải outage/breach | Issue | Cloud provider chưa chọn. |
+| Blocker/decision/task đã biết nhưng không phải outage/breach | Issue | Google Cloud project/billing chưa được cấu hình dù provider đã chọn. |
 | Service, data, security hoặc user workflow đang bị ảnh hưởng thực tế | Incident; có thể kèm Defect/Issue | Staging/Production API down sau deploy, token exposure, grade corruption. |
 
 ## Severity Và Quyền Xử Lý

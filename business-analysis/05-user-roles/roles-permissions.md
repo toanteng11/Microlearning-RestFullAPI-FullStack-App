@@ -267,7 +267,7 @@ action không yêu cầu Super Admin
 | Account Status | `account.block`, `account.unblock`, `account.deactivate`, `account.restore` | Quản lý trạng thái account |
 | Role Management | `role.view`, `role.assign_limited`, `role.revoke_limited` | Quản lý role trong phạm vi được cấp |
 | Classroom Governance | `classroom.view_all`, `classroom.status_update_admin`, `classroom.ownership_transfer` | Giám sát và quản trị Classroom |
-| Enrollment Policy | `policy.enrollment.view`, `policy.enrollment.update` | Cấu hình Class Code và Invite Link |
+| Enrollment Policy | `enrollment_policy.view`, `enrollment_policy.update` | Cấu hình Class Code và Invite Link |
 | File Policy | `policy.file.view`, `policy.file.update` | Cấu hình upload file |
 | Notification Policy | `policy.notification.view`, `policy.notification.update` | Cấu hình notification |
 | Reports | `report.view_all`, `report.export` | Xem/xuất report |

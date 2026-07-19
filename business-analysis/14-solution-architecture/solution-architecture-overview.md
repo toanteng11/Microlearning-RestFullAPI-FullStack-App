@@ -10,7 +10,7 @@ Tài liệu là kiến trúc định hướng cho MVP và Staging. Các quyết 
 
 | Có trong phạm vi | Không quyết định cố định ở tài liệu này |
 | --- | --- |
-| ReactJS Web Application, Node.js/ExpressJS RESTful API, MongoDB, object storage, Swagger/OpenAPI, Docker, CI/CD, Cloud runtime | Tên Cloud provider, UI component library, CI/CD provider, monitoring vendor và tên domain cụ thể |
+| ReactJS Web Application, Node.js/ExpressJS RESTful API, MongoDB Atlas, Swagger/OpenAPI, Docker, GitHub Actions và Google Cloud Run runtime | UI component library, object storage provider, Production Atlas tier, RPO/RTO và tên domain cụ thể |
 | RBAC, object-level authorization, JWT-based authentication, audit logging, health check | Native mobile app, microservices, AI recommendation engine, payment gateway |
 | Quy trình Teacher Invitation Link thủ công, Classroom join bằng code/link, progress/grade/to-do | Tích hợp tự động Gmail, Zalo, Facebook, SSO, HR/LMS ở MVP |
 
@@ -57,9 +57,9 @@ Tài liệu là kiến trúc định hướng cho MVP và Staging. Các quyết 
 
 ## Mức Độ Quyết Định
 
-- **Baseline kiến trúc MVP:** ReactJS, Node.js, ExpressJS, MongoDB, RESTful API, Swagger/OpenAPI, Docker và CI/CD/Cloud direction.
-- **Khuyến nghị triển khai:** modular monolith, MongoDB managed service cho Staging/Production, object storage cho file/media, reverse proxy/CDN cho static frontend.
-- **Cần chốt trước Production:** Cloud provider, database plan/region, object storage provider, CI/CD provider, domain/TLS, secrets manager, monitoring/alerting vendor, backup retention và resource sizing.
+- **Baseline kiến trúc MVP:** ReactJS, Node.js, ExpressJS, MongoDB, RESTful API, Swagger/OpenAPI, Docker và modular monolith.
+- **Baseline Cloud đã chọn:** một Google Cloud Run application image phục vụ React/API/Swagger cùng origin, MongoDB Atlas, GitHub Actions, Artifact Registry, Secret Manager và Cloud Logging/Monitoring; không dùng Firebase.
+- **Cần chốt trước Production:** Atlas tier/region/network/backup, object storage provider, domain/TLS, monitoring retention/alert thresholds, RPO/RTO và resource sizing.
 
 ## Tiêu Chí Hoàn Thành Mục 14
 

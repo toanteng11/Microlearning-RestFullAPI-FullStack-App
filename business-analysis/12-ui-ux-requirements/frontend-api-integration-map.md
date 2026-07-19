@@ -23,7 +23,7 @@ Tài liệu này ánh xạ các màn hình frontend với API endpoints ở mụ
 | Student Register | `POST /api/v1/auth/register` | Email trùng, validation, role/status injection; thành công chuyển Login, không coi registration response là authenticated session. |
 | Forgot Password | `POST /api/v1/auth/forgot-password` | Success message không tiết lộ email có tồn tại hay không nếu security yêu cầu. |
 | Reset Password | `POST /api/v1/auth/reset-password` | Token invalid/expired, password validation. |
-| Teacher Invitation Accept | `GET /api/v1/teacher/invitations/{token}`, `POST /api/v1/teacher/invitations/{token}/accept` | Token expired/revoked/accepted, password confirm, success redirect login. |
+| Teacher Invitation Accept | `POST /api/v1/teacher/invitations/preview`, `POST /api/v1/teacher/invitations/accept` | Đọc token một lần từ link, xóa token khỏi URL, gửi trong strict body; xử lý expired/revoked/accepted, password confirm và redirect Login. |
 
 ## Student Integration
 
@@ -32,7 +32,7 @@ Tài liệu này ánh xạ các màn hình frontend với API endpoints ở mụ
 | Student Dashboard | `GET /api/v1/students/me/dashboard`, `GET /api/v1/students/me/todo`, `GET /api/v1/students/me/notifications` | Dashboard partial loading, To-do priority, notification count. |
 | Student To-do | `GET /api/v1/students/me/todo`, `GET /api/v1/students/me/todo/{todoItemId}` | Filter by status/classroom/type, empty state, open activity by action URL. |
 | Join By Code | `POST /api/v1/classrooms/join-by-code` | Invalid code, already joined, enrollment locked, success redirect. |
-| Join By Link | `GET /api/v1/classrooms/invitations/{token}`, `POST /api/v1/classrooms/join-by-token` | Preview, login required, invalid token, already joined. |
+| Join By Link | `POST /api/v1/classrooms/invite-links/preview`, `POST /api/v1/classrooms/join-by-token` | Đọc/xóa token fragment trước network call; preview `no-store`, login required, invalid token, revalidate sau auth và already joined. |
 | Classroom List | `GET /api/v1/classrooms` | Empty state nếu chưa tham gia lớp nào. |
 | Classroom Detail | `GET /api/v1/classrooms/{classroomId}`, `GET /api/v1/classrooms/{classroomId}/announcements` | Forbidden nếu không thuộc Classroom, not found. |
 | Classwork/Course Detail | `GET /api/v1/courses`, `GET /api/v1/courses/{courseId}` | Chỉ hiển thị content đã publish/assigned cho Student. |
@@ -53,7 +53,7 @@ Tài liệu này ánh xạ các màn hình frontend với API endpoints ở mụ
 | Teacher Dashboard | `GET /api/v1/classrooms`, `GET /api/v1/courses`, `GET /api/v1/notifications` | Empty state cho Teacher mới, pending submission summary. |
 | Create Classroom | `POST /api/v1/classrooms` | Validation, success redirect, duplicate-like name warning nếu cần. |
 | Classroom Detail | `GET /api/v1/classrooms/{classroomId}`, `GET /api/v1/classrooms/{classroomId}/announcements` | Tabs Stream/Classwork/People/Grades, forbidden nếu không có quyền. |
-| Classroom Settings | `PATCH /api/v1/classrooms/{classroomId}/settings`, `POST /api/v1/classrooms/{classroomId}/class-code/regenerate`, `POST /api/v1/classrooms/{classroomId}/invite-links`, `PATCH /api/v1/classrooms/{classroomId}/invite-links/{linkId}` | Confirm regenerate/disable và copy feedback. |
+| Classroom Settings | `PATCH /api/v1/classrooms/{classroomId}/settings`, `POST /api/v1/classrooms/{classroomId}/class-code/regenerate`, `POST /api/v1/classrooms/{classroomId}/invite-links`, `POST /api/v1/classrooms/{classroomId}/invite-links/{linkId}/regenerate`, `POST /api/v1/classrooms/{classroomId}/invite-links/{linkId}/disable` | Confirm action, optimistic concurrency và one-time copy feedback; list/detail chỉ hiển thị metadata. |
 | Classroom Roster | `GET /api/v1/classrooms/{classroomId}/students` | Search, pagination, empty state. |
 | Create Course | `POST /api/v1/courses` | Validation, success redirect Course Dashboard. |
 | Teacher Course Dashboard | `GET /api/v1/teacher/courses/{courseId}/dashboard`, `GET /api/v1/teacher/courses/{courseId}/activities`, `GET /api/v1/teacher/courses/{courseId}/students`, `GET /api/v1/teacher/courses/{courseId}/progress` | Activities, deadlines, Student ranking sort `processScore DESC`. |
@@ -81,7 +81,7 @@ Tài liệu này ánh xạ các màn hình frontend với API endpoints ở mụ
 | Advanced User Search | `GET /api/v1/admin/users/search` | Initial state trước khi search, no result, query validation. |
 | Teacher Invitation Management | `POST /api/v1/admin/teacher-invitations`, `GET /api/v1/admin/teacher-invitations`, `POST /api/v1/admin/teacher-invitations/{invitationId}/copy-events`, `POST /api/v1/admin/teacher-invitations/{invitationId}/revoke` | Manual copy link, no auto email, revoke confirm, status badge. |
 | Role And Permission | `PATCH /api/v1/admin/users/{userId}/roles` | Permission guard, confirm, audit expectation. |
-| Classroom Governance | `GET /api/v1/admin/classrooms`, `GET /api/v1/admin/classrooms/{classroomId}`, `PATCH /api/v1/admin/classrooms/{classroomId}/ownership`, `PATCH /api/v1/admin/classrooms/{classroomId}/enrollment-lock` | Pagination, transfer ownership confirm, lock enrollment. |
+| Classroom Governance | `GET /api/v1/admin/classrooms`, `GET /api/v1/admin/classrooms/{classroomId}`; Conditional Should: `PATCH /api/v1/admin/classrooms/{classroomId}/ownership`, `PATCH /api/v1/admin/classrooms/{classroomId}/enrollment-lock` | Must chỉ có read-only list/detail và `memberCount`; transfer/lock ẩn hoặc bị deny cho đến khi được phê duyệt. |
 | Enrollment Policy | `GET /api/v1/admin/settings/enrollment-policy`, `PATCH /api/v1/admin/settings/enrollment-policy` | Toggle Code/Link policy, validation. |
 | Upload Policy | `GET /api/v1/admin/settings/file-upload-policy`, `PATCH /api/v1/admin/settings/file-upload-policy` | File type, max size, media policy. |
 | Notification Policy | `GET /api/v1/admin/settings/notification-policy`, `PATCH /api/v1/admin/settings/notification-policy` | Channel toggles, event toggles. |

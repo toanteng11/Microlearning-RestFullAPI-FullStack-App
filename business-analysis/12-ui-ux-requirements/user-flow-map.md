@@ -67,7 +67,7 @@ flowchart TD
     H --> I["Admin gửi link thủ công qua kênh ngoài hệ thống"]
     I --> J["Teacher mở link /teacher/invite?token=..."]
     J --> K["Teacher tự nhập họ tên và password"]
-    K --> L["Frontend gọi POST /api/v1/teacher/invitations/{token}/accept"]
+    K --> L["Frontend gọi POST /api/v1/teacher/invitations/accept với token trong strict body"]
     L --> M["Account Teacher chuyển thành ACTIVE"]
 ```
 
@@ -103,23 +103,27 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A["Student hoặc Guest mở invite link"] --> B["Frontend gọi GET /api/v1/classrooms/invitations/{token}"]
-    B --> C{"Token hợp lệ?"}
-    C -->|Không| D["Hiển thị link không hợp lệ hoặc đã hết hạn"]
-    C -->|Có| E["Hiển thị preview Classroom"]
-    E --> F{"User đã login?"}
-    F -->|Chưa| G["Redirect login; cho phép sang register nếu chưa có account và giữ returnUrl"]
-    F -->|Rồi| H["Student bấm Join"]
-    G --> I["Login thành công"]
-    I --> H
-    H --> J["Gọi POST /api/v1/classrooms/join-by-token"]
-    J --> K["Redirect Classroom Detail"]
+    A["Student hoặc Guest mở /join/invite#token=..."] --> B["React capture token một lần"]
+    B --> C["Xóa fragment bằng history.replaceState"]
+    C --> D["POST /api/v1/classrooms/invite-links/preview với strict body"]
+    D --> E{"Token và policy hợp lệ?"}
+    E -->|Không| F["Hiển thị link không hợp lệ hoặc đã hết hạn"]
+    E -->|Có| G["Hiển thị preview Classroom tối thiểu"]
+    G --> H{"User đã login?"}
+    H -->|Chưa| I["Redirect Login/Register và giữ join context có TTL"]
+    H -->|Rồi| J["Student bấm Join"]
+    I --> K["Login thành công"]
+    K --> L["Revalidate preview, policy và account"]
+    L --> J
+    J --> M["POST /api/v1/classrooms/join-by-token"]
+    M --> N["Xóa join context và redirect Classroom Detail"]
 ```
 
 ### Yêu Cầu Chính
 
 - Guest có thể preview thông tin cơ bản nếu policy cho phép, nhưng chỉ Student đã login mới join chính thức.
 - Nếu chưa có account, Guest có thể Register nhưng vẫn phải Login trước khi quay lại đúng link mời ban đầu.
+- Token không được đặt trong API path/query, analytics hoặc log; preview dùng `Cache-Control: no-store` và join luôn revalidate phía backend.
 
 ## Flow 05 - Student Học Từ To-do Đến Hoàn Thành Activity
 

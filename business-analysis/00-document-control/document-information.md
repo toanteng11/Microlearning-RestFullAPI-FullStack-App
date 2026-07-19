@@ -12,11 +12,11 @@ Tài liệu này là phần kiểm soát tài liệu cho bộ **Business Analysi
 | Document Section | 00 - Document Control |
 | Project Name | Microlearning Classroom LMS Platform |
 | Product Type | Web-based Microlearning Classroom LMS and RESTful API System |
-| Technology Scope | ReactJS, Node.js, ExpressJS, MongoDB, Docker, CI/CD, Swagger/OpenAPI, Cloud Deployment |
-| Document Version | 1.38 |
-| Document Status | Draft |
+| Technology Scope | ReactJS, Node.js, ExpressJS, MongoDB Atlas, Docker, GitHub Actions, Swagger/OpenAPI, Google Cloud Run |
+| Document Version | 1.41 |
+| Document Status | In Review |
 | Created Date | 2026-07-07 |
-| Last Updated Date | 2026-07-12 |
+| Last Updated Date | 2026-07-19 |
 | Prepared By | Business Analyst |
 | Reviewed By | Product Owner, Technical Lead, QA Lead |
 | Approved By | Product Owner |

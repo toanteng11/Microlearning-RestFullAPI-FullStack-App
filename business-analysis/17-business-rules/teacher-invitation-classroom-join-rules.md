@@ -43,7 +43,7 @@ ACCEPTED, REVOKED and EXPIRED are terminal states in MVP.
 1. Authorized Admin enters normalized Teacher email and optional safe metadata allowed by policy.
 2. Backend checks email format, Actor permission, existing `ACTIVE` Teacher, and existing unexpired `PENDING` invitation.
 3. Backend generates cryptographically strong raw token once, stores only `tokenHash`, `expiresAt`, state `PENDING`, intended email and actor/time.
-4. Backend returns invitation URL only to authorized Admin at create/copy operation according policy; API response/log never stores raw token.
+4. Backend returns invitation URL only in the authorized Admin create response. Clipboard copy uses that one-time client state; copy-event/list/detail APIs never reconstruct or return the raw link.
 5. Admin selects external channel and sends link manually. System stores no claim that a message was delivered.
 6. Create/copy/revoke/accept actions produce required AuditLog without raw URL/token/password.
 

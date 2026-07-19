@@ -48,19 +48,20 @@ Tài liệu này đặc tả các use case chính của **Student** trên web ap
 | Primary Actor | Student |
 | Priority | Must |
 | Related FR | FR-022, FR-023 |
-| UI Touchpoints | `/join/invite/:token` |
-| API Touchpoints | `GET /api/v1/classrooms/invitations/:token`, `POST /api/v1/classrooms/join-by-token` |
+| UI Touchpoints | `/join/invite#token=...`, sau capture dùng clean route `/join/invite` |
+| API Touchpoints | `POST /api/v1/classrooms/invite-links/preview`, `POST /api/v1/classrooms/join-by-token`; token nằm trong strict body |
 
 ### Main Flow
 
 | Step | Actor/System | Hành động |
 | --- | --- | --- |
-| 1 | Student | Mở Invite Link. |
-| 2 | System | Preview Classroom nếu token hợp lệ. |
-| 3 | Student | Bấm `Join Classroom`. |
-| 4 | System | Kiểm tra login, policy, token, Classroom status. |
-| 5 | System | Tạo Enrollment nếu chưa có. |
-| 6 | System | Redirect Classroom detail. |
+| 1 | Student | Mở Invite Link `/join/invite#token=...`. |
+| 2 | Frontend | Capture token một lần, xóa fragment khỏi URL rồi gọi preview bằng POST body. |
+| 3 | System | Trả preview Classroom tối thiểu nếu token/policy hợp lệ; không cấp quyền Classroom. |
+| 4 | Student | Login nếu cần, quay lại clean route và bấm `Join Classroom`. |
+| 5 | System | Revalidate account, policy, token, Classroom status và Enrollment trong join flow. |
+| 6 | System | Tạo đúng một Enrollment nếu chưa có; retry trả idempotent success. |
+| 7 | System | Xóa join context và redirect Classroom detail. |
 
 ### Exception Flows
 

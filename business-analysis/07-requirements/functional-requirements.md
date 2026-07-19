@@ -47,7 +47,7 @@ Tài liệu này là catalog **Functional Requirements** của hệ thống **Mi
 | FR-019 | Super Admin/Admin có quyền quản lý system configuration cơ bản. | Super Admin/Admin | Must | Thay đổi setting nhạy cảm được kiểm quyền và ghi audit log. |
 | FR-020 | Teacher tạo, cập nhật, archive và mở/đóng Classroom. | Teacher | Must | Teacher quản lý Classroom mình sở hữu hoặc được phân quyền. |
 | FR-021 | System tạo Class Code duy nhất cho Classroom active. | Teacher/System | Must | Student join được bằng code hợp lệ; code cũ bị vô hiệu khi regenerate. |
-| FR-022 | Teacher tạo/copy Invite Link cho Classroom. | Teacher | Must | Link mở join flow hợp lệ nếu policy cho phép. |
+| FR-022 | Teacher tạo/copy/regenerate/disable Invite Link cho Classroom. | Teacher | Must | Raw link chỉ trả đúng một lần khi create/regenerate; list/detail chỉ trả metadata. Link cũ không join được sau disable/regenerate và link hợp lệ mở secure preview/join flow nếu policy cho phép. |
 | FR-023 | Student đã login join Classroom bằng Class Code hoặc Invite Link. | Student | Must | Chỉ account `STUDENT` `ACTIVE` có session hợp lệ được join; join thành công tạo enrollment/roster record; Guest nhận `401`; duplicate join không tạo bản ghi trùng. |
 | FR-024 | Teacher quản lý classroom roster. | Teacher | Must | Teacher xem, tìm kiếm, lọc, remove Student theo quyền; dữ liệu học tập được bảo toàn. |
 | FR-025 | Teacher quản lý Classroom Settings. | Teacher | Must | Teacher bật/tắt/reset Class Code và Invite Link; quản lý quyền comment/post theo policy. |

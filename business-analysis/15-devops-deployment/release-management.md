@@ -46,7 +46,7 @@ Scope freeze / backlog selection
 | --- | --- | --- |
 | Scope | Release ID, included/excluded requirements/known issues | Product Owner + BA |
 | Source | PR/code review, commit SHA, protected branch status | Technical Lead + Developer |
-| Artifact | Frontend/backend version/tag/digest and registry scan result | DevOps |
+| Artifact | `microlearning-app` version/tag/digest, Cloud Run revision và registry scan result | DevOps |
 | Functional QA | Critical Student/Teacher/Admin test and regression result | QA Lead |
 | API/Data | Swagger/API contract, DB/index/migration/read model impact reviewed | Backend Lead |
 | Security | RBAC/object access/secret/upload/auth impact test as applicable | Technical Lead + QA |
