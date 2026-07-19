@@ -4,6 +4,8 @@
 
 Entry point cho Dev bắt đầu Phase 03 đúng dependency và contract. Đọc README, scope, decisions, data và API trước khi code.
 
+> Tài liệu này là hướng dẫn lịch sử tại thời điểm bắt đầu implementation. Phase 03 hiện đã `Completed` qua PR #6 và merge commit `7d2c10c`; trạng thái cuối nằm trong `phase-exit-evidence.md`.
+
 ## 2. Baseline Required
 
 - Branch base: latest protected `main` sau Phase 02.

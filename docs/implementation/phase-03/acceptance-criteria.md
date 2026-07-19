@@ -84,10 +84,10 @@ Planning baseline không được đánh dấu `Pass`. Mỗi criterion Pass cầ
 | P03-AC-042 | Teacher/Student/Admin pages có loading/empty/error/forbidden/stale/success, responsive và accessible | Component/browser review | Pass    |
 | P03-AC-043 | Playwright Must journeys create/share/join/roster/remove/policy/RBAC pass                            | E2E report               | Pass    |
 | P03-AC-044 | Docker build/Compose health/API non-root/seed idempotency/clean-clone pass                           | DevOps evidence          | Pass    |
-| P03-AC-045 | Remote CI quality/Mongo/OpenAPI/E2E/audit/secret jobs xanh và exit package traceable                 | PR/Actions/evidence      | Not Run |
+| P03-AC-045 | Remote CI quality/Mongo/OpenAPI/E2E/audit/secret jobs xanh và exit package traceable                 | PR #6; runs #14/#15      | Pass    |
 
 ## 8. Exit Accounting
 
-Baseline có `45` criteria. Kết quả local ngày `2026-07-19` là `44 Pass`, `0 Fail`, `0 Blocked`, `1 Not Run`. `P03-AC-045` chỉ được đổi sang `Pass` sau khi có Pull Request, URL GitHub Actions xanh và reviewer sign-off thật.
+Baseline có `45` criteria. Kết quả đóng phase ngày `2026-07-19` là `45 Pass`, `0 Fail`, `0 Blocked`, `0 Not Run`. `P03-AC-045` đạt nhờ [PR #6](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/6), [PR run #14](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689514790), [main run #15](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29689670564) và merge commit `7d2c10c`.
 
-P03-AC-038 chỉ xác nhận các endpoint Conditional Should vẫn absent/denied đúng baseline; kết quả này không claim ownership transfer hoặc Admin lock đã được triển khai. Phase hiện là `LOCAL_EXIT_CANDIDATE`, chưa phải `Completed`.
+P03-AC-038 chỉ xác nhận các endpoint Conditional Should vẫn absent/denied đúng baseline; kết quả này không claim ownership transfer hoặc Admin lock đã được triển khai. Phase hiện là `Completed` với `45/45` criteria Pass.

@@ -10,7 +10,7 @@
 | Trạng thái | `LOCAL_COMPLETE_AWAITING_PR` |
 | MongoDB | MongoDB 8, replica set `rs0`, database test tách biệt |
 
-Trạng thái này chỉ xác nhận lát cắt đã đạt Gate B ở môi trường local. PR review, remote CI và merge evidence vẫn bắt buộc trước khi coi lát cắt đã đóng trên repository.
+Đây là trạng thái lịch sử tại thời điểm lát cắt đạt Gate B ở môi trường local. Các release gate còn lại sau đó đã hoàn tất qua PR #6, PR run #14, main run #15 và merge commit `7d2c10c`; xem `phase-exit-evidence.md` cho kết quả cuối.
 
 ## 2. Phạm Vi Đã Triển Khai
 
@@ -52,10 +52,10 @@ Không có P03 route mới được publish trong lát cắt này. Classroom CRU
 - Audit allowlist chỉ giữ metadata được phê duyệt; raw credential bị loại.
 - MongoDB Atlas trong local `.env` không được dùng cho integration test; test chạy trên database Docker tách biệt.
 
-## 5. Deferred Và Exit Còn Lại
+## 5. Deferred Tại Thời Điểm Snapshot
 
 - Hoàn thành P03 business transaction tests khi Classroom/credential/join services được implement.
 - Bổ sung 20-request concurrent join test; PR-03A mới chứng minh unique invariant ở tầng data.
 - Publish P03 routes và OpenAPI trong cùng các lát cắt API tương ứng.
-- Mở Pull Request, chờ required checks/review, lưu Actions URL và merge commit.
-- Không claim Phase 03 `Completed` từ evidence này.
+- Mở Pull Request, chạy required checks/review, lưu Actions URL và merge commit.
+- Tài liệu snapshot này tự nó không dùng để claim Phase 03 `Completed`; hồ sơ exit hiện tại xác nhận Phase 03 đã hoàn thành `45/45`.
