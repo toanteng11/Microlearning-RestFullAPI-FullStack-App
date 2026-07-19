@@ -2,7 +2,7 @@
 
 Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ cho Student, Teacher và Admin. Repository sử dụng ReactJS, Node.js/ExpressJS, MongoDB, Swagger/OpenAPI, Docker và CI/CD.
 
-Repository đã hoàn thành Phase 01, Phase 02 và Phase 03. Classroom Management đạt `45/45` acceptance criteria; PR #6 đã merge vào `main` tại `7d2c10c` sau khi toàn bộ required checks trên Pull Request và post-merge CI đều xanh. Xem [Phase 03 Implementation Plan](docs/implementation/phase-03/README.md) và [Phase 03 Exit Evidence](docs/implementation/phase-03/phase-exit-evidence.md).
+Repository đã hoàn thành Phase 01, Phase 02 và Phase 03. Classroom Management đạt `45/45` acceptance criteria; source merge tại `7d2c10c` và hồ sơ đóng phase merge tại `d9de828`. Phase 04 Learning Content đã có planning baseline chi tiết và đang ở trạng thái `READY_FOR_REVIEW`, chưa bắt đầu implementation.
 
 ## Prerequisites
 
@@ -135,5 +135,7 @@ Web image đã có Nginx SPA fallback. Nếu lỗi còn xảy ra, kiểm tra ima
 - [Phase 02 Exit Evidence](docs/implementation/phase-02/phase-exit-evidence.md)
 - [Phase 03 Documentation](docs/implementation/phase-03/README.md)
 - [Phase 03 Exit Evidence](docs/implementation/phase-03/phase-exit-evidence.md)
+- [Phase 04 Planning Baseline](docs/implementation/phase-04/README.md)
+- [Phase 04 Developer Start Guide](docs/implementation/phase-04/developer-start-guide.md)
 - [Architecture Overview](docs/implementation/phase-01/architecture-overview.md)
 - [Architecture Decision Records](docs/implementation/phase-01/technical-decisions.md)
