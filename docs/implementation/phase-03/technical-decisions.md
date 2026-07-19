@@ -93,6 +93,6 @@ Must baseline chỉ implement `none -> ACTIVE` và `ACTIVE -> REMOVED`. Schema g
 
 ## 8. Decision Approval Result
 
-Toàn bộ `P03-ADR-001..018` được Project Owner chấp thuận ngày `2026-07-19` sau khi review BA revision `1.41`, `DEC-016/017`, API, data, security, frontend, QA và DevOps plan theo các góc nhìn của đồ án cá nhân. Các quyết định đã trở thành code baseline khi PR #5 merge vào `main` tại `1e8ad41`.
+Toàn bộ `P03-ADR-001..018` được Project Owner chấp thuận ngày `2026-07-19` và được ghi nhận trong BA baseline revision `1.42`, cùng `DEC-016/017`, API, data, security, frontend, QA và DevOps plan. Các quyết định đã trở thành code baseline khi PR #5 merge vào `main` tại `1e8ad41`.
 
 Mọi thay đổi tiếp theo phải cập nhật BA, API, UI, OpenAPI, test, risk và change record trong cùng Pull Request; không tự ý thay đổi behavior trong code.

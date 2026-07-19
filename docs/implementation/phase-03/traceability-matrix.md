@@ -1,5 +1,7 @@
 # Phase 03 Traceability Matrix
 
+Trạng thái xác minh local ngày `2026-07-19`: toàn bộ Must capability trong ma trận đã có source và test evidence; `44/45` P03 criteria Pass. Remote CI/reviewer evidence của `P03-AC-045` đang chờ Pull Request.
+
 ## 1. Requirement To Delivery
 
 | BA source                                                        | Capability                                 | P03 tasks                               | API/UI/Data                           | Acceptance/Test                      |
@@ -64,5 +66,5 @@
 
 - BA ID thay đổi phải review task/API/data/AC/test cùng lúc.
 - Không ghi `Implemented` nếu chỉ có source nhưng chưa test/evidence.
-- API preview POST body/fragment transport tại BA revision `1.40` và `DEC-016` đã được chấp thuận qua `P03-ADR-007`; planning PR #5 đã merge tại `1e8ad41`, nên contract được phép triển khai.
+- API preview POST body/fragment transport tại BA revision `1.42` và `DEC-016` đã được chấp thuận qua `P03-ADR-007`; planning PR #5 đã merge tại `1e8ad41` và implementation đã có exact route/OpenAPI/E2E evidence local.
 - Requirement chuyển phase phải có reason, owner, impact và Product Owner/BA approval.

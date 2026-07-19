@@ -2,12 +2,14 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { returnUrlForRole } from './login-return-url';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ProfilePage } from '../profile/ProfilePage';
 import { StudentHomePage } from '../role-home/RoleHomePage';
 import { ProtectedRoute } from '../../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../../shared/auth/RoleRoute';
+import type { UserRole } from '../../app/route-paths';
 import {
   AuthContext,
   type AuthContextValue,
@@ -21,6 +23,14 @@ const student: CurrentUser = {
   role: 'STUDENT',
   status: 'ACTIVE',
   capabilities: ['profile.update_own', 'profile.view_own'],
+};
+
+const teacher: CurrentUser = {
+  ...student,
+  id: 'teacher-one',
+  email: 'teacher@example.com',
+  role: 'TEACHER',
+  capabilities: [],
 };
 
 function authValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
@@ -44,6 +54,26 @@ function withAuth(element: React.ReactNode, value: AuthContextValue) {
 describe('authentication UI', () => {
   afterEach(() => vi.unstubAllGlobals());
 
+  const returnUrlCases: Array<[string | undefined, UserRole, string | null]> = [
+    [undefined, 'STUDENT', null],
+    ['//external.example', 'STUDENT', null],
+    ['/profile?tab=account', 'TEACHER', '/profile?tab=account'],
+    ['/join/invite', 'STUDENT', '/join/invite'],
+    ['/join/invite', 'TEACHER', null],
+    ['/student/classrooms/one', 'STUDENT', '/student/classrooms/one'],
+    ['/student/dashboard', 'TEACHER', null],
+    ['/teacher/dashboard', 'TEACHER', '/teacher/dashboard'],
+    ['/teacher/dashboard', 'STUDENT', null],
+    ['/admin/classrooms', 'ADMIN', '/admin/classrooms'],
+    ['/admin/classrooms', 'SUPER_ADMIN', '/admin/classrooms'],
+    ['/admin/classrooms', 'STUDENT', null],
+    ['/unsupported', 'ADMIN', null],
+  ];
+
+  it.each(returnUrlCases)('scopes return URL %s to role %s', (returnUrl, role, expected) => {
+    expect(returnUrlForRole(returnUrl, role)).toBe(expected);
+  });
+
   it('logs in and redirects from server role context', async () => {
     const context = authValue({ status: 'anonymous', user: null });
     const router = createMemoryRouter(
@@ -62,6 +92,36 @@ describe('authentication UI', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Đăng nhập' }));
     expect(await screen.findByRole('heading', { name: 'Student destination' })).toBeInTheDocument();
     expect(context.login).toHaveBeenCalledWith(student.email, 'StrongPassword123!');
+  });
+
+  it('ignores a stale return URL that belongs to another role', async () => {
+    const context = authValue({
+      status: 'anonymous',
+      user: null,
+      login: vi.fn().mockResolvedValue(teacher),
+    });
+    const router = createMemoryRouter(
+      [
+        { path: '/login', element: withAuth(<LoginPage />, context) },
+        { path: '/teacher/dashboard', element: <h1>Teacher destination</h1> },
+        { path: '/admin/settings/enrollment-policy', element: <h1>Admin destination</h1> },
+      ],
+      {
+        initialEntries: [
+          { pathname: '/login', state: { returnUrl: '/admin/settings/enrollment-policy' } },
+        ],
+      },
+    );
+    render(<RouterProvider router={router} />);
+
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: teacher.email } });
+    fireEvent.change(screen.getByLabelText('Mật khẩu'), {
+      target: { value: 'StrongPassword123!' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Đăng nhập' }));
+
+    expect(await screen.findByRole('heading', { name: 'Teacher destination' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Admin destination' })).not.toBeInTheDocument();
   });
 
   it('registers a Student without any role control and redirects to login', async () => {

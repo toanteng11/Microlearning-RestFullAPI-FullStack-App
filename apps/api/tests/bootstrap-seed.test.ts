@@ -160,8 +160,13 @@ describe('DemoSeedService', () => {
     expect(users.create).toHaveBeenCalledTimes(DEMO_IDENTITIES.length);
     expect(first.users.map((item) => `${item.role}:${item.status}`)).toEqual([
       'STUDENT:ACTIVE',
+      'STUDENT:ACTIVE',
+      'STUDENT:ACTIVE',
+      'STUDENT:ACTIVE',
       'STUDENT:BLOCKED',
       'TEACHER:ACTIVE',
+      'TEACHER:ACTIVE',
+      'TEACHER:BLOCKED',
       'ADMIN:ACTIVE',
       'SUPER_ADMIN:ACTIVE',
     ]);

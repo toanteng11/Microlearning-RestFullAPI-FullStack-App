@@ -9,6 +9,7 @@ import { dashboardForRole } from '../../../app/route-paths';
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { PasswordField } from '../../../shared/components/PasswordField';
+import { returnUrlForRole } from '../login-return-url';
 
 const loginSchema = z.object({
   email: z.email('Email không hợp lệ.'),
@@ -19,10 +20,6 @@ type LoginValues = z.infer<typeof loginSchema>;
 interface LoginLocationState {
   message?: string;
   returnUrl?: string;
-}
-
-function safeReturnUrl(value: string | undefined): string | null {
-  return value?.startsWith('/') && !value.startsWith('//') ? value : null;
 }
 
 export function LoginPage() {
@@ -39,15 +36,22 @@ export function LoginPage() {
 
   useEffect(() => {
     if (status === 'authenticated' && user)
-      navigate(dashboardForRole(user.role), { replace: true });
-  }, [navigate, status, user]);
+      navigate(
+        returnUrlForRole(locationState.returnUrl, user.role) ?? dashboardForRole(user.role),
+        {
+          replace: true,
+        },
+      );
+  }, [locationState.returnUrl, navigate, status, user]);
 
   const submit = handleSubmit(async (values) => {
     try {
       const currentUser = await login(values.email, values.password);
-      navigate(safeReturnUrl(locationState.returnUrl) ?? dashboardForRole(currentUser.role), {
-        replace: true,
-      });
+      navigate(
+        returnUrlForRole(locationState.returnUrl, currentUser.role) ??
+          dashboardForRole(currentUser.role),
+        { replace: true },
+      );
     } catch (error) {
       const message =
         error instanceof ApiError && error.code === 'RATE_LIMITED'

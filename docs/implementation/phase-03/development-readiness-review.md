@@ -1,5 +1,7 @@
 # Phase 03 Development Readiness Review
 
+> Đây là snapshot lịch sử tại thời điểm đóng Gate A. Trạng thái implementation hiện tại được quản lý tại `README.md`, `acceptance-criteria.md` và `exit-report.md`.
+
 ## 1. Review Status
 
 | Field              | Value                                               |
@@ -18,7 +20,7 @@
 | ---------------------- | ---------- | ----------------------------------------------------------- |
 | BA scope/traceability  | Approved   | Scope + traceability map FR/US/UC/BR/AC                     |
 | Domain lifecycle       | Approved   | Classroom/credential/Enrollment state machines              |
-| API contract           | Approved   | BA revision 1.40, DEC-016 và Accepted ADR-007               |
+| API contract           | Approved   | BA revision 1.42, DEC-016 và Accepted ADR-007               |
 | Data/index/transaction | Approved   | Collection/index/transaction matrix                         |
 | Security/object scope  | Approved   | Permission/threat/rate/redaction contract                   |
 | Frontend UX/states     | Approved   | Route/page/state/navigation plan                            |
@@ -42,7 +44,7 @@
 | --------- | ---------------------------------------------------------------- | ----------------------- | ------ | ----------------------------------------------------- |
 | P03-GA-01 | Product Owner/BA duyệt Must/Should/Out-of-scope                  | PO/BA                   | Closed | Project Owner review confirmation, `2026-07-19`       |
 | P03-GA-02 | Duyệt Code HMAC, Token hash, one-time copy và expiry 30d         | TL/Security/BA          | Closed | `P03-ADR-004..008` Accepted                           |
-| P03-GA-03 | Duyệt POST body Invite preview và xác nhận BA revision 1.40      | BA/Backend/Frontend     | Closed | `DEC-016` + `P03-ADR-007` Accepted                    |
+| P03-GA-03 | Duyệt POST body Invite preview và xác nhận BA revision 1.42      | BA/Backend/Frontend     | Closed | `DEC-016` + `P03-ADR-007` Accepted                    |
 | P03-GA-04 | Duyệt unique membership + no automatic rejoin                    | BA/TL/QA                | Closed | `P03-ADR-009/010/014` Accepted                        |
 | P03-GA-05 | Duyệt permission catalog và offboarding integration              | Security/TL/Admin owner | Closed | Permission matrix + `P03-ADR-018` Accepted            |
 | P03-GA-06 | QA/DevOps duyệt real rs0 concurrency, seed and CI gates          | QA/DevOps               | Closed | Test/CI plan reviewed; `npm run check:ci` Pass        |
@@ -69,7 +71,7 @@ Trạng thái có hiệu lực:
 Gate A status = READY_TO_CODE
 Code authorization = APPROVED
 Planning status = COMPLETED
-Implementation status = NOT_STARTED
+Implementation status at Gate A approval = NOT_STARTED
 ```
 
-PR-03A được phép bắt đầu trên branch `feature/phase-03-data-foundation` theo `developer-start-guide.md`. Chỉ chuyển Implementation sang `IN_PROGRESS` khi task code đầu tiên thực sự bắt đầu; việc chỉ tạo branch không được tính là implementation progress.
+Tại thời điểm Gate A, PR-03A được phép bắt đầu trên branch `feature/phase-03-data-foundation` theo `developer-start-guide.md`. Sau implementation, trạng thái đã chuyển sang `LOCAL_EXIT_CANDIDATE`; xem `phase-exit-evidence.md` để tránh dùng snapshot này như báo cáo tiến độ hiện tại.

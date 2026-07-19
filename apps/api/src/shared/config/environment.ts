@@ -37,6 +37,17 @@ const environmentSchema = z.object({
   REFRESH_COOKIE_SECURE: booleanString,
   AUTH_IDENTITY_PEPPER: secretSchema,
   TEACHER_INVITATION_TTL_DAYS: z.coerce.number().int().min(1).max(30).default(7),
+  CLASSROOM_CODE_PEPPER: secretSchema,
+  CLASSROOM_CODE_LENGTH: z.coerce
+    .number()
+    .int()
+    .refine((value) => value === 8, { message: 'must be exactly 8' }),
+  CLASSROOM_INVITE_TOKEN_BYTES: z.coerce.number().int().min(32).max(64),
+  CLASSROOM_INVITE_DEFAULT_TTL_DAYS: z.coerce.number().int().min(1).max(90),
+  CLASSROOM_JOIN_IP_LIMIT: z.coerce.number().int().min(1).max(1000),
+  CLASSROOM_JOIN_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(1000),
+  CLASSROOM_JOIN_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600),
+  CLASSROOM_PREVIEW_IP_LIMIT: z.coerce.number().int().min(1).max(1000),
   RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REGISTER_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(10),
   LOGIN_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(30),
@@ -72,6 +83,13 @@ export interface RateLimitConfig {
   loginCooldownSeconds: number;
 }
 
+export interface ClassroomRateLimitConfig {
+  joinIpMax: number;
+  joinIdentityMax: number;
+  joinWindowSeconds: number;
+  previewIpMax: number;
+}
+
 export interface AppConfig {
   appEnvironment: AppEnvironment;
   appVersion: string;
@@ -91,6 +109,11 @@ export interface AppConfig {
   refreshCookieSecure: boolean;
   authIdentityPepper: string;
   teacherInvitationTtlDays: number;
+  classroomCodePepper: string;
+  classroomCodeLength: number;
+  classroomInviteTokenBytes: number;
+  classroomInviteDefaultTtlDays: number;
+  classroomRateLimits: ClassroomRateLimitConfig;
   rateLimits: RateLimitConfig;
   bootstrapAdminEnabled: boolean;
   logLevel: LogLevel;
@@ -170,8 +193,15 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
 
   validateMongoRuntime(parsed.data.MONGODB_URI, parsed.data.APP_ENV);
 
-  if (parsed.data.ACCESS_TOKEN_SECRET === parsed.data.AUTH_IDENTITY_PEPPER) {
-    configurationError('ACCESS_TOKEN_SECRET and AUTH_IDENTITY_PEPPER must be different');
+  const distinctSecrets = new Set([
+    parsed.data.ACCESS_TOKEN_SECRET,
+    parsed.data.AUTH_IDENTITY_PEPPER,
+    parsed.data.CLASSROOM_CODE_PEPPER,
+  ]);
+  if (distinctSecrets.size !== 3) {
+    configurationError(
+      'ACCESS_TOKEN_SECRET, AUTH_IDENTITY_PEPPER and CLASSROOM_CODE_PEPPER must be different',
+    );
   }
 
   if (['staging', 'production'].includes(parsed.data.APP_ENV)) {
@@ -188,7 +218,8 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     }
     if (
       isUnsafeSecret(parsed.data.ACCESS_TOKEN_SECRET) ||
-      isUnsafeSecret(parsed.data.AUTH_IDENTITY_PEPPER)
+      isUnsafeSecret(parsed.data.AUTH_IDENTITY_PEPPER) ||
+      isUnsafeSecret(parsed.data.CLASSROOM_CODE_PEPPER)
     ) {
       configurationError('Production-like environments must not use placeholder secrets');
     }
@@ -205,6 +236,13 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     loginFailureWindowSeconds: parsed.data.LOGIN_FAILURE_WINDOW_SECONDS,
     loginFailureMaxAttempts: parsed.data.LOGIN_FAILURE_MAX_ATTEMPTS,
     loginCooldownSeconds: parsed.data.LOGIN_COOLDOWN_SECONDS,
+  });
+
+  const classroomRateLimits = Object.freeze({
+    joinIpMax: parsed.data.CLASSROOM_JOIN_IP_LIMIT,
+    joinIdentityMax: parsed.data.CLASSROOM_JOIN_IDENTITY_LIMIT,
+    joinWindowSeconds: parsed.data.CLASSROOM_JOIN_WINDOW_SECONDS,
+    previewIpMax: parsed.data.CLASSROOM_PREVIEW_IP_LIMIT,
   });
 
   return Object.freeze({
@@ -226,6 +264,11 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     refreshCookieSecure: parsed.data.REFRESH_COOKIE_SECURE,
     authIdentityPepper: parsed.data.AUTH_IDENTITY_PEPPER,
     teacherInvitationTtlDays: parsed.data.TEACHER_INVITATION_TTL_DAYS,
+    classroomCodePepper: parsed.data.CLASSROOM_CODE_PEPPER,
+    classroomCodeLength: parsed.data.CLASSROOM_CODE_LENGTH,
+    classroomInviteTokenBytes: parsed.data.CLASSROOM_INVITE_TOKEN_BYTES,
+    classroomInviteDefaultTtlDays: parsed.data.CLASSROOM_INVITE_DEFAULT_TTL_DAYS,
+    classroomRateLimits,
     rateLimits,
     bootstrapAdminEnabled: parsed.data.BOOTSTRAP_ADMIN_ENABLED,
     logLevel: parsed.data.LOG_LEVEL,

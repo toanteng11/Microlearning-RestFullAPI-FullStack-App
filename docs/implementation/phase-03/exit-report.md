@@ -2,47 +2,52 @@
 
 ## 1. Report Status
 
-| Field                 | Value                        |
-| --------------------- | ---------------------------- |
-| Phase                 | `P03 - Classroom Management` |
-| Report status         | Template - Not Started       |
-| Implementation status | `NOT_STARTED`                |
-| Target commit/release | Pending                      |
-| Review date           | Pending                      |
+| Field                 | Value                                                |
+| --------------------- | ---------------------------------------------------- |
+| Phase                 | `P03 - Classroom Management`                         |
+| Report status         | `LOCAL_EXIT_CANDIDATE`                               |
+| Implementation status | Must scope complete local; remote exit gate pending  |
+| Target branch         | `feature/phase-03-data-foundation`                   |
+| Review date           | `2026-07-19`                                         |
 
 ## 2. Scope Result
 
-| Capability                         | Planned            | Actual           | Result/evidence |
-| ---------------------------------- | ------------------ | ---------------- | --------------- |
-| Classroom lifecycle/ownership      | Must               | Pending          | Not Run         |
-| Class Code lifecycle               | Must               | Pending          | Not Run         |
-| Invite Link lifecycle              | Must               | Pending          | Not Run         |
-| Join/Enrollment idempotency        | Must               | Pending          | Not Run         |
-| Roster/remove/Student access       | Must               | Pending          | Not Run         |
-| Admin policy/governance            | Must               | Pending          | Not Run         |
-| Offboarding guard                  | Must               | Pending          | Not Run         |
-| React Teacher/Student/Admin        | Must               | Pending          | Not Run         |
-| OpenAPI/Docker/CI/evidence         | Must               | Pending          | Not Run         |
-| Ownership transfer/capacity/rejoin | Conditional Should | Pending decision | Not claimed     |
+| Capability                         | Planned            | Actual                                      | Result/evidence       |
+| ---------------------------------- | ------------------ | ------------------------------------------- | --------------------- |
+| Classroom lifecycle/ownership      | Must               | Implemented                                 | Pass local            |
+| Class Code lifecycle               | Must               | Implemented hash-only/raw-once              | Pass local            |
+| Invite Link lifecycle              | Must               | Implemented hash-only/expiry/safe preview   | Pass local            |
+| Join/Enrollment idempotency        | Must               | Implemented transaction + unique invariant  | Pass local            |
+| Roster/remove/Student access       | Must               | Implemented soft membership state           | Pass local            |
+| Admin policy/governance            | Must               | Implemented revision/CAS/audit               | Pass local            |
+| Offboarding guard                  | Must               | Implemented P02-P03 ownership guard          | Pass local            |
+| React Teacher/Student/Admin        | Must               | Implemented with API thật                    | Pass local            |
+| OpenAPI/Docker/local evidence      | Must               | Implemented and verified                     | Pass local            |
+| Remote CI/PR/reviewer evidence     | Must               | Chưa chạy trên commit hiện tại               | Not Run               |
+| Ownership transfer/capacity/rejoin | Conditional Should | Deferred theo approved baseline              | Not claimed           |
 
 ## 3. Acceptance Result
 
-| Metric                      | Result                    |
-| --------------------------- | ------------------------- |
-| P03 acceptance criteria     | `0/45 Pass`; `45 Not Run` |
-| Critical/High defects       | Pending                   |
-| Automated tests/coverage    | Pending                   |
-| Security/data status        | Pending                   |
-| Remote CI                   | Pending                   |
-| Compose/browser/clean clone | Pending                   |
+| Metric                      | Result                                                                  |
+| --------------------------- | ----------------------------------------------------------------------- |
+| P03 acceptance criteria     | `44/45 Pass`; `1 Not Run`                                                |
+| Critical/High defects       | `0` open                                                                 |
+| Automated tests             | API `85`, Web `71`, Integration `35`, OpenAPI `7`, E2E `9`: all Pass    |
+| Security/data status        | Pass local; no duplicate/partial/raw credential evidence                |
+| Remote CI                   | Pending PR; P03-AC-045 chưa được phép Pass                               |
+| Compose/browser/onboarding  | Pass local                                                               |
 
 ## 4. Residual Risk And Technical Debt
 
-Điền accepted residual từ `risk-and-issues.md` sau implementation; không dùng template để pre-approve risk.
+- Rate limiter hiện process-local; deployment nhiều API replica phải chuyển sang shared store ở Phase 07.
+- Invite expiry cleanup là lazy; scheduled cleanup chưa thuộc Must scope.
+- Ownership transfer, Admin lock, capacity và rejoin approval tiếp tục ở Conditional Should.
+- Member count dùng aggregation phù hợp baseline hiện tại; cần read model/counter khi scale tăng.
+- Remote CI và reviewer sign-off là open release gate, không phải defect kỹ thuật local.
 
 ## 5. Phase 04 Readiness
 
-P03 phải bàn giao stable:
+P03 đã chuẩn bị các contract sau cho Phase 04:
 
 - `ClassroomReader` và owner/state contract.
 - `EnrollmentReader/ClassroomAccessReader`.
@@ -52,12 +57,12 @@ P03 phải bàn giao stable:
 
 ## 6. Sign-Off
 
-| Role              | Name    | Decision | Date    |
-| ----------------- | ------- | -------- | ------- |
-| Product Owner/BA  | Pending | Pending  | Pending |
-| Technical Lead    | Pending | Pending  | Pending |
-| QA Lead           | Pending | Pending  | Pending |
-| Security Reviewer | Pending | Pending  | Pending |
-| DevOps            | Pending | Pending  | Pending |
+| Role              | Name    | Decision                              | Date    |
+| ----------------- | ------- | ------------------------------------- | ------- |
+| Product Owner/BA  | Pending | Review local exit + scope             | Pending |
+| Technical Lead    | Pending | Review implementation/architecture    | Pending |
+| QA Lead           | Pending | Review automated/browser evidence     | Pending |
+| Security Reviewer | Pending | Review credential/RBAC/secret evidence | Pending |
+| DevOps            | Pending | Review remote CI and merge readiness  | Pending |
 
-Chỉ đổi phase thành `Completed` khi `45/45` AC Pass, CI/main xanh, không blocker và reviewer ký quyết định dựa trên evidence thật.
+Quyết định hiện tại: `CONDITIONAL GO FOR PULL REQUEST`. Chỉ đổi phase thành `Completed` khi `45/45` AC Pass, required checks trên PR/main xanh, không có blocker và reviewer ký dựa trên evidence thật.

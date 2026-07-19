@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 import { apiRequest } from '../../../shared/api/api-client';
@@ -29,6 +29,8 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnUrl = (location.state as { returnUrl?: string } | null)?.returnUrl;
   const {
     register,
     handleSubmit,
@@ -41,7 +43,10 @@ export function RegisterPage() {
       await apiRequest('/auth/register', { method: 'POST', body: values });
       navigate('/login', {
         replace: true,
-        state: { message: 'Đăng ký thành công. Bạn có thể đăng nhập ngay.' },
+        state: {
+          message: 'Đăng ký thành công. Bạn có thể đăng nhập ngay.',
+          ...(returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? { returnUrl } : {}),
+        },
       });
     } catch (error) {
       const message =
@@ -93,7 +98,10 @@ export function RegisterPage() {
           </button>
         </form>
         <p className="auth-alternative">
-          Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+          Đã có tài khoản?{' '}
+          <Link to="/login" state={returnUrl ? { returnUrl } : undefined}>
+            Đăng nhập
+          </Link>
         </p>
       </section>
     </main>

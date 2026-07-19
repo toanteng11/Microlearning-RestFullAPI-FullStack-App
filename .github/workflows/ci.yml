@@ -98,10 +98,13 @@ jobs:
           docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml run --rm mongodb-init
           docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml ps
 
-      - name: Run MongoDB transaction integration tests
+      - name: Run MongoDB transaction integration coverage
         env:
           MONGODB_INTEGRATION_URI: mongodb://127.0.0.1:27018/microlearning-ci?replicaSet=rs0&directConnection=true
-        run: npm run test:integration --workspace @microlearning/api
+        run: npm run test:integration:coverage --workspace @microlearning/api
+
+      - name: Verify integration coverage report
+        run: test -f apps/api/coverage-integration/coverage-summary.json
 
       - name: Show MongoDB diagnostics
         if: failure()
@@ -129,11 +132,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Validate parser and Phase 02 operation coverage
+      - name: Validate parser and Phase 03 operation coverage
         run: npm run test:openapi
 
   browser-e2e:
-    name: Phase 02 browser E2E
+    name: Phase 03 browser E2E
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -145,8 +148,6 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27018/microlearning-e2e?replicaSet=rs0&directConnection=true
       PUBLIC_WEB_URL: http://localhost:3000
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
-      ACCESS_TOKEN_SECRET: ci-e2e-access-token-secret-with-32-byte-minimum
-      AUTH_IDENTITY_PEPPER: ci-e2e-identity-pepper-with-32-byte-minimum
       REFRESH_COOKIE_SECURE: 'false'
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: silent
@@ -168,6 +169,25 @@ jobs:
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+
+      - name: Generate masked E2E secrets
+        shell: bash
+        run: |
+          access_secret="$(openssl rand -hex 32)"
+          identity_pepper="$(openssl rand -hex 32)"
+          classroom_pepper="$(openssl rand -hex 32)"
+          demo_password="$(openssl rand -base64 24 | tr -d '\n')Aa1!"
+
+          for value in "$access_secret" "$identity_pepper" "$classroom_pepper" "$demo_password"; do
+            echo "::add-mask::$value"
+          done
+
+          {
+            echo "ACCESS_TOKEN_SECRET=$access_secret"
+            echo "AUTH_IDENTITY_PEPPER=$identity_pepper"
+            echo "CLASSROOM_CODE_PEPPER=$classroom_pepper"
+            echo "E2E_DEMO_PASSWORD=$demo_password"
+          } >> "$GITHUB_ENV"
 
       - name: Validate integrated Compose configuration
         run: docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml config --quiet
@@ -191,12 +211,6 @@ jobs:
           docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml ps
           exit 1
 
-      - name: Generate masked E2E credential
-        run: |
-          password="$(openssl rand -base64 24 | tr -d '\n')Aa1!"
-          echo "::add-mask::$password"
-          echo "E2E_DEMO_PASSWORD=$password" >> "$GITHUB_ENV"
-
       - name: Seed synthetic role identities
         run: printf '%s' "$E2E_DEMO_PASSWORD" | npm run seed:demo --workspace @microlearning/api
 
@@ -211,7 +225,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: phase-02-e2e-report
+          name: phase-03-e2e-report
           path: playwright-report
           if-no-files-found: warn
           retention-days: 7

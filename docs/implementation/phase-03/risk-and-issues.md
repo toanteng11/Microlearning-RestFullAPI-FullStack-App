@@ -29,7 +29,7 @@
 | P03-R17 | Join context token persist browser                  | M/H       | localStorage/session leak               | Memory/TTL/clear + storage E2E                | Disable link/clear storage / FE                |
 | P03-R18 | Process-local limiter không nhất quán multi-replica | H/M later | Scale API >1                            | Keep one replica; shared store P07            | Set replicas=1 / DevOps                        |
 | P03-R19 | Invite expiry/default UX không được BA duyệt        | M/M       | Teacher mất link bất ngờ                | ADR/BA approval, clear expiry UI              | Adjust default/regenerate / PO                 |
-| P03-R20 | API/BA transport bị sửa lệch sau khi đã đồng bộ     | M/M       | Frontend/backend dùng route khác nhau    | Revision 1.40 + exact OpenAPI route test       | Block implementation until re-aligned / BA+TL  |
+| P03-R20 | API/BA transport bị sửa lệch sau khi đã đồng bộ     | M/M       | Frontend/backend dùng route khác nhau    | Revision 1.42 + exact OpenAPI route test       | Block implementation until re-aligned / BA+TL  |
 | P03-R21 | Comment/post setting claim nhưng chưa consumer      | M/M       | UI promises behavior P04 chưa có        | Persist only, wording/scope explicit          | Hide until Phase 04 / BA+FE                    |
 | P03-R22 | Index migration fail do duplicate pre-existing data | L/H       | Unique index creation error             | Preflight scan; empty/new P03 collections     | Repair plan/rollback / DevOps+Backend          |
 | P03-R23 | E2E fixture logs active credential                  | M/H       | CI trace/output contains token          | Runtime memory fixture, redacted artifact     | Revoke fixtures/delete artifact / QA+DevOps    |
@@ -47,22 +47,25 @@ Không chấp nhận residual raw credential exposure, IDOR, duplicate active me
 
 ## 4. Decision Closure
 
-| Decision group              | Required approver         | Status  |
-| --------------------------- | ------------------------- | ------- |
-| Scope/Should/out-of-scope   | Product Owner/BA          | Pending |
-| Code/token/raw-once/expiry  | Security + Technical Lead | Pending |
-| API preview POST refinement | BA + Backend + Frontend   | Pending |
-| Data/index/transaction      | Backend + QA + DevOps     | Pending |
-| UI join context/one-time UX | BA + Frontend + Security  | Pending |
+| Decision group              | Required approver         | Status                         |
+| --------------------------- | ------------------------- | ------------------------------ |
+| Scope/Should/out-of-scope   | Product Owner/BA          | Accepted `2026-07-19`          |
+| Code/token/raw-once/expiry  | Security + Technical Lead | Accepted `2026-07-19`          |
+| API preview POST refinement | BA + Backend + Frontend   | Accepted `2026-07-19`          |
+| Data/index/transaction      | Backend + QA + DevOps     | Accepted `2026-07-19`          |
+| UI join context/one-time UX | BA + Frontend + Security  | Accepted `2026-07-19`          |
 
 ## 5. Issue Register
 
 | Issue                                                                | Severity      | Owner                               | Status | Next action                                              |
 | -------------------------------------------------------------------- | ------------- | ----------------------------------- | ------ | -------------------------------------------------------- |
 | P03-I01 - Phase 03 decisions từng chưa được reviewer phê duyệt       | Planning gate | Product Owner/TL/QA/Security/DevOps | Closed | ADR Accepted; P03-GA-07 đóng bởi PR #5/run #11/merge `1e8ad41` |
-| P03-I02 - BA/API transport từng chưa thống nhất | Contract | BA + TL | Closed | Revision 1.40/DEC-016 và P03-ADR-007 đã Accepted ngày `2026-07-19` |
+| P03-I02 - BA/API transport từng chưa thống nhất | Contract | BA + TL | Closed | Revision 1.42/DEC-016 và P03-ADR-007 đã Accepted ngày `2026-07-19` |
+| P03-I03 - Login giữ `returnUrl` khác role có thể điều hướng sai scope | High | Frontend | Closed | Thêm role-aware sanitizer và ma trận `13` return URL security cases |
+| P03-I04 - Roster/governance table từng ẩn dữ liệu ở mobile | Medium | Frontend | Closed | Chuyển responsive table thành labeled row-card; browser review pass |
+| P03-I05 - E2E database từng lệch fixture credential | Environment | QA/DevOps | Closed | Dùng database tách biệt, seed lại hai lần và chạy `9/9` journeys pass |
 
-Không bắt đầu implementation PR-03A khi P03-I01/I02 còn chặn Gate A.
+Không còn issue Critical/High mở ở local exit candidate. Remote CI hoặc review phát hiện regression mới phải mở issue tương ứng trước merge.
 
 ## 6. Issue Handling
 

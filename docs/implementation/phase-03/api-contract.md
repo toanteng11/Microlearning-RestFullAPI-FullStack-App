@@ -46,7 +46,7 @@
 | POST   | `/classrooms/join-by-code`         | Student ACTIVE + rate limit | Idempotent natural key                       |
 | POST   | `/classrooms/join-by-token`        | Student ACTIVE + rate limit | Revalidate token/policy in transaction       |
 
-User-facing link là `/join/invite#token=...`; URL fragment không được gửi tới web server/proxy và API chỉ nhận token trong POST body. BA API/UI/use-case catalog đã được đồng bộ tại revision `1.40`; decision vẫn cần Gate A phê duyệt trước implementation.
+User-facing link là `/join/invite#token=...`; URL fragment không được gửi tới web server/proxy và API chỉ nhận token trong POST body. BA API/UI/use-case catalog đã được đồng bộ tại revision `1.42`; `DEC-016` và `P03-ADR-007` đã được phê duyệt tại Gate A.
 
 ## 5. Admin Endpoints
 

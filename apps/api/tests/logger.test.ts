@@ -12,6 +12,9 @@ describe('structured log redaction', () => {
       ),
     ).toBe('/api/v1/teacher/invitations/preview?token=%5BREDACTED%5D&channel=ZALO');
     expect(sanitizeRequestUrl('/health')).toBe('/health');
+    expect(sanitizeRequestUrl('/join/invite#token=raw-fragment-token')).toBe(
+      '/join/invite#[REDACTED]',
+    );
   });
 
   it('redacts credentials, cookies, token fields, and request URL values', () => {
@@ -37,6 +40,10 @@ describe('structured log redaction', () => {
         password: 'raw-password',
         confirmPassword: 'raw-confirm-password',
         token: 'raw-body-token',
+        code: 'ABCD-EFGH',
+        codeDigest: 'raw-code-digest',
+        inviteToken: 'raw-invite-token',
+        tokenHash: 'raw-token-hash',
       },
       accessToken: 'raw-top-level-access-token',
     });
@@ -51,6 +58,10 @@ describe('structured log redaction', () => {
       'raw-confirm-password',
       'raw-body-token',
       'raw-top-level-access-token',
+      'ABCD-EFGH',
+      'raw-code-digest',
+      'raw-invite-token',
+      'raw-token-hash',
     ]) {
       expect(output).not.toContain(secret);
     }

@@ -8,6 +8,9 @@ import swaggerUi from 'swagger-ui-express';
 
 import { createOpenApiDocument } from './docs/openapi.js';
 import { createPhaseTwoRouter } from './modules/phase-two.router.js';
+import { createPhaseThreeRouter } from './modules/phase-three.router.js';
+import { ClassroomOwnershipRepositoryReader } from './modules/classrooms/classroom-ownership.reader.js';
+import { ClassroomRepository } from './modules/classrooms/classroom.repository.js';
 import { createSystemRouter } from './modules/system/system.routes.js';
 import type { RuntimeInfo, SystemDependencies } from './modules/system/system.types.js';
 import type { AppConfig } from './shared/config/environment.js';
@@ -91,7 +94,12 @@ export function createApp(options: AppOptions) {
   );
 
   app.use('/api/v1', createSystemRouter(options.runtimeInfo, options.dependencies));
-  app.use('/api/v1', createPhaseTwoRouter(options.config));
+  const classrooms = new ClassroomRepository();
+  app.use(
+    '/api/v1',
+    createPhaseTwoRouter(options.config, new ClassroomOwnershipRepositoryReader(classrooms)),
+  );
+  app.use('/api/v1', createPhaseThreeRouter(options.config, classrooms));
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(options.logger, options.config.appEnvironment === 'development'));

@@ -10,11 +10,17 @@ import { ProfilePage } from '../features/profile/ProfilePage';
 import { AdminTeacherInvitationDetailPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationDetailPage';
 import { AdminTeacherInvitationsPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationsPage';
 import { TeacherInvitationActivationPage } from '../features/teacher-invitations/pages/TeacherInvitationActivationPage';
+import { AdminHomePage } from '../features/role-home/RoleHomePage';
 import {
-  AdminHomePage,
-  StudentHomePage,
-  TeacherHomePage,
-} from '../features/role-home/RoleHomePage';
+  AdminClassroomDetailPage,
+  AdminClassroomsPage,
+  AdminEnrollmentPolicyPage,
+  InviteJoinPage,
+  StudentClassroomDetailPage,
+  StudentClassroomsPage,
+  TeacherClassroomDetailPage,
+  TeacherClassroomsPage,
+} from '../features/classrooms/classroom-route-components';
 import { SystemStatusPage } from '../features/system/SystemStatusPage';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../shared/auth/RoleRoute';
@@ -37,6 +43,7 @@ export const router = createBrowserRouter([
       { path: '/', element: <Navigate to="/login" replace /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
+      { path: '/join/invite', element: <InviteJoinPage /> },
       { path: '/forbidden', element: <ForbiddenPage /> },
       {
         element: (
@@ -50,7 +57,7 @@ export const router = createBrowserRouter([
             path: '/student/dashboard',
             element: (
               <RoleRoute roles={['STUDENT']}>
-                <StudentHomePage />
+                <StudentClassroomsPage />
               </RoleRoute>
             ),
           },
@@ -58,7 +65,23 @@ export const router = createBrowserRouter([
             path: '/teacher/dashboard',
             element: (
               <RoleRoute roles={['TEACHER']}>
-                <TeacherHomePage />
+                <TeacherClassroomsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/classrooms/:classroomId',
+            element: (
+              <RoleRoute roles={['STUDENT']}>
+                <StudentClassroomDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/classrooms/:classroomId',
+            element: (
+              <RoleRoute roles={['TEACHER']}>
+                <TeacherClassroomDetailPage />
               </RoleRoute>
             ),
           },
@@ -123,6 +146,30 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="teacher_invitation.view">
                 <AdminTeacherInvitationDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/classrooms',
+            element: (
+              <RoleRoute permission="classroom.governance.view">
+                <AdminClassroomsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/classrooms/:classroomId',
+            element: (
+              <RoleRoute permission="classroom.governance.view">
+                <AdminClassroomDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/settings/enrollment-policy',
+            element: (
+              <RoleRoute permission="enrollment_policy.view">
+                <AdminEnrollmentPolicyPage />
               </RoleRoute>
             ),
           },

@@ -2,7 +2,7 @@
 
 Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ cho Student, Teacher và Admin. Repository sử dụng ReactJS, Node.js/ExpressJS, MongoDB, Swagger/OpenAPI, Docker và CI/CD.
 
-Repository đã hoàn thành Phase 01 và Phase 02. Planning baseline Phase 03 Classroom Management đã merge bằng PR #5 tại `1e8ad41`, remote CI đạt `6/6` jobs và hiện ở trạng thái `READY_TO_CODE` trong [Phase 03 Implementation Plan](docs/implementation/phase-03/README.md).
+Repository đã hoàn thành Phase 01 và Phase 02. Must scope Phase 03 Classroom Management đã hoàn tất và đạt `44/45` acceptance criteria ở local; trạng thái hiện tại là `LOCAL_EXIT_CANDIDATE`, đang chờ Pull Request, remote CI/Gitleaks và reviewer sign-off cho criterion cuối trong [Phase 03 Implementation Plan](docs/implementation/phase-03/README.md).
 
 ## Prerequisites
 
@@ -82,7 +82,7 @@ npm run check:ci
 
 `npm run check` là quality gate đầy đủ dành cho local. `npm run check:ci` thay test thông thường bằng coverage test, áp dụng coverage threshold, kiểm tra negative lint gate và là lệnh được Pull Request CI sử dụng.
 
-`npm run test:integration` yêu cầu `MONGODB_INTEGRATION_URI` trỏ tới test database trên replica set. `npm run test:e2e` yêu cầu Web/API/MongoDB đang healthy và `E2E_DEMO_PASSWORD` trùng với password dùng cho synthetic seed; xem [Phase 02 DevOps Guide](docs/implementation/phase-02/devops-environment-and-seeding.md).
+`npm run test:integration` yêu cầu `MONGODB_INTEGRATION_URI` trỏ tới test database trên replica set. `npm run test:e2e` yêu cầu Web/API/MongoDB đang healthy và `E2E_DEMO_PASSWORD` trùng với password dùng cho synthetic seed; xem [Phase 03 DevOps Guide](docs/implementation/phase-03/devops-environment-and-seeding.md).
 
 ## Environment Variables
 
@@ -101,6 +101,10 @@ npm run check:ci
 | `REFRESH_REUSE_GRACE_SECONDS` | API         | Grace chống multi-tab self-revoke, từ 0 đến 10 giây         |
 | `REFRESH_COOKIE_*`            | API         | Tên cookie và Secure policy                                 |
 | `AUTH_IDENTITY_PEPPER`        | API         | Secret riêng cho identity cooldown key                      |
+| `CLASSROOM_CODE_PEPPER`       | API         | Secret riêng để tạo HMAC digest cho Class Code              |
+| `CLASSROOM_INVITE_*`          | API         | Token bytes và thời hạn mặc định của Classroom Invite Link  |
+| `CLASSROOM_JOIN_*`            | API         | Rate limit theo IP/identity cho join                        |
+| `CLASSROOM_PREVIEW_IP_LIMIT`  | API         | Rate limit theo IP cho public Invite preview                |
 | Rate/cooldown variables       | API         | Threshold/window có min/max validation trong `.env.example` |
 | `BOOTSTRAP_ADMIN_ENABLED`     | API/CLI     | Tắt mặc định; không tự seed khi API startup                 |
 | `LOG_LEVEL`                   | API         | Structured logging level                                    |
@@ -129,5 +133,7 @@ Web image đã có Nginx SPA fallback. Nếu lỗi còn xảy ra, kiểm tra ima
 - [Phase 01 Documentation](docs/implementation/phase-01/README.md)
 - [Phase 02 Documentation](docs/implementation/phase-02/README.md)
 - [Phase 02 Exit Evidence](docs/implementation/phase-02/phase-exit-evidence.md)
+- [Phase 03 Documentation](docs/implementation/phase-03/README.md)
+- [Phase 03 Exit Evidence](docs/implementation/phase-03/phase-exit-evidence.md)
 - [Architecture Overview](docs/implementation/phase-01/architecture-overview.md)
 - [Architecture Decision Records](docs/implementation/phase-01/technical-decisions.md)

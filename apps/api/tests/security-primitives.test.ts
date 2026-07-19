@@ -70,8 +70,16 @@ describe('Phase 02 security primitives', () => {
   });
 
   it('resolves stable capabilities and secure refresh-cookie attributes', () => {
-    expect(getCapabilities('STUDENT')).toEqual(['profile.update_own', 'profile.view_own']);
+    expect(getCapabilities('STUDENT')).toEqual([
+      'classroom.join',
+      'classroom.view_enrolled',
+      'profile.update_own',
+      'profile.view_own',
+    ]);
     expect(hasPermission('ADMIN', 'teacher_invitation.create')).toBe(true);
+    expect(hasPermission('ADMIN', 'classroom.governance.view')).toBe(true);
+    expect(hasPermission('ADMIN', 'classroom.governance.lock')).toBe(false);
+    expect(hasPermission('TEACHER', 'classroom.create')).toBe(true);
     expect(hasPermission('STUDENT', 'user.view_students')).toBe(false);
     expect(getRefreshCookieOptions(testConfig)).toMatchObject({
       httpOnly: true,

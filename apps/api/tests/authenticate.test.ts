@@ -88,7 +88,12 @@ describe('authentication middleware', () => {
     expect(request.auth).toMatchObject({
       role: 'STUDENT',
       familyId: 'family-id',
-      capabilities: ['profile.update_own', 'profile.view_own'],
+      capabilities: [
+        'classroom.join',
+        'classroom.view_enrolled',
+        'profile.update_own',
+        'profile.view_own',
+      ],
     });
     expect(next).toHaveBeenLastCalledWith();
   });
