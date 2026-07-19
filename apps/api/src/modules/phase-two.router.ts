@@ -18,8 +18,12 @@ import {
 import { TeacherInvitationService } from './teacher-invitations/teacher-invitation.service.js';
 import { createCurrentUserRouter } from './users/current-user.routes.js';
 import { UserRepository } from './users/user.repository.js';
+import type { ClassroomOwnershipReader } from './classrooms/classroom-ownership.reader.js';
 
-export function createPhaseTwoRouter(config: AppConfig) {
+export function createPhaseTwoRouter(
+  config: AppConfig,
+  classroomOwnershipReader?: ClassroomOwnershipReader,
+) {
   const router = Router();
   const users = new UserRepository();
   const sessions = new AuthSessionRepository();
@@ -28,7 +32,14 @@ export function createPhaseTwoRouter(config: AppConfig) {
   const systemGuards = new SystemGuardRepository();
   const invitations = new TeacherInvitationRepository();
   const authService = new AuthService(config, users, sessions, loginStates);
-  const adminUserService = new AdminUserService(users, sessions, audits, systemGuards);
+  const adminUserService = new AdminUserService(
+    users,
+    sessions,
+    audits,
+    systemGuards,
+    undefined,
+    classroomOwnershipReader,
+  );
   const teacherInvitationService = new TeacherInvitationService(config, invitations, users, audits);
   const authenticate = createAuthenticateMiddleware(
     authService.accessTokenService,

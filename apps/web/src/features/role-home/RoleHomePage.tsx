@@ -30,7 +30,7 @@ export function StudentHomePage() {
             <GraduationCap size={21} />
             <h2>Lớp học</h2>
           </div>
-          <p>Chức năng tham gia bằng link hoặc class code sẽ được nối với Classroom ở Phase 03.</p>
+          <p>Các lớp học đã tham gia được tổng hợp tại trang lớp học của Student.</p>
         </section>
       </div>
     </section>
@@ -53,7 +53,7 @@ export function TeacherHomePage() {
           <h2>Khóa học của tôi</h2>
         </div>
         <div className="empty-state">
-          <p>Khóa học sẽ được xây dựng trong phase Classroom tiếp theo.</p>
+          <p>Các lớp học do Teacher phụ trách được tổng hợp tại trang lớp học.</p>
         </div>
       </section>
     </section>

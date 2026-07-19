@@ -12,16 +12,42 @@ export const PERMISSIONS = [
   'teacher_invitation.view',
   'teacher_invitation.copy_link',
   'teacher_invitation.revoke',
+  'classroom.join',
+  'classroom.view_enrolled',
+  'classroom.create',
+  'classroom.view_owned',
+  'classroom.update_owned',
+  'classroom.archive_owned',
+  'classroom.manage_join',
+  'classroom.view_roster',
+  'classroom.remove_student',
+  'enrollment_policy.view',
+  'enrollment_policy.update',
+  'classroom.governance.view',
+  'classroom.governance.lock',
+  'classroom.ownership.transfer',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
 const PROFILE_PERMISSIONS: readonly Permission[] = ['profile.update_own', 'profile.view_own'];
 
 const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
-  STUDENT: PROFILE_PERMISSIONS,
-  TEACHER: PROFILE_PERMISSIONS,
+  STUDENT: [...PROFILE_PERMISSIONS, 'classroom.join', 'classroom.view_enrolled'],
+  TEACHER: [
+    ...PROFILE_PERMISSIONS,
+    'classroom.archive_owned',
+    'classroom.create',
+    'classroom.manage_join',
+    'classroom.remove_student',
+    'classroom.update_owned',
+    'classroom.view_owned',
+    'classroom.view_roster',
+  ],
   ADMIN: [
     ...PROFILE_PERMISSIONS,
+    'classroom.governance.view',
+    'enrollment_policy.update',
+    'enrollment_policy.view',
     'teacher_invitation.copy_link',
     'teacher_invitation.create',
     'teacher_invitation.revoke',

@@ -22,6 +22,27 @@ export const DEMO_IDENTITIES: readonly DemoIdentity[] = [
     registrationSource: 'SELF_REGISTRATION',
   },
   {
+    email: 'student.active.2@example.test',
+    fullName: 'Demo Student Active Two',
+    role: 'STUDENT',
+    status: 'ACTIVE',
+    registrationSource: 'SELF_REGISTRATION',
+  },
+  {
+    email: 'student.active.3@example.test',
+    fullName: 'Demo Student Active Three',
+    role: 'STUDENT',
+    status: 'ACTIVE',
+    registrationSource: 'SELF_REGISTRATION',
+  },
+  {
+    email: 'student.active.4@example.test',
+    fullName: 'Demo Student Active Four',
+    role: 'STUDENT',
+    status: 'ACTIVE',
+    registrationSource: 'SELF_REGISTRATION',
+  },
+  {
     email: 'student.blocked@example.test',
     fullName: 'Demo Student Blocked',
     role: 'STUDENT',
@@ -33,6 +54,20 @@ export const DEMO_IDENTITIES: readonly DemoIdentity[] = [
     fullName: 'Demo Teacher Active',
     role: 'TEACHER',
     status: 'ACTIVE',
+    registrationSource: 'TEACHER_INVITATION',
+  },
+  {
+    email: 'teacher.active.2@example.test',
+    fullName: 'Demo Teacher Active Two',
+    role: 'TEACHER',
+    status: 'ACTIVE',
+    registrationSource: 'TEACHER_INVITATION',
+  },
+  {
+    email: 'teacher.blocked@example.test',
+    fullName: 'Demo Teacher Blocked',
+    role: 'TEACHER',
+    status: 'BLOCKED',
     registrationSource: 'TEACHER_INVITATION',
   },
   {

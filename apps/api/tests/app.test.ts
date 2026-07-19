@@ -4,7 +4,11 @@ import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
 import { createApp } from '../src/app.js';
-import { createOpenApiDocument, PHASE_TWO_OPENAPI_OPERATIONS } from '../src/docs/openapi.js';
+import {
+  createOpenApiDocument,
+  PHASE_THREE_OPENAPI_OPERATIONS,
+  PHASE_TWO_OPENAPI_OPERATIONS,
+} from '../src/docs/openapi.js';
 import { testConfig, testRuntimeInfo } from './test-fixtures.js';
 
 function buildTestApp(databaseStatus: 'UP' | 'DOWN' | 'CONNECTING' = 'UP') {
@@ -145,5 +149,74 @@ describe('system API', () => {
     expect([...documentedOperations.values()].sort()).toEqual(
       [...PHASE_TWO_OPENAPI_OPERATIONS].sort(),
     );
+  });
+
+  it('keeps every Phase 03 route covered and excludes stored credential secrets', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expectedRoutes = new Map([
+      ['GET /api/v1/classrooms', 'listClassrooms'],
+      ['POST /api/v1/classrooms', 'createClassroom'],
+      ['GET /api/v1/classrooms/{classroomId}', 'getClassroom'],
+      ['PATCH /api/v1/classrooms/{classroomId}', 'updateClassroom'],
+      ['DELETE /api/v1/classrooms/{classroomId}', 'archiveClassroom'],
+      ['PATCH /api/v1/classrooms/{classroomId}/settings', 'updateClassroomSettings'],
+      ['GET /api/v1/classrooms/{classroomId}/students', 'listClassroomStudents'],
+      [
+        'POST /api/v1/classrooms/{classroomId}/students/{studentId}/remove',
+        'removeClassroomStudent',
+      ],
+      ['GET /api/v1/classrooms/{classroomId}/class-code', 'getClassCode'],
+      ['POST /api/v1/classrooms/{classroomId}/class-code/regenerate', 'regenerateClassCode'],
+      ['POST /api/v1/classrooms/{classroomId}/class-code/disable', 'disableClassCode'],
+      ['GET /api/v1/classrooms/{classroomId}/invite-links', 'listClassroomInviteLinks'],
+      ['POST /api/v1/classrooms/{classroomId}/invite-links', 'createClassroomInviteLink'],
+      [
+        'POST /api/v1/classrooms/{classroomId}/invite-links/{linkId}/regenerate',
+        'regenerateClassroomInviteLink',
+      ],
+      [
+        'POST /api/v1/classrooms/{classroomId}/invite-links/{linkId}/disable',
+        'disableClassroomInviteLink',
+      ],
+      ['POST /api/v1/classrooms/invite-links/preview', 'previewClassroomInviteLink'],
+      ['POST /api/v1/classrooms/join-by-code', 'joinClassroomByCode'],
+      ['POST /api/v1/classrooms/join-by-token', 'joinClassroomByToken'],
+      ['GET /api/v1/admin/settings/enrollment-policy', 'getEnrollmentPolicy'],
+      ['PATCH /api/v1/admin/settings/enrollment-policy', 'updateEnrollmentPolicy'],
+      ['GET /api/v1/admin/classrooms', 'listAdminClassrooms'],
+      ['GET /api/v1/admin/classrooms/{classroomId}', 'getAdminClassroom'],
+    ]);
+    const documentedOperations = new Map<string, string>();
+
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (!pathItem) continue;
+      for (const method of ['get', 'post', 'patch', 'put', 'delete'] as const) {
+        const operation = pathItem[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_THREE_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_THREE_OPENAPI_OPERATIONS)[number],
+          )
+        ) {
+          continue;
+        }
+
+        const routeKey = `${method.toUpperCase()} ${path}`;
+        documentedOperations.set(routeKey, operation.operationId);
+        expect(operation.security, `${routeKey} security`).toBeDefined();
+        const responseCodes = Object.keys(operation.responses);
+        expect(responseCodes.some((code) => /^2\d\d$/u.test(code))).toBe(true);
+        expect(responseCodes.some((code) => /^4\d\d$/u.test(code))).toBe(true);
+      }
+    }
+
+    expect(documentedOperations).toEqual(expectedRoutes);
+    expect([...documentedOperations.values()].sort()).toEqual(
+      [...PHASE_THREE_OPENAPI_OPERATIONS].sort(),
+    );
+    const serialized = JSON.stringify(document);
+    expect(serialized).not.toContain('codeDigest');
+    expect(serialized).not.toContain('tokenHash');
+    expect(serialized).not.toContain('CLASSROOM_CODE_PEPPER');
   });
 });

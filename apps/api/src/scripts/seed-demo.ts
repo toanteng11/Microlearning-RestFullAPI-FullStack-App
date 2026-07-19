@@ -1,6 +1,7 @@
 import { loadEnvFile } from 'node:process';
 
 import { DemoSeedService } from '../modules/bootstrap/demo-seed.service.js';
+import { PhaseThreeDemoSeedService } from '../modules/bootstrap/phase-three-demo-seed.service.js';
 import { UserRepository } from '../modules/users/user.repository.js';
 import { loadEnvironment } from '../shared/config/environment.js';
 import { connectToMongoDB, disconnectFromMongoDB } from '../shared/database/mongodb.js';
@@ -29,10 +30,15 @@ async function main() {
   await connectToMongoDB(config.mongodbUri, logger);
 
   try {
-    const result = await new DemoSeedService(config.appEnvironment, new UserRepository()).execute(
+    const users = await new DemoSeedService(config.appEnvironment, new UserRepository()).execute(
       password,
     );
-    process.stdout.write(`${JSON.stringify({ event: 'demo.seed.completed', ...result })}\n`);
+    const phaseThree = await new PhaseThreeDemoSeedService(config.appEnvironment).execute(
+      users.users,
+    );
+    process.stdout.write(
+      `${JSON.stringify({ event: 'demo.seed.completed', users, phaseThree })}\n`,
+    );
   } finally {
     await disconnectFromMongoDB(logger);
   }

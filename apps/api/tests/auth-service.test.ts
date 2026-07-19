@@ -147,7 +147,12 @@ describe('AuthService', () => {
       }),
     );
     expect(result.refreshToken).not.toBe(result.accessToken);
-    expect(result.user.capabilities).toEqual(['profile.update_own', 'profile.view_own']);
+    expect(result.user.capabilities).toEqual([
+      'classroom.join',
+      'classroom.view_enrolled',
+      'profile.update_own',
+      'profile.view_own',
+    ]);
   });
 
   it('distinguishes refresh race from token reuse and revokes only outside grace', async () => {

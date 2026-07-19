@@ -1,6 +1,12 @@
 import type { OpenAPIV3 } from 'openapi-types';
 
 import type { RuntimeInfo } from '../modules/system/system.types.js';
+import {
+  createPhaseThreePaths,
+  phaseThreeSchemas,
+  phaseThreeTags,
+} from './phase-three.openapi.js';
+export { PHASE_THREE_OPENAPI_OPERATIONS } from './phase-three.openapi.js';
 
 type Schema = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
@@ -366,7 +372,12 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
               data: {
                 user: {
                   ...userExample,
-                  capabilities: ['profile.update_own', 'profile.view_own'],
+                  capabilities: [
+                    'classroom.join',
+                    'classroom.view_enrolled',
+                    'profile.update_own',
+                    'profile.view_own',
+                  ],
                   avatarUrl: null,
                   studentCode: null,
                   department: null,
@@ -737,13 +748,15 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
     },
   };
 
+  Object.assign(paths, createPhaseThreePaths());
+
   return {
     openapi: '3.0.3',
     info: {
       title: 'Microlearning Classroom LMS API',
       version: runtimeInfo.version,
       description:
-        'RESTful API cho nền tảng Microlearning nội bộ. Phase 02 cung cấp Identity, secure session rotation, RBAC, Admin User Governance và manual Teacher Invitation.',
+        'RESTful API cho nền tảng Microlearning nội bộ. Phase 02 cung cấp Identity, secure session rotation, RBAC, Admin User Governance và manual Teacher Invitation; Phase 03 bổ sung Classroom, Class Code, Invite Link, enrollment, roster và governance policy.',
     },
     servers: [{ url: '/', description: 'Current environment' }],
     tags: [
@@ -755,6 +768,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         name: 'Teacher Invitations',
         description: 'Manual one-time Teacher invitation lifecycle',
       },
+      ...phaseThreeTags,
     ],
     paths,
     components: {
@@ -789,6 +803,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         },
       },
       schemas: {
+        ...phaseThreeSchemas,
         UserRole: {
           type: 'string',
           enum: ['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN'],

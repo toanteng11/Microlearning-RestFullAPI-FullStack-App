@@ -60,6 +60,14 @@ services:
       REFRESH_COOKIE_SECURE: 'false'
       AUTH_IDENTITY_PEPPER: local-development-identity-pepper-not-production
       TEACHER_INVITATION_TTL_DAYS: 7
+      CLASSROOM_CODE_PEPPER: local-development-classroom-code-pepper-not-production
+      CLASSROOM_CODE_LENGTH: 8
+      CLASSROOM_INVITE_TOKEN_BYTES: 32
+      CLASSROOM_INVITE_DEFAULT_TTL_DAYS: 30
+      CLASSROOM_JOIN_IP_LIMIT: 20
+      CLASSROOM_JOIN_IDENTITY_LIMIT: 10
+      CLASSROOM_JOIN_WINDOW_SECONDS: 900
+      CLASSROOM_PREVIEW_IP_LIMIT: 30
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:

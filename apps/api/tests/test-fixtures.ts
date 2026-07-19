@@ -20,6 +20,16 @@ export const testConfig: AppConfig = {
   refreshCookieSecure: false,
   authIdentityPepper: 'synthetic-identity-pepper-for-test-fixture',
   teacherInvitationTtlDays: 7,
+  classroomCodePepper: 'synthetic-classroom-code-pepper-for-test-fixture',
+  classroomCodeLength: 8,
+  classroomInviteTokenBytes: 32,
+  classroomInviteDefaultTtlDays: 30,
+  classroomRateLimits: {
+    joinIpMax: 20,
+    joinIdentityMax: 10,
+    joinWindowSeconds: 900,
+    previewIpMax: 30,
+  },
   rateLimits: {
     windowSeconds: 900,
     registerMax: 10,

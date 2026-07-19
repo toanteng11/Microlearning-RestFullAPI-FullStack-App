@@ -7,7 +7,7 @@ Entry point cho Dev bắt đầu Phase 03 đúng dependency và contract. Đọc
 ## 2. Baseline Required
 
 - Branch base: latest protected `main` sau Phase 02.
-- Planning status phải `READY_TO_CODE`; hiện `APPROVED_PENDING_PR_MERGE` và chỉ còn `P03-GA-07`.
+- Planning status là `READY_TO_CODE`; PR #5 đã merge vào `main` tại `1e8ad41` và remote CI đạt `6/6` jobs.
 - Must scope: Classroom, Code/Link, Enrollment/join, roster, Student list/detail, Admin policy/governance, offboarding guard.
 - Should không tự kéo vào.
 - QR/Course/Lesson/Stream không thuộc P03.

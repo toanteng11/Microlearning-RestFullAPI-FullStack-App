@@ -42,10 +42,15 @@ export async function getDatabaseStatus(): Promise<DatabaseStatus> {
   }
 }
 
-export async function connectToMongoDB(uri: string, logger: Logger): Promise<void> {
+export async function connectToMongoDB(
+  uri: string,
+  logger: Logger,
+  options: { autoIndex?: boolean } = {},
+): Promise<void> {
   mongoose.set('strictQuery', true);
 
   await mongoose.connect(uri, {
+    autoIndex: options.autoIndex ?? true,
     serverSelectionTimeoutMS: 10_000,
     connectTimeoutMS: 10_000,
   });

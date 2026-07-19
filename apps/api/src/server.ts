@@ -2,12 +2,14 @@ import { createServer } from 'node:http';
 import { loadEnvFile } from 'node:process';
 
 import { createApp } from './app.js';
+import { EnrollmentPolicyRepository } from './modules/enrollment-policy/enrollment-policy.repository.js';
 import { loadEnvironment } from './shared/config/environment.js';
 import {
   connectToMongoDB,
   disconnectFromMongoDB,
   getDatabaseStatus,
 } from './shared/database/mongodb.js';
+import { initializePhaseThreeIndexes } from './shared/database/phase-three-indexes.js';
 import { createLogger } from './shared/logging/logger.js';
 
 function loadLocalEnvironmentFile() {
@@ -25,7 +27,13 @@ async function bootstrap() {
   const config = loadEnvironment(process.env);
   const logger = createLogger(config.logLevel);
 
-  await connectToMongoDB(config.mongodbUri, logger);
+  const mayCreateIndexes = ['development', 'test'].includes(config.appEnvironment);
+  await connectToMongoDB(config.mongodbUri, logger, { autoIndex: mayCreateIndexes });
+  await initializePhaseThreeIndexes(config.appEnvironment);
+  const enrollmentPolicy = await new EnrollmentPolicyRepository().ensureEnrollmentPolicy(
+    config.classroomInviteDefaultTtlDays,
+  );
+  if (!enrollmentPolicy) throw new Error('Enrollment Policy bootstrap failed');
 
   const app = createApp({
     config,

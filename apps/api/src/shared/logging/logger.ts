@@ -3,7 +3,11 @@ import pino, { type DestinationStream, type Logger, type LoggerOptions } from 'p
 const SENSITIVE_QUERY_PARAMETERS = new Set([
   'access_token',
   'authorization',
+  'classcode',
+  'code',
+  'invite_token',
   'invitationtoken',
+  'invitetoken',
   'password',
   'refresh_token',
   'secret',
@@ -11,7 +15,7 @@ const SENSITIVE_QUERY_PARAMETERS = new Set([
 ]);
 
 export function sanitizeRequestUrl(value: string | undefined): string | undefined {
-  if (!value || !value.includes('?')) return value;
+  if (!value || (!value.includes('?') && !value.includes('#'))) return value;
 
   try {
     const parsed = new URL(value, 'http://microlearning.local');
@@ -20,7 +24,7 @@ export function sanitizeRequestUrl(value: string | undefined): string | undefine
         parsed.searchParams.set(key, '[REDACTED]');
       }
     }
-    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    return `${parsed.pathname}${parsed.search}${parsed.hash ? '#[REDACTED]' : ''}`;
   } catch {
     return value.replace(
       /([?&](?:access_token|authorization|invitationtoken|password|refresh_token|secret|token)=)[^&#]*/giu,
@@ -45,27 +49,47 @@ export function createLogger(level: string, destination?: DestinationStream): Lo
         'headers.cookie',
         'headers["set-cookie"]',
         'body.accessToken',
+        'body.classCode',
+        'body.code',
+        'body.codeDigest',
         'body.confirmPassword',
         'body.password',
         'body.refreshToken',
         'body.secret',
         'body.token',
+        'body.tokenHash',
+        'body.inviteToken',
         'req.body.accessToken',
+        'req.body.classCode',
+        'req.body.code',
+        'req.body.codeDigest',
         'req.body.confirmPassword',
         'req.body.password',
         'req.body.refreshToken',
         'req.body.secret',
         'req.body.token',
+        'req.body.tokenHash',
+        'req.body.inviteToken',
         'accessToken',
+        'classCode',
+        'code',
+        'codeDigest',
         'confirmPassword',
         'password',
         'refreshToken',
         'token',
+        'tokenHash',
+        'inviteToken',
         '*.password',
         '*.confirmPassword',
         '*.accessToken',
         '*.refreshToken',
         '*.token',
+        '*.classCode',
+        '*.code',
+        '*.codeDigest',
+        '*.inviteToken',
+        '*.tokenHash',
         '*.secret',
       ],
       censor: '[REDACTED]',

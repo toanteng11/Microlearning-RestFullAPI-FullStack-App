@@ -1030,6 +1030,443 @@ button:disabled {
   margin-bottom: 4px;
 }
 
+button svg,
+.button-link svg,
+.back-link svg {
+  flex: 0 0 auto;
+}
+
+.fit-button,
+.secondary-button,
+.button-link,
+.back-link,
+.segmented-tabs button,
+.inline-confirm,
+.inline-create,
+.join-code-form,
+.credential-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secondary-button {
+  border: 1px solid #aebbc2;
+  color: #32434b;
+  background: #ffffff;
+}
+
+.secondary-button:hover {
+  color: #0e6075;
+  background: #edf5f6;
+}
+
+.button-link {
+  min-height: 42px;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0 18px;
+  color: #ffffff;
+  background: #0e7490;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-link {
+  margin-bottom: 18px;
+  color: #0e6075;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.one-time-credential {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(220px, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+  border: 1px solid #d1ad46;
+  border-left: 5px solid #b98200;
+  border-radius: 7px;
+  padding: 16px 18px;
+  background: #fffdf3;
+}
+
+.one-time-credential p {
+  margin: 4px 0 0;
+  color: #52616a;
+  font-size: 0.85rem;
+}
+
+.one-time-credential code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.88rem;
+}
+
+.editor-band {
+  margin-bottom: 24px;
+  border-top: 1px solid #cbd5d9;
+  border-bottom: 1px solid #cbd5d9;
+  padding: 20px 0;
+}
+
+.editor-band__heading,
+.section-heading,
+.classroom-detail-header,
+.classroom-card__status,
+.credential-history-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.editor-band__heading h2,
+.section-heading h2 {
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
+.classroom-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.classroom-form .form-field {
+  margin-bottom: 0;
+}
+
+.classroom-form__wide {
+  grid-column: 1 / -1;
+}
+
+.classroom-form textarea,
+.detail-panel textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.classroom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.classroom-card {
+  min-width: 0;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid #c7d1d5;
+  border-radius: 7px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.classroom-card h2 {
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+  font-size: 1.15rem;
+}
+
+.classroom-card p {
+  margin-bottom: 0;
+  color: #5a6971;
+}
+
+.classroom-card__status {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.status-badge--open,
+.status-badge--active {
+  border-color: #65a37a;
+  color: #166534;
+  background: #eff8f1;
+}
+
+.status-badge--closed,
+.status-badge--locked,
+.status-badge--disabled,
+.status-badge--regenerated,
+.status-badge--archived,
+.status-badge--removed,
+.status-badge--expired {
+  border-color: #9aa8ae;
+  color: #46555d;
+  background: #f1f4f5;
+}
+
+.student-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.task-band,
+.join-band {
+  min-height: 150px;
+  border-top: 1px solid #cbd5d9;
+  border-bottom: 1px solid #cbd5d9;
+  padding: 18px 0;
+}
+
+.join-code-form {
+  width: 100%;
+}
+
+.join-code-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: 'Cascadia Code', Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.join-code-form button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.section-heading {
+  align-items: center;
+  margin: 30px 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #cbd5d9;
+}
+
+.section-heading span {
+  color: #52616a;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.classroom-detail-header {
+  align-items: flex-start;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #cbd5d9;
+  padding-bottom: 20px;
+}
+
+.classroom-detail-header h1 {
+  margin-bottom: 8px;
+  font-size: 2rem;
+}
+
+.classroom-detail-header p {
+  margin-bottom: 0;
+  color: #52616a;
+}
+
+.segmented-tabs {
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(130px, 1fr));
+  margin-bottom: 22px;
+  border: 1px solid #aebbc2;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmented-tabs button {
+  min-height: 40px;
+  justify-content: center;
+  border-right: 1px solid #aebbc2;
+  border-radius: 0;
+  padding: 0 14px;
+  color: #41515a;
+  background: #ffffff;
+}
+
+.segmented-tabs button:last-child {
+  border-right: 0;
+}
+
+.segmented-tabs button.active {
+  color: #ffffff;
+  background: #0e6075;
+}
+
+.danger-panel {
+  border-left: 4px solid #b42318;
+}
+
+.people-section {
+  min-width: 0;
+}
+
+.roster-table {
+  min-width: 720px;
+}
+
+.inline-confirm {
+  width: 100%;
+  margin-top: 14px;
+  border-left: 4px solid #b42318;
+  padding: 12px 14px;
+  background: #fff8f7;
+}
+
+.inline-confirm input {
+  min-width: 160px;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.settings-layout__wide {
+  grid-column: 1 / -1;
+}
+
+.toggle-row {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-top: 1px solid #e0e6e8;
+  padding: 10px 0;
+  font-weight: 700;
+}
+
+.toggle-row input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: #0e7490;
+}
+
+.credential-row {
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-top: 1px solid #e0e6e8;
+  border-bottom: 1px solid #e0e6e8;
+  padding: 14px 0;
+}
+
+.credential-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.credential-actions form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.credential-actions .danger-button {
+  width: auto;
+}
+
+.credential-actions--horizontal {
+  min-width: min(100%, 680px);
+}
+
+.inline-create {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 140px auto;
+  align-items: center;
+}
+
+.credential-list {
+  border-top: 1px solid #d7dfe2;
+}
+
+.credential-history-row {
+  align-items: center;
+  border-bottom: 1px solid #d7dfe2;
+  padding: 14px 0;
+}
+
+.credential-history-row small {
+  display: block;
+  margin-top: 7px;
+  color: #66767f;
+}
+
+.invite-join-page {
+  min-height: 100vh;
+  background: #f4f7f8;
+}
+
+.invite-join-header {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #cbd5d9;
+  padding: 0 28px;
+  background: #ffffff;
+}
+
+.invite-join-content {
+  width: min(100% - 32px, 680px);
+  margin: 0 auto;
+  padding: 54px 0;
+}
+
+.invite-preview-panel {
+  border-top: 5px solid #0e7490;
+  padding: 30px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgb(28 50 60 / 9%);
+}
+
+.invite-preview-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid #b7c7cc;
+  border-radius: 50%;
+  color: #0e6075;
+}
+
+.invite-preview-panel .detail-list {
+  margin-bottom: 22px;
+}
+
+.invite-preview-panel dd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.invite-auth-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.governance-filter {
+  grid-template-columns: minmax(220px, 1fr) auto;
+}
+
+.governance-count {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.governance-count strong {
+  font-size: 2.5rem;
+}
+
 @media (max-width: 900px) {
   .management-grid,
   .detail-layout {
@@ -1056,6 +1493,23 @@ button:disabled {
   .invitation-create-form .form-field:first-child,
   .one-time-link-value input {
     grid-column: 1 / -1;
+  }
+
+  .classroom-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .classroom-form,
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-layout__wide {
+    grid-column: auto;
+  }
+
+  .student-dashboard-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1157,6 +1611,64 @@ button:disabled {
     display: none;
   }
 
+  .data-table-wrap--responsive,
+  .data-table-wrap--responsive .data-table,
+  .data-table-wrap--responsive tbody,
+  .data-table-wrap--responsive tr,
+  .data-table-wrap--responsive td {
+    display: block;
+  }
+
+  .data-table-wrap--responsive {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .data-table-wrap--responsive .data-table {
+    min-width: 0;
+  }
+
+  .data-table-wrap--responsive thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .data-table-wrap--responsive tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .data-table-wrap--responsive tr {
+    overflow: hidden;
+    border: 1px solid #c7d1d5;
+    border-radius: 7px;
+    background: #ffffff;
+  }
+
+  .data-table-wrap--responsive td {
+    display: grid;
+    grid-template-columns: minmax(88px, 0.36fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 14px;
+    overflow-wrap: anywhere;
+  }
+
+  .data-table-wrap--responsive td::before {
+    content: attr(data-label);
+    color: #52616a;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .data-table-wrap--responsive td:last-child {
+    border-bottom: 0;
+  }
+
   .mobile-user-list {
     display: grid;
     gap: 12px;
@@ -1190,5 +1702,52 @@ button:disabled {
   .detail-list > div {
     grid-template-columns: 1fr;
     gap: 5px;
+  }
+
+  .classroom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .one-time-credential,
+  .inline-create,
+  .credential-actions form,
+  .inline-confirm {
+    grid-template-columns: 1fr;
+  }
+
+  .one-time-credential {
+    align-items: start;
+  }
+
+  .segmented-tabs {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .segmented-tabs button {
+    border-right: 0;
+    border-bottom: 1px solid #aebbc2;
+  }
+
+  .segmented-tabs button:last-child {
+    border-bottom: 0;
+  }
+
+  .classroom-detail-header,
+  .credential-history-row {
+    flex-direction: column;
+  }
+
+  .credential-actions--horizontal {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .invite-join-header {
+    padding: 0 16px;
+  }
+
+  .invite-preview-panel {
+    padding: 24px 20px;
   }
 }

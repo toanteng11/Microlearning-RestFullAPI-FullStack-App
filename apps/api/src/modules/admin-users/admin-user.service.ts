@@ -6,6 +6,7 @@ import type { AuthSessionRepository } from '../sessions/auth-session.repository.
 import type { SystemGuardRepository } from '../system-guards/system-guard.repository.js';
 import type { UserRepository } from '../users/user.repository.js';
 import type { UserRecord, UserRole, UserStatus } from '../users/user.types.js';
+import type { ClassroomOwnershipReader } from '../classrooms/classroom-ownership.reader.js';
 import { hasPermission, type Permission } from '../../shared/auth/permissions.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
@@ -143,6 +144,7 @@ export class AdminUserService {
     private readonly audits: AuditLogRepository,
     private readonly systemGuards: SystemGuardRepository,
     private readonly now: () => Date = () => new Date(),
+    private readonly classroomOwnershipReader?: ClassroomOwnershipReader,
   ) {}
 
   async list(scope: AdminUserListScope, input: AdminUserListQueryInput) {
@@ -200,6 +202,20 @@ export class AdminUserService {
         throw new AppError(409, 'INVALID_STATE_TRANSITION', 'User status transition is invalid');
       }
       const expectedUpdatedAt = assertExpectedVersion(target, input.expectedUpdatedAt);
+
+      if (
+        target.role === 'TEACHER' &&
+        target.status === 'ACTIVE' &&
+        input.status !== 'ACTIVE' &&
+        this.classroomOwnershipReader &&
+        (await this.classroomOwnershipReader.countActiveOwnedClassrooms(target._id.toString())) > 0
+      ) {
+        throw new AppError(
+          409,
+          'TEACHER_HAS_ACTIVE_CLASSROOM',
+          'Teacher still owns an active Classroom',
+        );
+      }
 
       if (target.role === 'SUPER_ADMIN' || input.status === 'DELETED') {
         await this.systemGuards.touchSuperAdminGovernance(session);

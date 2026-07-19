@@ -38,9 +38,9 @@ Việc phê duyệt áp dụng cho các nhóm tài liệu sau:
 
 | Scope | Decision authority | Review date | Decision | Remaining condition |
 | --- | --- | --- | --- | --- |
-| BA revision `1.41`, `DEC-016/017` và `P03-ADR-001..018` | Project Owner theo governance đồ án cá nhân | `2026-07-19` | Approved for planning baseline | Planning PR required checks pass và merge vào `main` (`P03-GA-07`) |
+| BA revision `1.42`, `DEC-016/017` và `P03-ADR-001..018` | Project Owner theo governance đồ án cá nhân | `2026-07-19` | Approved for development baseline | Satisfied: PR #5, Actions run #11 `6/6`, merge commit `1e8ad41` |
 
-Approval này cho phép đóng review nội dung Phase 03 nhưng chưa cho phép code trên branch tài liệu. `READY_TO_CODE` chỉ có hiệu lực sau khi repository lưu được PR, Actions và merge evidence.
+Approval và repository gate đều đã hoàn tất. Phase 03 ở trạng thái `READY_TO_CODE`; development phải thực hiện trên feature branch, liên kết WBS, test và evidence, không push trực tiếp vào `main`.
 
 ## Tiêu Chí Phê Duyệt
 

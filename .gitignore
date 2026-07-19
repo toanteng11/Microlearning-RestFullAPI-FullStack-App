@@ -4,6 +4,7 @@ node_modules/
 # Build and coverage
 dist/
 coverage/
+coverage-integration/
 *.tsbuildinfo
 
 # Environment and secrets
