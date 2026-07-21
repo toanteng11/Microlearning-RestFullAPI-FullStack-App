@@ -907,6 +907,25 @@ button:disabled {
   padding: 0 12px;
 }
 
+.governance-guidance {
+  margin: 0 0 18px;
+  border-left: 3px solid #0e6075;
+  padding-left: 12px;
+  color: #52616a;
+  line-height: 1.55;
+}
+
+.form-hint {
+  margin: 7px 0 0;
+  color: #52616a;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.form-hint--invalid {
+  color: #a33a2b;
+}
+
 .muted-text {
   color: #66767f;
 }

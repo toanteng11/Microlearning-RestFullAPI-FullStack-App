@@ -249,11 +249,21 @@ describe('Admin user management UI', () => {
     );
     render(<RouterProvider router={router} />);
     expect(await screen.findByText('Nguyen Van An')).toBeInTheDocument();
+    const statusButton = screen.getByRole('button', { name: 'Cập nhật trạng thái' });
+    expect(screen.getByRole('option', { name: 'Đã khóa' })).toHaveValue('BLOCKED');
+    expect(screen.getByRole('option', { name: 'Ngừng hoạt động' })).toHaveValue('INACTIVE');
+    expect(statusButton).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Trạng thái mới'), { target: { value: 'BLOCKED' } });
+    expect(statusButton).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Lý do thay đổi'), {
       target: { value: 'Security policy review' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Cập nhật trạng thái' }));
+    expect(screen.getByText('Lý do hợp lệ. Bạn có thể thực hiện cập nhật.')).toBeInTheDocument();
+    expect(statusButton).toBeEnabled();
+    fireEvent.click(statusButton);
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Xác nhận đổi trạng thái của an@example.com thành Đã khóa?',
+    );
     await waitFor(() =>
       expect(requestMock).toHaveBeenLastCalledWith('/admin/users/user-one/status', {
         method: 'PATCH',
@@ -319,7 +329,7 @@ describe('Admin user management UI', () => {
     );
     const second = render(<RouterProvider router={noActionRouter} />);
     expect(
-      await screen.findByText('Không có thao tác quản trị hợp lệ cho tài khoản này.'),
+      await screen.findByText(/Trạng thái hoặc quyền hiện tại không cho phép/),
     ).toBeInTheDocument();
     second.unmount();
 
@@ -337,5 +347,47 @@ describe('Admin user management UI', () => {
     );
     render(<RouterProvider router={failedRouter} />);
     expect(await screen.findByRole('alert')).toHaveTextContent('Not found');
+  });
+
+  it('explains a teacher status update blocked by active classrooms', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const requestMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        success: true,
+        data: {
+          user: detail({
+            role: 'TEACHER',
+            allowedActions: ['STATUS_BLOCK', 'STATUS_DEACTIVATE'],
+          }),
+        },
+      })
+      .mockRejectedValueOnce(
+        new ApiError(
+          409,
+          'TEACHER_HAS_ACTIVE_CLASSROOM',
+          'Teacher owns at least one active classroom',
+        ),
+      );
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/admin/users/:userId',
+          element: withAuth(<AdminUserDetailPage />, requestMock),
+        },
+      ],
+      { initialEntries: ['/admin/users/teacher-one'] },
+    );
+    render(<RouterProvider router={router} />);
+    await screen.findByText('Nguyen Van An');
+    fireEvent.change(screen.getByLabelText('Trạng thái mới'), { target: { value: 'BLOCKED' } });
+    fireEvent.change(screen.getByLabelText('Lý do thay đổi'), {
+      target: { value: 'Tạm khóa theo yêu cầu quản trị' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Cập nhật trạng thái' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Giảng viên vẫn đang sở hữu lớp học hoạt động',
+    );
   });
 });
