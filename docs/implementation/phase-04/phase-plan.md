@@ -134,4 +134,4 @@ Mỗi PR phải chạy `npm run check:ci`; PR có API phải cập nhật OpenAP
 | `IMPLEMENTED_LOCALLY` | Local/runtime evidence pass, remote exit chưa đủ |
 | `COMPLETED` | Gate E và post-merge `main` CI pass |
 
-Trạng thái hiện tại: `READY_TO_CODE`; Gate A đã được phê duyệt qua PR `#8`, CI `#18` và merge commit `66f400d`.
+Trạng thái hiện tại: `COMPLETED`; Gate A đã được phê duyệt qua PR `#8`, implementation merge qua [PR #10](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/10) tại `a6cd37b`, và post-merge `main` CI run `29799307403` đã pass đủ 6 job.

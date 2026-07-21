@@ -2,7 +2,7 @@
 
 Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ cho Student, Teacher và Admin. Repository sử dụng ReactJS, Node.js/ExpressJS, MongoDB, Swagger/OpenAPI, Docker và CI/CD.
 
-Repository đã hoàn thành Phase 01, Phase 02 và Phase 03. Classroom Management đạt `45/45` acceptance criteria; source merge tại `7d2c10c` và hồ sơ đóng phase merge tại `d9de828`. Phase 04 Learning Content đã hoàn tất Gate A, planning baseline merge tại `66f400d` và sẵn sàng bắt đầu implementation.
+Repository đã hoàn thành Phase 01-04. Phase 04 Learning Content đạt `66/66` Must acceptance criteria; implementation đã merge qua [PR #10](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/10) tại `a6cd37b`, PR CI và post-merge `main` CI đều xanh đủ 6 job. Hai Conditional Resource/GCS criteria được defer có phê duyệt sang Phase 07.
 
 ## Prerequisites
 
@@ -138,7 +138,8 @@ Web image đã có Nginx SPA fallback. Nếu lỗi còn xảy ra, kiểm tra ima
 - [Phase 02 Exit Evidence](docs/implementation/phase-02/phase-exit-evidence.md)
 - [Phase 03 Documentation](docs/implementation/phase-03/README.md)
 - [Phase 03 Exit Evidence](docs/implementation/phase-03/phase-exit-evidence.md)
-- [Phase 04 Planning Baseline](docs/implementation/phase-04/README.md)
+- [Phase 04 Documentation](docs/implementation/phase-04/README.md)
+- [Phase 04 Exit Evidence](docs/implementation/phase-04/phase-exit-evidence.md)
 - [Phase 04 Developer Start Guide](docs/implementation/phase-04/developer-start-guide.md)
 - [Architecture Overview](docs/implementation/phase-01/architecture-overview.md)
 - [Architecture Decision Records](docs/implementation/phase-01/technical-decisions.md)

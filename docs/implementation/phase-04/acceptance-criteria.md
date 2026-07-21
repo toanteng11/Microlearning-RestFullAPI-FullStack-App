@@ -119,8 +119,8 @@
 | P04-AC-064 | Must | React component và five critical browser journeys pass | Test/Playwright report | Pass |
 | P04-AC-065 | Must | Critical screens keyboard-accessible, desktop/mobile không overlap/overflow | A11y/visual evidence | Pass |
 | P04-AC-066 | Must | To-do/dashboard/structure đạt performance baseline hoặc approved non-high exception | Performance report | Pass |
-| P04-AC-067 | Must | Docker clean build/start/seed/smoke và clean-clone onboarding pass | Command/runtime evidence | Not Run |
-| P04-AC-068 | Must | PR/main CI required checks, audit, secret scan xanh; evidence/exit docs đầy đủ | GitHub URLs + register | Not Run |
+| P04-AC-067 | Must | Docker clean build/start/seed/smoke và clean-clone onboarding pass | Command/runtime evidence | Pass |
+| P04-AC-068 | Must | PR/main CI required checks, audit, secret scan xanh; evidence/exit docs đầy đủ | GitHub URLs + register | Pass |
 
 ## 11. BA Acceptance Mapping
 
@@ -139,7 +139,7 @@
 
 | Group | Total | Pass | Fail | Blocked | Not Run | N/A |
 | --- | --- | --- | --- | --- | --- | --- |
-| All Must | 66 | 64 | 0 | 0 | 2 | 0 |
+| All Must | 66 | 66 | 0 | 0 | 0 | 0 |
 | Conditional | 2 | 0 | 0 | 0 | 0 | 2 |
 
-Hai Conditional criteria ở trạng thái `Not Applicable` theo `conditional-resource-decision.md`. Phase 04 đã sẵn sàng mở implementation PR; hai Must criteria còn `Not Run` là clean-clone onboarding sau commit (`P04-AC-067`) và protected PR/post-merge main CI (`P04-AC-068`).
+Hai Conditional criteria ở trạng thái `Not Applicable` theo `conditional-resource-decision.md`. Clean-clone onboarding tại commit `ccf032c` đã pass, PR triển khai [#10](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/10) đã merge, [PR CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29798342894) và [post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29799307403) đều xanh đủ 6 job. Kết quả Phase 04 là `66/66 Must Pass`.

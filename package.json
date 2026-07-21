@@ -41,5 +41,8 @@
     "prettier": "^3.9.5",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.63.0"
+  },
+  "overrides": {
+    "shell-quote": "1.10.0"
   }
 }

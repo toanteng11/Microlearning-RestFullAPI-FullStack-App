@@ -14,14 +14,17 @@ Phase này triển khai Course Dashboard và Student To-do theo phạm vi **Less
 | Tên | `Learning Content` |
 | Dependency | Phase 03 đã merge vào `main` tại `d9de828` |
 | Planning branch | `docs/phase-04-planning-baseline` |
-| Planning status | `READY_TO_CODE` |
+| Planning status | `COMPLETED` |
 | Implementation branch | `feature/phase-04-content-foundation` |
-| Implementation status | `READY_FOR_IMPLEMENTATION_PR` - toàn bộ Must source và local quality gates đã pass |
+| Implementation status | `COMPLETED` - đã merge vào `main` qua PR `#10` |
 | Gate A | `APPROVED` - PR `#8`, CI `#18` và merge commit `66f400d` |
+| Gate E | `PASSED` - `66/66` Must Pass, PR/main CI đều xanh đủ 6 job |
+| Implementation PR | [PR #10](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/10) |
+| Merge commit | [`a6cd37b`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/commit/a6cd37b973242f44db1ebf9502ce5e0ba3acff60) |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P05 - Assessments and Grading` |
 
-Planning baseline đã được repository owner review và merge qua protected workflow. Must implementation `P04-T009..T099` đã pass local unit, component, Mongo replica-set integration, OpenAPI, performance, Docker seed/smoke và Playwright checks ngày `2026-07-20`; Resource/GCS Conditional scope được defer sang P07. Các task implementation vẫn ở `In Review` cho tới khi PR và remote CI xanh. Phase 04 chưa hoàn thành vì còn clean-clone sau commit, protected PR checks và post-merge `main` CI.
+Planning baseline đã được repository owner review và merge qua protected workflow. Must implementation `P04-T009..T099` đã pass unit, component, Mongo replica-set integration, OpenAPI, performance, Docker seed/smoke, clean-clone onboarding và Playwright checks. Implementation được merge ngày `2026-07-21` qua PR `#10`; [PR CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29798342894) và [post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/29799307403) đều pass đủ 6 job bắt buộc. Resource/GCS Conditional scope được defer sang P07 theo quyết định đã phê duyệt. Phase 04 đã hoàn thành `66/66` Must acceptance criteria.
 
 ## 3. Business Outcome
 

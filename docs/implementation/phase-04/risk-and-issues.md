@@ -23,15 +23,15 @@
 | P04-R010 | To-do sai sau deadline/content change | Medium | High | Derived state stale | On-demand source query + one asOf | Rebuild query/fix index | BE/QA | Mitigated |
 | P04-R011 | Cross-module model coupling | Medium | Medium | P04/P03 direct model imports | Reader ports + review | Refactor adapter before P05 | TL | Mitigated |
 | P04-R012 | GCS upload làm chặn Must | High | Medium | IAM/CORS/malware unresolved | Conditional gate, URL-first | Defer upload to P07 | PO/DevOps | Accepted |
-| P04-R013 | Public bucket/signed URL leak | Low | Critical | Object accessible without auth | Private bucket/re-authorize/short TTL | Disable uploads, revoke access/rotate | Security/DevOps | Open |
+| P04-R013 | Public bucket/signed URL leak | Low | Critical | Object accessible without auth | Private bucket/re-authorize/short TTL; capability deferred P07 | Disable uploads, revoke access/rotate | Security/DevOps | Accepted |
 | P04-R014 | Timezone làm Teacher đặt sai hạn | Medium | High | UI/server date lệch | UTC contract + timezone confirmation | Correct deadline with audited reason | FE/BE | Mitigated |
 | P04-R015 | Published edit làm Student thấy nội dung dở | Medium | High | Direct edit while published | Body lock, unpublish-to-edit | Roll back status/content | BE/FE | Mitigated |
 | P04-R016 | Archive vô tình xóa progress | Low | Critical | Cascade delete/hard delete code | Soft archive invariant/tests | Restore backup, disable archive route | BE/DBA | Mitigated |
 | P04-R017 | OpenAPI lệch route | Medium | Medium | Swagger sample fail/runtime missing | Route parity CI | Block merge until synchronized | BE/QA | Mitigated |
 | P04-R018 | Seed phụ thuộc wall clock/flaky CI | Medium | Medium | Deadline test pass/fail theo giờ | Fixed IDs + injected/relative seed time | Regenerate deterministic fixtures | QA/DevOps | Mitigated |
-| P04-R019 | Branch required check đổi tên mất protection | Low | High | Ruleset không còn matching job | Plan workflow name migration | Restore check before merge | DevOps | Open |
+| P04-R019 | Branch required check đổi tên mất protection | Low | High | Ruleset không còn matching job | Plan workflow name migration | Restore check before merge | DevOps | Mitigated |
 | P04-R020 | Dữ liệu riêng tư xuất hiện trong logs/artifacts | Medium | Critical | Body/reason/token/signed URL captured | Field allowlist/redaction tests | Remove artifact, rotate/revoke, incident review | Security | Mitigated |
-| P04-R021 | WBS quá lớn cho solo schedule | High | Medium | Must critical path trễ | Vertical PR + defer Conditional | Rebaseline date, giữ Must quality | PO/TL | Open |
+| P04-R021 | WBS quá lớn cho solo schedule | High | Medium | Must critical path trễ | Vertical PR + defer Conditional | Rebaseline date, giữ Must quality | PO/TL | Closed |
 | P04-R022 | Frontend drag/drop không accessible | Medium | Medium | Keyboard user không reorder | Button/keyboard fallback | Disable drag-only UI | FE/QA | Mitigated |
 | P04-R023 | Long content/title phá mobile layout | Medium | Medium | Overflow/overlap screenshot | Stable constraints/wrap/visual QA | Patch CSS before exit | FE | Mitigated |
 | P04-R024 | Student denominator đổi gây hiểu nhầm progress | Medium | Medium | Publish/unpublish làm percentage đổi | metricVersion/asOf/counts/docs | Explain history; P06 snapshot policy | BA/BE | Mitigated |
@@ -42,8 +42,9 @@
 | --- | --- | --- | --- | --- | --- |
 | P04-I001 | Planning Gate A chưa review/merge | Chưa được bắt đầu implementation | PO/TL | PR `#8`, CI `#18`, merge `66f400d` | Closed |
 | P04-I002 | Conditional Resource/GCS cần execution decision | Không chặn Must; ảnh hưởng FR-032 Should | PO/DevOps | Deferred P07 tại `conditional-resource-decision.md` | Closed |
+| P04-I003 | Implementation PR và Phase Exit evidence chưa có URL | Chặn AC-068 và trạng thái Completed | PO/TL | PR `#10`, merge `a6cd37b`, PR/main CI đều xanh `6/6` job | Closed |
 
-Local release-candidate review không ghi nhận implementation defect mức Critical/High. PR review và remote CI vẫn có quyền mở defect mới trước merge.
+Phase Exit review không ghi nhận implementation defect mức Critical/High. PR `#10` và post-merge main CI đều pass; các rủi ro còn lại thuộc capability đã defer hoặc được chuyển sang phase tương ứng.
 
 ## 4. Risk Review Cadence
 
