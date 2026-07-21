@@ -46,6 +46,16 @@ export class ClassroomRepository {
       .exec();
   }
 
+  listActiveByIds(classroomIds: readonly Types.ObjectId[], session?: ClientSession) {
+    if (classroomIds.length === 0) return Promise.resolve([] as ClassroomRecord[]);
+    return ClassroomModel.find({ _id: { $in: classroomIds }, status: 'ACTIVE' })
+      .select({ name: 1, ownerTeacherId: 1, status: 1 })
+      .sort({ _id: 1 })
+      .session(session ?? null)
+      .lean<ClassroomRecord[]>()
+      .exec();
+  }
+
   async listOwned(
     ownerTeacherId: Types.ObjectId,
     query: ClassroomListQuery,

@@ -83,6 +83,7 @@ export function AdminClassroomsPage() {
                 <th>Teacher</th>
                 <th>Trạng thái</th>
                 <th>Thành viên</th>
+                <th>Course</th>
                 <th aria-label="Thao tác" />
               </tr>
             </thead>
@@ -98,6 +99,7 @@ export function AdminClassroomsPage() {
                     <ClassroomStatusBadge status={classroom.status} />
                   </td>
                   <td data-label="Thành viên">{classroom.memberCount ?? 0}</td>
+                  <td data-label="Course">{classroom.contentCount ?? 0}</td>
                   <td data-label="Thao tác">
                     <Link className="row-link" to={`/admin/classrooms/${classroom.id}`}>
                       Xem

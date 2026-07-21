@@ -1,9 +1,11 @@
-import { ArrowLeft, Archive, BookOpen, UserRound } from 'lucide-react';
+import { ArrowLeft, Archive, Bell, BookOpen, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { StudentClassworkPanel } from '../../learning/components/StudentClassworkPanel';
+import { StudentStreamPanel } from '../../learning/components/StudentStreamPanel';
 import { ClassroomStatusBadge } from '../components/ClassroomStatusBadge';
 import { displayDate } from '../classroom-format';
 import type { ClassroomDetail, ClassroomDetailEnvelope } from '../classroom.types';
@@ -11,6 +13,7 @@ import type { ClassroomDetail, ClassroomDetailEnvelope } from '../classroom.type
 export function StudentClassroomDetailPage() {
   const { classroomId = '' } = useParams();
   const { request } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [classroom, setClassroom] = useState<ClassroomDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +43,8 @@ export function StudentClassroomDetailPage() {
       </div>
     );
 
+  const tab = searchParams.get('tab') === 'classwork' ? 'classwork' : 'stream';
+
   return (
     <section className="page-section">
       <Link className="back-link" to="/student/dashboard">
@@ -58,6 +63,24 @@ export function StudentClassroomDetailPage() {
           <Archive size={17} /> Lớp học đã được lưu trữ và chỉ còn quyền xem.
         </div>
       ) : null}
+      <nav className="segmented-tabs" aria-label="Nội dung lớp học">
+        <button
+          className={tab === 'stream' ? 'active' : ''}
+          type="button"
+          onClick={() => setSearchParams({ tab: 'stream' })}
+        >
+          <Bell size={17} /> Bảng tin
+        </button>
+        <button
+          className={tab === 'classwork' ? 'active' : ''}
+          type="button"
+          onClick={() => setSearchParams({ tab: 'classwork' })}
+        >
+          <BookOpen size={17} /> Nội dung học
+        </button>
+      </nav>
+      {tab === 'stream' ? <StudentStreamPanel classroomId={classroomId} /> : null}
+      {tab === 'classwork' ? <StudentClassworkPanel classroomId={classroomId} /> : null}
       <div className="detail-layout">
         <section className="detail-panel">
           <div className="panel-title">

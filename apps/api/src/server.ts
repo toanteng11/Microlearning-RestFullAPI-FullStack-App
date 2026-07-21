@@ -10,6 +10,7 @@ import {
   getDatabaseStatus,
 } from './shared/database/mongodb.js';
 import { initializePhaseThreeIndexes } from './shared/database/phase-three-indexes.js';
+import { initializePhaseFourIndexes } from './shared/database/phase-four-indexes.js';
 import { createLogger } from './shared/logging/logger.js';
 
 function loadLocalEnvironmentFile() {
@@ -30,6 +31,7 @@ async function bootstrap() {
   const mayCreateIndexes = ['development', 'test'].includes(config.appEnvironment);
   await connectToMongoDB(config.mongodbUri, logger, { autoIndex: mayCreateIndexes });
   await initializePhaseThreeIndexes(config.appEnvironment);
+  await initializePhaseFourIndexes(config.appEnvironment);
   const enrollmentPolicy = await new EnrollmentPolicyRepository().ensureEnrollmentPolicy(
     config.classroomInviteDefaultTtlDays,
   );

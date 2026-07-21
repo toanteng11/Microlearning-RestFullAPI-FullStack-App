@@ -30,6 +30,24 @@ export const testConfig: AppConfig = {
     joinWindowSeconds: 900,
     previewIpMax: 30,
   },
+  contentLimits: {
+    markdownMaxChars: 100_000,
+    coursesPerClassroom: 100,
+    modulesPerCourse: 100,
+    lessonsPerCourse: 500,
+    flashcardsPerLesson: 100,
+    dashboardPageMax: 100,
+  },
+  learningRateLimits: {
+    contentWriteWindowSeconds: 60,
+    contentWriteIdentityMax: 120,
+    learningActionWindowSeconds: 60,
+    learningActionIdentityMax: 180,
+  },
+  featureFlags: {
+    learningResourcesEnabled: false,
+    gcsUploadsEnabled: false,
+  },
   rateLimits: {
     windowSeconds: 900,
     registerMax: 10,

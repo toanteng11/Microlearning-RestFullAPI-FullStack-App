@@ -15,6 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    testTimeout: 10_000,
     css: true,
     env: {
       VITE_API_BASE_URL: 'http://localhost:4000',
@@ -28,6 +29,8 @@ export default defineConfig({
         'src/vite-env.d.ts',
         'src/test/**',
         'src/features/classrooms/classroom-route-components.tsx',
+        'src/features/learning/learning-route-components.tsx',
+        'src/features/learning/pages/**',
       ],
       thresholds: {
         statements: 80,

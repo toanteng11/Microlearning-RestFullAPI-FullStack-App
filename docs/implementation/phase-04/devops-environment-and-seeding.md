@@ -73,16 +73,14 @@ Seed phải deterministic, idempotent và không hard-code real credential.
 | Fixture key | Data |
 | --- | --- |
 | `demo.teacher` | Existing active Teacher owner |
-| `demo.student.high` | Active Student, complete nhiều Lesson |
-| `demo.student.mid` | Active Student, progress một phần |
-| `demo.student.none` | Active Student, chưa bắt đầu |
+| `student.active@example.test` | Active Student, một Lesson complete và một Lesson in progress |
+| Các demo Student còn lại | Active/removed/blocked states từ Phase 03 và E2E dynamic fixture |
 | `demo.classroom` | Active Classroom, enrollment open |
-| `demo.course.published` | 2 Module, published, mixed deadlines |
-| `demo.course.draft` | Draft Course không visible Student |
-| `demo.lessons` | At least 5: completed/upcoming/missing/unpublished/scheduled |
-| `demo.flashcards` | At least 3 cards in one Lesson |
-| `demo.announcement` | One published, one draft |
-| `demo.progress` | Deterministic ranking/todo scenarios |
+| `RESTful API Microlearning` | Một published Course với 2 published Module |
+| `demo.lessons` | 3 published Lesson: completed/overdue-upcoming/in-progress scenarios |
+| `demo.flashcards` | 3 active Flashcard |
+| `demo.announcement` | Một published Announcement |
+| `demo.progress` | 2 deterministic progress records; broader ranking do E2E/performance fixture tạo |
 
 ### Seed Rules
 
@@ -104,6 +102,8 @@ Seed phải deterministic, idempotent và không hard-code real credential.
   4. Student read Lesson/To-do.
   5. Swagger JSON/UI HTTP 200.
 - Container restart không mất Mongo volume trong normal local workflow.
+- Mongo không publish host port trong Compose; API kết nối qua private Docker network.
+- `MONGODB_DATABASE` cho phép tạo database review/E2E cô lập mà không xóa dữ liệu local hiện có.
 - Không mount source secret vào production image layer.
 
 ## 7. CI Pipeline
@@ -116,7 +116,7 @@ Existing required jobs được giữ:
 | `Production dependency audit` | New renderer/storage dependency audit |
 | `MongoDB replica-set transaction` | Index, reorder, deadline, completion concurrency tests |
 | `OpenAPI contract` | P04 path/schema/route parity |
-| `Phase 03 browser E2E` | Rename/generalize to integrated browser E2E; add P04 journey |
+| `Integrated browser E2E` | Phase 02-04 critical journeys trên Docker stack |
 | `Secret scan` | Scan all commits/diff as current gate |
 
 Nếu đổi tên required check, cập nhật GitHub Ruleset cẩn thận để không tạo khoảng trống bảo vệ `main`.

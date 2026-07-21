@@ -227,8 +227,12 @@ describe('Phase 03 Classroom API integration', () => {
       .get('/api/v1/admin/classrooms')
       .set('Authorization', bearer(admin.accessToken))
       .expect(200);
-    expect(governance.body.data[0]).toMatchObject({ id: classroomId, memberCount: 0 });
-    expect(JSON.stringify(governance.body)).not.toMatch(/codeDigest|tokenHash|contentCount/u);
+    expect(governance.body.data[0]).toMatchObject({
+      id: classroomId,
+      memberCount: 0,
+      contentCount: 0,
+    });
+    expect(JSON.stringify(governance.body)).not.toMatch(/codeDigest|tokenHash/u);
 
     const governanceDetail = await request(app)
       .get(`/api/v1/admin/classrooms/${classroomId}`)

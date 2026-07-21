@@ -73,6 +73,8 @@ describe('Phase 02 security primitives', () => {
     expect(getCapabilities('STUDENT')).toEqual([
       'classroom.join',
       'classroom.view_enrolled',
+      'learning.complete_own',
+      'learning.view_enrolled',
       'profile.update_own',
       'profile.view_own',
     ]);

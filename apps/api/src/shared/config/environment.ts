@@ -9,6 +9,21 @@ const secretSchema = z.string().refine((value) => Buffer.byteLength(value, 'utf8
   message: 'must contain at least 32 UTF-8 bytes',
 });
 
+const phaseFourExplicitProductionFields = [
+  'CONTENT_MARKDOWN_MAX_CHARS',
+  'COURSE_MAX_PER_CLASSROOM',
+  'MODULE_MAX_PER_COURSE',
+  'LESSON_MAX_PER_COURSE',
+  'FLASHCARD_MAX_PER_LESSON',
+  'CONTENT_WRITE_WINDOW_SECONDS',
+  'CONTENT_WRITE_IDENTITY_LIMIT',
+  'LEARNING_ACTION_WINDOW_SECONDS',
+  'LEARNING_ACTION_IDENTITY_LIMIT',
+  'DASHBOARD_PAGE_MAX',
+  'LEARNING_RESOURCES_ENABLED',
+  'GCS_UPLOADS_ENABLED',
+] as const;
+
 const environmentSchema = z.object({
   APP_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
   APP_VERSION: z.string().trim().min(1).default('0.1.0'),
@@ -48,6 +63,18 @@ const environmentSchema = z.object({
   CLASSROOM_JOIN_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(1000),
   CLASSROOM_JOIN_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600),
   CLASSROOM_PREVIEW_IP_LIMIT: z.coerce.number().int().min(1).max(1000),
+  CONTENT_MARKDOWN_MAX_CHARS: z.coerce.number().int().min(1_000).max(500_000).default(100_000),
+  COURSE_MAX_PER_CLASSROOM: z.coerce.number().int().min(1).max(1_000).default(100),
+  MODULE_MAX_PER_COURSE: z.coerce.number().int().min(1).max(500).default(100),
+  LESSON_MAX_PER_COURSE: z.coerce.number().int().min(1).max(5_000).default(500),
+  FLASHCARD_MAX_PER_LESSON: z.coerce.number().int().min(1).max(500).default(100),
+  CONTENT_WRITE_WINDOW_SECONDS: z.coerce.number().int().min(1).max(3_600).default(60),
+  CONTENT_WRITE_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
+  LEARNING_ACTION_WINDOW_SECONDS: z.coerce.number().int().min(1).max(3_600).default(60),
+  LEARNING_ACTION_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(180),
+  DASHBOARD_PAGE_MAX: z.coerce.number().int().min(20).max(100).default(100),
+  LEARNING_RESOURCES_ENABLED: booleanString,
+  GCS_UPLOADS_ENABLED: booleanString,
   RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REGISTER_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(10),
   LOGIN_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(30),
@@ -90,6 +117,27 @@ export interface ClassroomRateLimitConfig {
   previewIpMax: number;
 }
 
+export interface ContentLimitConfig {
+  markdownMaxChars: number;
+  coursesPerClassroom: number;
+  modulesPerCourse: number;
+  lessonsPerCourse: number;
+  flashcardsPerLesson: number;
+  dashboardPageMax: number;
+}
+
+export interface LearningRateLimitConfig {
+  contentWriteWindowSeconds: number;
+  contentWriteIdentityMax: number;
+  learningActionWindowSeconds: number;
+  learningActionIdentityMax: number;
+}
+
+export interface FeatureFlagConfig {
+  learningResourcesEnabled: boolean;
+  gcsUploadsEnabled: boolean;
+}
+
 export interface AppConfig {
   appEnvironment: AppEnvironment;
   appVersion: string;
@@ -114,6 +162,9 @@ export interface AppConfig {
   classroomInviteTokenBytes: number;
   classroomInviteDefaultTtlDays: number;
   classroomRateLimits: ClassroomRateLimitConfig;
+  contentLimits: ContentLimitConfig;
+  learningRateLimits: LearningRateLimitConfig;
+  featureFlags: FeatureFlagConfig;
   rateLimits: RateLimitConfig;
   bootstrapAdminEnabled: boolean;
   logLevel: LogLevel;
@@ -175,6 +226,17 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
       .map((issue) => `${issue.path.join('.') || 'environment'}: ${issue.message}`)
       .join('; ');
     configurationError(issues);
+  }
+
+  if (['staging', 'production'].includes(parsed.data.APP_ENV)) {
+    const missingFields = phaseFourExplicitProductionFields.filter(
+      (field) => !input[field]?.trim(),
+    );
+    if (missingFields.length > 0) {
+      configurationError(
+        `Production-like environments must explicitly configure ${missingFields.join(', ')}`,
+      );
+    }
   }
 
   const publicWebUrl = normalizeOrigin(parsed.data.PUBLIC_WEB_URL, 'PUBLIC_WEB_URL');
@@ -245,6 +307,31 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     previewIpMax: parsed.data.CLASSROOM_PREVIEW_IP_LIMIT,
   });
 
+  const contentLimits = Object.freeze({
+    markdownMaxChars: parsed.data.CONTENT_MARKDOWN_MAX_CHARS,
+    coursesPerClassroom: parsed.data.COURSE_MAX_PER_CLASSROOM,
+    modulesPerCourse: parsed.data.MODULE_MAX_PER_COURSE,
+    lessonsPerCourse: parsed.data.LESSON_MAX_PER_COURSE,
+    flashcardsPerLesson: parsed.data.FLASHCARD_MAX_PER_LESSON,
+    dashboardPageMax: parsed.data.DASHBOARD_PAGE_MAX,
+  });
+
+  const learningRateLimits = Object.freeze({
+    contentWriteWindowSeconds: parsed.data.CONTENT_WRITE_WINDOW_SECONDS,
+    contentWriteIdentityMax: parsed.data.CONTENT_WRITE_IDENTITY_LIMIT,
+    learningActionWindowSeconds: parsed.data.LEARNING_ACTION_WINDOW_SECONDS,
+    learningActionIdentityMax: parsed.data.LEARNING_ACTION_IDENTITY_LIMIT,
+  });
+
+  const featureFlags = Object.freeze({
+    learningResourcesEnabled: parsed.data.LEARNING_RESOURCES_ENABLED,
+    gcsUploadsEnabled: parsed.data.GCS_UPLOADS_ENABLED,
+  });
+
+  if (featureFlags.gcsUploadsEnabled && !featureFlags.learningResourcesEnabled) {
+    configurationError('GCS_UPLOADS_ENABLED requires LEARNING_RESOURCES_ENABLED=true');
+  }
+
   return Object.freeze({
     appEnvironment: parsed.data.APP_ENV,
     appVersion: parsed.data.APP_VERSION,
@@ -269,6 +356,9 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     classroomInviteTokenBytes: parsed.data.CLASSROOM_INVITE_TOKEN_BYTES,
     classroomInviteDefaultTtlDays: parsed.data.CLASSROOM_INVITE_DEFAULT_TTL_DAYS,
     classroomRateLimits,
+    contentLimits,
+    learningRateLimits,
+    featureFlags,
     rateLimits,
     bootstrapAdminEnabled: parsed.data.BOOTSTRAP_ADMIN_ENABLED,
     logLevel: parsed.data.LOG_LEVEL,

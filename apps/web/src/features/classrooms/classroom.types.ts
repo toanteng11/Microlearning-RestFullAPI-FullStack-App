@@ -32,12 +32,20 @@ export interface ClassroomSummary {
   createdAt: string;
   updatedAt: string;
   memberCount?: number;
+  contentCount?: number;
 }
 
 export interface ClassroomDetail extends ClassroomSummary {
   configuredSettings: ClassroomSettings;
   effectiveSettings: ClassroomSettings;
   allowedActions: string[];
+  contentSummary?: {
+    classroomId: string;
+    courseCount: number;
+    lessonCount: number;
+    announcementCount: number;
+    lastContentUpdatedAt: string | null;
+  };
 }
 
 export interface Pagination {

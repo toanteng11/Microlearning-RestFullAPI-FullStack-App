@@ -47,7 +47,7 @@ services:
       COMMIT_SHA: ${COMMIT_SHA:-local-compose}
       BUILD_TIME: ${BUILD_TIME:-local}
       PORT: 4000
-      MONGODB_URI: mongodb://mongodb:27017/microlearning?replicaSet=rs0
+      MONGODB_URI: mongodb://mongodb:27017/${MONGODB_DATABASE:-microlearning}?replicaSet=rs0
       PUBLIC_WEB_URL: http://localhost:3000
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
       ACCESS_TOKEN_SECRET: local-development-access-token-secret-not-production
@@ -68,6 +68,18 @@ services:
       CLASSROOM_JOIN_IDENTITY_LIMIT: 10
       CLASSROOM_JOIN_WINDOW_SECONDS: 900
       CLASSROOM_PREVIEW_IP_LIMIT: 30
+      CONTENT_MARKDOWN_MAX_CHARS: 100000
+      COURSE_MAX_PER_CLASSROOM: 100
+      MODULE_MAX_PER_COURSE: 100
+      LESSON_MAX_PER_COURSE: 500
+      FLASHCARD_MAX_PER_LESSON: 100
+      CONTENT_WRITE_WINDOW_SECONDS: 60
+      CONTENT_WRITE_IDENTITY_LIMIT: 120
+      LEARNING_ACTION_WINDOW_SECONDS: 60
+      LEARNING_ACTION_IDENTITY_LIMIT: 180
+      DASHBOARD_PAGE_MAX: 100
+      LEARNING_RESOURCES_ENABLED: 'false'
+      GCS_UPLOADS_ENABLED: 'false'
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:

@@ -16,6 +16,10 @@ let classCode = '';
 let inviteLink = '';
 let teacherClassroomPath = '';
 let studentClassroomPath = '';
+const courseName = `Phase 04 REST API ${runId}`;
+const moduleName = `HTTP Foundations ${runId}`;
+const lessonName = `Designing REST Resources ${runId}`;
+let teacherCoursePath = '';
 
 async function expectNoHorizontalOverflow(page: import('@playwright/test').Page, label: string) {
   const dimensions = await page.evaluate(() => ({
@@ -274,6 +278,162 @@ test('Guest Invite Link removes the token from URL and resumes after Student log
   expect(`${browserState.local}${browserState.session}`).not.toContain('token');
 });
 
+test('Phase 04 Teacher authors and publishes a Course, Module, Lesson and Flashcard', async ({
+  page,
+}) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(teacherEmail);
+  await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+  await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(page.getByRole('heading', { name: 'Lớp học của E2E Teacher' })).toBeVisible();
+  await page.goto(teacherClassroomPath);
+  await page.getByRole('button', { name: /Nội dung học/u }).click();
+  await page.getByRole('link', { name: /Tạo khóa học/u }).click();
+  await page.getByLabel('Tên khóa học').fill(courseName);
+  await page.getByLabel('Mô tả').fill('Nội dung Microlearning về thiết kế RESTful API.');
+  await page.getByRole('button', { name: 'Tạo khóa học', exact: true }).click();
+  await expect(page.getByRole('heading', { name: courseName })).toBeVisible();
+  teacherCoursePath = new URL(page.url()).pathname;
+
+  await page.getByRole('link', { name: /Quản lý nội dung/u }).click();
+  await page.getByLabel('Tên Module').fill(moduleName);
+  await page.getByLabel('Mô tả Module').fill('HTTP semantics and resource modeling');
+  await page.getByRole('button', { name: /Thêm Module/u }).click();
+  await expect(page.getByRole('heading', { name: moduleName })).toBeVisible();
+  await page.getByRole('button', { name: `Xuất bản ${moduleName}` }).click();
+  await expect(page.getByText('Đã xuất bản Module.')).toBeVisible();
+
+  await page.getByRole('link', { name: /Tạo bài học/u }).click();
+  await page.getByLabel('Tên bài học').fill(lessonName);
+  await page.getByLabel('Module').selectOption({ label: moduleName });
+  await page.getByLabel('Thời lượng dự kiến').fill('12');
+  const futureDeadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1_000).toISOString().slice(0, 16);
+  await page.getByLabel(/Deadline theo múi giờ/u).fill(futureDeadline);
+  await page.getByLabel('Bài học bắt buộc').check();
+  await page
+    .getByLabel('Nội dung', { exact: true })
+    .fill('# REST Resources\n\nUse nouns and predictable HTTP semantics.');
+  await page.getByRole('button', { name: /Tạo bài học/u }).click();
+  await expect(page.getByRole('heading', { name: lessonName })).toBeVisible();
+
+  await page.getByLabel('Mặt trước').fill('Which HTTP verb updates part of a resource?');
+  await page.getByLabel('Mặt sau').fill('PATCH');
+  await page.getByRole('button', { name: /Thêm Flashcard/u }).click();
+  await expect(page.getByText('Đã thêm Flashcard.')).toBeVisible();
+  await page.getByLabel('Mặt trước').fill('Which HTTP status confirms resource creation?');
+  await page.getByLabel('Mặt sau').fill('201 Created');
+  await page.getByRole('button', { name: /Thêm Flashcard/u }).click();
+  await page.getByRole('button', { name: 'Di chuyển Flashcard 2 lên' }).click();
+  await expect(page.getByText('Đã cập nhật thứ tự Flashcard.')).toBeVisible();
+  await page.getByRole('button', { name: 'Preview' }).click();
+  await expect(page.getByRole('heading', { name: 'REST Resources' })).toBeVisible();
+  await page.getByRole('button', { name: /Chỉnh sửa/u }).click();
+  await page.getByRole('button', { name: 'Xuất bản', exact: true }).click();
+  await expect(page.getByText('Đã xuất bản bài học.')).toBeVisible();
+
+  await page.goto(teacherCoursePath);
+  await page.getByRole('button', { name: 'Xuất bản', exact: true }).click();
+  await expect(page.getByText('Đã xuất bản khóa học.')).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectNoHorizontalOverflow(page, 'Teacher Phase 04 Course Dashboard');
+});
+
+test('Phase 04 Announcement lifecycle reaches enrolled Student Stream', async ({
+  page,
+  browser,
+}) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(teacherEmail);
+  await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+  await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(page.getByRole('heading', { name: 'Lớp học của E2E Teacher' })).toBeVisible();
+  await page.goto(teacherClassroomPath);
+  await page.getByLabel('Thông báo mới').fill('Phase 04 published classroom update');
+  await page.getByRole('button', { name: /Tạo bản nháp/u }).click();
+  await expect(page.getByText('Đã tạo thông báo nháp.')).toBeVisible();
+  await page.getByRole('button', { name: 'Xuất bản thông báo' }).first().click();
+  await expect(page.getByText('Đã xuất bản thông báo.')).toBeVisible();
+
+  const studentContext = await browser.newContext({ baseURL: webUrl });
+  const studentPage = await studentContext.newPage();
+  try {
+    await studentPage.goto('/login');
+    await studentPage.getByLabel('Email').fill('student.active.2@example.test');
+    await studentPage.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+    await studentPage.getByRole('button', { name: 'Đăng nhập' }).click();
+    await expect(
+      studentPage.getByRole('heading', { name: 'Xin chào, Demo Student Active Two' }),
+    ).toBeVisible();
+    await studentPage.goto(studentClassroomPath);
+    await expect(studentPage.getByText('Phase 04 published classroom update')).toBeVisible();
+  } finally {
+    await studentContext.close();
+  }
+});
+
+test('Phase 04 Student sees To-do, studies Flashcard and completes Lesson', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('student.active.2@example.test');
+  await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+  await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Xin chào, Demo Student Active Two' }),
+  ).toBeVisible();
+  await page.getByRole('link', { name: /Việc cần làm/u }).click();
+  await expect(page.getByRole('link', { name: lessonName })).toBeVisible();
+  await page.getByRole('link', { name: lessonName }).click();
+  await expect(page.getByRole('heading', { name: lessonName })).toBeVisible();
+  await expect(page.getByText('Which HTTP status confirms resource creation?')).toBeVisible();
+  await page.locator('.flashcard-viewer').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('201 Created')).toBeVisible();
+  await page.getByRole('button', { name: 'Thẻ sau' }).click();
+  await expect(page.getByText('Which HTTP verb updates part of a resource?')).toBeVisible();
+  await page.locator('.flashcard-viewer').focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByText('PATCH')).toBeVisible();
+  await page.getByRole('button', { name: /Bắt đầu/u }).click();
+  await expect(page.getByText('Đã bắt đầu bài học.')).toBeVisible();
+  await page.getByRole('button', { name: 'Hoàn thành' }).click();
+  await expect(page.getByText('Đã hoàn thành bài học.')).toBeVisible();
+  await page.getByRole('link', { name: /Việc cần làm/u }).click();
+  await expect(page.getByRole('link', { name: lessonName })).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectNoHorizontalOverflow(page, 'Student Phase 04 Lesson Player and To-do');
+});
+
+test('Phase 04 Teacher Dashboard reports Student completion deterministically', async ({
+  page,
+}) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(teacherEmail);
+  await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+  await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(page.getByRole('heading', { name: 'Lớp học của E2E Teacher' })).toBeVisible();
+  await page.goto(teacherCoursePath);
+  await expect(page.getByText('P04_LESSON_COMPLETION_V1')).toBeVisible();
+  await expect(page.getByText('Demo Student Active Two')).toBeVisible();
+  await expect(page.getByText('100%')).toBeVisible();
+  await expect(page.getByRole('link', { name: /Quản lý nội dung/u })).toBeVisible();
+});
+
+test('Phase 04 Admin governance exposes metadata without lesson content', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('admin.active@example.test');
+  await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+  await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible();
+  await page.goto('/admin/courses');
+  const courseRow = page.getByRole('row').filter({ hasText: courseName });
+  await expect(courseRow).toBeVisible();
+  await courseRow.getByRole('link', { name: 'Xem' }).click();
+  await expect(page.getByRole('heading', { name: courseName })).toBeVisible();
+  await expect(page.getByText('1', { exact: true })).toHaveCount(2);
+  await expect(page.getByText('REST Resources')).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectNoHorizontalOverflow(page, 'Admin Phase 04 Course governance');
+});
+
 test('Teacher sees roster, removes Student, and the removed Student loses access', async ({
   page,
   browser,
@@ -349,6 +509,14 @@ test('Admin updates Enrollment Policy and direct cross-role routes are denied', 
     await studentPage.goto('/teacher/dashboard');
     await expect(
       studentPage.getByRole('heading', { name: 'Không có quyền truy cập' }),
+    ).toBeVisible();
+    await studentContext.clearCookies();
+    await studentPage.goto('/login');
+    await studentPage.getByLabel('Email').fill('student.active.3@example.test');
+    await studentPage.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
+    await studentPage.getByRole('button', { name: 'Đăng nhập' }).click();
+    await expect(
+      studentPage.getByRole('heading', { name: 'Xin chào, Demo Student Active Three' }),
     ).toBeVisible();
     await studentPage.goto('/admin/classrooms');
     await expect(

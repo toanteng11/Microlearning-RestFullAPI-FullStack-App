@@ -57,6 +57,9 @@ Sau khi các service healthy:
 - API readiness: `http://localhost:4000/ready`
 - Swagger UI: `http://localhost:4000/api-docs`
 
+MongoDB chỉ được expose trong Docker network. Có thể đặt `MONGODB_DATABASE` trong `.env`
+để chạy một database cô lập cho E2E hoặc review mà không xóa volume hiện có.
+
 Dừng service nhưng giữ dữ liệu MongoDB local:
 
 ```powershell
