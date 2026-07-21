@@ -5,7 +5,7 @@
 - Checklist này theo dõi gate execution; WBS theo dõi task chi tiết.
 - Chỉ tick `[x]` khi có evidence kiểm chứng.
 - Conditional item ghi `[N/A - reason/evidence]` nếu được defer chính thức.
-- Gate A đã được phê duyệt bằng PR `#8`, CI `#18` và merge commit `66f400d`; các gate implementation vẫn giữ unchecked cho tới khi có evidence tương ứng.
+- Gate A đã được phê duyệt bằng PR `#8`, CI `#18` và merge commit `66f400d`; Gate B-E đã được xác minh bằng implementation PR `#10` và post-merge main CI.
 
 ## 2. Gate A - Planning Baseline
 
@@ -97,9 +97,9 @@
 
 ## 7. Gate E - Quality And Exit
 
-- [ ] All 66 Must AC = Pass.
+- [x] All 66 Must AC = Pass.
 - [x] Conditional AC có approved N/A evidence tại `conditional-resource-decision.md`.
-- [x] `npm run check:ci` pass trên working tree release candidate.
+- [x] `npm run check:ci` pass trên implementation source, clean clone và remote CI.
 - [x] Web test timeout được harden cho full parallel coverage trên CI; full suite `84/84` pass.
 - [x] Unit/integration/component coverage gate pass.
 - [x] Mongo transaction/index tests pass.
@@ -108,27 +108,27 @@
 - [x] XSS/unsafe URL/IDOR/log-redaction tests pass cho enabled scope.
 - [x] Performance baseline có report và đạt.
 - [x] Docker build/start/seed/smoke pass.
-- [ ] Clean-clone onboarding pass.
+- [x] Clean-clone onboarding pass tại source commit `ccf032c`.
 - [x] Desktop/mobile automated review không overlap/overflow.
 - [x] Keyboard/accessibility critical flow pass.
-- [ ] Dependency audit và Secret Scan pass.
+- [x] Dependency audit và Secret Scan pass trên PR/main CI.
 - [x] Không còn Critical/High defect trong local review.
 - [x] Local review không có Medium/Low defect đang mở cần disposition.
-- [ ] Evidence register không còn Must placeholder.
-- [ ] Exit report ghi đúng commit/PR/run.
-- [ ] Implementation PR merge bằng protected workflow.
-- [ ] Post-merge `main` CI pass.
-- [ ] P05/P06 handoff review hoàn tất.
+- [x] Evidence register không còn Must placeholder.
+- [x] Exit report ghi đúng source/merge commit, PR và hai CI run URL.
+- [x] Implementation PR `#10` merge bằng protected workflow.
+- [x] Post-merge `main` CI run `29799307403` pass đủ 6 job.
+- [x] P05/P06 handoff review hoàn tất qua versioned contracts đã merge.
 
 ## 8. Status Summary
 
 | Gate | Status | Blocking reason |
 | --- | --- | --- |
 | A | Completed | PR `#8`, CI `#18`, merge `66f400d` |
-| B | Local Verified | `P04-T009..T030` pass local; chờ implementation PR và remote CI |
-| C | Local Verified | Teacher authoring, Announcement và React flow pass local |
-| D | Local Verified | Student learning, Dashboard và Admin governance pass local |
-| Conditional Resource | Deferred | AC-045/046 N/A; review lại tại P07 |
-| E | Ready for PR | Còn clean-clone, protected PR/main CI và remote evidence |
+| B | Completed | `P04-T009..T030` pass local, clean clone và remote CI |
+| C | Completed | Teacher authoring, Announcement và React flow đã merge |
+| D | Completed | Student learning, Dashboard và Admin governance đã merge |
+| Conditional Resource | Deferred by decision | AC-045/046 N/A; review lại tại P07 |
+| E | Completed | `66/66` Must Pass; PR/main CI đều xanh `6/6` job |
 
-Current overall status: `READY_FOR_IMPLEMENTATION_PR`, chưa phải `COMPLETED`.
+Current overall status: `COMPLETED` tại merge commit `a6cd37b`.

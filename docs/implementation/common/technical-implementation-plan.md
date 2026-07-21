@@ -24,7 +24,7 @@ Việc dùng TypeScript không thay đổi nền tảng ReactJS/Node.js; nó b�
 | 01    | Project Foundation       | Repository, Web/API skeleton, MongoDB local, Swagger, Docker Compose và CI baseline    | BA architecture baseline | Completed                       |
 | 02    | Authentication and Users | Student registration, login/session, RBAC, Admin user lists và Teacher invitation      | Phase 01                 | Merged; `39/39` Pass            |
 | 03    | Classroom Management     | Classroom CRUD, enrollment, class code, invite link, roster và enrollment policy       | Phase 02                 | Completed; `45/45` Pass         |
-| 04    | Learning Content         | Course, module, lesson, resource, publish lifecycle và deadline                        | Phase 03                 | `READY_TO_CODE`; Not Started    |
+| 04    | Learning Content         | Course, module, lesson, resource, publish lifecycle và deadline                        | Phase 03                 | Completed; `66/66` Must Pass    |
 | 05    | Assessments and Grading  | Quiz, assignment, submission, grading, feedback và deadline exception                  | Phase 04                 | Planned                         |
 | 06    | Reporting and Analytics  | Student To-do, progress, process score, ranking và Admin reports                       | Phase 05                 | Planned                         |
 | 07    | DevOps and Deployment    | Container registry, Staging/Production pipeline, Cloud, monitoring, backup và rollback | Phase 01-06              | Planned                         |
