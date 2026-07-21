@@ -114,3 +114,5 @@ Admin governance access không đồng nghĩa Student visibility và không cấ
 - [x] Planning PR CI xanh và merge vào `main`.
 
 Approval evidence: PR `#8`, Actions run `29692181077`, merge commit `66f400d`, ngày `2026-07-19`. Mọi thay đổi behavior sau baseline này phải có impact analysis và decision update.
+
+Execution note ngày `2026-07-20`: ADR-025/026 vẫn là security baseline khi capability được bật, nhưng External URL Resource và private GCS không được thực thi trong Phase 04. Disposition và điều kiện enablement nằm tại `conditional-resource-decision.md`.

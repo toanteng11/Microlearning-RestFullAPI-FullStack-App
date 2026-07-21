@@ -81,6 +81,24 @@ export class UserRepository {
       .exec();
   }
 
+  listActiveStudentSummaries(studentIds: readonly Types.ObjectId[], session?: ClientSession) {
+    if (studentIds.length === 0) {
+      return Promise.resolve(
+        [] as Array<
+          Pick<UserRecord, '_id' | 'fullName' | 'email' | 'studentCode' | 'lastActiveAt'>
+        >,
+      );
+    }
+    return UserModel.find({ _id: { $in: studentIds }, role: 'STUDENT', status: 'ACTIVE' })
+      .select({ fullName: 1, email: 1, studentCode: 1, lastActiveAt: 1 })
+      .sort({ fullNameNormalized: 1, _id: 1 })
+      .session(session ?? null)
+      .lean<
+        Array<Pick<UserRecord, '_id' | 'fullName' | 'email' | 'studentCode' | 'lastActiveAt'>>
+      >()
+      .exec();
+  }
+
   async updateLastLogin(userId: Types.ObjectId, now: Date): Promise<void> {
     await UserModel.updateOne({ _id: userId }, { $set: { lastLoginAt: now } }).exec();
   }

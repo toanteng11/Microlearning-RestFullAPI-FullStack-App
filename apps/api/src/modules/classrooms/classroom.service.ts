@@ -8,6 +8,7 @@ import type { EnrollmentPolicyRepository } from '../enrollment-policy/enrollment
 import type { EnrollmentPolicyValue } from '../enrollment-policy/system-setting.model.js';
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
 import type { UserRepository } from '../users/user.repository.js';
+import type { ClassroomContentReader } from '../learning-content/classroom-content.reader.js';
 import { isMongoDuplicateKeyError } from '../../shared/database/mongo-errors.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
@@ -80,6 +81,7 @@ export class ClassroomService {
     private readonly audits: PhaseThreeAuditWriter,
     private readonly crypto: ClassroomCredentialCrypto,
     private readonly now: () => Date = () => new Date(),
+    private readonly contentReader?: ClassroomContentReader,
   ) {}
 
   private async getPolicy(session?: ClientSession): Promise<EnrollmentPolicyValue> {
@@ -387,10 +389,16 @@ export class ClassroomService {
       ownerTeacherId: input.ownerTeacherId ? asObjectId(input.ownerTeacherId) : undefined,
     };
     const result = await this.classrooms.listGovernance(query);
+    const contentCounts = this.contentReader
+      ? await this.contentReader.countByClassroomIds(
+          result.items.map((row) => row.classroom._id.toString()),
+        )
+      : new Map<string, number>();
     return {
       data: result.items.map((row) => ({
         ...toClassroomSummary(row.classroom, row.owner),
         memberCount: row.memberCount,
+        contentCount: contentCounts.get(row.classroom._id.toString()) ?? 0,
       })),
       pagination: pagination(input.page, input.limit, result.totalItems),
       filters: {
@@ -405,6 +413,15 @@ export class ClassroomService {
   async getGovernanceDetail(classroomId: string) {
     const row = await this.classrooms.findGovernanceById(asObjectId(classroomId));
     if (!row) throw new AppError(404, 'RESOURCE_NOT_FOUND', 'Classroom was not found');
+    const contentSummary = this.contentReader
+      ? await this.contentReader.getGovernanceSummary(classroomId)
+      : {
+          classroomId,
+          courseCount: 0,
+          lessonCount: 0,
+          announcementCount: 0,
+          lastContentUpdatedAt: null,
+        };
     return {
       ...toClassroomSummary(row.classroom, row.owner),
       configuredSettings: {
@@ -413,6 +430,8 @@ export class ClassroomService {
         allowInviteLinkJoin: row.classroom.allowInviteLinkJoin,
       },
       memberCount: row.memberCount,
+      contentCount: contentSummary.courseCount,
+      contentSummary,
     };
   }
 }

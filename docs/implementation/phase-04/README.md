@@ -15,12 +15,13 @@ Phase này triển khai Course Dashboard và Student To-do theo phạm vi **Less
 | Dependency | Phase 03 đã merge vào `main` tại `d9de828` |
 | Planning branch | `docs/phase-04-planning-baseline` |
 | Planning status | `READY_TO_CODE` |
-| Implementation status | `NOT_STARTED` |
+| Implementation branch | `feature/phase-04-content-foundation` |
+| Implementation status | `READY_FOR_IMPLEMENTATION_PR` - toàn bộ Must source và local quality gates đã pass |
 | Gate A | `APPROVED` - PR `#8`, CI `#18` và merge commit `66f400d` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P05 - Assessments and Grading` |
 
-Planning baseline đã được repository owner review và merge qua protected workflow. `READY_TO_CODE` cho phép bắt đầu `P04-T009`; trạng thái này không đồng nghĩa Phase 04 đã hoàn thành.
+Planning baseline đã được repository owner review và merge qua protected workflow. Must implementation `P04-T009..T099` đã pass local unit, component, Mongo replica-set integration, OpenAPI, performance, Docker seed/smoke và Playwright checks ngày `2026-07-20`; Resource/GCS Conditional scope được defer sang P07. Các task implementation vẫn ở `In Review` cho tới khi PR và remote CI xanh. Phase 04 chưa hoàn thành vì còn clean-clone sau commit, protected PR checks và post-merge `main` CI.
 
 ## 3. Business Outcome
 
@@ -115,6 +116,7 @@ Conditional Should chỉ được kéo vào khi Must critical path xanh, có own
 | `deadline-and-derived-state.md` | Deadline, late/missing, To-do và history |
 | `security-ownership-and-governance.md` | Permission, object scope, XSS, audit và threat controls |
 | `data-model-and-indexes.md` | Collection, field, index, transaction và migration |
+| `migration-and-rollback.md` | Trình tự index deployment, rollback và data recovery |
 | `api-contract.md` | Endpoint, payload, response/error và OpenAPI contract |
 | `backend-implementation-plan.md` | Thứ tự triển khai backend theo vertical slice |
 | `frontend-implementation-plan.md` | Route, page, form, state và accessibility |
@@ -127,6 +129,7 @@ Conditional Should chỉ được kéo vào khi Must critical path xanh, có own
 | `risk-and-issues.md` | Risk, trigger, mitigation và contingency |
 | `developer-start-guide.md` | Cách bắt đầu code, chia PR và chạy kiểm tra |
 | `development-readiness-review.md` | Gate A review và điều kiện `READY_TO_CODE` |
+| `conditional-resource-decision.md` | Quyết định defer Resource URL/GCS sang P07 |
 | `evidence-register.md` | Danh mục bằng chứng cần thu thập |
 | `phase-exit-evidence.md` | Template/kết quả test và runtime evidence |
 | `exit-report.md` | Báo cáo đóng phase trung thực |

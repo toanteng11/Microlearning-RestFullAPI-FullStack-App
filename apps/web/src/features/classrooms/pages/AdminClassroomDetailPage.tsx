@@ -1,4 +1,4 @@
-import { ArrowLeft, UsersRound } from 'lucide-react';
+import { ArrowLeft, BookOpen, UsersRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -74,10 +74,22 @@ export function AdminClassroomDetailPage() {
             </div>
           </dl>
         </section>
-        <section className="detail-panel governance-count">
-          <UsersRound size={24} />
-          <strong>{classroom.memberCount}</strong>
-          <span>thành viên đang hoạt động</span>
+        <section className="governance-metrics">
+          <div>
+            <UsersRound size={24} />
+            <strong>{classroom.memberCount}</strong>
+            <span>thành viên đang hoạt động</span>
+          </div>
+          <div>
+            <BookOpen size={24} />
+            <strong>{classroom.contentCount ?? 0}</strong>
+            <span>Course đang quản trị</span>
+          </div>
+          <div>
+            <BookOpen size={24} />
+            <strong>{classroom.contentSummary?.lessonCount ?? 0}</strong>
+            <span>bài học</span>
+          </div>
         </section>
       </div>
     </section>

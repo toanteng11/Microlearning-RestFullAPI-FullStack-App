@@ -46,6 +46,7 @@ import {
 import { EnrollmentService } from './enrollments/enrollment.service.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { UserRepository } from './users/user.repository.js';
+import type { ClassroomContentReader } from './learning-content/classroom-content.reader.js';
 
 function requestIdFrom(response: {
   getHeader(name: string): number | string | string[] | undefined;
@@ -76,7 +77,11 @@ function createIdentityLimiter(windowSeconds: number, max: number) {
   });
 }
 
-export function createPhaseThreeRouter(config: AppConfig, classrooms = new ClassroomRepository()) {
+export function createPhaseThreeRouter(
+  config: AppConfig,
+  classrooms = new ClassroomRepository(),
+  contentReader?: ClassroomContentReader,
+) {
   const router = Router();
   const users = new UserRepository();
   const sessions = new AuthSessionRepository();
@@ -103,6 +108,8 @@ export function createPhaseThreeRouter(config: AppConfig, classrooms = new Class
     users,
     audits,
     crypto,
+    undefined,
+    contentReader,
   );
   const credentialService = new ClassroomCredentialService(
     classrooms,

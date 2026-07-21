@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
 import {
   createOpenApiDocument,
+  PHASE_FOUR_OPENAPI_OPERATIONS,
   PHASE_THREE_OPENAPI_OPERATIONS,
   PHASE_TWO_OPENAPI_OPERATIONS,
 } from '../src/docs/openapi.js';
@@ -218,5 +219,82 @@ describe('system API', () => {
     expect(serialized).not.toContain('codeDigest');
     expect(serialized).not.toContain('tokenHash');
     expect(serialized).not.toContain('CLASSROOM_CODE_PEPPER');
+  });
+
+  it('keeps every implemented Phase 04 authoring route in OpenAPI', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expectedRoutes = new Map([
+      ['GET /api/v1/courses', 'listCourses'],
+      ['POST /api/v1/courses', 'createCourse'],
+      ['GET /api/v1/courses/{courseId}', 'getCourse'],
+      ['PATCH /api/v1/courses/{courseId}', 'updateCourse'],
+      ['PATCH /api/v1/courses/{courseId}/status', 'changeCourseStatus'],
+      ['DELETE /api/v1/courses/{courseId}', 'archiveCourse'],
+      ['GET /api/v1/courses/{courseId}/modules', 'listCourseModules'],
+      ['POST /api/v1/courses/{courseId}/modules', 'createCourseModule'],
+      ['PATCH /api/v1/modules/{moduleId}', 'updateCourseModule'],
+      ['PATCH /api/v1/modules/{moduleId}/status', 'changeCourseModuleStatus'],
+      ['DELETE /api/v1/modules/{moduleId}', 'archiveCourseModule'],
+      ['PATCH /api/v1/courses/{courseId}/modules/reorder', 'reorderCourseModules'],
+      ['GET /api/v1/courses/{courseId}/lessons', 'listCourseLessons'],
+      ['POST /api/v1/lessons', 'createLesson'],
+      ['GET /api/v1/lessons/{lessonId}', 'getLesson'],
+      ['PATCH /api/v1/lessons/{lessonId}', 'updateLesson'],
+      ['PATCH /api/v1/lessons/{lessonId}/status', 'changeLessonStatus'],
+      ['DELETE /api/v1/lessons/{lessonId}', 'archiveLesson'],
+      ['POST /api/v1/lessons/{lessonId}/preview', 'previewLesson'],
+      ['PATCH /api/v1/courses/{courseId}/lessons/reorder', 'reorderCourseLessons'],
+      ['GET /api/v1/lessons/{lessonId}/flashcards', 'listLessonFlashcards'],
+      ['POST /api/v1/lessons/{lessonId}/flashcards', 'createLessonFlashcard'],
+      ['PATCH /api/v1/flashcards/{flashcardId}', 'updateFlashcard'],
+      ['DELETE /api/v1/flashcards/{flashcardId}', 'archiveFlashcard'],
+      ['PATCH /api/v1/lessons/{lessonId}/flashcards/reorder', 'reorderLessonFlashcards'],
+      ['PATCH /api/v1/teacher/lessons/{lessonId}/deadline', 'changeLessonDeadline'],
+      ['GET /api/v1/teacher/lessons/{lessonId}/deadline-history', 'listLessonDeadlineHistory'],
+      ['GET /api/v1/classrooms/{classroomId}/classwork', 'getStudentClasswork'],
+      ['POST /api/v1/lessons/{lessonId}/start', 'startLesson'],
+      ['POST /api/v1/lessons/{lessonId}/complete', 'completeLesson'],
+      ['GET /api/v1/students/me/todo', 'listStudentTodo'],
+      ['GET /api/v1/students/me/deadlines', 'listStudentDeadlines'],
+      ['GET /api/v1/students/me/progress', 'getOwnCourseProgress'],
+      ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherCourseDashboard'],
+      ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherCourseActivities'],
+      ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
+      ['GET /api/v1/teacher/courses/{courseId}/progress', 'listTeacherCourseProgress'],
+      ['GET /api/v1/classrooms/{classroomId}/announcements', 'listClassroomAnnouncements'],
+      ['POST /api/v1/classrooms/{classroomId}/announcements', 'createAnnouncement'],
+      ['PATCH /api/v1/announcements/{announcementId}', 'updateAnnouncement'],
+      ['PATCH /api/v1/announcements/{announcementId}/status', 'changeAnnouncementStatus'],
+      ['DELETE /api/v1/announcements/{announcementId}', 'archiveAnnouncement'],
+      ['GET /api/v1/admin/courses', 'listAdminCourses'],
+      ['GET /api/v1/admin/courses/{courseId}', 'getAdminCourse'],
+    ]);
+    const documentedOperations = new Map<string, string>();
+
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (!pathItem) continue;
+      for (const method of ['get', 'post', 'patch', 'put', 'delete'] as const) {
+        const operation = pathItem[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_FOUR_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_FOUR_OPENAPI_OPERATIONS)[number],
+          )
+        ) {
+          continue;
+        }
+        const routeKey = `${method.toUpperCase()} ${path}`;
+        documentedOperations.set(routeKey, operation.operationId);
+        expect(operation.security, `${routeKey} security`).toBeDefined();
+        const responseCodes = Object.keys(operation.responses);
+        expect(responseCodes.some((code) => /^2\d\d$/u.test(code))).toBe(true);
+        expect(responseCodes.some((code) => /^4\d\d$/u.test(code))).toBe(true);
+      }
+    }
+
+    expect(documentedOperations).toEqual(expectedRoutes);
+    expect([...documentedOperations.values()].sort()).toEqual(
+      [...PHASE_FOUR_OPENAPI_OPERATIONS].sort(),
+    );
   });
 });

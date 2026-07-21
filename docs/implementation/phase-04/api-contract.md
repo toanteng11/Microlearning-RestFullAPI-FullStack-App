@@ -139,7 +139,7 @@ Response trả canonical items và `structureRevision=5`. Missing/duplicate/fore
 | --- | --- | --- | --- | --- |
 | `GET` | `/courses/{courseId}/lessons` | owned/enrolled view | `200` | List/filter Lesson projection |
 | `POST` | `/lessons` | `lesson.manage_owned` | `201` | Tạo Lesson draft |
-| `GET` | `/lessons/{lessonId}` | owned/enrolled view | `200` | Teacher detail hoặc Student player DTO |
+| `GET` | `/lessons/{lessonId}` | owned/enrolled view | `200` | Teacher nhận Markdown source; Student nhận sanitized `contentHtml` |
 | `PATCH` | `/lessons/{lessonId}` | `lesson.manage_owned` | `200` | Sửa editable Lesson |
 | `PATCH` | `/lessons/{lessonId}/status` | `course.publish_owned` | `200` | Schedule/publish/unpublish |
 | `DELETE` | `/lessons/{lessonId}` | `course.archive_owned` | `204` | Soft archive |
@@ -271,7 +271,7 @@ Body create: `{ "content": "Lớp học bắt đầu lúc 08:00." }`. Status mut
     "courseId": "...",
     "moduleId": "...",
     "title": "REST Resource Naming",
-    "content": "## Mục tiêu...",
+    "contentHtml": "<h2>Mục tiêu</h2><p>Đặt tên resource bằng danh từ.</p>",
     "contentFormat": "MARKDOWN",
     "estimatedMinutes": 8,
     "isRequired": true,
@@ -287,11 +287,19 @@ Body create: `{ "content": "Lớp học bắt đầu lúc 08:00." }`. Status mut
   "navigation": {
     "back": { "label": "Backend Fundamentals", "url": "/student/courses/..." },
     "previous": null,
-    "next": { "id": "...", "title": "HTTP Status Codes", "url": "/student/lessons/..." }
+    "next": { "id": "...", "title": "HTTP Status Codes", "url": "/student/lessons/..." },
+    "breadcrumb": [
+      { "label": "Backend 01", "url": "/student/classrooms/.../classwork" },
+      { "label": "Backend Fundamentals", "url": "/student/courses/..." },
+      { "label": "REST Basics", "url": "/student/courses/...#module-..." },
+      { "label": "REST Resource Naming", "url": "/student/lessons/..." }
+    ]
   },
   "asOf": "2026-07-19T04:10:00.000Z"
 }
 ```
+
+Teacher authoring DTO dùng trường `content` để trả Markdown source. Student/preview DTO không trả source này mà chỉ trả `contentHtml` đã render qua Markdown parser, tắt raw HTML và sanitize theo allowlist. Frontend không render lại source bằng `dangerouslySetInnerHTML`; chỉ dùng HTML đã sanitize từ contract này trong renderer được kiểm soát.
 
 ### Start/Complete Response
 

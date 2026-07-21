@@ -21,6 +21,18 @@ const validEnvironment = {
   CLASSROOM_JOIN_IDENTITY_LIMIT: '10',
   CLASSROOM_JOIN_WINDOW_SECONDS: '900',
   CLASSROOM_PREVIEW_IP_LIMIT: '30',
+  CONTENT_MARKDOWN_MAX_CHARS: '100000',
+  COURSE_MAX_PER_CLASSROOM: '100',
+  MODULE_MAX_PER_COURSE: '100',
+  LESSON_MAX_PER_COURSE: '500',
+  FLASHCARD_MAX_PER_LESSON: '100',
+  CONTENT_WRITE_WINDOW_SECONDS: '60',
+  CONTENT_WRITE_IDENTITY_LIMIT: '120',
+  LEARNING_ACTION_WINDOW_SECONDS: '60',
+  LEARNING_ACTION_IDENTITY_LIMIT: '180',
+  DASHBOARD_PAGE_MAX: '100',
+  LEARNING_RESOURCES_ENABLED: 'false',
+  GCS_UPLOADS_ENABLED: 'false',
   LOG_LEVEL: 'silent',
 };
 
@@ -61,9 +73,30 @@ describe('loadEnvironment', () => {
       joinWindowSeconds: 900,
       previewIpMax: 30,
     });
+    expect(config.contentLimits).toEqual({
+      markdownMaxChars: 100_000,
+      coursesPerClassroom: 100,
+      modulesPerCourse: 100,
+      lessonsPerCourse: 500,
+      flashcardsPerLesson: 100,
+      dashboardPageMax: 100,
+    });
+    expect(config.learningRateLimits).toEqual({
+      contentWriteWindowSeconds: 60,
+      contentWriteIdentityMax: 120,
+      learningActionWindowSeconds: 60,
+      learningActionIdentityMax: 180,
+    });
+    expect(config.featureFlags).toEqual({
+      learningResourcesEnabled: false,
+      gcsUploadsEnabled: false,
+    });
     expect(Object.isFrozen(config)).toBe(true);
     expect(Object.isFrozen(config.rateLimits)).toBe(true);
     expect(Object.isFrozen(config.classroomRateLimits)).toBe(true);
+    expect(Object.isFrozen(config.contentLimits)).toBe(true);
+    expect(Object.isFrozen(config.learningRateLimits)).toBe(true);
+    expect(Object.isFrozen(config.featureFlags)).toBe(true);
   });
 
   it('fails fast without exposing a connection string when MongoDB config is invalid', () => {
@@ -94,10 +127,30 @@ describe('loadEnvironment', () => {
     ['CLASSROOM_INVITE_DEFAULT_TTL_DAYS', '91'],
     ['CLASSROOM_JOIN_WINDOW_SECONDS', '59'],
     ['CLASSROOM_PREVIEW_IP_LIMIT', '0'],
+    ['CONTENT_MARKDOWN_MAX_CHARS', '999'],
+    ['COURSE_MAX_PER_CLASSROOM', '1001'],
+    ['MODULE_MAX_PER_COURSE', '501'],
+    ['LESSON_MAX_PER_COURSE', '5001'],
+    ['FLASHCARD_MAX_PER_LESSON', '501'],
+    ['CONTENT_WRITE_WINDOW_SECONDS', 'NaN'],
+    ['CONTENT_WRITE_IDENTITY_LIMIT', '0'],
+    ['LEARNING_ACTION_WINDOW_SECONDS', '0'],
+    ['LEARNING_ACTION_IDENTITY_LIMIT', '0'],
+    ['DASHBOARD_PAGE_MAX', '19'],
   ])('rejects invalid %s boundaries', (field, value) => {
     expect(() => loadEnvironment({ ...validEnvironment, [field]: value })).toThrow(
       'Invalid application configuration',
     );
+  });
+
+  it('rejects invalid Phase 04 feature combinations', () => {
+    expect(() =>
+      loadEnvironment({
+        ...validEnvironment,
+        LEARNING_RESOURCES_ENABLED: 'false',
+        GCS_UPLOADS_ENABLED: 'true',
+      }),
+    ).toThrow('GCS_UPLOADS_ENABLED requires LEARNING_RESOURCES_ENABLED=true');
   });
 
   it('rejects malformed origins and secret reuse', () => {
@@ -149,5 +202,12 @@ describe('loadEnvironment', () => {
         CLASSROOM_CODE_PEPPER: 'replace-with-production-classroom-code-pepper',
       }),
     ).toThrow('must not use placeholder secrets');
+
+    const missingPhaseFourField = { ...productionEnvironment };
+    delete (missingPhaseFourField as Partial<typeof productionEnvironment>)
+      .CONTENT_MARKDOWN_MAX_CHARS;
+    expect(() => loadEnvironment(missingPhaseFourField)).toThrow(
+      'must explicitly configure CONTENT_MARKDOWN_MAX_CHARS',
+    );
   });
 });

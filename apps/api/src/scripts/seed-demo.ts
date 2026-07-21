@@ -1,6 +1,7 @@
 import { loadEnvFile } from 'node:process';
 
 import { DemoSeedService } from '../modules/bootstrap/demo-seed.service.js';
+import { PhaseFourDemoSeedService } from '../modules/bootstrap/phase-four-demo-seed.service.js';
 import { PhaseThreeDemoSeedService } from '../modules/bootstrap/phase-three-demo-seed.service.js';
 import { UserRepository } from '../modules/users/user.repository.js';
 import { loadEnvironment } from '../shared/config/environment.js';
@@ -36,8 +37,11 @@ async function main() {
     const phaseThree = await new PhaseThreeDemoSeedService(config.appEnvironment).execute(
       users.users,
     );
+    const phaseFour = await new PhaseFourDemoSeedService(config.appEnvironment).execute(
+      users.users,
+    );
     process.stdout.write(
-      `${JSON.stringify({ event: 'demo.seed.completed', users, phaseThree })}\n`,
+      `${JSON.stringify({ event: 'demo.seed.completed', users, phaseThree, phaseFour })}\n`,
     );
   } finally {
     await disconnectFromMongoDB(logger);

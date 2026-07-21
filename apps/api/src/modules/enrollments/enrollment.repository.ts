@@ -59,6 +59,17 @@ export class EnrollmentRepository {
       .exec();
   }
 
+  async findActiveMemberships(studentId: Types.ObjectId, classroomIds: readonly Types.ObjectId[]) {
+    return EnrollmentModel.find({
+      studentId,
+      classroomId: { $in: classroomIds },
+      status: 'ACTIVE',
+    })
+      .select({ _id: 1, classroomId: 1, status: 1 })
+      .lean()
+      .exec();
+  }
+
   async listStudentClassrooms(studentId: Types.ObjectId, query: StudentClassroomListQuery) {
     const classroomMatch: Record<string, unknown> = {};
     if (query.status) classroomMatch.status = query.status;
@@ -249,6 +260,22 @@ export class EnrollmentRepository {
       EnrollmentModel.countDocuments(filter).exec(),
     ]);
     return { items, totalItems, page: query.page, limit: query.limit };
+  }
+
+  listActiveByStudent(studentId: Types.ObjectId, session?: ClientSession) {
+    return EnrollmentModel.find({ studentId, status: 'ACTIVE' })
+      .sort({ classroomId: 1, _id: 1 })
+      .session(session ?? null)
+      .lean<EnrollmentRecord[]>()
+      .exec();
+  }
+
+  listActiveByClassroom(classroomId: Types.ObjectId, session?: ClientSession) {
+    return EnrollmentModel.find({ classroomId, status: 'ACTIVE' })
+      .sort({ studentId: 1, _id: 1 })
+      .session(session ?? null)
+      .lean<EnrollmentRecord[]>()
+      .exec();
   }
 
   async removeActiveCas(

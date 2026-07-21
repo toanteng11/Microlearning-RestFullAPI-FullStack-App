@@ -1,22 +1,46 @@
 import type { OpenAPIV3 } from 'openapi-types';
 
 import type { RuntimeInfo } from '../modules/system/system.types.js';
+import { createPhaseThreePaths, phaseThreeSchemas, phaseThreeTags } from './phase-three.openapi.js';
 import {
-  createPhaseThreePaths,
-  phaseThreeSchemas,
-  phaseThreeTags,
-} from './phase-three.openapi.js';
+  createPhaseFourPaths,
+  PHASE_FOUR_OPENAPI_OPERATIONS as PHASE_FOUR_CORE_OPENAPI_OPERATIONS,
+  phaseFourSchemas,
+  phaseFourTags,
+} from './phase-four.openapi.js';
+import {
+  createPhaseFourLearningPaths,
+  PHASE_FOUR_LEARNING_OPENAPI_OPERATIONS,
+  phaseFourLearningSchemas,
+  phaseFourLearningTags,
+} from './phase-four-learning.openapi.js';
+import {
+  createPhaseFourProgressPaths,
+  PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS,
+  phaseFourProgressSchemas,
+  phaseFourProgressTags,
+} from './phase-four-progress.openapi.js';
+import {
+  createPhaseFourGovernancePaths,
+  PHASE_FOUR_GOVERNANCE_OPENAPI_OPERATIONS,
+  phaseFourGovernanceSchemas,
+  phaseFourGovernanceTags,
+} from './phase-four-governance.openapi.js';
 export { PHASE_THREE_OPENAPI_OPERATIONS } from './phase-three.openapi.js';
+
+export const PHASE_FOUR_OPENAPI_OPERATIONS = [
+  ...PHASE_FOUR_CORE_OPENAPI_OPERATIONS,
+  ...PHASE_FOUR_LEARNING_OPENAPI_OPERATIONS,
+  ...PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS,
+  ...PHASE_FOUR_GOVERNANCE_OPENAPI_OPERATIONS,
+] as const;
 
 type Schema = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 
 const bearerSecurity: OpenAPIV3.SecurityRequirementObject[] = [{ bearerAuth: [] }];
 const cookieSecurity: OpenAPIV3.SecurityRequirementObject[] = [{ refreshCookie: [] }];
 
-function jsonContent(
-  schema: Schema,
-  example?: unknown,
-): Record<string, OpenAPIV3.MediaTypeObject> {
+function jsonContent(schema: Schema, example?: unknown): Record<string, OpenAPIV3.MediaTypeObject> {
   return {
     'application/json': {
       schema,
@@ -34,22 +58,32 @@ function response(
 }
 
 function errorResponse(description: string, code: string): OpenAPIV3.ResponseObject {
-  return response(description, { $ref: '#/components/schemas/ErrorResponse' }, {
-    success: false,
-    error: { code, message: description },
-    meta: {
-      requestId: '019c5cb4-0b51-7000-8000-000000000001',
-      timestamp: '2026-07-17T10:00:00.000Z',
-      path: '/api/v1/example',
+  return response(
+    description,
+    { $ref: '#/components/schemas/ErrorResponse' },
+    {
+      success: false,
+      error: { code, message: description },
+      meta: {
+        requestId: '019c5cb4-0b51-7000-8000-000000000001',
+        timestamp: '2026-07-17T10:00:00.000Z',
+        path: '/api/v1/example',
+      },
     },
-  });
+  );
 }
 
 const unauthorized = errorResponse('Authentication is required or no longer valid', 'UNAUTHORIZED');
 const forbidden = errorResponse('The current role does not have this permission', 'FORBIDDEN');
-const validationError = errorResponse('The request does not match the contract', 'VALIDATION_ERROR');
+const validationError = errorResponse(
+  'The request does not match the contract',
+  'VALIDATION_ERROR',
+);
 const notFound = errorResponse('The requested resource was not found', 'RESOURCE_NOT_FOUND');
-const conflict = errorResponse('The request conflicts with current resource state', 'INVALID_STATE_TRANSITION');
+const conflict = errorResponse(
+  'The request conflicts with current resource state',
+  'INVALID_STATE_TRANSITION',
+);
 const rateLimited = errorResponse('Too many requests. Try again later', 'RATE_LIMITED');
 
 function requestBody(schema: Schema, example: unknown): OpenAPIV3.RequestBodyObject {
@@ -749,6 +783,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
   };
 
   Object.assign(paths, createPhaseThreePaths());
+  Object.assign(paths, createPhaseFourPaths());
+  Object.assign(paths, createPhaseFourLearningPaths());
+  Object.assign(paths, createPhaseFourProgressPaths());
+  Object.assign(paths, createPhaseFourGovernancePaths());
 
   return {
     openapi: '3.0.3',
@@ -769,6 +807,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         description: 'Manual one-time Teacher invitation lifecycle',
       },
       ...phaseThreeTags,
+      ...phaseFourTags,
+      ...phaseFourLearningTags,
+      ...phaseFourProgressTags,
+      ...phaseFourGovernanceTags,
     ],
     paths,
     components: {
@@ -777,7 +819,8 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: 'Short-lived access token. Web giữ token trong memory, không persistent storage.',
+          description:
+            'Short-lived access token. Web giữ token trong memory, không persistent storage.',
         },
         refreshCookie: {
           type: 'apiKey',
@@ -804,6 +847,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
       },
       schemas: {
         ...phaseThreeSchemas,
+        ...phaseFourSchemas,
+        ...phaseFourLearningSchemas,
+        ...phaseFourProgressSchemas,
+        ...phaseFourGovernanceSchemas,
         UserRole: {
           type: 'string',
           enum: ['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN'],
@@ -940,14 +987,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         },
         Pagination: {
           type: 'object',
-          required: [
-            'page',
-            'limit',
-            'totalItems',
-            'totalPages',
-            'hasNextPage',
-            'hasPreviousPage',
-          ],
+          required: ['page', 'limit', 'totalItems', 'totalPages', 'hasNextPage', 'hasPreviousPage'],
           properties: {
             page: { type: 'integer', minimum: 1 },
             limit: { type: 'integer', minimum: 1, maximum: 100 },

@@ -22,6 +22,19 @@ import {
   TeacherClassroomsPage,
 } from '../features/classrooms/classroom-route-components';
 import { SystemStatusPage } from '../features/system/SystemStatusPage';
+import {
+  AdminCourseDetailPage,
+  AdminCoursesPage,
+  StudentCoursePage,
+  StudentDeadlinePage,
+  StudentLessonPlayerPage,
+  StudentTodoPage,
+  TeacherCourseContentPage,
+  TeacherCourseCreatePage,
+  TeacherCourseDashboardPage,
+  TeacherLessonCreatePage,
+  TeacherLessonEditorPage,
+} from '../features/learning/learning-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../shared/auth/RoleRoute';
 import { AppShell } from '../shared/components/AppShell';
@@ -78,10 +91,82 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: '/student/todo',
+            element: (
+              <RoleRoute roles={['STUDENT']}>
+                <StudentTodoPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/deadlines',
+            element: (
+              <RoleRoute roles={['STUDENT']}>
+                <StudentDeadlinePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/courses/:courseId',
+            element: (
+              <RoleRoute roles={['STUDENT']}>
+                <StudentCoursePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/lessons/:lessonId',
+            element: (
+              <RoleRoute roles={['STUDENT']}>
+                <StudentLessonPlayerPage />
+              </RoleRoute>
+            ),
+          },
+          {
             path: '/teacher/classrooms/:classroomId',
             element: (
               <RoleRoute roles={['TEACHER']}>
                 <TeacherClassroomDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/classrooms/:classroomId/courses/new',
+            element: (
+              <RoleRoute permission="course.create">
+                <TeacherCourseCreatePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId',
+            element: (
+              <RoleRoute permission="course.progress_view_owned">
+                <TeacherCourseDashboardPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/content',
+            element: (
+              <RoleRoute permission="course.update_owned">
+                <TeacherCourseContentPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/lessons/new',
+            element: (
+              <RoleRoute permission="lesson.manage_owned">
+                <TeacherLessonCreatePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/lessons/:lessonId/edit',
+            element: (
+              <RoleRoute permission="lesson.manage_owned">
+                <TeacherLessonEditorPage />
               </RoleRoute>
             ),
           },
@@ -162,6 +247,22 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="classroom.governance.view">
                 <AdminClassroomDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/courses',
+            element: (
+              <RoleRoute permission="content.governance_view">
+                <AdminCoursesPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/courses/:courseId',
+            element: (
+              <RoleRoute permission="content.governance_view">
+                <AdminCourseDetailPage />
               </RoleRoute>
             ),
           },

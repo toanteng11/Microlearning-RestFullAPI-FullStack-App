@@ -1,4 +1,14 @@
-import { ArrowLeft, ArrowRight, BookOpen, LogOut, School, Settings, UserRound } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  CalendarClock,
+  ListTodo,
+  LogOut,
+  School,
+  Settings,
+  UserRound,
+} from 'lucide-react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 
 import { dashboardForRole } from '../../app/route-paths';
@@ -38,10 +48,23 @@ export function AppShell() {
         </div>
         <nav className="app-nav" aria-label="Điều hướng chính">
           <NavLink to={dashboardForRole(user.role)}>Tổng quan</NavLink>
+          {user.role === 'STUDENT' ? (
+            <>
+              <NavLink to="/student/todo">
+                <ListTodo size={17} /> Việc cần làm
+              </NavLink>
+              <NavLink to="/student/deadlines">
+                <CalendarClock size={17} /> Deadline
+              </NavLink>
+            </>
+          ) : null}
           {user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? (
             <>
               <NavLink to="/admin/classrooms">
                 <School size={17} /> Classroom
+              </NavLink>
+              <NavLink to="/admin/courses">
+                <BookOpen size={17} /> Course
               </NavLink>
               <NavLink to="/admin/settings/enrollment-policy">
                 <Settings size={17} /> Policy

@@ -1,6 +1,8 @@
 import {
   Archive,
   ArrowLeft,
+  Bell,
+  BookOpen,
   Clipboard,
   KeyRound,
   Link2,
@@ -15,6 +17,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { TeacherClassworkPanel } from '../../learning/components/TeacherClassworkPanel';
+import { TeacherStreamPanel } from '../../learning/components/TeacherStreamPanel';
 import { ClassroomStatusBadge } from '../components/ClassroomStatusBadge';
 import { classroomStatusLabel, displayDate } from '../classroom-format';
 import type {
@@ -26,7 +30,7 @@ import type {
   RosterItem,
 } from '../classroom.types';
 
-type DetailTab = 'overview' | 'people' | 'join';
+type DetailTab = 'stream' | 'classwork' | 'people' | 'settings';
 
 interface ClassCodeEnvelope {
   success: true;
@@ -50,7 +54,7 @@ export function TeacherClassroomDetailPage() {
   const { classroomId = '' } = useParams();
   const { request } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<DetailTab>('overview');
+  const [tab, setTab] = useState<DetailTab>('stream');
   const [reloadKey, setReloadKey] = useState(0);
   const [classroom, setClassroom] = useState<ClassroomDetail | null>(null);
   const [classCode, setClassCode] = useState<ClassCodeMetadata | null>(null);
@@ -285,11 +289,18 @@ export function TeacherClassroomDetailPage() {
 
       <nav className="segmented-tabs" aria-label="Nội dung lớp học">
         <button
-          className={tab === 'overview' ? 'active' : ''}
+          className={tab === 'stream' ? 'active' : ''}
           type="button"
-          onClick={() => setTab('overview')}
+          onClick={() => setTab('stream')}
         >
-          <Settings size={17} /> Tổng quan
+          <Bell size={17} /> Bảng tin
+        </button>
+        <button
+          className={tab === 'classwork' ? 'active' : ''}
+          type="button"
+          onClick={() => setTab('classwork')}
+        >
+          <BookOpen size={17} /> Nội dung học
         </button>
         <button
           className={tab === 'people' ? 'active' : ''}
@@ -299,11 +310,12 @@ export function TeacherClassroomDetailPage() {
           <UsersRound size={17} /> Thành viên
         </button>
         <button
-          className={tab === 'join' ? 'active' : ''}
+          aria-label="Cài đặt và Quyền tham gia"
+          className={tab === 'settings' ? 'active' : ''}
           type="button"
-          onClick={() => setTab('join')}
+          onClick={() => setTab('settings')}
         >
-          <KeyRound size={17} /> Quyền tham gia
+          <Settings size={17} /> Cài đặt
         </button>
       </nav>
 
@@ -328,7 +340,10 @@ export function TeacherClassroomDetailPage() {
         </section>
       ) : null}
 
-      {tab === 'overview' ? (
+      {tab === 'stream' ? <TeacherStreamPanel classroomId={classroomId} /> : null}
+      {tab === 'classwork' ? <TeacherClassworkPanel classroomId={classroomId} /> : null}
+
+      {tab === 'settings' ? (
         <div className="detail-layout">
           <section className="detail-panel">
             <h2>Thông tin lớp học</h2>
@@ -456,7 +471,7 @@ export function TeacherClassroomDetailPage() {
         </section>
       ) : null}
 
-      {tab === 'join' ? (
+      {tab === 'settings' ? (
         <div className="settings-layout">
           <section className="detail-panel">
             <h2>Cấu hình tham gia</h2>

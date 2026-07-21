@@ -132,11 +132,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Validate parser and Phase 03 operation coverage
+      - name: Validate parser and Phase 04 operation coverage
         run: npm run test:openapi
 
   browser-e2e:
-    name: Phase 03 browser E2E
+    name: Integrated browser E2E
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -155,6 +155,18 @@ jobs:
       CLASSROOM_JOIN_IDENTITY_LIMIT: '10'
       CLASSROOM_JOIN_WINDOW_SECONDS: '900'
       CLASSROOM_PREVIEW_IP_LIMIT: '30'
+      CONTENT_MARKDOWN_MAX_CHARS: '100000'
+      COURSE_MAX_PER_CLASSROOM: '100'
+      MODULE_MAX_PER_COURSE: '100'
+      LESSON_MAX_PER_COURSE: '500'
+      FLASHCARD_MAX_PER_LESSON: '100'
+      CONTENT_WRITE_WINDOW_SECONDS: '60'
+      CONTENT_WRITE_IDENTITY_LIMIT: '120'
+      LEARNING_ACTION_WINDOW_SECONDS: '60'
+      LEARNING_ACTION_IDENTITY_LIMIT: '180'
+      DASHBOARD_PAGE_MAX: '100'
+      LEARNING_RESOURCES_ENABLED: 'false'
+      GCS_UPLOADS_ENABLED: 'false'
       REFRESH_COOKIE_SECURE: 'false'
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: silent
@@ -218,7 +230,7 @@ jobs:
           docker compose -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml ps
           exit 1
 
-      - name: Seed synthetic role identities
+      - name: Seed deterministic Phase 03 and Phase 04 demo data
         run: printf '%s' "$E2E_DEMO_PASSWORD" | npm run seed:demo --workspace @microlearning/api
 
       - name: Run critical browser journeys
@@ -232,7 +244,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: phase-03-e2e-report
+          name: integrated-e2e-report
           path: playwright-report
           if-no-files-found: warn
           retention-days: 7

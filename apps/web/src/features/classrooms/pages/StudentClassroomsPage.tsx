@@ -1,9 +1,12 @@
-import { BookOpen, KeyRound, RefreshCw } from 'lucide-react';
+import { BookOpen, CalendarClock, KeyRound, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { ProgressStatusBadge } from '../../learning/components/LearningStatusBadge';
+import { displayLearningDate } from '../../learning/learning-format';
+import type { TodoEnvelope } from '../../learning/learning.types';
 import { ClassroomStatusBadge } from '../components/ClassroomStatusBadge';
 import type { ClassroomListEnvelope } from '../classroom.types';
 
@@ -14,6 +17,7 @@ export function StudentClassroomsPage() {
   const [error, setError] = useState<string | null>(null);
   const [joinMessage, setJoinMessage] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
+  const [todo, setTodo] = useState<TodoEnvelope | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -32,6 +36,20 @@ export function StudentClassroomsPage() {
               : 'Không thể tải danh sách lớp học.',
           );
         }
+      });
+    return () => {
+      active = false;
+    };
+  }, [reloadKey, request]);
+
+  useEffect(() => {
+    let active = true;
+    void request<TodoEnvelope>('/students/me/todo?page=1&limit=5&scope=ALL')
+      .then((response) => {
+        if (active && Array.isArray(response.data?.items)) setTodo(response);
+      })
+      .catch(() => {
+        if (active) setTodo(null);
       });
     return () => {
       active = false;
@@ -83,9 +101,35 @@ export function StudentClassroomsPage() {
             <BookOpen size={20} />
             <h2>Việc cần làm</h2>
           </div>
-          <div className="empty-state">
-            <strong>Chưa có công việc cần hoàn thành</strong>
-          </div>
+          {todo?.data.items.length === 0 ? (
+            <div className="empty-state">
+              <strong>Chưa có bài học cần hoàn thành</strong>
+            </div>
+          ) : null}
+          {todo && todo.data.items.length > 0 ? (
+            <div className="dashboard-todo-list">
+              {todo.data.items.map((item) => (
+                <article key={item.id}>
+                  <div>
+                    <Link to={item.actionUrl}>{item.title}</Link>
+                    <small>
+                      {item.course.title} · {displayLearningDate(item.completionDeadline)}
+                    </small>
+                  </div>
+                  <ProgressStatusBadge status={item.progress.derivedStatus} />
+                </article>
+              ))}
+              <Link className="row-link" to="/student/todo">
+                Xem tất cả
+              </Link>
+            </div>
+          ) : null}
+          {!todo ? (
+            <div className="empty-state">
+              <CalendarClock size={24} />
+              <span>Đang tải việc cần làm...</span>
+            </div>
+          ) : null}
         </section>
         <section className="join-band">
           <div className="panel-title">

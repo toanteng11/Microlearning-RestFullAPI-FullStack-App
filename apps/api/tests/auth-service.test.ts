@@ -150,6 +150,8 @@ describe('AuthService', () => {
     expect(result.user.capabilities).toEqual([
       'classroom.join',
       'classroom.view_enrolled',
+      'learning.complete_own',
+      'learning.view_enrolled',
       'profile.update_own',
       'profile.view_own',
     ]);
