@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { accountStatusLabel } from '../account-status';
 import { StatusBadge } from '../components/StatusBadge';
 import type {
   AccountRole,
@@ -52,6 +53,15 @@ function mutationMessage(error: unknown) {
   if (error.code === 'FINAL_SUPER_ADMIN_REQUIRED') {
     return 'Hệ thống phải còn ít nhất một Super Admin đang hoạt động.';
   }
+  if (error.code === 'TEACHER_HAS_ACTIVE_CLASSROOM') {
+    return 'Giảng viên vẫn đang sở hữu lớp học hoạt động. Hãy chuyển quyền hoặc lưu trữ lớp học trước khi đổi trạng thái.';
+  }
+  if (error.code === 'INVALID_STATE_TRANSITION') {
+    return 'Không thể thực hiện thay đổi từ trạng thái hoặc vai trò hiện tại.';
+  }
+  if (error.code === 'ACCESS_DENIED') {
+    return 'Bạn không có quyền thực hiện thay đổi này.';
+  }
   return error.message;
 }
 
@@ -94,6 +104,8 @@ export function AdminUserDetailPage() {
 
   const availableStatuses = useMemo(() => (user ? statusChoices(user) : []), [user]);
   const availableRoles = user ? ROLE_TRANSITIONS[user.role] : [];
+  const trimmedReasonLength = reason.trim().length;
+  const reasonIsValid = trimmedReasonLength >= 5;
 
   async function submitMutation(type: 'status' | 'role') {
     if (!user || !userId || reason.trim().length < 5) return;
@@ -101,8 +113,8 @@ export function AdminUserDetailPage() {
     if (!nextValue) return;
     const confirmed = window.confirm(
       type === 'status'
-        ? `Xác nhận đổi trạng thái thành ${nextValue}?`
-        : `Xác nhận đổi vai trò thành ${nextValue}?`,
+        ? `Xác nhận đổi trạng thái của ${user.email} thành ${accountStatusLabel(nextValue as AccountStatus)}?`
+        : `Xác nhận đổi vai trò của ${user.email} thành ${nextValue}?`,
     );
     if (!confirmed) return;
 
@@ -210,9 +222,16 @@ export function AdminUserDetailPage() {
               <h2 id="account-governance">Quản trị tài khoản</h2>
             </div>
             {availableStatuses.length === 0 && !user.allowedActions.includes('ROLE_CHANGE') ? (
-              <p className="muted-text">Không có thao tác quản trị hợp lệ cho tài khoản này.</p>
+              <p className="muted-text">
+                Trạng thái hoặc quyền hiện tại không cho phép thực hiện thêm thao tác quản trị với
+                tài khoản này.
+              </p>
             ) : (
               <div className="governance-form">
+                <p className="governance-guidance">
+                  Chọn giá trị mới và nhập lý do thay đổi. Mọi thao tác sẽ được ghi vào Audit Log;
+                  thay đổi trạng thái có thể thu hồi các phiên đăng nhập hiện tại.
+                </p>
                 {availableStatuses.length > 0 ? (
                   <div className="form-field">
                     <label htmlFor="nextStatus">Trạng thái mới</label>
@@ -224,7 +243,7 @@ export function AdminUserDetailPage() {
                       <option value="">Chọn trạng thái</option>
                       {availableStatuses.map((value) => (
                         <option value={value} key={value}>
-                          {value}
+                          {accountStatusLabel(value)}
                         </option>
                       ))}
                     </select>
@@ -251,16 +270,29 @@ export function AdminUserDetailPage() {
                   <label htmlFor="governanceReason">Lý do thay đổi</label>
                   <textarea
                     id="governanceReason"
+                    aria-describedby="governanceReasonHint"
+                    minLength={5}
                     maxLength={500}
+                    required
+                    rows={3}
                     value={reason}
                     onChange={(event) => setReason(event.target.value)}
                   />
+                  <p
+                    id="governanceReasonHint"
+                    className={`form-hint${reason.length > 0 && !reasonIsValid ? ' form-hint--invalid' : ''}`}
+                    aria-live="polite"
+                  >
+                    {reasonIsValid
+                      ? 'Lý do hợp lệ. Bạn có thể thực hiện cập nhật.'
+                      : `Lý do bắt buộc, tối thiểu 5 ký tự${trimmedReasonLength > 0 ? ` (còn ${5 - trimmedReasonLength})` : ''}.`}
+                  </p>
                 </div>
                 <div className="governance-actions">
                   {availableStatuses.length > 0 ? (
                     <button
                       type="button"
-                      disabled={saving || !status || reason.trim().length < 5}
+                      disabled={saving || !status || !reasonIsValid}
                       onClick={() => void submitMutation('status')}
                     >
                       <Save size={17} /> Cập nhật trạng thái
@@ -269,7 +301,7 @@ export function AdminUserDetailPage() {
                   {user.allowedActions.includes('ROLE_CHANGE') ? (
                     <button
                       type="button"
-                      disabled={saving || !role || reason.trim().length < 5}
+                      disabled={saving || !role || !reasonIsValid}
                       onClick={() => void submitMutation('role')}
                     >
                       <Save size={17} /> Cập nhật vai trò
