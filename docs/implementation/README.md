@@ -111,6 +111,34 @@ docs/implementation/
 |   |-- phase-exit-evidence.md
 |   `-- exit-report.md
 |-- phase-05/
+|   |-- README.md
+|   |-- phase-plan.md
+|   |-- scope-and-deliverables.md
+|   |-- ba-alignment-and-decisions.md
+|   |-- technical-decisions.md
+|   |-- architecture-and-module-design.md
+|   |-- assessment-lifecycle-and-scoring.md
+|   |-- assignment-submission-grading.md
+|   |-- deadline-exceptions-and-derived-state.md
+|   |-- security-ownership-and-privacy.md
+|   |-- conditional-media-and-storage-decision.md
+|   |-- data-model-and-indexes.md
+|   |-- migration-and-rollback.md
+|   |-- api-contract.md
+|   |-- backend-implementation-plan.md
+|   |-- frontend-implementation-plan.md
+|   |-- devops-environment-and-seeding.md
+|   |-- testing-strategy.md
+|   |-- acceptance-criteria.md
+|   |-- traceability-matrix.md
+|   |-- work-breakdown-structure.md
+|   |-- implementation-checklist.md
+|   |-- risk-and-issues.md
+|   |-- developer-start-guide.md
+|   |-- development-readiness-review.md
+|   |-- evidence-register.md
+|   |-- phase-exit-evidence.md
+|   `-- exit-report.md
 |-- phase-06/
 |-- phase-07/
 |   |-- README.md
@@ -126,7 +154,7 @@ docs/implementation/
 | `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation   | Merged; `39/39` Pass            |
 | `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | Completed; `45/45` Pass; PR #6 merged |
 | `phase-04/` | Learning Content         | Course/module/lesson/deadline/completion/To-do và dashboard v1      | Completed; `66/66` Must Pass; PR #10 merged |
-| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Planned                         |
+| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Planning baseline `READY_FOR_REVIEW`; Gate A pending |
 | `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                         | Planned                         |
 | `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Provider accepted; Planned      |
 | `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                                | Planned                         |
