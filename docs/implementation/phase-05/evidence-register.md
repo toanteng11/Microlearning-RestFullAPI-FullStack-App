@@ -13,7 +13,7 @@
 
 | ID | Evidence | Required | Location | Status |
 | --- | --- | --- | --- | --- |
-| P05-EV-001 | Complete planning document package | Có | `docs/implementation/phase-05/` | Prepared |
+| P05-EV-001 | Complete planning document package | Có | Branch `docs/phase-05-planning-baseline`, source commit [`67dbaf5`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/commit/67dbaf5) | Collected |
 | P05-EV-002 | Planning local format/link/count/quality validation | Có | `2026-07-22`: 28/28 files, 78 AC, 108 tasks, 32 decisions, 25 risks, 52 endpoint rows; local links resolve; `git diff --check`, targeted Prettier và `npm run check:ci` Pass; API `149/149`, Web `84/84`, builds Pass | Collected |
 | P05-EV-003 | Planning Pull Request | Có | URL pending | Planned |
 | P05-EV-004 | Planning required CI | Có | Actions URL pending | Planned |
@@ -95,11 +95,11 @@
 
 | Category | Total | Prepared | Planned | Collected | Verified |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Planning | 7 | 3 | 3 | 1 | 0 |
+| Planning | 7 | 2 | 3 | 2 | 0 |
 | Domain/Data/API | 12 | 0 | 12 | 0 | 0 |
 | Security/Privacy | 7 | 0 | 7 | 0 | 0 |
 | Frontend/Browser | 9 | 0 | 9 | 0 | 0 |
 | DevOps/Remote | 13 | 0 | 13 | 0 | 0 |
 | Acceptance/Exit | 4 | 2 | 2 | 0 | 0 |
 
-Current conclusion: evidence model đã chuẩn bị để review; local planning validation đã được thu thập, nhưng chưa có remote review/CI/merge, chưa có implementation evidence và chưa evidence nào được ghi `Verified`.
+Current conclusion: planning package và local validation đã được thu thập trên remote branch; chưa có Pull Request review/CI/merge, chưa có implementation evidence và chưa evidence nào được ghi `Verified`.
