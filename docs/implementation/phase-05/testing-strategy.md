@@ -8,6 +8,8 @@
 - Chứng minh P04 Lesson/Classwork/To-do không regression.
 - Chứng minh React sử dụng API thật và hiển thị đầy đủ state.
 
+Case setup, expected assertions và file group cụ thể được khóa tại `test-case-catalog.md`. Bảng range trong tài liệu này là summary; catalog là nguồn ID chi tiết.
+
 ## 2. Test Layers
 
 | Layer | Focus | Runtime |
@@ -97,7 +99,7 @@ Golden tests use integer points and injectable snapshot; no DB needed.
 - Teacher B cannot manage Teacher A Quiz/Assignment/result.
 - Removed Enrollment cannot start/submit or read new assessment.
 - BLOCKED account direct API denied.
-- Admin without exceptional capability cannot read private evidence.
+- Admin/Super Admin baseline cannot read private Attempt/Submission/Grade evidence.
 - Student DTO recursively lacks `correctOptionIds`, rubric, Teacher-only feedback draft.
 - Student grade list excludes DRAFT and foreign Grades.
 - Guessed ID error does not leak title/owner/existence.
@@ -145,6 +147,8 @@ Golden tests use integer points and injectable snapshot; no DB needed.
 | `P05-E2E-10` | Cross-scope deep-link Student/Teacher denial. |
 | `P05-E2E-11` | Mixed Lesson/Quiz/Assignment To-do completion journey. |
 | `P05-E2E-12` | Desktop/mobile navigation, unsaved warning and no overflow. |
+
+Responsive journey dùng viewport `390x844` cục bộ trong `phase-05-responsive-journeys.spec.ts`; không bắt buộc nhân đôi toàn bộ existing Playwright suite thành mobile project.
 
 ## 11. OpenAPI Tests
 

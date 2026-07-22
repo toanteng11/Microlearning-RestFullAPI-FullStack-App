@@ -9,11 +9,13 @@
 | `QUESTION_MEDIA_ALLOWED_HOSTS` | Conditional | empty | Reviewed host allowlist |
 | `ASSIGNMENT_LINK_SUBMISSION_ENABLED` | Yes | `false` | Conditional external link method |
 | `ASSIGNMENT_MARK_DONE_ENABLED` | Yes | `false` | Conditional mark done |
+| `BASIC_GRADEBOOK_ENABLED` | Yes | `false` | Conditional basic Gradebook read view; no weighting/export |
 | `ASSESSMENT_FILE_UPLOAD_ENABLED` | Yes | `false` | Hard guard P05; true rejected at startup |
 | `QUIZ_ATTEMPT_START_IP_LIMIT` | Yes | `300` | Start requests per IP/window; classroom NAT tolerant |
 | `QUIZ_ATTEMPT_IDENTITY_LIMIT` | Yes | `20` | Start requests per user + Quiz/window |
 | `QUIZ_ANSWER_SAVE_LIMIT` | Yes | `180` | Saves per user + Attempt/window |
 | `ASSESSMENT_MUTATION_WINDOW_SECONDS` | Yes | `60` | Shared limiter window |
+| `ASSESSMENT_MUTATION_IDENTITY_LIMIT` | Yes | `120` | Other assessment mutations per actor/window |
 
 Config values phải parse/validate bằng Zod. P05 không thêm GCS credential.
 
@@ -80,13 +82,13 @@ P05 adds tests to existing jobs, không tạo optional green path bỏ qua asses
 
 ## 6. Feature Flag Matrix
 
-| Environment | URL media | Link | Mark Done | File Upload |
-| --- | --- | --- | --- | --- |
-| Test | Explicit per test | Explicit | Explicit | false |
-| Local demo | false by default | false by default | false | false |
-| CI E2E | allowlisted synthetic URL only if tested | explicit per Conditional test | optional test | false |
-| Staging/P07 | Security approval | approved | product decision | only after P07 gate |
-| Production | Explicit approval | approved | explicit | only after P07 release |
+| Environment | URL media | Link | Mark Done | Basic Gradebook | File Upload |
+| --- | --- | --- | --- | --- | --- |
+| Test | Explicit per test | Explicit | Explicit | Explicit | false |
+| Local demo | false by default | false by default | false | false | false |
+| CI E2E | allowlisted synthetic URL only if tested | explicit per Conditional test | optional test | explicit Conditional test | false |
+| Staging/P07 | Security approval | approved | product decision | explicit approval | only after P07 gate |
+| Production | Explicit approval | approved | explicit | explicit approval | only after P07 release |
 
 ## 7. Logging And Metrics
 

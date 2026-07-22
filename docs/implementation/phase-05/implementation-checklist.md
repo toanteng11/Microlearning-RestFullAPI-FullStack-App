@@ -6,7 +6,7 @@
 - Chỉ tick `[x]` khi có bằng chứng trong `evidence-register.md` hoặc Pull Request đã merge.
 - Dòng `[Prepared]` nghĩa là tài liệu đã soạn trên planning branch nhưng chưa được reviewer phê duyệt.
 - Conditional item phải là `Pass` hoặc `[N/A - approved reason/evidence]`; không được im lặng bỏ qua.
-- Current status: `READY_FOR_REVIEW`, Gate A `PENDING`, implementation `NOT_STARTED`.
+- Current status: `READY_TO_CODE`, Gate A `APPROVED`, implementation `NOT_STARTED`.
 
 ## 2. Gate A - Planning Baseline
 
@@ -27,15 +27,20 @@
 - [x] [Prepared] Security, IDOR, grade privacy và field projection đã mô tả.
 - [x] [Prepared] Testing strategy, 78 AC và evidence model đã soạn.
 - [x] [Prepared] WBS 108 task và critical dependencies đã soạn.
-- [ ] PO/TL chấp thuận sáu refinement/boundary quyết định sản phẩm trong `ba-alignment-and-decisions.md`.
-- [ ] Tất cả decision chặn Must trong `technical-decisions.md` chuyển từ `Proposed` sang `Accepted`.
-- [ ] Conditional media/link/comment/basic Gradebook có disposition `Enabled` hoặc `Deferred/N/A`.
+- [x] [Prepared] Source file blueprint chỉ rõ file Create/Modify và compile-safe order.
+- [x] [Prepared] Runtime TypeScript/permission/config/service/DTO contracts đã khóa.
+- [x] [Prepared] Toàn bộ 52 P05 API và P04 read models đã ánh xạ tới UI/state/refetch.
+- [x] [Prepared] 74 integration cases và 12 E2E journeys đã có expected assertion cụ thể.
+- [x] [Prepared] P05-PR01..08 có branch, scope, test gate và exit riêng.
+- [x] Product Owner chấp thuận sáu refinement/boundary quyết định sản phẩm trong `ba-alignment-and-decisions.md` ngày `2026-07-22`.
+- [x] Tất cả decision chặn Must trong `technical-decisions.md` đã chuyển từ `Proposed` sang `Accepted`.
+- [x] Conditional media/link/comment/basic Gradebook có disposition mặc định `Disabled` hoặc `Deferred/N/A`.
 - [x] Planning package format/link/count và local `npm run check:ci` validation Pass (`P05-EV-002`).
 - [ ] Planning Pull Request có required CI xanh và review approval.
 - [ ] Planning Pull Request merge vào `main`.
-- [ ] `development-readiness-review.md` được cập nhật thành `READY_TO_CODE` kèm PR/commit/CI evidence.
+- [x] `development-readiness-review.md` được cập nhật thành `READY_TO_CODE` kèm approval và local quality evidence.
 
-Gate A hiện tại: **PENDING**.
+Gate A hiện tại: **APPROVED** ngày `2026-07-22`. Hai mục planning PR/merge phía trên là bước đồng bộ repository bắt buộc trước khi tạo implementation branch, không phải runtime evidence.
 
 ## 3. Gate B - Domain Và Data Foundation
 
@@ -64,7 +69,7 @@ Gate B hiện tại: **NOT_STARTED**.
 - [ ] Publish bị chặn khi aggregate không hợp lệ.
 - [ ] Bốn Question types có validation và reorder pass.
 - [ ] Student DTO trước release không có correct answer/scoring internals.
-- [ ] Conditional question media Pass hoặc approved N/A.
+- [x] [N/A - Gate A `2026-07-22`] Question media URL disabled; không tạo upload/media runtime.
 - [ ] Student eligibility/enrollment/visibility/window/limit checks pass.
 - [ ] Start Attempt tạo immutable snapshot transactionally.
 - [ ] Hai start đồng thời chỉ có một active Attempt.
@@ -87,7 +92,7 @@ Gate C hiện tại: **NOT_STARTED**.
 
 - [ ] Teacher Assignment CRUD/lifecycle/policy đúng scope.
 - [ ] TEXT submission method hoạt động đầy đủ.
-- [ ] LINK/MARK_DONE Conditional Pass hoặc approved N/A.
+- [x] [N/A - Gate A `2026-07-22`] LINK/MARK_DONE disabled trong P05 baseline.
 - [ ] Student draft dùng một current Submission theo natural key.
 - [ ] Turn in ghi revision/event và late state đúng server time.
 - [ ] Unsubmit/resubmit tuân policy và không mất history.
@@ -98,10 +103,10 @@ Gate C hiện tại: **NOT_STARTED**.
 - [ ] Return/regrade dùng optimistic revision, history và AuditLog.
 - [ ] Student không thấy draft Grade/Feedback trước return.
 - [ ] Student chỉ xem own returned Grade/Feedback.
-- [ ] Private comment Conditional Pass hoặc approved N/A.
+- [x] [N/A - Gate A `2026-07-22`] Private Comments deferred; không tạo contract ngầm.
 - [ ] Deadline exception chỉ áp dụng đúng Student/activity.
 - [ ] Normal Teacher không thể rút ngắn deadline hoặc đặt quá khứ.
-- [ ] Set/reset exception có reason/revision/history/audit.
+- [ ] Set/revoke exception có reason/revision/history/audit.
 - [ ] Exception lập tức phản ánh vào late/missing/To-do ở query tiếp theo.
 - [ ] Teacher Editor/Grader và Student Submission/Grade screens dùng API thật.
 - [ ] Assignment/Grade Swagger happy/negative samples hợp lệ.
@@ -117,7 +122,7 @@ Gate D hiện tại: **NOT_STARTED**.
 - [ ] Progress metric trả `P05_REQUIRED_ACTIVITY_COMPLETION_V1` và `asOf`.
 - [ ] Score chưa bị dùng làm weighted process score Phase 06.
 - [ ] Admin Course governance chỉ thêm assessment counts/status metadata, không lộ private assessment evidence.
-- [ ] Conditional basic Gradebook Pass hoặc approved N/A; không export/weighting.
+- [x] [N/A - Gate A `2026-07-22`] Basic Gradebook deferred sang P06; không export/weighting.
 - [ ] OpenAPI operation/schema/security/error parity pass.
 - [ ] Authorization/IDOR/field leak matrix pass.
 - [ ] Scoring golden fixtures và all concurrency/rollback tests pass.
@@ -130,7 +135,7 @@ Gate D hiện tại: **NOT_STARTED**.
 - [ ] Dependency audit và Secret Scan pass.
 - [ ] Clean-clone onboarding pass.
 - [ ] `74/74` Must AC Pass.
-- [ ] Bốn Conditional AC Pass hoặc có approved N/A evidence.
+- [x] Bốn Conditional AC có approved N/A evidence tại Gate A `2026-07-22`.
 - [ ] Không Critical/High defect; Medium/Low có disposition.
 - [ ] Evidence register có command/count/commit/CI URL/report.
 - [ ] Implementation PR merge qua branch protection.

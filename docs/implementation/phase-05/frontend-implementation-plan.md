@@ -9,6 +9,8 @@
 - Unsaved Quiz answer/Assignment draft warning where data may be lost.
 - No “coming soon” upload control presented as working capability.
 
+File/component placement canonical nằm trong `source-file-blueprint.md`; mapping đầy đủ endpoint -> screen/action/state nằm trong `api-ui-integration-matrix.md`; component/E2E case IDs nằm trong `test-case-catalog.md`.
+
 ## 2. Proposed Routes
 
 ### Teacher
@@ -178,9 +180,10 @@ Existing Classwork/To-do/Deadline/Course routes thêm mixed activities, không t
 
 ## 13. State Management
 
-- Reuse Auth context/request client and React Query pattern if established.
-- Query keys include actor scope/resource/filter/page.
-- Mutation invalidates exact affected keys.
+- Reuse `useAuth().request` và page-local state pattern đang chạy ở Phase 04; P05 không đưa thêm React Query/data-fetching library mới.
+- Mỗi page/hook giữ key truy vấn bằng dependency rõ: actor scope, resource ID, filter và page; `useEffect` phải có cancellation guard như các learning pages hiện tại.
+- Sau mutation, dùng DTO response làm canonical state rồi refetch đúng read model bị ảnh hưởng; không giả lập cache invalidation của thư viện chưa được dùng.
+- Quiz autosave giữ state machine cục bộ `IDLE -> DIRTY -> SAVING -> SAVED|ERROR|CONFLICT`, chỉ một request save đang chạy và luôn cập nhật server revision từ response.
 - Draft form local state separated from server returned state.
 - Do not cache correct answer in global/shared persistent storage.
 - No attempt/submission private data in localStorage.

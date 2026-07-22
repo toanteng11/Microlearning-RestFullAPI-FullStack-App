@@ -45,7 +45,7 @@ Tài liệu này chuyển BA baseline thành quyết định triển khai có th
 | P05-BA-013 | Grade visible sau save hay return | Save = internal `DRAFT`; Student chỉ thấy `RETURNED` | Khớp Google Classroom-inspired workflow và BA |
 | P05-BA-014 | Admin có thể grade vì BA ghi governance | Daily Admin read-only; override cần capability + reason/audit, không thuộc Must UI | Least privilege |
 | P05-BA-015 | Deadline reset global hay per Student | P04 giữ global Lesson deadline; P05 thêm per-Student exception cho Lesson/Quiz/Assignment | Đáp ứng trường hợp ngoại lệ không ảnh hưởng cả lớp |
-| P05-BA-016 | Teacher có thể rút ngắn deadline exception | Must chỉ extend; shorten/past cần exceptional capability | Tránh bất lợi im lặng cho Student |
+| P05-BA-016 | Teacher có thể rút ngắn deadline exception | P05 Must chỉ extend; shorten/past bị từ chối, future override cần change-control riêng | Tránh bất lợi im lặng cho Student |
 | P05-BA-017 | Quiz/Assignment completion dùng Grade hay submit | Quiz complete khi final submit/timeout; Assignment complete khi valid turn-in | To-do phản ánh hành động Student, Grade là kết quả sau đó |
 | P05-BA-018 | processScore có tính điểm Quiz/Assignment ngay | P05 metric chỉ completion đa activity; weighted score P06 | Không thay công thức reporting ngoài phase |
 | P05-BA-019 | Gradebook nằm P05 hay P06 | P05 per-assessment result + optional basic course grid; export/weighting P06 | Giữ Must path gọn |
@@ -80,28 +80,28 @@ Tài liệu này chuyển BA baseline thành quyết định triển khai có th
 | Short-answer manual review | Must | Không để state treo |
 | Assignment text submission | Must | End-to-end |
 | Grade/return/own result | Must | End-to-end |
-| LINK/MARK_DONE | Conditional Should | Bật theo policy |
-| URL Question media | Conditional Should | Host allowlist |
+| LINK/MARK_DONE | Conditional Should | `N/A` trong baseline Must; feature flag giữ `false` |
+| URL Question media | Conditional Should | `N/A` trong baseline Must; feature flag giữ `false` |
 | FILE/upload media | Deferred | P07 |
-| Private comments | Conditional Should | Grade feedback đã đủ Must |
-| Basic Gradebook | Conditional Should | Export P06 |
+| Private comments | Conditional Should | `N/A - Deferred`; Grade feedback đã đủ Must |
+| Basic Gradebook | Conditional Should | `N/A - Deferred`; reporting/export thuộc P06 |
 
-## 7. Open Questions
+## 7. Gate A Confirmed Product Decisions
 
-Không còn alternative kỹ thuật chưa có baseline đề xuất. Sáu refinement/boundary sau vẫn cần Product Owner xác nhận tại Gate A trước khi được phép code:
+Product Owner đã chấp thuận sáu refinement/boundary sau ngày `2026-07-22`:
 
-1. Chấp thuận Multiple Choice dùng exact-set, không partial credit trong MVP.
-2. Chấp thuận `HIGHEST` làm score policy duy nhất trong MVP.
-3. Chấp thuận FILE/upload defer P07 dù BA gốc đánh dấu file submission Must.
-4. Chấp thuận Gradebook grid là Conditional và export thuộc P06.
-5. Chấp thuận Teacher chỉ được extend deadline exception trong daily flow.
-6. Chấp thuận progress P05 chỉ dùng required activity completion, chưa weighted grade.
+1. Multiple Choice dùng exact-set, không partial credit trong MVP.
+2. `HIGHEST` là score policy duy nhất trong MVP.
+3. FILE/upload được defer sang P07 dù BA gốc đánh dấu file submission Must.
+4. Gradebook grid được disposition `N/A - Deferred`; reporting/export thuộc P06.
+5. Teacher chỉ được extend deadline exception trong daily flow.
+6. Progress P05 chỉ dùng required activity completion, chưa weighted grade.
 
-Nếu bất kỳ mục nào bị từ chối, phải cập nhật scope, technical decision, API/data, AC, WBS và risk trước khi `READY_TO_CODE`.
+Các thay đổi sau Gate A phải cập nhật scope, technical decision, API/data, AC, WBS và risk qua change control trước khi implementation tương ứng được merge.
 
 ## 8. Integrity Rule
 
 - Không đổi BA source để che giấu defer; ghi disposition tại phase traceability.
 - Không đánh dấu FR-038/FILE part của FR-043 hoàn thành khi chỉ có URL metadata.
 - Không dùng planned endpoint/model làm implementation evidence.
-- Không đổi `READY_FOR_REVIEW` thành `READY_TO_CODE` trước Gate A merge.
+- Không dùng `READY_TO_CODE` để suy diễn rằng implementation hoặc acceptance criteria đã Pass.

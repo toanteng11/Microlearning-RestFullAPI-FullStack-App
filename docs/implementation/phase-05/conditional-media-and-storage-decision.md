@@ -22,7 +22,7 @@ Google Cloud Storage là provider đã chọn, nhưng P07 mới chịu trách nh
 | `QUESTION_IMAGE_URL_ENABLED` | `false` | Cho phép image URL metadata |
 | `QUESTION_VIDEO_URL_ENABLED` | `false` | Cho phép approved video provider |
 | `QUESTION_MEDIA_ALLOWED_HOSTS` | empty | Comma-separated exact/suffix allowlist đã review |
-| `ASSIGNMENT_LINK_SUBMISSION_ENABLED` | `true` local/demo sau review | Cho phép HTTPS link |
+| `ASSIGNMENT_LINK_SUBMISSION_ENABLED` | `false` | Cho phép HTTPS link sau explicit review |
 | `ASSIGNMENT_MARK_DONE_ENABLED` | `false` | Cho phép Teacher bật mark done |
 | `ASSESSMENT_FILE_UPLOAD_ENABLED` | `false` hard guard | Luôn false trong P05 |
 
@@ -84,4 +84,20 @@ Muốn bật upload phải có:
 
 ## 9. Gate A Approval
 
-Repository owner phải chấp thuận defer này trước `READY_TO_CODE`. Nếu FILE trở thành Must P05, planning phải mở lại để bổ sung GCS architecture, API, security, DevOps, test và manual prerequisites trước implementation.
+Repository owner đã chấp thuận defer này ngày `2026-07-22`. Nếu FILE trở thành Must P05, planning phải mở lại để bổ sung GCS architecture, API, security, DevOps, test và manual prerequisites trước implementation.
+
+## 10. Conditional Defaults
+
+Mọi URL/media/link capability giữ `false` sau Gate A nếu không có riêng một quyết định `Enabled` kèm host/provider policy và test owner. “Conditional” không có nghĩa tự động bật ở local/demo.
+
+Gate A disposition hiện tại:
+
+| Capability | Disposition P05 | Runtime default |
+| --- | --- | --- |
+| Question media URL | `N/A - Disabled` | `QUESTION_MEDIA_URL_ENABLED=false` |
+| Assignment LINK/MARK_DONE | `N/A - Disabled` | `ASSIGNMENT_LINK_ENABLED=false` |
+| Private Comments | `N/A - Deferred` | Không tạo route/model/permission |
+| Basic Gradebook | `N/A - Deferred` | `BASIC_GRADEBOOK_ENABLED=false` |
+| FILE/upload | `Deferred P07` | Không có upload endpoint hoặc local storage |
+
+Private Comments không thuộc contract media/storage và hiện không có operation trong 52 P05 endpoints. Nếu không có change-control trước P05-PR06 để bổ sung API, model, permission, UI và privacy tests, `P05-T074`, `P05-T089` và `P05-AC-059` phải được disposition `N/A - Deferred`; Developer không tự đặt route/comment schema.

@@ -3,11 +3,25 @@
 ## 1. Quy Ước
 
 - Estimate là ideal engineering day (`d`), dùng để nhìn quy mô và dependency, không phải cam kết lịch.
-- Status gồm `Backlog`, `In Progress`, `In Review`, `Done`, `Blocked`.
+- Status gồm `Backlog`, `In Progress`, `In Review`, `Done`, `Blocked`, `Not Applicable`.
 - Task chỉ `Done` khi output, test, tài liệu và evidence liên quan đã merge qua protected Pull Request.
 - Priority `M` là Must; `C` là Conditional Should.
 - Dự án cá nhân có thể cùng một người giữ nhiều owner, nhưng review Product, Security và QA vẫn phải được thực hiện như vai trò độc lập.
 - Runtime task không được bắt đầu trước `P05-T008`.
+
+### 1.1 Developer Execution Map
+
+| WBS range | Mở tài liệu trước khi code |
+| --- | --- |
+| `P05-T009..020` | `source-file-blueprint.md` sections 4-5, `runtime-contract-catalog.md` sections 2-7/11, `test-case-catalog.md` IT-001..008/069..072 |
+| `P05-T021..035` | Quiz/Question lifecycle docs, API matrix section 3, PR03 guide |
+| `P05-T036..052` | Attempt/scoring docs, API matrix sections 4-5, IT-017..034, PR04 guide |
+| `P05-T053..067` | Assignment/Submission docs, API matrix sections 6-7, IT-035..044, PR05 guide |
+| `P05-T068..080` | Grade/deadline docs, API matrix sections 5/8/9, IT-045..060, PR06 guide |
+| `P05-T081..093` | Activity V2/runtime contract, API matrix section 10, IT-061..068, PR07 guide |
+| `P05-T094..108` | Security/testing/devops/evidence docs, OpenAPI/E2E/performance catalog, PR08 guide |
+
+Các tài liệu mới làm rõ task hiện có; không tạo thêm WBS ID nên tổng vẫn là 108 task.
 
 ## 2. E01 - Planning Baseline Và Gate A
 
@@ -20,7 +34,7 @@
 | P05-T005 | M | Review UI/security/test contract | Route/state/privacy/concurrency/AC được chấp thuận | FE/Security/QA | T002,T003 | 0.75d | In Review |
 | P05-T006 | M | Review storage/media disposition | URL-only/defer GCS được PO/TL chấp thuận | PO/TL/DevOps | T002 | 0.25d | In Review |
 | P05-T007 | M | Validate planning package | Link, format, count, traceability và local quality gate xanh; chờ PR review để Done | DevOps/QA | T001-T006 | 0.5d | In Review |
-| P05-T008 | M | Merge planning PR và phê duyệt Gate A | PR review, required checks xanh, merge `main`, readiness = `READY_TO_CODE` | Repository owner | T007 | 0.25d | Backlog |
+| P05-T008 | M | Publish planning baseline sau Gate A approval | Product approval đã ghi nhận; PR review, required checks xanh và merge `main` trước implementation branch | Repository owner | T007 | 0.25d | In Progress |
 
 ## 3. E02 - Permission, Port, Domain Và Data Foundation
 
@@ -56,7 +70,7 @@
 | P05-T031 | M | TRUE_FALSE domain validation | Boolean answer và points rules pass | BE/QA | T014,T019 | 0.25d | Backlog |
 | P05-T032 | M | SHORT_ANSWER domain validation | Manual-review rule và prompt limits pass | BE/QA | T014,T019 | 0.25d | Backlog |
 | P05-T033 | M | Question CRUD routes/projections | Teacher sees key; Student contract không leak | BE/Security | T018,T029-T032 | 1d | Backlog |
-| P05-T034 | C | Question media URL validation/projection | HTTPS/allowlist/no server fetch tests pass hoặc approved N/A | BE/Security | T006,T033 | 0.5d | Backlog |
+| P05-T034 | C | Question media URL validation/projection | Approved N/A tại Gate A; feature flag giữ `false` | BE/Security | T006,T033 | 0.5d | Not Applicable |
 | P05-T035 | M | Question reorder + aggregate tests | Exact-set order, conflict, publish matrix pass | BE/QA | T027,T033 | 1d | Backlog |
 
 ## 5. E04 - Student Attempt, Scoring Và Quiz Result
@@ -77,7 +91,7 @@
 | P05-T047 | M | Submit/timeout transaction | Terminal transition một lần, canonical timestamp | BE/Data | T042,T045,T046 | 1.25d | Backlog |
 | P05-T048 | M | Lazy timeout reconciliation | Read/write/list trả effective state nhất quán | BE | T047 | 0.75d | Backlog |
 | P05-T049 | M | Submit/finalize routes/OpenAPI | Retry/double submit/expired/conflict tests pass | BE/QA | T047,T048 | 0.75d | Backlog |
-| P05-T050 | M | Result release policy/projection | Immediate/after-close/manual policy và secrecy đúng | BE/Security | T026,T047 | 1d | Backlog |
+| P05-T050 | M | Result release policy/projection | `IMMEDIATE/AFTER_REVIEW/TEACHER_RETURN` và secrecy đúng | BE/Security | T026,T047 | 1d | Backlog |
 | P05-T051 | M | Student own result endpoint | Chỉ own released result, breakdown đúng policy | BE/QA | T050 | 0.75d | Backlog |
 | P05-T052 | M | Scoring/release regression suite | Snapshot mutation, exact-set, timeout, retry đều pass | QA/BE | T045-T051 | 1.25d | Backlog |
 
@@ -93,7 +107,7 @@
 | P05-T058 | M | Assignment Teacher routes/OpenAPI | CRUD/transition/negative tests pass | BE/QA | T053-T057 | 0.75d | Backlog |
 | P05-T059 | M | Student own Submission query/create draft | Một current submission theo natural key | BE/Data | T016,T018,T057 | 1d | Backlog |
 | P05-T060 | M | Save Submission draft | Revision/content validation/idempotency đúng | BE/Data | T055,T059 | 1d | Backlog |
-| P05-T061 | C | External LINK/MARK_DONE payload | HTTPS URL/method-specific contract pass hoặc approved N/A | BE/Security | T006,T055,T060 | 0.5d | Backlog |
+| P05-T061 | C | External LINK/MARK_DONE payload | Approved N/A tại Gate A; feature flag giữ `false` | BE/Security | T006,T055,T060 | 0.5d | Not Applicable |
 | P05-T062 | M | Turn-in transaction | Append revision/event, canonical submittedAt/late | BE/Data | T056,T060 | 1d | Backlog |
 | P05-T063 | M | Unsubmit transaction | Policy/state/revision guard đúng | BE/Data | T056,T062 | 0.75d | Backlog |
 | P05-T064 | M | Resubmit transaction | Không mất history; current revision đúng | BE/Data | T063 | 0.75d | Backlog |
@@ -111,10 +125,10 @@
 | P05-T071 | M | Return/regrade transaction | Revision guard, history, audit và release atomic | BE/Data | T069,T070 | 1.25d | Backlog |
 | P05-T072 | M | Grade/return/regrade routes/OpenAPI | Happy/deny/stale revision tests pass | BE/QA | T071 | 0.75d | Backlog |
 | P05-T073 | M | Student own Grade/Feedback query | Chỉ RETURNED/RELEASED; no cross-student fields | BE/Security | T071,T018 | 0.75d | Backlog |
-| P05-T074 | C | Private Assignment comments | Membership/privacy/audit tests pass hoặc approved N/A | BE/FE/Security | T006,T065 | 1d | Backlog |
+| P05-T074 | C | Private Assignment comments | Approved N/A tại Gate A; không tạo route/model/permission | BE/FE/Security | T006,T065 | 1d | Not Applicable |
 | P05-T075 | M | Effective deadline resolver | Student override > activity default, canonical time | BE | T013,T017 | 0.75d | Backlog |
 | P05-T076 | M | Deadline exception validation | Gia hạn-only/reason/future/revision rules đúng | BE/PO | T075 | 0.75d | Backlog |
-| P05-T077 | M | Set/reset deadline exception transaction | History/audit/revision atomic | BE/Data | T076 | 1d | Backlog |
+| P05-T077 | M | Set/revoke deadline exception transaction | History/audit/revision atomic | BE/Data | T076 | 1d | Backlog |
 | P05-T078 | M | Deadline exception query/history | Teacher scope và Student own projection đúng | BE/Security | T077 | 0.75d | Backlog |
 | P05-T079 | M | Recompute late/missing with exception | Quiz/Assignment/To-do dùng cùng resolver | BE/QA | T067,T075-T078 | 1d | Backlog |
 | P05-T080 | M | Deadline exception routes/OpenAPI/tests | Conflict/IDOR/time-boundary/history pass | BE/QA | T077-T079 | 0.75d | Backlog |
@@ -131,10 +145,10 @@
 | P05-T086 | M | Build Student Assignment/Submission UI | Draft/turn-in/unsubmit/history/late/missing states | FE | T065,T067,T079 | 2d | Backlog |
 | P05-T087 | M | Build Teacher Results/Submission Grader | Tables, detail, review, grade, return, conflict states | FE | T068-T072 | 2d | Backlog |
 | P05-T088 | M | Build Student Grades/Feedback UI | Own returned grades only, empty/error/forbidden states | FE | T073 | 1d | Backlog |
-| P05-T089 | C | Build private comment thread | Accessible send/retry/history hoặc approved N/A | FE | T074 | 0.75d | Backlog |
+| P05-T089 | C | Build private comment thread | Approved N/A tại Gate A; không tạo UI giả | FE | T074 | 0.75d | Not Applicable |
 | P05-T090 | M | Build deadline exception dialog/history | Effective deadline preview, reason, revision conflict | FE | T080 | 1d | Backlog |
 | P05-T091 | M | Extend learning views và Admin governance UI | Mixed activities, due/progress versions và metadata-only assessment counts | FE/BE | T079-T082 | 1.5d | Backlog |
-| P05-T092 | C | Build basic Gradebook read view | Conditional scope, no weighting/export hoặc approved N/A | FE/BE | T068,T073 | 1.25d | Backlog |
+| P05-T092 | C | Build basic Gradebook read view | Approved N/A tại Gate A; deferred sang P06 | FE/BE | T068,T073 | 1.25d | Not Applicable |
 | P05-T093 | M | Complete navigation/state/accessibility behavior | Back/next/breadcrumb/loading/empty/error/conflict responsive | FE/QA | T083-T092 | 1.25d | Backlog |
 
 ## 9. E08 - Security, Quality, DevOps Và Exit

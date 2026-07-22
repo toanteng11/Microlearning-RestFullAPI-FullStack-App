@@ -34,24 +34,30 @@ Record denormalize `classroomId`, `courseId`, optional `moduleId` để scope/qu
 
 ## 5. Allowed Actions
 
-| Action | Teacher normal flow | Exceptional actor |
-| --- | --- | --- |
-| Set first extension | Allowed | Allowed |
-| Extend existing exception | Allowed | Allowed |
-| Shorten below current effective deadline | Denied | Capability + reason/audit |
-| Set past deadline | Denied | Capability + reason/audit |
-| Revoke exception về default | Allowed nếu không làm deadline ngắn hơn bất lợi; nếu có thì denied | Capability + reason/audit |
-| Change archived activity | Denied | Restore hoặc explicit governance flow |
-| Change Student ngoài active enrollment | Denied normal | Historical governance only |
+| Action | P05 behavior |
+| --- | --- |
+| Set first extension | Allowed khi deadline mới muộn hơn current effective deadline |
+| Extend existing exception | Allowed |
+| Shorten below current effective deadline | Denied; future override cần change-control riêng |
+| Set past deadline | Denied |
+| Revoke exception về default | Allowed chỉ khi không làm deadline ngắn hơn bất lợi; trường hợp còn lại bị denied |
+| Change archived activity | Denied |
+| Change Student ngoài active enrollment | Denied |
 
 ## 6. Mutation Contract
 
-Request:
+Set/extend request qua canonical `PUT`:
 
-- `deadline`: ISO UTC date-time hoặc `null` khi revoke.
+- `deadline`: ISO UTC date-time bắt buộc.
 - `reason`: 10-500 ký tự.
-- `expectedRevision`: integer >= 0.
-- `acknowledgeShortening`: chỉ recognized cho exceptional capability.
+- `expectedRevision`: integer >= 0; `0` dùng create-if-absent.
+
+Revoke request qua canonical `POST /revoke`:
+
+- `reason`: 10-500 ký tự.
+- `expectedRevision`: integer >= 1.
+
+P05 không dùng `deadline=null` và không mount biến thể `DELETE` cho revoke.
 
 Transaction:
 
@@ -79,7 +85,7 @@ Append-only history lưu:
 - actor ID/role;
 - reason;
 - changedAt/requestId;
-- whether exceptional capability was used.
+- policy result (`SET`, `EXTEND`, `REVOKE`) và denial chỉ nằm trong safe application/audit event, không có private override flag P05.
 
 Student không có endpoint xem reason/history đầy đủ. Teacher owner xem paginated history; Admin chỉ khi governance capability.
 

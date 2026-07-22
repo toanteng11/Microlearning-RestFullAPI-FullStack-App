@@ -6,7 +6,7 @@ Phase 05 tiếp tục Modular Monolith hiện có:
 
 ```text
 React Web
-  -> /api/v1 REST + HttpOnly session
+  -> /api/v1 REST + Bearer access token; HttpOnly refresh cookie chỉ ở auth flow
   -> Express Router
   -> Application Services
   -> Domain Policies / Ports
@@ -28,9 +28,9 @@ Không tạo microservice hoặc message broker mới. Boundary domain vẫn ph�
 | `submissions` | Draft/turn-in/unsubmit/resubmit/roster projection | Grade ownership |
 | `grades` | Grade/feedback/regrade/return/own projection | Submission content mutation |
 | `deadline-exceptions` | Per-Student deadline override/history | Activity default deadline |
-| `assessment-content` | Activity adapters/read model composition | Direct domain persistence |
+| existing `learning-content` contracts | Composite activity/progress read contract | Quiz/Assignment persistence |
 
-Conditional `private-comments` chỉ thêm khi Gate D Must path ổn định.
+Conditional `private-comments` chỉ thêm khi Gate D Must path ổn định và change-control đã bổ sung API/data/UI/privacy contract; nếu không, disposition defer/N/A.
 
 ## 3. Dependency Direction
 
@@ -43,7 +43,7 @@ deadline-exceptions -> ActivityDeadlineReader + CourseScopeReader
 
 P05 -> P04 through CourseScopeReader / Activity contracts
 P05 -> P03 through EnrollmentAccessReader / ClassroomScopeReader
-P04 learning views <- P05 through AssessmentActivityReader / AssessmentProgressReader
+P04 learning views <- P05 through Quiz/Assignment activity adapters + LearningProgressReader V2
 P06 -> P05 through AssessmentResultReader / GradeReader
 ```
 
@@ -69,7 +69,7 @@ interface LearningActivityDescriptorV2 {
   moduleId: string | null;
   title: string;
   isRequired: boolean;
-  defaultDeadline: string | null;
+  completionDeadline: string;
   displayOrder: number;
   visible: boolean;
   actionUrl: string;
@@ -85,15 +85,14 @@ interface ActivityProgressSnapshotV2 {
   studentId: string;
   activityType: ActivityType;
   activityId: string;
-  completionStatus: 'IN_PROGRESS' | 'COMPLETED';
-  resultStatus: 'NONE' | 'NEEDS_REVIEW' | 'GRADED' | 'RETURNED';
-  startedAt: string | null;
+  status: 'IN_PROGRESS' | 'COMPLETED';
+  startedAt: string;
   completedAt: string | null;
   lastActiveAt: string;
 }
 ```
 
-Version: `P05_REQUIRED_ACTIVITY_COMPLETION_V1`.
+Version: `P05_REQUIRED_ACTIVITY_COMPLETION_V1`. Result pending/graded/returned không nằm trong completion snapshot; activity-specific adapters cung cấp field này cho To-do/result DTO khi cần.
 
 ### 4.3 Course Scope
 

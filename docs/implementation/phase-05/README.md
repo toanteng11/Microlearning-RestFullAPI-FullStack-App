@@ -14,14 +14,14 @@ Phase này đồng thời mở rộng Activity contract, Student To-do, Deadline
 | Tên | `Assessments And Grading` |
 | Dependency | Phase 04 đã hoàn thành và merge vào `main` tại `4860e45` |
 | Planning branch | `docs/phase-05-planning-baseline` |
-| Planning status | `READY_FOR_REVIEW` |
-| Gate A | `PENDING` - cần repository owner review, CI xanh và merge planning baseline |
+| Planning status | `READY_TO_CODE` |
+| Gate A | `APPROVED` - Product Owner đã chấp thuận baseline ngày `2026-07-22` |
 | Implementation status | `NOT_STARTED` |
-| Implementation branch dự kiến | `feature/phase-05-assessments-grading` |
+| Implementation branch đầu tiên | `feature/phase-05-foundation`; các branch sau theo `pull-request-execution-guide.md` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P06 - Reporting And Analytics` |
 
-`READY_FOR_REVIEW` không đồng nghĩa `READY_TO_CODE`. Chỉ sau khi Gate A được phê duyệt và planning PR merge vào `main`, `development-readiness-review.md` mới được đổi thành `READY_TO_CODE`.
+`READY_TO_CODE` xác nhận scope, contract, decision, test catalog và thứ tự triển khai đã được chấp thuận. Trạng thái này không có nghĩa runtime đã được triển khai; Developer vẫn phải đưa planning baseline qua protected Pull Request và đồng bộ `main` trước khi tạo implementation branch đầu tiên.
 
 ## 3. Business Outcome
 
@@ -121,16 +121,21 @@ Conditional item chỉ được bật khi Must critical path xanh, có owner, ac
 | `data-model-and-indexes.md` | Collection, field, index, transaction và migration |
 | `migration-and-rollback.md` | Schema/index rollout, rollback và reconciliation |
 | `api-contract.md` | REST endpoint, payload, response, error và OpenAPI |
+| `runtime-contract-catalog.md` | TypeScript constants, permissions, ports, service và DTO contract |
+| `source-file-blueprint.md` | File Create/Modify cụ thể theo module, slice và Pull Request |
+| `api-ui-integration-matrix.md` | Ánh xạ 52 API cùng P04 read models tới React screen/action/state |
 | `backend-implementation-plan.md` | Vertical slice backend và dependency order |
 | `frontend-implementation-plan.md` | Route, screen, component, state và accessibility |
 | `devops-environment-and-seeding.md` | Env, seed, Docker, CI và operational boundary |
 | `testing-strategy.md` | Test pyramid, fixture, performance và quality gates |
+| `test-case-catalog.md` | Chi tiết 74 integration cases, OpenAPI, Web và 12 E2E journeys |
 | `acceptance-criteria.md` | Điều kiện Pass/Fail kiểm chứng được |
 | `traceability-matrix.md` | BA -> task -> API/UI/data -> test |
 | `work-breakdown-structure.md` | Task, dependency, output, estimate và status |
 | `implementation-checklist.md` | Checklist Gate A-E |
 | `risk-and-issues.md` | Risk, trigger, mitigation và contingency |
 | `developer-start-guide.md` | Trình tự bắt đầu code và command kiểm tra |
+| `pull-request-execution-guide.md` | Branch, file scope, test/evidence và exit cho P05-PR01..08 |
 | `development-readiness-review.md` | Gate A review và điều kiện `READY_TO_CODE` |
 | `conditional-media-and-storage-decision.md` | Quyết định URL-only/defer private upload |
 | `evidence-register.md` | Evidence phải thu thập trong implementation |
@@ -149,6 +154,8 @@ Conditional item chỉ được bật khi Must critical path xanh, có owner, ac
 - Acceptance criteria ánh xạ được tới WBS, test và evidence.
 - Không còn decision `TBD` chặn Must implementation.
 - Planning PR được review, CI xanh và merge vào `main`.
+
+Developer sau Gate A nên đọc theo đường ngắn: `source-file-blueprint.md` -> `runtime-contract-catalog.md` -> `api-ui-integration-matrix.md` -> `test-case-catalog.md` -> `pull-request-execution-guide.md`, rồi mở domain document tương ứng với slice đang code.
 
 ## 11. Exit Signal
 

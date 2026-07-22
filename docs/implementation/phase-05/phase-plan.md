@@ -8,7 +8,7 @@ Triển khai Assessments And Grading theo vertical slice có thể demo, kiểm 
 
 | Gate | Mục tiêu | Exit condition |
 | --- | --- | --- |
-| Gate A - Planning | Khóa scope/decision/contract/test | Planning PR review + CI + merge; readiness `READY_TO_CODE` |
+| Gate A - Planning | Khóa scope/decision/contract/test | Product approval tạo readiness `READY_TO_CODE`; protected PR + CI + merge hoàn tất repository publication trước implementation |
 | Gate B - Domain/Data | Model, policy, ports, indexes | Unit + Mongo integration + migration preflight Pass |
 | Gate C - Quiz | Quiz/Question/Attempt/scoring/result | Teacher/Student Quiz journeys và security Pass |
 | Gate D - Assignment/Grade | Submission/grade/return/deadline exception | Assignment/Grade journeys và privacy Pass |
@@ -66,20 +66,22 @@ Quiz and Assignment branches may progress in parallel only after M1 contracts me
 | --- | --- | --- |
 | P05-PR01 | Planning baseline | Runtime implementation |
 | P05-PR02 | Permissions, ports, model/index foundation | UI placeholder |
-| P05-PR03 | Quiz/Question Teacher authoring | Attempt/result fake |
-| P05-PR04 | Student Attempt/scoring/Teacher review | Assignment |
-| P05-PR05 | Assignment/Submission | Gradebook/report export |
-| P05-PR06 | Grade/Feedback/Return/deadline exception | P06 analytics |
-| P05-PR07 | P04 integration + Web complete | GCS upload |
+| P05-PR03 | Quiz/Question Teacher authoring API + Web | Attempt/result fake |
+| P05-PR04 | Student Attempt/scoring/Teacher review API + Web | Assignment |
+| P05-PR05 | Assignment/Submission API + Web | Gradebook/report export |
+| P05-PR06 | Grade/Feedback/Return/deadline exception API + Web | P06 analytics |
+| P05-PR07 | P04 mixed read-model integration + Web completion | GCS upload |
 | P05-PR08 | Quality hardening/evidence/exit | Unreviewed feature scope |
 
 Mỗi PR phải có Task ID, BA reference, migration impact, security impact, test evidence và rollback note.
 
+Chi tiết branch, files, tests và exit demo cho từng PR nằm trong `pull-request-execution-guide.md`.
+
 ## 7. Branch Naming
 
 - Planning: `docs/phase-05-planning-baseline`.
-- Implementation: `feature/phase-05-assessments-grading`.
-- Slice/fix nếu cần: `feature/phase-05-quiz-attempts`, `feature/phase-05-submissions`, `fix/phase-05-<issue>`.
+- Implementation slices: `feature/phase-05-foundation`, `feature/phase-05-quiz-authoring`, `feature/phase-05-quiz-attempts`, `feature/phase-05-assignments`, `feature/phase-05-grading-deadlines`, `feature/phase-05-learning-integration`.
+- Quality/exit: `release/phase-05-quality-exit`; fix nếu cần: `fix/phase-05-<issue>`.
 - Không dùng tiền tố `codex/` theo quy ước dự án.
 
 ## 8. Entry Criteria
@@ -110,13 +112,13 @@ Mỗi PR phải có Task ID, BA reference, migration impact, security impact, te
 | --- | --- |
 | `DRAFTING` | Tài liệu đang soạn, chưa review |
 | `READY_FOR_REVIEW` | Planning package đủ để review Gate A |
-| `READY_TO_CODE` | Gate A đã phê duyệt và merge |
+| `READY_TO_CODE` | Gate A đã phê duyệt; planning baseline sẵn sàng được đồng bộ qua protected PR trước implementation |
 | `IMPLEMENTING` | Runtime implementation đang thực hiện |
 | `IMPLEMENTED_LOCALLY` | Local evidence Pass, remote exit chưa đủ |
 | `COMPLETED` | Tất cả Gate và exit evidence Pass |
 | `BLOCKED` | Không thể tiến triển do dependency/decision cụ thể |
 
-Current status: `READY_FOR_REVIEW`; Gate A chưa phê duyệt.
+Current status: `READY_TO_CODE`; Gate A đã được Product Owner phê duyệt ngày `2026-07-22`. Implementation chưa bắt đầu.
 
 ## 11. Change Control
 

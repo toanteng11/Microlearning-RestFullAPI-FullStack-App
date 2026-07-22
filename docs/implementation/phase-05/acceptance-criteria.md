@@ -44,7 +44,7 @@
 | P05-AC-019 | Must | Bốn Question type validate đúng options/answer/rubric | Unit/API tests | Not Run |
 | P05-AC-020 | Must | Question CRUD/archive/reorder exact-set/revision đúng | Mongo/API tests | Not Run |
 | P05-AC-021 | Must | Published scoring content bị lock tới unpublish/new revision | API tests | Not Run |
-| P05-AC-022 | Conditional | Allowlisted image/video URL preview/remove/fallback an toàn | Security/UI tests | Not Run |
+| P05-AC-022 | Conditional | Allowlisted image/video URL preview/remove/fallback an toàn | Gate A disposition: feature disabled | Not Applicable |
 | P05-AC-023 | Must | Question không media vẫn save/publish/attempt bình thường | API/E2E | Not Run |
 | P05-AC-024 | Must | Attempt cũ giữ immutable snapshot sau Question edit | Mongo test | Not Run |
 | P05-AC-025 | Must | Teacher preview không tạo Attempt/Progress | API/UI tests | Not Run |
@@ -80,7 +80,7 @@
 | P05-AC-045 | Must | TEXT submission method end-to-end | API/E2E | Not Run |
 | P05-AC-046 | Must | FILE method/routes/UI không advertise khi disabled | Contract/UI tests | Not Run |
 | P05-AC-047 | Must | Assignment edit conflict không silent overwrite | Concurrency/UI | Not Run |
-| P05-AC-048 | Conditional | LINK/MARK_DONE enabled methods validate và work end-to-end | API/E2E/security | Not Run |
+| P05-AC-048 | Conditional | LINK/MARK_DONE enabled methods validate và work end-to-end | Gate A disposition: feature disabled | Not Applicable |
 | P05-AC-049 | Must | Assignment preview không tạo Submission/Progress | API/UI tests | Not Run |
 
 ## 7. Submission, Grade And Feedback
@@ -96,7 +96,7 @@
 | P05-AC-056 | Must | Teacher Submission roster search/filter/sort/page/status correct | API/UI/perf | Not Run |
 | P05-AC-057 | Must | Grade range/evidence revision/ownership validated | API tests | Not Run |
 | P05-AC-058 | Must | Return transaction releases Grade/Feedback atomically | Transaction/E2E | Not Run |
-| P05-AC-059 | Conditional | Private comments remain visible only scoped Teacher/Student | Privacy tests | Not Run |
+| P05-AC-059 | Conditional | Private comments remain visible only scoped Teacher/Student | Gate A disposition: deferred | Not Applicable |
 | P05-AC-060 | Must | Regrade history/audit/visible result update correctly | Mongo/API tests | Not Run |
 | P05-AC-061 | Must | Own Grades list/detail returns only current Student returned results | IDOR/UI tests | Not Run |
 
@@ -110,7 +110,7 @@
 | P05-AC-065 | Must | To-do/Deadline/Classwork mix Lesson/Quiz/Assignment đúng visibility/order | API/UI tests | Not Run |
 | P05-AC-066 | Must | Quiz submit và Assignment turn-in/unsubmit cập nhật progress/query kế tiếp | Integration tests | Not Run |
 | P05-AC-067 | Must | Metric/descriptor versions, Admin metadata-only assessment counts và P04 Lesson regression đúng | Contract/privacy/regression | Not Run |
-| P05-AC-068 | Conditional | Basic Gradebook derived grid đúng scope; không export giả | API/UI tests | Not Run |
+| P05-AC-068 | Conditional | Basic Gradebook derived grid đúng scope; không export giả | Gate A disposition: deferred to P06 | Not Applicable |
 
 ## 9. Quality, OpenAPI And Exit
 
@@ -132,6 +132,6 @@
 | Group | Total | Pass | Fail | Blocked | Not Run | N/A |
 | --- | --- | --- | --- | --- | --- | --- |
 | Must | 74 | 0 | 0 | 0 | 74 | 0 |
-| Conditional | 4 | 0 | 0 | 0 | 4 | 0 |
+| Conditional | 4 | 0 | 0 | 0 | 0 | 4 |
 
-Current phase execution status: `NOT_STARTED`. Planning package ở `READY_FOR_REVIEW`; không được đổi criteria thành Pass trong giai đoạn soạn kế hoạch.
+Current phase execution status: `NOT_STARTED`. Planning package ở `READY_TO_CODE`; chỉ criteria có implementation evidence thật mới được đổi sang Pass.

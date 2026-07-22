@@ -17,9 +17,10 @@
 | P05-EV-002 | Planning local format/link/count/quality validation | Có | `2026-07-22`: 28/28 files, 78 AC, 108 tasks, 32 decisions, 25 risks, 52 endpoint rows; local links resolve; `git diff --check`, targeted Prettier và `npm run check:ci` Pass; API `149/149`, Web `84/84`, builds Pass | Collected |
 | P05-EV-003 | Planning Pull Request | Có | URL pending | Planned |
 | P05-EV-004 | Planning required CI | Có | Actions URL pending | Planned |
-| P05-EV-005 | Accepted product/technical decision record | Có | `technical-decisions.md` + PR review | Prepared |
+| P05-EV-005 | Accepted product/technical decision record | Có | Product Owner approval `2026-07-22`; `ba-alignment-and-decisions.md`; `technical-decisions.md` | Collected |
 | P05-EV-006 | Planning merge commit | Có | Commit pending | Planned |
-| P05-EV-007 | Gate A readiness approval | Có | `development-readiness-review.md` | Prepared |
+| P05-EV-007 | Gate A readiness approval | Có | Product Owner approval `2026-07-22`; `development-readiness-review.md` decision `READY_TO_CODE` | Collected |
+| P05-EV-053 | Developer implementation blueprint refinement validation | Có | `2026-07-22`: 33/33 Phase files; source/runtime/API-UI/test/PR catalogs added; 52 P05 endpoint rows + 10 existing read-model mappings, 74 integration cases, 12 E2E, 78 AC, 108 tasks; phase links, `git diff --check`, Prettier và `npm run check:ci` Pass; API `149/149`, Web `84/84`, builds Pass. Source commit/PR pending. | Prepared |
 
 ## 3. Domain, Data Và API Evidence
 
@@ -95,7 +96,7 @@
 
 | Category | Total | Prepared | Planned | Collected | Verified |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Planning | 7 | 2 | 3 | 2 | 0 |
+| Planning | 8 | 3 | 3 | 2 | 0 |
 | Domain/Data/API | 12 | 0 | 12 | 0 | 0 |
 | Security/Privacy | 7 | 0 | 7 | 0 | 0 |
 | Frontend/Browser | 9 | 0 | 9 | 0 | 0 |

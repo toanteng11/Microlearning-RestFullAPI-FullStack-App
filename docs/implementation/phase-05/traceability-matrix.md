@@ -9,8 +9,10 @@ Ma trận này là nguồn đối chiếu cấp Phase giữa Business Analysis, 
 - `Must`: bắt buộc để đóng Phase 05.
 - `Conditional`: chỉ triển khai khi điều kiện trong `scope-and-deliverables.md` được chấp thuận; nếu defer phải có bằng chứng `N/A`.
 - `Derived`: trạng thái được tính tại thời điểm đọc, không lưu như nguồn sự thật độc lập.
-- Test ID trỏ tới nhóm kiểm thử trong `testing-strategy.md`; test case cụ thể được bổ sung cạnh code.
+- Test ID trỏ tới assertion cụ thể trong `test-case-catalog.md`; `testing-strategy.md` mô tả layer và quality approach.
 - Task ID trỏ tới `work-breakdown-structure.md`.
+- File/module/service contract trỏ tới `source-file-blueprint.md` và `runtime-contract-catalog.md`.
+- API consumer và UI state trỏ tới `api-ui-integration-matrix.md`.
 - Trạng thái hiện tại của implementation là `NOT_STARTED`; các cột bên dưới là contract dự kiến, không phải bằng chứng đã chạy.
 
 ## 3. Quiz Và Question
@@ -54,7 +56,7 @@ Ma trận này là nguồn đối chiếu cấp Phase giữa Business Analysis, 
 | `FR-046`, `US-TCH-069..073`, `UC-061` | Teacher xem Submission và chấm điểm | `grades`, grade history | Teacher submission/grade endpoints | Submission Table/Grader | `P05-T068..073/087` | `P05-IT-045..052`, `P05-E2E-08` | `P05-AC-056..058/060` | Must |
 | `FR-047`, `BR-094..096` | Return/regrade có revision, history và audit | grade event/history | return/regrade endpoints | return/regrade confirmation | `P05-T071..074` | stale revision/concurrency | `P05-AC-057/058` | Must |
 | `FR-048`, `US-STU-054..057`, `UC-063` | Student xem own returned Grade/Feedback | role projection | own grades endpoints | Grades list/detail | `P05-T073/088` | unreleased 404/IDOR/`P05-E2E-08` | `P05-AC-060/061` | Must |
-| `US-TCH-074`, `US-STU-058` | Private comment theo Assignment | comments collection/event | comment endpoints | comment thread | `P05-T074/089` | membership/privacy | `P05-AC-059` | Conditional |
+| `US-TCH-074`, `US-STU-058` | Private comment theo Assignment | Chưa tạo; chỉ thêm sau change-control | Chưa có trong 52-operation baseline | Chưa tạo; mặc định defer/N/A | `P05-T074/089` | membership/privacy nếu enabled | `P05-AC-059` | Conditional |
 
 ## 7. Deadline Exception Và Learning Integration
 

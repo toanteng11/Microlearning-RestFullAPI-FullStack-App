@@ -27,6 +27,8 @@
 
 Existing `learning_progress` được migrate enum/activity DTO; không tạo duplicate progress collection.
 
+`private_comments` không được tạo/index trong baseline mặc định. Chỉ bổ sung sau approved change-control trước PR06; nếu không, Conditional này được defer/N/A.
+
 ## 3. Quiz Schema
 
 | Field | Type | Required | Rule |
@@ -183,7 +185,6 @@ Unique `{submissionId, revision}`. Normal actor không update/delete history.
 - `deadline`, `revision`, `active`.
 - `reason`, `changedBy`, `changedAt`.
 - default deadline snapshot at change.
-- exceptional override metadata.
 
 ### History
 
@@ -198,7 +199,7 @@ Existing enum `LESSON` expands to `LESSON/QUIZ/ASSIGNMENT`. Existing Lesson reco
 - Quiz: start -> IN_PROGRESS; submit/timeout -> COMPLETED.
 - Assignment: draft -> IN_PROGRESS; turn-in -> COMPLETED; unsubmit -> IN_PROGRESS.
 
-`resultStatus` có thể derive từ Attempt/Grade thay vì thêm vào learning_progress trong initial migration; port V2 composition trả field này.
+`resultStatus` không thêm vào `learning_progress`. Quiz/Assignment adapters derive `resultPending` hoặc result state cho To-do/result DTO; `LearningProgressReader` V2 giữ completion-only contract.
 
 ## 13. Index Manifest
 

@@ -4,12 +4,12 @@
 
 - Base path: `/api/v1`.
 - JSON UTF-8; timestamps ISO 8601 UTC.
-- Auth: existing HttpOnly session/access token flow.
+- Auth API protected: `Authorization: Bearer <accessToken>` theo `AuthProvider`; refresh token chỉ đi qua HttpOnly cookie ở auth refresh flow hiện có.
 - Mutations use strict Zod schemas and reject unknown fields.
 - IDs in route; owner/student/system fields không nhận từ body khi có thể derive.
 - Pagination: `page`, `limit` (default 20, max 100), stable sort + `_id` tie-breaker.
-- Concurrency: explicit expected revision/updatedAt.
-- Standard envelope/error theo Phase 01-04.
+- Concurrency: explicit expected revision cho mọi P05 mutation có thể bị ghi đè.
+- Envelope/error bám đúng middleware và list contract đang chạy ở Phase 04.
 - OpenAPI operationId unique và parity với runtime route.
 
 ## 2. Response Envelopes
@@ -19,30 +19,32 @@
 ```json
 {
   "success": true,
-  "data": {},
-  "meta": {
-    "requestId": "req_..."
-  }
+  "data": {}
 }
 ```
+
+`x-request-id` luôn nằm trong response header. Success body không tự thêm `requestId`; chỉ thêm `meta` khi endpoint thực sự có metadata nghiệp vụ như phân trang.
 
 ### Paginated
 
 ```json
 {
   "success": true,
-  "data": [],
-  "pagination": {
+  "data": {
+    "items": []
+  },
+  "meta": {
     "page": 1,
     "limit": 20,
     "totalItems": 0,
     "totalPages": 0,
     "hasNextPage": false,
     "hasPreviousPage": false
-  },
-  "filters": {}
+  }
 }
 ```
+
+Filter đã áp dụng được phản ánh bằng query canonical/response domain khi thật sự cần; không tạo top-level `pagination` hoặc `filters` mới cho P05. Cấu trúc này phải dùng lại `Pagination` hiện có của Phase 04.
 
 ### Error
 
@@ -52,15 +54,23 @@
   "error": {
     "code": "CONCURRENT_MODIFICATION",
     "message": "The resource was changed by another request",
-    "details": {
-      "currentRevision": 3
-    },
-    "requestId": "req_..."
+    "details": [
+      {
+        "field": "expectedContentRevision",
+        "code": "STALE_REVISION",
+        "message": "Expected revision 2 but current revision is 3"
+      }
+    ]
+  },
+  "meta": {
+    "requestId": "req_...",
+    "timestamp": "2026-08-01T10:00:00.000Z",
+    "path": "/api/v1/teacher/quizzes/quiz-id"
   }
 }
 ```
 
-Error details không chứa correct answer, other Student identity, submission body hoặc feedback.
+`error.details` luôn là mảng `ErrorDetail` theo middleware hiện tại. Web dùng `error.code`/`details[].code`, không parse `message` để quyết định logic. Error details không chứa correct answer, other Student identity, submission body hoặc feedback.
 
 ## 3. Teacher Quiz Endpoints
 
@@ -79,6 +89,8 @@ Error details không chứa correct answer, other Student identity, submission b
 | PATCH | `/teacher/quizzes/{quizId}/questions/reorder` | `reorderQuizQuestions` | `quiz.manage_owned` |
 | PUT | `/teacher/questions/{questionId}/media` | `setQuestionMedia` | `quiz.manage_owned` |
 | DELETE | `/teacher/questions/{questionId}/media` | `removeQuestionMedia` | `quiz.manage_owned` |
+
+Question list trả `data.items`, `data.questionRevision` và `data.maxScore`. Mọi Question mutation trả canonical Question/order, aggregate `questionRevision`, `maxScore` và `auditId`; Web không tự tăng revision hoặc tự cộng điểm.
 
 ### Create Quiz Request
 
@@ -172,11 +184,31 @@ List phải là exact active Question ID set; transaction tăng revision một l
   "kind": "IMAGE_URL",
   "url": "https://allowed.example.edu/http-status.png",
   "caption": "HTTP response example",
-  "altText": "Ví dụ response HTTP 201"
+  "altText": "Ví dụ response HTTP 201",
+  "expectedQuestionRevision": 5
 }
 ```
 
 Feature disabled trả `FEATURE_NOT_ENABLED`.
+
+Archive Question request:
+
+```json
+{
+  "reason": "Question is no longer used",
+  "expectedQuestionRevision": 6
+}
+```
+
+Remove media request:
+
+```json
+{
+  "expectedQuestionRevision": 7
+}
+```
+
+Hai `DELETE` operations trả `200` mutation envelope với aggregate `questionRevision` mới; không dùng `204` vì Web cần canonical revision để tiếp tục edit an toàn.
 
 ## 4. Student Quiz Endpoints
 
@@ -268,6 +300,8 @@ Short answer dùng `textAnswer`; request không được gửi score/correctness
 ```
 
 Response trả terminal/current status, result availability và safe score nếu policy cho phép.
+
+Save answer response luôn trả canonical `revision`, `lastSavedAt`, saved answer projection và answered/total counts. Submit response trả `idempotentReplay`, `resultAvailable` và `resultUrl` nullable để Web không tự suy diễn release policy.
 
 ## 5. Teacher Quiz Result Endpoints
 
@@ -399,6 +433,8 @@ Reopen `CLOSED -> PUBLISHED` bắt buộc reason.
 | GET | `/students/me/grades/{gradeId}` | `getOwnGrade` | Student |
 | GET | `/teacher/courses/{courseId}/gradebook` | `getBasicCourseGradebook` | Conditional Teacher |
 
+`getBasicCourseGradebook` luôn nằm trong route/OpenAPI parity manifest. Khi `BASIC_GRADEBOOK_ENABLED=false`, endpoint trả `409 FEATURE_NOT_ENABLED`; Web không hiển thị navigation. Khi bật, response chỉ là derived basic grid, không weighting/export.
+
 ### Save Grade
 
 ```json
@@ -463,19 +499,23 @@ Student list query supports `page`, `limit`, `classroomId`, `courseId`, `activit
 
 Baseline dùng `POST /.../revoke` để request luôn mang được `reason` và `expectedRevision` qua proxy/client một cách nhất quán. Không đồng thời mount biến thể `DELETE`; OpenAPI và runtime chỉ công bố một operation canonical.
 
+### Conditional Private Comments
+
+Private Comments chưa có operation trong 52-endpoint baseline và mặc định được defer/N/A nếu không có quyết định `Enabled` trước P05-PR06. Nếu Product Owner bật capability này, phải mở change-control bổ sung endpoint, schema, permission, privacy test, WBS/AC và OpenAPI trước khi code; không tự phát sinh route ngoài parity manifest.
+
 ## 10. P04 Read Model Extensions
 
 ### Student Classwork
 
-`GET /students/me/courses/{courseId}/classwork` trả mixed activities và `descriptorVersion=P05_ACTIVITY_DESCRIPTOR_V2`.
+Giữ route Phase 04 `GET /classrooms/{classroomId}/classwork`; mở rộng response thành mixed activities và trả `data.descriptorVersion=P05_ACTIVITY_DESCRIPTOR_V2`. Không tạo route Classwork thứ hai theo `courseId`.
 
 ### To-do
 
-`GET /students/me/todo` thêm `activityType=LESSON|QUIZ|ASSIGNMENT`, `effectiveDeadline`, `resultPending`, correct action URL.
+`GET /students/me/todo` thêm `activityType=LESSON|QUIZ|ASSIGNMENT`, `effectiveDeadline`, `resultPending`, correct action URL và `data.scopeVersion=P05_MIXED_ACTIVITY_TODO_V2`.
 
 ### Deadlines
 
-`GET /students/me/deadlines` thêm filter/activity rows Quiz/Assignment và exception indicator.
+`GET /students/me/deadlines` thêm filter/activity rows Quiz/Assignment, exception indicator và `data.descriptorVersion=P05_ACTIVITY_DESCRIPTOR_V2`.
 
 ### Progress
 
@@ -500,7 +540,7 @@ Existing `GET /admin/courses` và `GET /admin/courses/{courseId}` thêm `quizCou
 | Own Grades | classroom/course/type | returnedAt desc, id desc |
 | Deadline exceptions | student keyword/active | deadline asc, studentId |
 
-Invalid enum/date/sort returns `400 VALIDATION_ERROR`; no silent fallback for unsupported sort.
+Invalid enum/date/sort đi qua `parseWithSchema` và trả `422 VALIDATION_ERROR`; no silent fallback for unsupported sort.
 
 ## 12. Error Catalog
 
@@ -524,12 +564,12 @@ Invalid enum/date/sort returns `400 VALIDATION_ERROR`; no silent fallback for un
 
 - `200`: read/update/idempotent replay.
 - `201`: create Quiz/Question/Assignment/first Attempt/first Submission.
-- `204`: archive/remove media only when no response useful; project may consistently use envelope instead.
-- `400`: malformed query/path.
+- `204`: không dùng cho 52 P05 operations; archive/remove media trả `200` vì phải trả revision canonical.
+- `400`: malformed transport syntax nếu shared HTTP parser phân loại được; Zod path/query/body validation không dùng status này.
 - `401`: unauthenticated.
 - `403/404`: safe authorization/existence policy.
 - `409`: lifecycle/concurrency/limit/expired/feature state.
-- `422`: semantically invalid payload/scoring/content.
+- `422`: Zod path/query/body validation và semantically invalid scoring/content.
 - `429`: rate limit.
 
 ## 14. OpenAPI Requirements
@@ -537,7 +577,7 @@ Invalid enum/date/sort returns `400 VALIDATION_ERROR`; no silent fallback for un
 - Tags: `Quizzes`, `Quiz Questions`, `Quiz Attempts`, `Assignments`, `Submissions`, `Grades`, `Deadline Exceptions`.
 - Separate Teacher/Student schemas; never reuse secret-bearing schema.
 - Happy + validation + forbidden + conflict examples.
-- Cookie/security scheme và CSRF expectations mô tả đúng runtime.
+- Protected P05 operations dùng `bearerAuth`; `refreshCookie` chỉ mô tả trên auth refresh/logout operations hiện có. Không gắn cookie security hoặc CSRF contract giả vào P05 resource routes.
 - Feature-disabled response documented cho conditional routes.
 - Every operationId in parity manifest; no undocumented mounted route.
 - Swagger UI at `/api-docs`; JSON at `/api/v1/openapi.json`.

@@ -6,12 +6,12 @@
 | --- | --- |
 | Phase | `P05 - Assessments And Grading` |
 | Report type | Pre-created exit template |
-| Planning | `READY_FOR_REVIEW` |
-| Gate A | `PENDING` |
+| Planning | `READY_TO_CODE` |
+| Gate A | `APPROVED` - `2026-07-22` |
 | Implementation | `NOT_STARTED` |
 | Exit decision | `NOT_EVALUATED` |
 | Must acceptance | `0/74 Pass`, `74 Not Run` |
-| Conditional acceptance | `0/4 Pass`, `4 Not Run` |
+| Conditional acceptance | `4/4 Not Applicable` by approved Gate A disposition |
 | Implementation PR | Pending |
 | Post-merge main CI | Pending |
 
@@ -80,8 +80,8 @@ Khi đóng Phase, ghi rõ disposition cuối cùng:
 Decision: NOT_EVALUATED
 Evaluated release: Pending
 Must AC result: 0/74 Pass; 74 Not Run
-Conditional result: 0/4 Pass; 4 Not Run
-Open blockers: Gate A approval, implementation, validation and remote evidence
+Conditional result: 4/4 Not Applicable by approved Gate A disposition
+Open blockers: implementation, validation and remote evidence
 ```
 
 ## 9. Approval Record

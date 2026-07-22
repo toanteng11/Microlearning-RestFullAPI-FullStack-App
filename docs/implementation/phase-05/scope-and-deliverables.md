@@ -10,8 +10,8 @@ Phase 05 cung cấp assessment workflow hoàn chỉnh trên Course/Classroom đ�
 | --- | --- | --- |
 | Student | Xem assessment published, làm Quiz, nộp Assignment, xem own result/grade | Xem đáp án chuẩn trước release, dữ liệu Student khác, tự sửa score/deadline |
 | Teacher | Quản lý assessment trong Course owned, xem result/submission, review/grade/return | Quản lý Course của Teacher khác, override global policy |
-| Admin | Read-only governance metadata và exceptional action nếu capability rõ | Chấm bài hằng ngày hoặc đọc private answer mặc định |
-| Super Admin | Exceptional governance có reason/audit | Bypass privacy mà không purpose/capability |
+| Admin | Read-only governance metadata qua capability hiện có | Chấm bài, đọc private answer hoặc override deadline/Grade |
+| Super Admin | Read-only governance metadata trong baseline | Bypass privacy hoặc private override khi chưa có change-control |
 | System | Server time, scoring, derived state, audit và reconciliation | Tin client score/time/status |
 
 ## 3. Must Functional Scope
@@ -77,7 +77,7 @@ Phase 05 cung cấp assessment workflow hoàn chỉnh trên Course/Classroom đ�
 ### 3.7 Deadline Exception
 
 - Teacher set/replace/revoke deadline exception cho một Student và một `LESSON/QUIZ/ASSIGNMENT`.
-- Default Must chỉ cho extend; shorten/past override cần exceptional capability ngoài daily Teacher flow.
+- P05 Must chỉ cho extend; shorten/past bị từ chối. Exceptional override được defer cho tới khi có change-control riêng.
 - Reason 10-500 ký tự, expected revision và immutable history.
 - Effective deadline precedence: active Student exception > activity default.
 - Chỉ To-do/Deadline/late-missing của Student liên quan được tính lại.

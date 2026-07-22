@@ -20,8 +20,6 @@
 - `submission.manage_own`
 - `submission.view_own`
 - `grade.view_own`
-- `feedback.view_own`
-- `deadline.view_own`
 
 ### Teacher
 
@@ -33,31 +31,26 @@
 - `assignment.publish_owned`
 - `submission.view_owned`
 - `grade.manage_owned`
-- `feedback.manage_owned`
 - `deadline_exception.manage_owned`
 
-### Governance
+### Governance Boundary
 
-- `assessment.governance_view`
-- `grade.override_exceptional`
-- `deadline.override_exceptional`
-
-Governance capabilities không cấp cho Admin daily flow nếu chưa có BA/approval.
+P05 reuse `content.governance_view` hiện có cho Admin Course assessment counts/status metadata. Baseline không thêm private Grade/deadline override capability hoặc route cho Admin/Super Admin. Nếu nghiệp vụ exceptional access trở thành yêu cầu, phải change-control API, purpose logging, approval và privacy tests trước khi thêm permission.
 
 ## 3. Object Authorization Matrix
 
 | Resource/action | Student | Teacher | Admin | Super Admin |
 | --- | --- | --- | --- | --- |
 | Quiz published intro | Active enrolled | Owned | Metadata only | Metadata only |
-| Question author/scoring config | No | Owned | No default | Exceptional only |
-| Own Attempt | Own | Owned Course | No default | Exceptional only |
-| Other Student Attempt | No | Owned Course | No default | Exceptional only |
+| Question author/scoring config | No | Owned | No | No default |
+| Own Attempt | Own | Owned Course | No | No default |
+| Other Student Attempt | No | Owned Course | No | No default |
 | Assignment published | Active enrolled | Owned | Metadata only | Metadata only |
-| Own Submission | Own + policy | Owned Course read | No default | Exceptional only |
-| Grade draft | No | Owned Course | No default | Exceptional only |
-| Returned Grade | Own | Owned Course | Governance metadata | Exceptional |
-| Private feedback/comment | Own context | Owned Course | No default | Exceptional purpose |
-| Deadline exception | View own effective date | Manage owned | Governance | Exceptional override |
+| Own Submission | Own + policy | Owned Course read | No | No default |
+| Grade draft | No | Owned Course | No | No default |
+| Returned Grade | Own | Owned Course | Aggregate metadata only | Aggregate metadata only |
+| Private feedback/comment | Own context | Owned Course | No | No default |
+| Deadline exception | View own effective date | Manage owned | No private row | No default override |
 
 ## 4. Scope Resolution Order
 
@@ -89,7 +82,7 @@ Không authorize chỉ bằng role hoặc resource ID từ body.
 - Draft Grade/Feedback không xuất hiện trong Student list/count.
 - Return transaction là visibility boundary.
 - Teacher list luôn scope Course owner và paginated.
-- Admin governance chỉ count/status; body cần exceptional permission/purpose audit.
+- Admin/Super Admin governance chỉ count/status; P05 không có endpoint đọc private Grade/Submission body.
 - Export deferred P06 phải tái kiểm privacy, không kế thừa broad DTO.
 
 ## 7. Mass Assignment Controls
@@ -102,7 +95,7 @@ Request schema `strict` và reject unknown fields. Client không được set:
 - `startedAt/submittedAt/returnedAt/isLate`;
 - revision/history/audit fields;
 - correct answer snapshot;
-- effective deadline hay exceptional flag.
+- effective deadline override flag hoặc policy bypass field.
 
 ## 8. URL And Media Security
 
@@ -135,7 +128,7 @@ Request schema `strict` và reject unknown fields. Client không được set:
 
 Rate limit không thay business transaction guard.
 
-Baseline dùng cửa sổ `60` giây: Start Attempt tối đa `300` request/IP để không khóa cả lớp dùng chung NAT và `20` request/user+Quiz; Save Answer tối đa `180` request/user+Attempt. Submit/turn-in/grade vẫn dùng strict state/revision guard và limiter nhóm mutation; mọi giá trị phải đi qua environment schema, không hard-code rải rác trong route.
+Baseline dùng cửa sổ `60` giây: Start Attempt tối đa `300` request/IP để không khóa cả lớp dùng chung NAT và `20` request/user+Quiz; Save Answer tối đa `180` request/user+Attempt; các assessment mutations khác tối đa `120` request/actor. Submit/turn-in/grade vẫn dùng strict state/revision guard; mọi giá trị phải đi qua environment schema, không hard-code rải rác trong route.
 
 ## 11. CSRF, Session And CORS
 
@@ -166,7 +159,7 @@ Audit required:
 - Submission turn-in/unsubmit/resubmit.
 - Grade save/return/regrade.
 - Deadline exception mutation.
-- Exceptional Admin/Super Admin access/override.
+- Mọi future exceptional access/override chỉ được audit sau khi có approved change-control; không tồn tại trong baseline route hiện tại.
 
 Audit metadata allowlist; private answer/submission/feedback content không lưu.
 
@@ -174,7 +167,7 @@ Audit metadata allowlist; private answer/submission/feedback content không lưu
 
 - Student A guessed Attempt/Submission/Grade của Student B.
 - Teacher B guessed Course/Quiz/Assignment của Teacher A.
-- Admin gọi private endpoint không exceptional capability.
+- Admin/Super Admin gọi private Attempt/Submission/Grade endpoint bị từ chối trong baseline.
 - Direct URL to draft/unpublished/archived assessment.
 - Correct answer field leak recursive trong Student DTO/OpenAPI.
 - Manipulated score/status/timestamp/owner fields.
