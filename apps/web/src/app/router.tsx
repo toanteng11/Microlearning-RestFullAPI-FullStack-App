@@ -23,6 +23,25 @@ import {
 } from '../features/classrooms/classroom-route-components';
 import { SystemStatusPage } from '../features/system/SystemStatusPage';
 import {
+  TeacherAssessmentsPage,
+  TeacherQuizBuilderPage,
+  TeacherQuizCreatePage,
+  TeacherQuizPreviewPage,
+  StudentQuizIntroPage,
+  StudentQuizAttemptPage,
+  StudentQuizResultPage,
+  TeacherAssignmentCreatePage,
+  TeacherAssignmentEditorPage,
+  TeacherAssignmentSubmissionsPage,
+  StudentAssignmentPage,
+  TeacherQuizResultsPage,
+  TeacherQuizAttemptReviewPage,
+  TeacherSubmissionGradingPage,
+  StudentGradesPage,
+  StudentGradeDetailPage,
+  TeacherDeadlineExceptionsPage,
+} from '../features/assessments/assessment-route-components';
+import {
   AdminCourseDetailPage,
   AdminCoursesPage,
   StudentCoursePage,
@@ -123,6 +142,54 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: '/student/quizzes/:quizId',
+            element: (
+              <RoleRoute permission="quiz.view_assigned">
+                <StudentQuizIntroPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/quiz-attempts/:attemptId',
+            element: (
+              <RoleRoute permission="quiz.attempt">
+                <StudentQuizAttemptPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/quiz-attempts/:attemptId/result',
+            element: (
+              <RoleRoute permission="quiz.result_view_own">
+                <StudentQuizResultPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/assignments/:assignmentId',
+            element: (
+              <RoleRoute permission="assignment.view_assigned">
+                <StudentAssignmentPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/grades',
+            element: (
+              <RoleRoute permission="grade.view_own">
+                <StudentGradesPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/grades/:gradeId',
+            element: (
+              <RoleRoute permission="grade.view_own">
+                <StudentGradeDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
             path: '/teacher/classrooms/:classroomId',
             element: (
               <RoleRoute roles={['TEACHER']}>
@@ -159,6 +226,94 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="lesson.manage_owned">
                 <TeacherLessonCreatePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/assessments',
+            element: (
+              <RoleRoute permission="quiz.manage_owned">
+                <TeacherAssessmentsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/quizzes/new',
+            element: (
+              <RoleRoute permission="quiz.manage_owned">
+                <TeacherQuizCreatePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/quizzes/:quizId/edit',
+            element: (
+              <RoleRoute permission="quiz.manage_owned">
+                <TeacherQuizBuilderPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/quizzes/:quizId/preview',
+            element: (
+              <RoleRoute permission="quiz.manage_owned">
+                <TeacherQuizPreviewPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/quizzes/:quizId/results',
+            element: (
+              <RoleRoute permission="quiz.results_view_owned">
+                <TeacherQuizResultsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/quiz-attempts/:attemptId/review',
+            element: (
+              <RoleRoute permission="quiz.review_owned">
+                <TeacherQuizAttemptReviewPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/assignments/new',
+            element: (
+              <RoleRoute permission="assignment.manage_owned">
+                <TeacherAssignmentCreatePage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/assignments/:assignmentId/edit',
+            element: (
+              <RoleRoute permission="assignment.manage_owned">
+                <TeacherAssignmentEditorPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/assignments/:assignmentId/submissions',
+            element: (
+              <RoleRoute permission="submission.view_owned">
+                <TeacherAssignmentSubmissionsPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/submissions/:submissionId/grade',
+            element: (
+              <RoleRoute permission="grade.manage_owned">
+                <TeacherSubmissionGradingPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/activities/:activityType/:activityId/deadline-exceptions',
+            element: (
+              <RoleRoute permission="deadline_exception.manage_owned">
+                <TeacherDeadlineExceptionsPage />
               </RoleRoute>
             ),
           },

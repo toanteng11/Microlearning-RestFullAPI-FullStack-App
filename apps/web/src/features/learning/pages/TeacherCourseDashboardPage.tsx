@@ -150,7 +150,7 @@ export function TeacherCourseDashboardPage() {
         <div>
           <p className="eyebrow">Course Dashboard</p>
           <h1>{dashboard.course.title}</h1>
-          <p>Tiến độ dựa trên bài học bắt buộc.</p>
+          <p>Tiến độ dựa trên mọi bài học, bài kiểm tra và bài tập bắt buộc.</p>
         </div>
         <div className="course-header-actions">
           <ContentStatusBadge status={course.effectiveStatus} />
@@ -249,12 +249,12 @@ export function TeacherCourseDashboardPage() {
       ) : null}
       <div className="metric-grid">
         <div>
-          <span>Tổng bài học</span>
-          <strong>{dashboard.summary.totalLessons}</strong>
+          <span>Tổng hoạt động</span>
+          <strong>{dashboard.summary.totalActivities}</strong>
         </div>
         <div>
           <span>Đã xuất bản</span>
-          <strong>{dashboard.summary.publishedLessons}</strong>
+          <strong>{dashboard.summary.publishedActivities}</strong>
         </div>
         <div>
           <span>Student hoạt động</span>
@@ -272,13 +272,22 @@ export function TeacherCourseDashboardPage() {
             <h2>Hoạt động gần đây</h2>
           </div>
           {dashboard.activities.length === 0 ? (
-            <p className="muted-text">Chưa có bài học được xuất bản.</p>
+            <p className="muted-text">Chưa có hoạt động được xuất bản.</p>
           ) : (
             <div className="activity-list">
               {dashboard.activities.map((activity) => (
                 <article key={activity.id}>
                   <div>
-                    <strong>{activity.title}</strong>
+                    <Link to={activity.actionUrl}>
+                      <strong>{activity.title}</strong>
+                    </Link>
+                    <small>
+                      {activity.activityType === 'LESSON'
+                        ? 'Bài học'
+                        : activity.activityType === 'QUIZ'
+                          ? 'Bài kiểm tra'
+                          : 'Bài tập'}
+                    </small>
                     <small>{displayLearningDate(activity.completionDeadline)}</small>
                   </div>
                   <ProgressBar
@@ -305,7 +314,7 @@ export function TeacherCourseDashboardPage() {
                   <div>
                     <strong>{student.fullName}</strong>
                     <small>
-                      {student.completedLessons}/{student.requiredLessons} bài học
+                      {student.completedActivities}/{student.requiredActivities} hoạt động
                     </small>
                   </div>
                   <ProgressBar
@@ -320,7 +329,8 @@ export function TeacherCourseDashboardPage() {
         </section>
       </div>
       <footer className="metric-footnote">
-        Metric: {dashboard.metricVersion} · as of {displayLearningDate(dashboard.asOf)}
+        Metric: {dashboard.metricVersion} · Descriptor: {dashboard.descriptorVersion} · as of{' '}
+        {displayLearningDate(dashboard.asOf)}
       </footer>
     </section>
   );

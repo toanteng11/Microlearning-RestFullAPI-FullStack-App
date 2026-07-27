@@ -161,6 +161,22 @@ describe('Phase 04 learning presentation components', () => {
       publishedRevision: 1,
       progress: progress(),
     };
+    const rootActivity = {
+      id: rootLesson.id,
+      activityId: rootLesson.id,
+      activityType: 'LESSON' as const,
+      courseId,
+      moduleId: null,
+      title: rootLesson.title,
+      isRequired: true,
+      completionDeadline: rootLesson.completionDeadline!,
+      defaultDeadline: rootLesson.completionDeadline!,
+      effectiveDeadline: rootLesson.completionDeadline!,
+      hasDeadlineException: false,
+      displayOrder: 0,
+      actionUrl: `/student/lessons/${rootLesson.id}`,
+      progress: progress(),
+    };
     const response: StudentClassworkEnvelope = {
       success: true,
       data: {
@@ -171,6 +187,8 @@ describe('Phase 04 learning presentation components', () => {
             title: 'REST API Course',
             description: 'Course description',
             displayOrder: 0,
+            descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
+            activities: [rootActivity],
             lessons: [rootLesson],
             modules: [
               {
@@ -178,6 +196,16 @@ describe('Phase 04 learning presentation components', () => {
                 title: 'HTTP Foundations',
                 description: 'Module description',
                 displayOrder: 0,
+                activities: [
+                  {
+                    ...rootActivity,
+                    id: 'lesson-two',
+                    activityId: 'lesson-two',
+                    moduleId: 'module-one',
+                    title: 'Status codes',
+                    actionUrl: '/student/lessons/lesson-two',
+                  },
+                ],
                 lessons: [
                   {
                     ...rootLesson,
@@ -190,6 +218,7 @@ describe('Phase 04 learning presentation components', () => {
             ],
           },
         ],
+        descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
         asOf: '2026-07-20T09:00:00.000Z',
       },
     };

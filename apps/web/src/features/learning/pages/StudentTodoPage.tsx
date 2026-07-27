@@ -1,17 +1,30 @@
-import { ArrowLeft, ArrowRight, CheckCircle2, ListTodo } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '../../../shared/auth/auth-context';
 import type { ClassroomListEnvelope } from '../../classrooms/classroom.types';
 import { displayLearningDate, requestErrorMessage } from '../learning-format';
-import type { TodoEnvelope } from '../learning.types';
+import type { LearningActivityType, TodoEnvelope } from '../learning.types';
 import { ProgressStatusBadge } from '../components/LearningStatusBadge';
 
 type TodoScope = 'ALL' | 'OVERDUE' | 'UPCOMING';
 
 const TODO_SCOPES: TodoScope[] = ['ALL', 'OVERDUE', 'UPCOMING'];
 const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/iu;
+
+function activityIcon(type: LearningActivityType) {
+  if (type === 'QUIZ') return <ClipboardList size={20} />;
+  if (type === 'ASSIGNMENT') return <FileText size={20} />;
+  return <BookOpen size={20} />;
+}
 
 export function StudentTodoPage() {
   const { request } = useAuth();
@@ -77,7 +90,7 @@ export function StudentTodoPage() {
         <div>
           <p className="eyebrow">Student workspace</p>
           <h1>Việc cần làm</h1>
-          <p>Danh sách này chỉ gồm bài học bắt buộc chưa hoàn thành.</p>
+          <p>Danh sách bài học, bài kiểm tra và bài tập bắt buộc chưa hoàn thành.</p>
         </div>
         <Link className="button-link" to="/student/deadlines">
           Xem tất cả deadline
@@ -132,11 +145,17 @@ export function StudentTodoPage() {
         <div className="todo-list">
           {result.data.items.map((item) => (
             <article className="todo-row" key={item.id}>
-              <ListTodo size={20} />
+              {activityIcon(item.activityType)}
               <div>
                 <Link to={item.actionUrl}>{item.title}</Link>
                 <small>
-                  {item.classroom.name} · {item.course.title}
+                  {item.classroom.name} · {item.course.title} ·{' '}
+                  {item.activityType === 'LESSON'
+                    ? 'Bài học'
+                    : item.activityType === 'QUIZ'
+                      ? 'Bài kiểm tra'
+                      : 'Bài tập'}
+                  {item.hasDeadlineException ? ' · Đã gia hạn' : ''}
                 </small>
               </div>
               <time dateTime={item.completionDeadline}>

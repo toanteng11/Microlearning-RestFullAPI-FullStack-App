@@ -1,4 +1,12 @@
-import { ArrowLeft, ArrowRight, CalendarClock, RotateCcw } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  CalendarClock,
+  ClipboardList,
+  FileText,
+  RotateCcw,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
@@ -6,7 +14,7 @@ import { useAuth } from '../../../shared/auth/auth-context';
 import type { ClassroomListEnvelope } from '../../classrooms/classroom.types';
 import { ProgressStatusBadge } from '../components/LearningStatusBadge';
 import { displayLearningDate, requestErrorMessage } from '../learning-format';
-import type { TodoEnvelope, TodoItem } from '../learning.types';
+import type { LearningActivityType, TodoEnvelope, TodoItem } from '../learning.types';
 
 const DEADLINE_PAGE_SIZE = 20;
 const MAX_RANGE_DAYS = 366;
@@ -62,6 +70,12 @@ function groupDeadlines(items: TodoItem[]) {
     }
   }
   return [...groups.entries()].map(([key, group]) => ({ key, ...group }));
+}
+
+function activityIcon(type: LearningActivityType) {
+  if (type === 'QUIZ') return <ClipboardList size={20} />;
+  if (type === 'ASSIGNMENT') return <FileText size={20} />;
+  return <BookOpen size={20} />;
 }
 
 export function StudentDeadlinePage() {
@@ -166,8 +180,8 @@ export function StudentDeadlinePage() {
       <header className="page-header">
         <div>
           <p className="eyebrow">Student workspace</p>
-          <h1>Deadline bài học</h1>
-          <p>Theo dõi các bài học có hạn hoàn thành trong từng lớp học.</p>
+          <h1>Deadline học tập</h1>
+          <p>Theo dõi hạn hoàn thành của bài học, bài kiểm tra và bài tập.</p>
         </div>
       </header>
       <form
@@ -238,11 +252,17 @@ export function StudentDeadlinePage() {
               <div className="todo-list">
                 {group.items.map((item) => (
                   <article className="todo-row" key={item.id}>
-                    <CalendarClock size={20} />
+                    {activityIcon(item.activityType)}
                     <div>
                       <Link to={item.actionUrl}>{item.title}</Link>
                       <small>
-                        {item.classroom.name} &middot; {item.course.title}
+                        {item.classroom.name} &middot; {item.course.title} &middot;{' '}
+                        {item.activityType === 'LESSON'
+                          ? 'Bài học'
+                          : item.activityType === 'QUIZ'
+                            ? 'Bài kiểm tra'
+                            : 'Bài tập'}
+                        {item.hasDeadlineException ? ' · Đã gia hạn' : ''}
                       </small>
                     </div>
                     <time dateTime={item.completionDeadline}>

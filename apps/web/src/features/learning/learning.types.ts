@@ -30,11 +30,31 @@ export interface ClassworkLesson extends StudentLessonSummary {
   progress: LearningProgress;
 }
 
+export type LearningActivityType = 'LESSON' | 'QUIZ' | 'ASSIGNMENT';
+
+export interface ClassworkActivity {
+  id: string;
+  activityId: string;
+  activityType: LearningActivityType;
+  courseId: string;
+  moduleId: string | null;
+  title: string;
+  isRequired: boolean;
+  completionDeadline: string;
+  defaultDeadline: string;
+  effectiveDeadline: string;
+  hasDeadlineException: boolean;
+  displayOrder: number;
+  actionUrl: string;
+  progress: LearningProgress;
+}
+
 export interface ClassworkModule {
   id: string;
   title: string;
   description: string;
   displayOrder: number;
+  activities: ClassworkActivity[];
   lessons: ClassworkLesson[];
 }
 
@@ -43,6 +63,8 @@ export interface ClassworkCourse {
   title: string;
   description: string;
   displayOrder: number;
+  descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2';
+  activities: ClassworkActivity[];
   lessons: ClassworkLesson[];
   modules: ClassworkModule[];
 }
@@ -52,6 +74,7 @@ export interface StudentClassworkEnvelope {
   data: {
     classroom: { id: string; name: string };
     courses: ClassworkCourse[];
+    descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2';
     asOf: string;
   };
 }
@@ -102,18 +125,28 @@ export interface TeacherCourse {
 
 export interface TodoItem {
   id: string;
+  activityId: string;
+  activityType: LearningActivityType;
   title: string;
   classroom: { id: string; name: string };
   course: { id: string; title: string };
   module?: { id: string; title: string } | null;
   completionDeadline: string;
+  defaultDeadline: string;
+  effectiveDeadline: string;
+  hasDeadlineException: boolean;
   progress: LearningProgress;
   actionUrl: string;
 }
 
 export interface TodoEnvelope {
   success: true;
-  data: { items: TodoItem[]; scopeVersion?: string; asOf: string };
+  data: {
+    items: TodoItem[];
+    scopeVersion?: 'P05_MIXED_ACTIVITY_TODO_V2';
+    descriptorVersion?: 'P05_ACTIVITY_DESCRIPTOR_V2';
+    asOf: string;
+  };
   meta: Pagination;
 }
 
@@ -147,18 +180,24 @@ export interface StudentLessonPlayerEnvelope {
 }
 
 export interface CourseDashboard {
-  metricVersion: 'P04_LESSON_COMPLETION_V1';
+  metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1';
+  descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2';
   asOf: string;
   course: { id: string; title: string; classroomId: string; classroomName: string };
   summary: {
     totalLessons: number;
     publishedLessons: number;
     requiredLessons: number;
+    totalActivities: number;
+    publishedActivities: number;
+    requiredActivities: number;
     activeStudents: number;
     averageProgressPercentage: number;
   };
   activities: Array<{
     id: string;
+    activityId: string;
+    activityType: LearningActivityType;
     title: string;
     isRequired: boolean;
     completionDeadline: string | null;
@@ -166,6 +205,7 @@ export interface CourseDashboard {
     completedStudents: number;
     activeStudents: number;
     completionPercentage: number;
+    actionUrl: string;
   }>;
   students: RankedStudent[];
 }
@@ -178,6 +218,8 @@ export interface RankedStudent {
   studentCode: string | null;
   requiredLessons: number;
   completedLessons: number;
+  requiredActivities: number;
+  completedActivities: number;
   progressPercentage: number;
   progressStatus: DerivedLearningStatus;
   lastActiveAt: string | null;
@@ -195,6 +237,8 @@ export interface CourseGovernanceSummary {
   owner: { id: string; fullName: string };
   moduleCount: number;
   lessonCount: number;
+  quizCount: number;
+  assignmentCount: number;
   createdAt: string;
   updatedAt: string;
   asOf?: string;

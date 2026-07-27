@@ -1,0 +1,13 @@
+{
+  "exceptions": [
+    {
+      "source": 1124282,
+      "advisory": "GHSA-qwww-vcr4-c8h2",
+      "package": "react-router",
+      "severity": "high",
+      "reason": "The application is a client-only Vite SPA and does not enable React Server Components, framework mode, actions, or server actions affected by this advisory.",
+      "owner": "Repository owner",
+      "expiresOn": "2026-08-31"
+    }
+  ]
+}
