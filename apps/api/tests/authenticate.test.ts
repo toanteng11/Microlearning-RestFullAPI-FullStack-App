@@ -10,6 +10,7 @@ import {
   createAuthenticateMiddleware,
   requirePermission,
 } from '../src/shared/auth/authenticate.js';
+import { getCapabilities } from '../src/shared/auth/permissions.js';
 
 const now = new Date('2026-07-17T10:00:00.000Z');
 
@@ -88,14 +89,7 @@ describe('authentication middleware', () => {
     expect(request.auth).toMatchObject({
       role: 'STUDENT',
       familyId: 'family-id',
-      capabilities: [
-        'classroom.join',
-        'classroom.view_enrolled',
-        'learning.complete_own',
-        'learning.view_enrolled',
-        'profile.update_own',
-        'profile.view_own',
-      ],
+      capabilities: getCapabilities('STUDENT'),
     });
     expect(next).toHaveBeenLastCalledWith();
   });

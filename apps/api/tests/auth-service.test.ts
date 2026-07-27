@@ -7,6 +7,7 @@ import type { AuthSessionRepository } from '../src/modules/sessions/auth-session
 import type { UserRepository } from '../src/modules/users/user.repository.js';
 import type { UserRecord } from '../src/modules/users/user.types.js';
 import { hashPassword } from '../src/shared/auth/password.js';
+import { getCapabilities } from '../src/shared/auth/permissions.js';
 import { testConfig } from './test-fixtures.js';
 
 const now = new Date('2026-07-17T10:00:00.000Z');
@@ -147,14 +148,7 @@ describe('AuthService', () => {
       }),
     );
     expect(result.refreshToken).not.toBe(result.accessToken);
-    expect(result.user.capabilities).toEqual([
-      'classroom.join',
-      'classroom.view_enrolled',
-      'learning.complete_own',
-      'learning.view_enrolled',
-      'profile.update_own',
-      'profile.view_own',
-    ]);
+    expect(result.user.capabilities).toEqual(getCapabilities('STUDENT'));
   });
 
   it('distinguishes refresh race from token reuse and revokes only outside grace', async () => {

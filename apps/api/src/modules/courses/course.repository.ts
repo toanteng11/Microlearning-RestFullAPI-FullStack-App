@@ -37,6 +37,8 @@ export interface CourseGovernanceRow {
   owner: { _id: Types.ObjectId; fullName: string };
   moduleCount: number;
   lessonCount: number;
+  quizCount: number;
+  assignmentCount: number;
 }
 
 export class CourseRepository {
@@ -198,6 +200,38 @@ export class CourseRepository {
               },
             },
             {
+              $lookup: {
+                from: 'quizzes',
+                let: { courseId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$courseId', '$$courseId'] },
+                      status: { $ne: 'ARCHIVED' },
+                    },
+                  },
+                  { $count: 'count' },
+                ],
+                as: 'quizzes',
+              },
+            },
+            {
+              $lookup: {
+                from: 'assignments',
+                let: { courseId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$courseId', '$$courseId'] },
+                      status: { $ne: 'ARCHIVED' },
+                    },
+                  },
+                  { $count: 'count' },
+                ],
+                as: 'assignments',
+              },
+            },
+            {
               $project: {
                 course: {
                   _id: '$_id',
@@ -222,6 +256,8 @@ export class CourseRepository {
                 owner: 1,
                 moduleCount: { $ifNull: [{ $first: '$modules.count' }, 0] },
                 lessonCount: { $ifNull: [{ $first: '$lessons.count' }, 0] },
+                quizCount: { $ifNull: [{ $first: '$quizzes.count' }, 0] },
+                assignmentCount: { $ifNull: [{ $first: '$assignments.count' }, 0] },
               },
             },
           ],
@@ -282,6 +318,38 @@ export class CourseRepository {
         },
       },
       {
+        $lookup: {
+          from: 'quizzes',
+          let: { courseId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$courseId', '$$courseId'] },
+                status: { $ne: 'ARCHIVED' },
+              },
+            },
+            { $count: 'count' },
+          ],
+          as: 'quizzes',
+        },
+      },
+      {
+        $lookup: {
+          from: 'assignments',
+          let: { courseId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$courseId', '$$courseId'] },
+                status: { $ne: 'ARCHIVED' },
+              },
+            },
+            { $count: 'count' },
+          ],
+          as: 'assignments',
+        },
+      },
+      {
         $project: {
           course: {
             _id: '$_id',
@@ -300,6 +368,8 @@ export class CourseRepository {
           owner: 1,
           moduleCount: { $ifNull: [{ $first: '$modules.count' }, 0] },
           lessonCount: { $ifNull: [{ $first: '$lessons.count' }, 0] },
+          quizCount: { $ifNull: [{ $first: '$quizzes.count' }, 0] },
+          assignmentCount: { $ifNull: [{ $first: '$assignments.count' }, 0] },
         },
       },
     ]).exec();

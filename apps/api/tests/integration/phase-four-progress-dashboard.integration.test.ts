@@ -353,7 +353,7 @@ describe('Phase 04 Student learning and Teacher dashboard on MongoDB replica set
       .get('/api/v1/students/me/todo')
       .set('Authorization', bearer(data.firstStudent.token))
       .expect(200);
-    expect(todo.body.data.scopeVersion).toBe('P04_LESSON_TODO_V1');
+    expect(todo.body.data.scopeVersion).toBe('P05_MIXED_ACTIVITY_TODO_V2');
     expect(todo.body.data.items.map((item: { id: string }) => item.id)).toEqual([
       data.overdueLesson._id.toString(),
       data.futureLesson._id.toString(),
@@ -398,7 +398,7 @@ describe('Phase 04 Student learning and Teacher dashboard on MongoDB replica set
       .set('Authorization', bearer(data.firstStudent.token))
       .expect(200);
     expect(progress.body.data).toMatchObject({
-      metricVersion: 'P04_LESSON_COMPLETION_V1',
+      metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
       summary: { requiredLessons: 2, completedLessons: 1, progressPercentage: 50 },
     });
   });

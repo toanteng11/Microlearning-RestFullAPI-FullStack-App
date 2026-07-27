@@ -1,6 +1,8 @@
 import { createServer } from 'node:http';
 import { loadEnvFile } from 'node:process';
 
+import mongoose from 'mongoose';
+
 import { createApp } from './app.js';
 import { EnrollmentPolicyRepository } from './modules/enrollment-policy/enrollment-policy.repository.js';
 import { loadEnvironment } from './shared/config/environment.js';
@@ -11,6 +13,11 @@ import {
 } from './shared/database/mongodb.js';
 import { initializePhaseThreeIndexes } from './shared/database/phase-three-indexes.js';
 import { initializePhaseFourIndexes } from './shared/database/phase-four-indexes.js';
+import { initializePhaseFiveIndexes } from './shared/database/phase-five-indexes.js';
+import {
+  assertPhaseFiveMigrationPreflight,
+  runPhaseFiveMigrationPreflight,
+} from './shared/database/phase-five-migration.js';
 import { createLogger } from './shared/logging/logger.js';
 
 function loadLocalEnvironmentFile() {
@@ -32,6 +39,8 @@ async function bootstrap() {
   await connectToMongoDB(config.mongodbUri, logger, { autoIndex: mayCreateIndexes });
   await initializePhaseThreeIndexes(config.appEnvironment);
   await initializePhaseFourIndexes(config.appEnvironment);
+  assertPhaseFiveMigrationPreflight(await runPhaseFiveMigrationPreflight(mongoose.connection));
+  await initializePhaseFiveIndexes(config.appEnvironment);
   const enrollmentPolicy = await new EnrollmentPolicyRepository().ensureEnrollmentPolicy(
     config.classroomInviteDefaultTtlDays,
   );

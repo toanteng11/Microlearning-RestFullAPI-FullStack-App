@@ -1,7 +1,14 @@
-export const LEARNING_ACTIVITY_DESCRIPTOR_VERSION = 'P04_ACTIVITY_DESCRIPTOR_V1' as const;
+export const LEARNING_ACTIVITY_DESCRIPTOR_VERSION = 'P05_ACTIVITY_DESCRIPTOR_V2' as const;
+export const LEARNING_ACTIVITY_TYPES = ['LESSON', 'QUIZ', 'ASSIGNMENT'] as const;
+export type LearningActivityType = (typeof LEARNING_ACTIVITY_TYPES)[number];
+
+export interface ActivityKey {
+  activityType: LearningActivityType;
+  activityId: string;
+}
 
 export interface LearningActivityDescriptor {
-  activityType: 'LESSON';
+  activityType: LearningActivityType;
   activityId: string;
   classroomId: string;
   courseId: string;
@@ -11,6 +18,7 @@ export interface LearningActivityDescriptor {
   completionDeadline: string;
   displayOrder: number;
   visible: boolean;
+  actionUrl: string;
 }
 
 export interface LearningActivityReader {

@@ -24,6 +24,21 @@ const phaseFourExplicitProductionFields = [
   'GCS_UPLOADS_ENABLED',
 ] as const;
 
+const phaseFiveExplicitProductionFields = [
+  'QUESTION_IMAGE_URL_ENABLED',
+  'QUESTION_VIDEO_URL_ENABLED',
+  'QUESTION_MEDIA_ALLOWED_HOSTS',
+  'ASSIGNMENT_LINK_SUBMISSION_ENABLED',
+  'ASSIGNMENT_MARK_DONE_ENABLED',
+  'BASIC_GRADEBOOK_ENABLED',
+  'ASSESSMENT_FILE_UPLOAD_ENABLED',
+  'QUIZ_ATTEMPT_START_IP_LIMIT',
+  'QUIZ_ATTEMPT_IDENTITY_LIMIT',
+  'QUIZ_ANSWER_SAVE_LIMIT',
+  'ASSESSMENT_MUTATION_WINDOW_SECONDS',
+  'ASSESSMENT_MUTATION_IDENTITY_LIMIT',
+] as const;
+
 const environmentSchema = z.object({
   APP_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
   APP_VERSION: z.string().trim().min(1).default('0.1.0'),
@@ -75,6 +90,18 @@ const environmentSchema = z.object({
   DASHBOARD_PAGE_MAX: z.coerce.number().int().min(20).max(100).default(100),
   LEARNING_RESOURCES_ENABLED: booleanString,
   GCS_UPLOADS_ENABLED: booleanString,
+  QUESTION_IMAGE_URL_ENABLED: booleanString,
+  QUESTION_VIDEO_URL_ENABLED: booleanString,
+  QUESTION_MEDIA_ALLOWED_HOSTS: z.string().default(''),
+  ASSIGNMENT_LINK_SUBMISSION_ENABLED: booleanString,
+  ASSIGNMENT_MARK_DONE_ENABLED: booleanString,
+  BASIC_GRADEBOOK_ENABLED: booleanString,
+  ASSESSMENT_FILE_UPLOAD_ENABLED: booleanString,
+  QUIZ_ATTEMPT_START_IP_LIMIT: z.coerce.number().int().min(1).max(10_000).default(300),
+  QUIZ_ATTEMPT_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(1_000).default(20),
+  QUIZ_ANSWER_SAVE_LIMIT: z.coerce.number().int().min(1).max(10_000).default(180),
+  ASSESSMENT_MUTATION_WINDOW_SECONDS: z.coerce.number().int().min(1).max(3_600).default(60),
+  ASSESSMENT_MUTATION_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
   RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REGISTER_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(10),
   LOGIN_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(30),
@@ -138,6 +165,24 @@ export interface FeatureFlagConfig {
   gcsUploadsEnabled: boolean;
 }
 
+export interface AssessmentFeatureFlagConfig {
+  questionImageUrlEnabled: boolean;
+  questionVideoUrlEnabled: boolean;
+  questionMediaAllowedHosts: readonly string[];
+  assignmentLinkSubmissionEnabled: boolean;
+  assignmentMarkDoneEnabled: boolean;
+  basicGradebookEnabled: boolean;
+  assessmentFileUploadEnabled: false;
+}
+
+export interface AssessmentRateLimitConfig {
+  mutationWindowSeconds: number;
+  mutationIdentityMax: number;
+  attemptStartIpMax: number;
+  attemptStartIdentityMax: number;
+  answerSaveIdentityMax: number;
+}
+
 export interface AppConfig {
   appEnvironment: AppEnvironment;
   appVersion: string;
@@ -165,6 +210,8 @@ export interface AppConfig {
   contentLimits: ContentLimitConfig;
   learningRateLimits: LearningRateLimitConfig;
   featureFlags: FeatureFlagConfig;
+  assessmentFeatures: AssessmentFeatureFlagConfig;
+  assessmentRateLimits: AssessmentRateLimitConfig;
   rateLimits: RateLimitConfig;
   bootstrapAdminEnabled: boolean;
   logLevel: LogLevel;
@@ -218,6 +265,30 @@ function isUnsafeSecret(value: string): boolean {
   );
 }
 
+function normalizeHostnameList(value: string): readonly string[] {
+  const hostnames = value
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean)
+    .map((entry) => {
+      if (entry.includes('://') || /[/@?#]/u.test(entry)) {
+        return configurationError(
+          'QUESTION_MEDIA_ALLOWED_HOSTS must contain hostnames without scheme, credentials or path',
+        );
+      }
+      try {
+        const parsed = new URL(`https://${entry}`);
+        if (parsed.hostname !== entry || parsed.port) throw new Error('not a hostname');
+        return parsed.hostname;
+      } catch {
+        return configurationError(
+          `QUESTION_MEDIA_ALLOWED_HOSTS contains invalid hostname ${entry}`,
+        );
+      }
+    });
+  return Object.freeze([...new Set(hostnames)]);
+}
+
 export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   const parsed = environmentSchema.safeParse(input);
 
@@ -229,9 +300,10 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   }
 
   if (['staging', 'production'].includes(parsed.data.APP_ENV)) {
-    const missingFields = phaseFourExplicitProductionFields.filter(
-      (field) => !input[field]?.trim(),
-    );
+    const missingFields = [
+      ...phaseFourExplicitProductionFields,
+      ...phaseFiveExplicitProductionFields,
+    ].filter((field) => !input[field]?.trim());
     if (missingFields.length > 0) {
       configurationError(
         `Production-like environments must explicitly configure ${missingFields.join(', ')}`,
@@ -328,8 +400,37 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     gcsUploadsEnabled: parsed.data.GCS_UPLOADS_ENABLED,
   });
 
+  const questionMediaAllowedHosts = normalizeHostnameList(parsed.data.QUESTION_MEDIA_ALLOWED_HOSTS);
+  const assessmentFeatures = Object.freeze({
+    questionImageUrlEnabled: parsed.data.QUESTION_IMAGE_URL_ENABLED,
+    questionVideoUrlEnabled: parsed.data.QUESTION_VIDEO_URL_ENABLED,
+    questionMediaAllowedHosts,
+    assignmentLinkSubmissionEnabled: parsed.data.ASSIGNMENT_LINK_SUBMISSION_ENABLED,
+    assignmentMarkDoneEnabled: parsed.data.ASSIGNMENT_MARK_DONE_ENABLED,
+    basicGradebookEnabled: parsed.data.BASIC_GRADEBOOK_ENABLED,
+    assessmentFileUploadEnabled: false as const,
+  });
+  const assessmentRateLimits = Object.freeze({
+    mutationWindowSeconds: parsed.data.ASSESSMENT_MUTATION_WINDOW_SECONDS,
+    mutationIdentityMax: parsed.data.ASSESSMENT_MUTATION_IDENTITY_LIMIT,
+    attemptStartIpMax: parsed.data.QUIZ_ATTEMPT_START_IP_LIMIT,
+    attemptStartIdentityMax: parsed.data.QUIZ_ATTEMPT_IDENTITY_LIMIT,
+    answerSaveIdentityMax: parsed.data.QUIZ_ANSWER_SAVE_LIMIT,
+  });
+
   if (featureFlags.gcsUploadsEnabled && !featureFlags.learningResourcesEnabled) {
     configurationError('GCS_UPLOADS_ENABLED requires LEARNING_RESOURCES_ENABLED=true');
+  }
+  if (parsed.data.ASSESSMENT_FILE_UPLOAD_ENABLED) {
+    configurationError('ASSESSMENT_FILE_UPLOAD_ENABLED must remain false in Phase 05');
+  }
+  if (
+    (assessmentFeatures.questionImageUrlEnabled || assessmentFeatures.questionVideoUrlEnabled) &&
+    assessmentFeatures.questionMediaAllowedHosts.length === 0
+  ) {
+    configurationError(
+      'QUESTION_MEDIA_ALLOWED_HOSTS is required when Question URL media is enabled',
+    );
   }
 
   return Object.freeze({
@@ -359,6 +460,8 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     contentLimits,
     learningRateLimits,
     featureFlags,
+    assessmentFeatures,
+    assessmentRateLimits,
     rateLimits,
     bootstrapAdminEnabled: parsed.data.BOOTSTRAP_ADMIN_ENABLED,
     logLevel: parsed.data.LOG_LEVEL,

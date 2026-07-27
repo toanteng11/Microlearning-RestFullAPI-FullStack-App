@@ -26,6 +26,30 @@ import {
   phaseFourGovernanceSchemas,
   phaseFourGovernanceTags,
 } from './phase-four-governance.openapi.js';
+import {
+  createPhaseFiveAssessmentAuthoringPaths,
+  PHASE_FIVE_ASSESSMENT_AUTHORING_OPENAPI_OPERATIONS,
+  phaseFiveAssessmentAuthoringSchemas,
+  phaseFiveAssessmentAuthoringTags,
+} from './phase-five-assessment-authoring.openapi.js';
+import {
+  createPhaseFiveQuizAttemptPaths,
+  PHASE_FIVE_QUIZ_ATTEMPT_OPENAPI_OPERATIONS,
+  phaseFiveQuizAttemptSchemas,
+  phaseFiveQuizAttemptTags,
+} from './phase-five-quiz-attempts.openapi.js';
+import {
+  createPhaseFiveAssignmentPaths,
+  PHASE_FIVE_ASSIGNMENT_OPENAPI_OPERATIONS,
+  phaseFiveAssignmentSchemas,
+  phaseFiveAssignmentTags,
+} from './phase-five-assignments.openapi.js';
+import {
+  createPhaseFiveGradingDeadlinePaths,
+  PHASE_FIVE_GRADING_DEADLINE_OPENAPI_OPERATIONS,
+  phaseFiveGradingDeadlineSchemas,
+  phaseFiveGradingDeadlineTags,
+} from './phase-five-grading-deadlines.openapi.js';
 export { PHASE_THREE_OPENAPI_OPERATIONS } from './phase-three.openapi.js';
 
 export const PHASE_FOUR_OPENAPI_OPERATIONS = [
@@ -33,6 +57,13 @@ export const PHASE_FOUR_OPENAPI_OPERATIONS = [
   ...PHASE_FOUR_LEARNING_OPENAPI_OPERATIONS,
   ...PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS,
   ...PHASE_FOUR_GOVERNANCE_OPENAPI_OPERATIONS,
+] as const;
+
+export const PHASE_FIVE_OPENAPI_OPERATIONS = [
+  ...PHASE_FIVE_ASSESSMENT_AUTHORING_OPENAPI_OPERATIONS,
+  ...PHASE_FIVE_QUIZ_ATTEMPT_OPENAPI_OPERATIONS,
+  ...PHASE_FIVE_ASSIGNMENT_OPENAPI_OPERATIONS,
+  ...PHASE_FIVE_GRADING_DEADLINE_OPENAPI_OPERATIONS,
 ] as const;
 
 type Schema = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
@@ -787,6 +818,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
   Object.assign(paths, createPhaseFourLearningPaths());
   Object.assign(paths, createPhaseFourProgressPaths());
   Object.assign(paths, createPhaseFourGovernancePaths());
+  Object.assign(paths, createPhaseFiveAssessmentAuthoringPaths());
+  Object.assign(paths, createPhaseFiveQuizAttemptPaths());
+  Object.assign(paths, createPhaseFiveAssignmentPaths());
+  Object.assign(paths, createPhaseFiveGradingDeadlinePaths());
 
   return {
     openapi: '3.0.3',
@@ -811,6 +846,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
       ...phaseFourLearningTags,
       ...phaseFourProgressTags,
       ...phaseFourGovernanceTags,
+      ...phaseFiveAssessmentAuthoringTags,
+      ...phaseFiveQuizAttemptTags,
+      ...phaseFiveAssignmentTags,
+      ...phaseFiveGradingDeadlineTags,
     ],
     paths,
     components: {
@@ -851,6 +890,10 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         ...phaseFourLearningSchemas,
         ...phaseFourProgressSchemas,
         ...phaseFourGovernanceSchemas,
+        ...phaseFiveAssessmentAuthoringSchemas,
+        ...phaseFiveQuizAttemptSchemas,
+        ...phaseFiveAssignmentSchemas,
+        ...phaseFiveGradingDeadlineSchemas,
         UserRole: {
           type: 'string',
           enum: ['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN'],

@@ -79,6 +79,10 @@ import {
   teacherProgressQuerySchema,
 } from './learning-progress/learning-progress.schemas.js';
 import { StudentLearningService } from './learning-progress/student-learning.service.js';
+import { MongoLearningActivityReader } from './learning-progress/mongo-learning-activity.reader.js';
+import { QuizRepository } from './quizzes/quiz.repository.js';
+import { AssignmentRepository } from './assignments/assignment.repository.js';
+import { DeadlineExceptionRepository } from './deadline-exceptions/deadline-exception.repository.js';
 import { TeacherCourseDashboardService } from './learning-progress/teacher-course-dashboard.service.js';
 import {
   archiveModuleSchema,
@@ -148,6 +152,10 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
   const deadlines = new LessonDeadlineRepository();
   const progress = new LearningProgressRepository();
   const announcements = new AnnouncementRepository();
+  const quizzes = new QuizRepository();
+  const assignments = new AssignmentRepository();
+  const deadlineExceptions = new DeadlineExceptionRepository();
+  const activityReader = new MongoLearningActivityReader(modules, lessons, quizzes, assignments);
   const foundation = createPhaseFourFoundation(classrooms, enrollments);
   const courseScopes = new CourseScopeRepositoryAdapter(courses, foundation.classroomScopeReader);
   const audits = new PhaseFourAuditWriter(new AuditLogRepository());
@@ -196,16 +204,19 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
     progress,
     foundation.classroomScopeReader,
     courseScopes,
+    activityReader,
+    deadlineExceptions,
   );
   const teacherDashboardService = new TeacherCourseDashboardService(
     classrooms,
     enrollments,
     users,
     courses,
-    modules,
     lessons,
     progress,
     courseScopes,
+    activityReader,
+    deadlineExceptions,
   );
   const announcementService = new AnnouncementService(
     announcements,

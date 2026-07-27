@@ -1,11 +1,17 @@
-import type { ClientSession, Types } from 'mongoose';
+import { Types, type ClientSession } from 'mongoose';
 
 import { LearningProgressModel, type LearningProgressRecord } from './learning-progress.model.js';
 import type {
+  CompleteLearningProgressInput,
   CompleteLessonProgressInput,
   NewLearningProgress,
+  StartLearningProgressInput,
   StartLessonProgressInput,
 } from './learning-progress.types.js';
+import type {
+  ActivityKey,
+  LearningActivityType,
+} from '../learning-content/learning-activity.reader.js';
 
 const LEARNING_PROGRESS_PROJECTION = {
   studentId: 1,
@@ -28,7 +34,7 @@ function isDuplicateKey(error: unknown): boolean {
   return typeof error === 'object' && error !== null && 'code' in error && error.code === 11000;
 }
 
-function naturalKey(input: StartLessonProgressInput) {
+function naturalKey(input: StartLearningProgressInput) {
   return {
     studentId: input.studentId,
     activityType: input.activityType,
@@ -47,7 +53,7 @@ export class LearningProgressRepository {
 
   findByNaturalKey(
     studentId: Types.ObjectId,
-    activityType: 'LESSON',
+    activityType: LearningActivityType,
     activityId: Types.ObjectId,
     session?: ClientSession,
   ) {
@@ -58,8 +64,8 @@ export class LearningProgressRepository {
       .exec();
   }
 
-  async startLesson(
-    input: StartLessonProgressInput,
+  async start(
+    input: StartLearningProgressInput,
     session?: ClientSession,
   ): Promise<{ progress: LearningProgressProjection; newlyStarted: boolean }> {
     let newlyStarted = false;
@@ -90,8 +96,8 @@ export class LearningProgressRepository {
     return { progress, newlyStarted };
   }
 
-  async completeLesson(
-    input: CompleteLessonProgressInput,
+  async complete(
+    input: CompleteLearningProgressInput,
     session?: ClientSession,
   ): Promise<{ progress: LearningProgressProjection; newlyCompleted: boolean }> {
     try {
@@ -142,6 +148,32 @@ export class LearningProgressRepository {
     return { progress, newlyCompleted: false };
   }
 
+  startLesson(input: StartLessonProgressInput, session?: ClientSession) {
+    return this.start(input, session);
+  }
+
+  completeLesson(input: CompleteLessonProgressInput, session?: ClientSession) {
+    return this.complete(input, session);
+  }
+
+  async reverseCompletion(
+    input: StartLearningProgressInput,
+    session?: ClientSession,
+  ): Promise<{ progress: LearningProgressProjection; changed: boolean }> {
+    const changed = await LearningProgressModel.findOneAndUpdate(
+      { ...naturalKey(input), status: 'COMPLETED' },
+      { $set: { status: 'IN_PROGRESS', completedAt: null, lastActiveAt: input.lastActiveAt } },
+      { returnDocument: 'after', runValidators: true, session },
+    )
+      .select(LEARNING_PROGRESS_PROJECTION)
+      .lean<LearningProgressProjection>()
+      .exec();
+    if (changed) return { progress: changed, changed: true };
+
+    const result = await this.start(input, session);
+    return { progress: result.progress, changed: false };
+  }
+
   listByStudentAndCourse(
     studentId: Types.ObjectId,
     courseId: Types.ObjectId,
@@ -173,6 +205,26 @@ export class LearningProgressRepository {
       .exec();
   }
 
+  listByStudentAndActivities(
+    studentId: Types.ObjectId,
+    activities: readonly ActivityKey[],
+    session?: ClientSession,
+  ) {
+    if (activities.length === 0) return Promise.resolve([] as LearningProgressProjection[]);
+    return LearningProgressModel.find({
+      studentId,
+      $or: activities.map((activity) => ({
+        activityType: activity.activityType,
+        activityId: new Types.ObjectId(activity.activityId),
+      })),
+    })
+      .select(LEARNING_PROGRESS_PROJECTION)
+      .sort({ activityType: 1, activityId: 1 })
+      .session(session ?? null)
+      .lean<LearningProgressProjection[]>()
+      .exec();
+  }
+
   listByCourseAndStudentIds(
     courseId: Types.ObjectId,
     studentIds: readonly Types.ObjectId[],
@@ -191,6 +243,39 @@ export class LearningProgressRepository {
     return LearningProgressModel.aggregate<{ _id: Types.ObjectId; count: number }>([
       { $match: { activityType: 'LESSON', activityId: { $in: activityIds }, status: 'COMPLETED' } },
       { $group: { _id: '$activityId', count: { $sum: 1 } } },
+    ])
+      .session(session ?? null)
+      .exec();
+  }
+
+  countCompletedByActivities(activities: readonly ActivityKey[], session?: ClientSession) {
+    if (activities.length === 0) {
+      return Promise.resolve(
+        [] as Array<{
+          _id: { activityType: LearningActivityType; activityId: Types.ObjectId };
+          count: number;
+        }>,
+      );
+    }
+    return LearningProgressModel.aggregate<{
+      _id: { activityType: LearningActivityType; activityId: Types.ObjectId };
+      count: number;
+    }>([
+      {
+        $match: {
+          status: 'COMPLETED',
+          $or: activities.map((activity) => ({
+            activityType: activity.activityType,
+            activityId: new Types.ObjectId(activity.activityId),
+          })),
+        },
+      },
+      {
+        $group: {
+          _id: { activityType: '$activityType', activityId: '$activityId' },
+          count: { $sum: 1 },
+        },
+      },
     ])
       .session(session ?? null)
       .exec();
