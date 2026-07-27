@@ -7,11 +7,11 @@
 | Review date | `2026-07-22` |
 | Dependency | Phase 04 completed; closure commit `4860e45` trên `main` |
 | Planning branch | `docs/phase-05-planning-baseline` |
-| Planning package | Approved by Product Owner; protected Pull Request publication pending |
+| Planning package | Approved by Product Owner; published through protected Pull Request #13 |
 | Planning status | `READY_TO_CODE` |
 | Gate A | `APPROVED` - `2026-07-22` |
-| Code authorization | `AUTHORIZED` after planning baseline is synchronized to `main` |
-| Implementation | `LOCAL_IMPLEMENTATION_COMPLETE` - Part 1-Part 7 local gates Pass; closure/remote evidence pending |
+| Code authorization | `AUTHORIZED`; planning baseline synchronized to `main` |
+| Implementation | `COMPLETED`; implementation Pull Request #14 and post-merge `main` CI passed |
 
 ## 2. Readiness Assessment
 
@@ -32,7 +32,7 @@
 | WBS/dependency | Approved | 108 tasks, source blueprint và P05-PR01..08 execution guide | Execute in dependency order |
 | Risk/evidence/exit | Approved | registers and truthful templates | Update continuously |
 
-Không còn gap tài liệu hoặc quyết định sản phẩm đã biết chặn code. Planning baseline đã được Product Owner chấp thuận; việc commit/push, required CI và merge protected Pull Request là bước đồng bộ repository bắt buộc trước khi tạo implementation branch đầu tiên.
+Không còn gap tài liệu hoặc quyết định sản phẩm đã biết chặn code. Planning baseline đã được Product Owner chấp thuận và đồng bộ vào `main` qua Pull Request #13. Việc triển khai sau đó đã hoàn thành qua Pull Request #14; bằng chứng đóng phase được tổng hợp trong `phase-exit-evidence.md`.
 
 ## 3. Product Confirmations Required
 
@@ -68,7 +68,7 @@ Reviewer chỉ đánh `Accepted` khi câu trả lời đã có trong baseline v�
 
 ## 5. Gate A Approval And Repository Publication
 
-Gate A về nội dung đã được phê duyệt. Hai control về protected Pull Request vẫn phải hoàn tất trước khi Developer tạo implementation branch từ `main`.
+Gate A về nội dung và hai control protected Pull Request của planning baseline đều đã hoàn tất trước khi triển khai.
 
 | ID | Condition | Owner | Current status | Evidence required |
 | --- | --- | --- | --- | --- |
@@ -80,8 +80,8 @@ Gate A về nội dung đã được phê duyệt. Hai control về protected Pu
 | P05-GA-006 | Approve UI/accessibility plan | Owner | Passed | Approved planning baseline |
 | P05-GA-007 | Approve 78 AC/108 tasks/test catalog/evidence model | Owner | Passed | Approved planning baseline |
 | P05-GA-008 | Validate links/format/counts/local quality gate | QA/DevOps | Passed | `P05-EV-002/053`: `npm run check:ci`, API `149/149`, Web `84/84`, builds Pass |
-| P05-GA-009 | Planning PR required CI Pass | DevOps | Pending | GitHub Actions URL |
-| P05-GA-010 | Planning PR merge vào `main` | Repository owner | Pending | PR URL + merge commit |
+| P05-GA-009 | Planning PR required CI Pass | DevOps | Passed | [Pull Request #13 checks](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/13/checks) |
+| P05-GA-010 | Planning PR merge vào `main` | Repository owner | Passed | [Pull Request #13](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/13), merge commit `24084c0` |
 | P05-GA-011 | Readiness decision recorded | TL/Owner | Passed | Document updated to `READY_TO_CODE` |
 
 ## 6. Readiness Scorecard
@@ -94,17 +94,18 @@ Gate A về nội dung đã được phê duyệt. Hai control về protected Pu
 | Frontend/UX | 100% | 100% | 10 |
 | Test/Acceptance | 100% | 100% | 15 |
 | DevOps/Evidence | 100% | 100% | 10 |
-| Repository publication | 0% | 0% | 5 |
+| Repository publication | 100% | 100% | 5 |
 
-Prepared score dùng để đánh giá độ đầy đủ của tài liệu, không phải phần trăm hoàn thành Phase. Implementation completion hiện là `0%`.
+Prepared score dùng để đánh giá độ đầy đủ của tài liệu, không phải phần trăm hoàn thành Phase. Quyết định readiness lịch sử là `READY_TO_CODE`; trạng thái triển khai hiện tại là `COMPLETED` theo `exit-report.md`.
 
 ## 7. Current Decision
 
 ```text
-Decision: READY_TO_CODE
-Code authorization: AUTHORIZED_AFTER_BASELINE_SYNC
-Reason: Product Owner đã chấp thuận planning baseline; không còn product/technical decision chặn code và local quality gate Pass.
-Pre-code repository action: commit/push planning refinement, mở protected Pull Request, chờ required CI Pass và merge vào main.
+Historical decision: READY_TO_CODE
+Current status: COMPLETED
+Code authorization: AUTHORIZED
+Reason: Planning baseline đã được phê duyệt và đồng bộ; implementation, acceptance, clean-clone verification, protected PR và post-merge CI đều Pass.
+Remaining pre-code repository action: NONE
 ```
 
 ## 8. Approval Record
@@ -113,6 +114,6 @@ Pre-code repository action: commit/push planning refinement, mở protected Pull
 | --- | --- | --- | --- | --- |
 | Product Owner/BA | Trần Đức Toàn | Approved | `2026-07-22` | Explicit approval in project task; `ba-alignment-and-decisions.md` |
 | Automated QA/DevOps | `npm run check:ci` | Passed | `2026-07-22` | `P05-EV-002`, `P05-EV-053`; API `149/149`, Web `84/84`, build Pass |
-| Repository publication | Pending | Pending | - | Planning PR URL, required CI URL và merge commit chưa được ghi nhận |
+| Repository publication | toanteng11 | Passed | `2026-07-22` | [Pull Request #13](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/13), merge commit `24084c0` |
 
-Không suy diễn approval này thành independent peer review hoặc implementation acceptance. Mọi runtime evidence vẫn phải được thu thập trên đúng implementation commit.
+Không suy diễn approval này thành independent peer review. Implementation acceptance và runtime evidence được ghi riêng trên source commit `e755ca6b9e7dee68d1d2838679c3e51878ed98d7` trong `phase-exit-evidence.md`.

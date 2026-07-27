@@ -6,7 +6,8 @@
 - Chỉ tick `[x]` khi có bằng chứng trong `evidence-register.md` hoặc Pull Request đã merge.
 - Dòng `[Prepared]` nghĩa là tài liệu đã soạn trên planning branch nhưng chưa được reviewer phê duyệt.
 - Conditional item phải là `Pass` hoặc `[N/A - approved reason/evidence]`; không được im lặng bỏ qua.
-- Current status: Gate A `APPROVED`; Part 1-Part 7 `LOCAL_IMPLEMENTATION_COMPLETE`; local quality/security/Docker/E2E Pass; commit, clean clone, remote PR/CI và formal acceptance/exit approval pending.
+- Current status: `COMPLETED`; Gate A-E Pass trên release merge commit `88404f3`, `74/74 Must`
+  Pass và `4/4 Conditional` approved N/A.
 
 ## 2. Gate A - Planning Baseline
 
@@ -60,7 +61,8 @@ Gate A hiện tại: **APPROVED** ngày `2026-07-22`. Hai mục planning PR/merg
 - [x] Không có binary/file content hoặc multipart upload trong P05 runtime.
 - [x] Gate B local review đã ghi evidence và không còn High data/security defect.
 
-Gate B hiện tại: **IMPLEMENTED_LOCALLY**. MongoDB replica-set suite `72/72` và security/data evidence Pass; còn thiếu implementation commit, Pull Request review và remote CI để chuyển sang **VERIFIED**.
+Gate B hiện tại: **VERIFIED**. MongoDB replica-set suite `72/72`, security/data evidence,
+implementation PR và remote CI đều Pass trên release commit.
 
 ## 4. Gate C - Quiz, Attempt Và Scoring
 
@@ -86,7 +88,8 @@ Gate B hiện tại: **IMPLEMENTED_LOCALLY**. MongoDB replica-set suite `72/72` 
 - [x] Quiz Swagger happy/negative samples hợp lệ.
 - [x] Quiz critical Playwright journeys pass desktop/mobile.
 
-Gate C hiện tại: **IMPLEMENTED_LOCALLY**. Quiz/Question authoring, Attempt, scoring, timeout, result release, manual review/regrade, Teacher/Student UI và Playwright đều Pass local; implementation PR và remote CI còn pending.
+Gate C hiện tại: **VERIFIED**. Quiz/Question authoring, Attempt, scoring, timeout, result
+release, manual review/regrade, Teacher/Student UI và Playwright đều Pass.
 
 ## 5. Gate D - Assignment, Submission, Grade Và Deadline Exception
 
@@ -112,7 +115,8 @@ Gate C hiện tại: **IMPLEMENTED_LOCALLY**. Quiz/Question authoring, Attempt, 
 - [x] Assignment/Grade Swagger happy/negative samples hợp lệ.
 - [x] Assignment/Grade critical Playwright journeys pass desktop/mobile.
 
-Gate D hiện tại: **IMPLEMENTED_LOCALLY**. Assignment/Submission/Grade/Regrade/deadline exception cùng Teacher/Student UI, privacy, transaction và Playwright evidence đều Pass local; implementation PR và remote CI còn pending.
+Gate D hiện tại: **VERIFIED**. Assignment/Submission/Grade/Regrade/deadline exception,
+Teacher/Student UI, privacy, transaction và Playwright evidence đều Pass.
 
 ## 6. Gate E - Integration, Quality Và Phase Exit
 
@@ -133,17 +137,18 @@ Gate D hiện tại: **IMPLEMENTED_LOCALLY**. Assignment/Submission/Grade/Regrad
 - [x] Deterministic demo seed không chứa PII/secret thật và repeat run không tạo trùng.
 - [x] Docker build/readiness/seed/smoke pass.
 - [x] Dependency audit và local Secret Scan pass; React Router RSC advisory có exception chính xác, owner và expiry `2026-08-31`.
-- [ ] Clean-clone onboarding pass.
-- [ ] `74/74` Must AC Pass.
+- [x] Clean-clone onboarding Pass tại `D:\Microlearning-phase05-clean`, commit `88404f3`.
+- [x] `74/74` Must AC Pass.
 - [x] Bốn Conditional AC có approved N/A evidence tại Gate A `2026-07-22`.
 - [x] Không Critical/High defect local; dependency advisory không áp dụng cho Vite SPA có accepted-risk disposition và expiry.
-- [ ] Evidence register có command/count/commit/CI URL/report; local command/count đã có, commit/CI URL còn pending.
-- [ ] Implementation PR merge qua branch protection.
-- [ ] Post-merge `main` required CI xanh.
-- [ ] Exit report được PO/TL chấp thuận.
-- [ ] P06 nhận versioned activity/progress/grade contract.
+- [x] Evidence register có command/count/commit/CI URL/report tái lập được.
+- [x] Implementation PR #14 merge vào protected `main`.
+- [x] Post-merge `main` required CI `6/6` xanh.
+- [x] Exit report được chấp thuận theo single-contributor academic owner attestation.
+- [x] P06 nhận versioned activity/progress/grade contract qua `phase-06-handoff.md`.
 
-Gate E hiện tại: **LOCAL_GATES_PASS_REMOTE_PENDING**. Còn thiếu clean clone trên implementation commit, formal `74/74` Must AC evaluation, implementation PR/main CI, exit approval và P06 handoff.
+Gate E hiện tại: **VERIFIED**. Clean clone, formal acceptance, PR/main CI, exit evidence và
+P06 handoff đều hoàn thành.
 
 ## 7. Stop-The-Line Conditions
 

@@ -1,5 +1,10 @@
 # Phase 05 Pull Request Execution Guide
 
+> Tài liệu này lưu kế hoạch chia Pull Request tại thời điểm triển khai. Các dòng
+> `IMPLEMENTED_LOCALLY` trong từng slice là snapshot lịch sử trước Pull Request hợp
+> nhất #14; trạng thái cuối cùng và remote evidence nằm trong
+> `phase-exit-evidence.md`.
+
 ## 1. Mục Đích
 
 Hướng dẫn này chia Phase 05 thành Pull Request có dependency, file scope, test gate và evidence rõ. Mỗi PR phải giữ repository build/test được, có vertical behavior thật và không chứa placeholder.

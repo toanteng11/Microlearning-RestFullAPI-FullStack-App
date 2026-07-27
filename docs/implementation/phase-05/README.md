@@ -16,12 +16,15 @@ Phase này đồng thời mở rộng Activity contract, Student To-do, Deadline
 | Planning branch | `docs/phase-05-planning-baseline`, merged by PR [#13](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/13) |
 | Planning status | `READY_TO_CODE` |
 | Gate A | `APPROVED` - Product Owner đã chấp thuận baseline ngày `2026-07-22` |
-| Implementation status | `LOCAL_IMPLEMENTATION_COMPLETE` - Part 1-Part 7 và toàn bộ local quality evidence đã hoàn thành; commit, Pull Request, clean clone và remote CI còn pending |
-| Implementation branch hiện tại | `feature/phase-05-foundation`; source đang ở working tree local, chưa có implementation commit/merge evidence |
+| Implementation status | `COMPLETED` - `74/74 Must` Pass, `4/4 Conditional` approved N/A, Gate A-E Pass |
+| Implementation release | PR [#14](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/14), source `e755ca6`, merge commit `88404f3` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P06 - Reporting And Analytics` |
 
-Planning baseline đã merge vào `main` tại `24084c0`. Runtime Part 1-Part 7 hiện có code và local evidence thật cho Quiz/Question authoring, Quiz Attempt/scoring/result state, Assignment/Submission, Grade/Regrade, deadline exception, mixed activity progress/To-do, React UI, Swagger, security, Docker và E2E. Phase 05 chưa được coi là hoàn thành cho tới khi source được commit, clean-clone tái lập thành công, implementation Pull Request được review, required CI xanh và merge qua protected branch.
+Planning baseline đã merge vào `main` tại `24084c0`. Runtime Part 1-Part 7 đã merge
+qua PR #14; clean clone tại `88404f3`, PR CI và post-merge `main` CI đều Pass. Quiz/Question,
+Attempt/scoring/result, Assignment/Submission, Grade/Regrade, deadline exception, mixed
+activity progress/To-do, React UI, Swagger, security, Docker và E2E đã có evidence tái lập.
 
 ## 3. Business Outcome
 
@@ -129,6 +132,7 @@ Conditional item chỉ được bật khi Must critical path xanh, có owner, ac
 | `devops-environment-and-seeding.md` | Env, seed, Docker, CI và operational boundary |
 | `testing-strategy.md` | Test pyramid, fixture, performance và quality gates |
 | `test-case-catalog.md` | Chi tiết 74 integration cases, OpenAPI, Web và 12 E2E journeys |
+| `test-case-execution-matrix.md` | Kết quả và automated evidence cho `P05-IT-001..074` |
 | `acceptance-criteria.md` | Điều kiện Pass/Fail kiểm chứng được |
 | `traceability-matrix.md` | BA -> task -> API/UI/data -> test |
 | `work-breakdown-structure.md` | Task, dependency, output, estimate và status |
@@ -140,7 +144,8 @@ Conditional item chỉ được bật khi Must critical path xanh, có owner, ac
 | `conditional-media-and-storage-decision.md` | Quyết định URL-only/defer private upload |
 | `evidence-register.md` | Evidence phải thu thập trong implementation |
 | `phase-exit-evidence.md` | Mẫu bằng chứng đóng phase |
-| `exit-report.md` | Báo cáo đóng phase, hiện ở trạng thái chưa thực thi |
+| `phase-06-handoff.md` | Contract/version/boundary bàn giao cho Reporting And Analytics |
+| `exit-report.md` | Báo cáo đóng Phase 05 |
 
 ## 10. Definition Of Ready
 
