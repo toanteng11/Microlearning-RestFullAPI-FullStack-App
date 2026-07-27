@@ -4,12 +4,16 @@ import { AppError } from '../../shared/errors/app-error.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { ClassroomRepository } from '../classrooms/classroom.repository.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
-import { orderedVisibleCourseLessons } from '../learning-content/visible-content.policy.js';
 import type { CourseRepository } from '../courses/course.repository.js';
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
+import type { DeadlineExceptionRepository } from '../deadline-exceptions/deadline-exception.repository.js';
+import { resolveEffectiveDeadline } from '../deadline-exceptions/effective-deadline.resolver.js';
 import type { LessonRepository } from '../lessons/lesson.repository.js';
-import type { CourseModuleRepository } from '../modules/module.repository.js';
 import type { UserRepository } from '../users/user.repository.js';
+import {
+  LEARNING_ACTIVITY_DESCRIPTOR_VERSION,
+  type LearningActivityReader,
+} from '../learning-content/learning-activity.reader.js';
 import {
   deriveLearningStatus,
   isCompletedDerived,
@@ -72,6 +76,8 @@ interface StudentMetric {
   studentCode: string | null;
   requiredLessons: number;
   completedLessons: number;
+  requiredActivities: number;
+  completedActivities: number;
   progressPercentage: number;
   progressStatus: DerivedLearningStatus;
   lastActiveAt: string | null;
@@ -84,11 +90,16 @@ interface DashboardSnapshot {
     totalLessons: number;
     publishedLessons: number;
     requiredLessons: number;
+    totalActivities: number;
+    publishedActivities: number;
+    requiredActivities: number;
     activeStudents: number;
     averageProgressPercentage: number;
   };
   activities: Array<{
     id: string;
+    activityId: string;
+    activityType: 'LESSON' | 'QUIZ' | 'ASSIGNMENT';
     title: string;
     moduleId: string | null;
     isRequired: boolean;
@@ -107,10 +118,11 @@ export class TeacherCourseDashboardService {
     private readonly enrollments: EnrollmentRepository,
     private readonly users: UserRepository,
     private readonly courses: CourseRepository,
-    private readonly modules: CourseModuleRepository,
     private readonly lessons: LessonRepository,
     private readonly progress: LearningProgressRepository,
     private readonly courseScopes: CourseScopeReader,
+    private readonly activityReader: LearningActivityReader,
+    private readonly deadlineExceptions: DeadlineExceptionRepository,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -119,12 +131,12 @@ export class TeacherCourseDashboardService {
     const asOf = this.now();
     const scope = await this.courseScopes.requireTeacherManage(actor.id, courseId);
     const id = objectId(courseId, 'Course');
-    const [course, classroom, modules, allLessons, enrollments] = await Promise.all([
+    const [course, classroom, allLessons, enrollments, activityMap] = await Promise.all([
       this.courses.findById(id),
       this.classrooms.findById(objectId(scope.classroomId, 'Classroom')),
-      this.modules.listByCourse(id),
       this.lessons.listByCourse(id),
       this.enrollments.listActiveByClassroom(objectId(scope.classroomId, 'Classroom')),
+      this.activityReader.listByCourseIds([courseId], asOf),
     ]);
     if (!course || !classroom) {
       throw new AppError(404, 'RESOURCE_NOT_FOUND', 'Course was not found');
@@ -132,9 +144,13 @@ export class TeacherCourseDashboardService {
     const enrollmentStudentIds = enrollments.map((item) => item.studentId);
     const students = await this.users.listActiveStudentSummaries(enrollmentStudentIds);
     const studentIds = students.map((item) => item._id);
-    const progress = await this.progress.listByCourseAndStudentIds(id, studentIds);
-    const visibleLessons = orderedVisibleCourseLessons(modules, allLessons, asOf);
-    const requiredLessons = visibleLessons.filter((item) => item.isRequired);
+    const [progress, deadlineExceptions] = await Promise.all([
+      this.progress.listByCourseAndStudentIds(id, studentIds),
+      this.deadlineExceptions.listActiveByCourse(id),
+    ]);
+    const visibleActivities = activityMap.get(courseId) ?? [];
+    const requiredActivities = visibleActivities.filter((item) => item.isRequired);
+    const requiredLessons = requiredActivities.filter((item) => item.activityType === 'LESSON');
     const progressByStudent = new Map<string, LearningProgressProjection[]>();
     for (const item of progress) {
       const key = item.studentId.toString();
@@ -144,16 +160,29 @@ export class TeacherCourseDashboardService {
     const studentMetrics: StudentMetric[] = students.map((student) => {
       const studentProgress = progressByStudent.get(student._id.toString()) ?? [];
       const progressMap = new Map(
-        studentProgress.map((item) => [item.activityId.toString(), item]),
+        studentProgress.map((item) => [`${item.activityType}:${item.activityId.toString()}`, item]),
       );
-      const statuses = requiredLessons.map((lesson) =>
-        deriveLearningStatus(
-          progressMap.get(lesson._id.toString()),
-          lesson.completionDeadline,
-          asOf,
-        ),
+      const studentExceptionMap = new Map(
+        deadlineExceptions
+          .filter((item) => item.studentId.equals(student._id))
+          .map((item) => [`${item.activityType}:${item.activityId.toString()}`, item]),
       );
-      const completedLessons = statuses.filter(isCompletedDerived).length;
+      const activityStatuses = requiredActivities.map((activity) => {
+        const key = `${activity.activityType}:${activity.activityId}`;
+        const deadline = resolveEffectiveDeadline(
+          new Date(activity.completionDeadline),
+          studentExceptionMap.get(key),
+        );
+        return {
+          activity,
+          status: deriveLearningStatus(progressMap.get(key), deadline.effectiveDeadline, asOf),
+        };
+      });
+      const statuses = activityStatuses.map((item) => item.status);
+      const completedActivities = statuses.filter(isCompletedDerived).length;
+      const completedLessons = activityStatuses.filter(
+        (item) => item.activity.activityType === 'LESSON' && isCompletedDerived(item.status),
+      ).length;
       const lastActiveAt = latestActivity(studentProgress);
       return {
         id: student._id.toString(),
@@ -162,29 +191,44 @@ export class TeacherCourseDashboardService {
         studentCode: student.studentCode ?? null,
         requiredLessons: requiredLessons.length,
         completedLessons,
-        progressPercentage: progressPercentage(completedLessons, requiredLessons.length),
+        requiredActivities: requiredActivities.length,
+        completedActivities,
+        progressPercentage: progressPercentage(completedActivities, requiredActivities.length),
         progressStatus: overallStatus(statuses, studentProgress.length > 0),
         lastActiveAt: lastActiveAt?.toISOString() ?? null,
       };
     });
 
-    const activityRows = visibleLessons.map((lesson) => {
+    const activityRows = visibleActivities.map((activity) => {
       const completedStudents = students.filter((student) => {
         const studentProgress = progressByStudent.get(student._id.toString()) ?? [];
-        const current = studentProgress.find((item) => item.activityId.equals(lesson._id));
-        return isCompletedDerived(deriveLearningStatus(current, lesson.completionDeadline, asOf));
+        const current = studentProgress.find(
+          (item) =>
+            item.activityType === activity.activityType &&
+            item.activityId.toString() === activity.activityId,
+        );
+        const exception = deadlineExceptions.find(
+          (item) =>
+            item.studentId.equals(student._id) &&
+            item.activityType === activity.activityType &&
+            item.activityId.toString() === activity.activityId,
+        );
+        const deadline = resolveEffectiveDeadline(new Date(activity.completionDeadline), exception);
+        return isCompletedDerived(deriveLearningStatus(current, deadline.effectiveDeadline, asOf));
       }).length;
       return {
-        id: lesson._id.toString(),
-        title: lesson.title,
-        moduleId: lesson.moduleId?.toString() ?? null,
-        isRequired: lesson.isRequired,
-        completionDeadline: lesson.completionDeadline?.toISOString() ?? null,
-        deadlineStatus: lesson.completionDeadline
-          ? lesson.completionDeadline <= asOf
+        id: activity.activityId,
+        activityId: activity.activityId,
+        activityType: activity.activityType,
+        title: activity.title,
+        moduleId: activity.moduleId,
+        isRequired: activity.isRequired,
+        completionDeadline: activity.completionDeadline,
+        actionUrl: activity.actionUrl,
+        deadlineStatus:
+          new Date(activity.completionDeadline) <= asOf
             ? ('OVERDUE' as const)
-            : ('UPCOMING' as const)
-          : ('NO_DEADLINE' as const),
+            : ('UPCOMING' as const),
         completedStudents,
         activeStudents: students.length,
         completionPercentage: progressPercentage(completedStudents, students.length),
@@ -209,8 +253,11 @@ export class TeacherCourseDashboardService {
       },
       summary: {
         totalLessons: allLessons.length,
-        publishedLessons: visibleLessons.length,
+        publishedLessons: visibleActivities.filter((item) => item.activityType === 'LESSON').length,
         requiredLessons: requiredLessons.length,
+        totalActivities: visibleActivities.length,
+        publishedActivities: visibleActivities.length,
+        requiredActivities: requiredActivities.length,
         activeStudents: students.length,
         averageProgressPercentage,
       },
@@ -223,6 +270,7 @@ export class TeacherCourseDashboardService {
     const snapshot = await this.snapshot(actor, courseId);
     return {
       metricVersion: LEARNING_PROGRESS_METRIC_VERSION,
+      descriptorVersion: LEARNING_ACTIVITY_DESCRIPTOR_VERSION,
       asOf: snapshot.asOf.toISOString(),
       course: snapshot.course,
       summary: snapshot.summary,
@@ -244,6 +292,7 @@ export class TeacherCourseDashboardService {
       data: {
         items: filtered.slice(start, start + query.limit),
         metricVersion: LEARNING_PROGRESS_METRIC_VERSION,
+        descriptorVersion: LEARNING_ACTIVITY_DESCRIPTOR_VERSION,
         asOf: snapshot.asOf.toISOString(),
       },
       meta: paginationMeta(query.page, query.limit, filtered.length),
@@ -263,6 +312,7 @@ export class TeacherCourseDashboardService {
           )
           .slice(start, start + query.limit),
         metricVersion: LEARNING_PROGRESS_METRIC_VERSION,
+        descriptorVersion: LEARNING_ACTIVITY_DESCRIPTOR_VERSION,
         asOf: snapshot.asOf.toISOString(),
       },
       meta: paginationMeta(query.page, query.limit, filtered.length),
@@ -280,6 +330,7 @@ export class TeacherCourseDashboardService {
           ...item,
         })),
         metricVersion: LEARNING_PROGRESS_METRIC_VERSION,
+        descriptorVersion: LEARNING_ACTIVITY_DESCRIPTOR_VERSION,
         asOf: snapshot.asOf.toISOString(),
       },
       meta: paginationMeta(query.page, query.limit, filtered.length),
@@ -307,7 +358,7 @@ export class TeacherCourseDashboardService {
         ? Date.parse(right.lastActiveAt)
         : Number.NEGATIVE_INFINITY;
       return (
-        right.completedLessons - left.completedLessons ||
+        right.completedActivities - left.completedActivities ||
         right.progressPercentage - left.progressPercentage ||
         rightActive - leftActive ||
         left.id.localeCompare(right.id)

@@ -29,6 +29,9 @@ export default defineConfig({
         'src/vite-env.d.ts',
         'src/test/**',
         'src/features/classrooms/classroom-route-components.tsx',
+        // Route pages are verified through the integrated browser gate.
+        'src/features/assessments/assessment-route-components.tsx',
+        'src/features/assessments/pages/**',
         'src/features/learning/learning-route-components.tsx',
         'src/features/learning/pages/**',
       ],

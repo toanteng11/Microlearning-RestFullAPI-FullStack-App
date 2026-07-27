@@ -1,10 +1,21 @@
-import { ArrowLeft, BookOpen, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpen,
+  CalendarPlus,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useAuth } from '../../../shared/auth/auth-context';
 import { displayLearningDate, requestErrorMessage } from '../learning-format';
-import type { DerivedLearningStatus, StudentLessonSummary } from '../learning.types';
+import type {
+  ClassworkActivity,
+  ClassworkCourse,
+  StudentClassworkEnvelope,
+} from '../learning.types';
 import { ProgressStatusBadge } from '../components/LearningStatusBadge';
 import { ProgressBar } from '../components/ProgressBar';
 
@@ -15,17 +26,48 @@ interface CourseData {
   description: string;
 }
 
-interface ModuleData {
-  id: string;
-  title: string;
-  description: string;
+interface ProgressData {
+  metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1';
+  descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2';
+  summary: {
+    requiredActivities: number;
+    completedActivities: number;
+    requiredLessons: number;
+    completedLessons: number;
+    progressPercentage: number | null;
+  };
 }
 
-interface ProgressItem {
-  lessonId: string;
-  title: string;
-  completionDeadline: string | null;
-  derivedStatus: DerivedLearningStatus;
+function ActivityIcon({ type }: { type: ClassworkActivity['activityType'] }) {
+  if (type === 'QUIZ') return <ClipboardList size={18} aria-hidden="true" />;
+  if (type === 'ASSIGNMENT') return <FileText size={18} aria-hidden="true" />;
+  return <BookOpen size={18} aria-hidden="true" />;
+}
+
+function ActivityRow({ activity }: { activity: ClassworkActivity }) {
+  return (
+    <li className="classwork-lesson-row">
+      <ActivityIcon type={activity.activityType} />
+      <div>
+        <Link to={activity.actionUrl}>{activity.title}</Link>
+        <small>
+          {activity.activityType === 'LESSON'
+            ? 'Bài học'
+            : activity.activityType === 'QUIZ'
+              ? 'Bài kiểm tra'
+              : 'Bài tập'}{' '}
+          · Hạn {displayLearningDate(activity.effectiveDeadline)}
+          {activity.hasDeadlineException ? (
+            <>
+              {' '}
+              · <CalendarPlus size={14} /> Đã gia hạn
+            </>
+          ) : null}
+        </small>
+      </div>
+      <ProgressStatusBadge status={activity.progress.derivedStatus} />
+    </li>
+  );
 }
 
 export function StudentCoursePage() {
@@ -33,43 +75,33 @@ export function StudentCoursePage() {
   const { request } = useAuth();
   const [data, setData] = useState<{
     course: CourseData;
-    modules: ModuleData[];
-    lessons: StudentLessonSummary[];
-    progress: {
-      summary: { requiredLessons: number; completedLessons: number; progressPercentage: number };
-      items: ProgressItem[];
-    };
+    classwork: ClassworkCourse;
+    progress: ProgressData;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    void Promise.all([
-      request<{ success: true; data: { course: CourseData } }>(`/courses/${courseId}`),
-      request<{ success: true; data: { items: ModuleData[] } }>(`/courses/${courseId}/modules`),
-      request<{ success: true; data: { items: StudentLessonSummary[] } }>(
-        `/courses/${courseId}/lessons`,
-      ),
-      request<{
-        success: true;
-        data: {
-          summary: {
-            requiredLessons: number;
-            completedLessons: number;
-            progressPercentage: number;
-          };
-          items: ProgressItem[];
-        };
-      }>(`/students/me/progress?courseId=${courseId}`),
-    ])
-      .then(([course, modules, lessons, progress]) => {
-        if (active)
+    void request<{ success: true; data: { course: CourseData } }>(`/courses/${courseId}`)
+      .then(async (courseResponse) => {
+        const [classworkResponse, progressResponse] = await Promise.all([
+          request<StudentClassworkEnvelope>(
+            `/classrooms/${courseResponse.data.course.classroomId}/classwork`,
+          ),
+          request<{ success: true; data: ProgressData }>(
+            `/students/me/progress?courseId=${courseId}`,
+          ),
+        ]);
+        const classwork = classworkResponse.data.courses.find((item) => item.id === courseId);
+        if (!classwork) throw new Error('Course is not visible in classwork');
+        if (active) {
           setData({
-            course: course.data.course,
-            modules: modules.data.items,
-            lessons: lessons.data.items,
-            progress: progress.data,
+            course: courseResponse.data.course,
+            classwork,
+            progress: progressResponse.data,
           });
+          setError(null);
+        }
       })
       .catch((requestError) => {
         if (active) setError(requestErrorMessage(requestError, 'Không thể tải khóa học.'));
@@ -86,8 +118,12 @@ export function StudentCoursePage() {
         <div className="spinner" />
       </div>
     );
-  const progressMap = new Map(data.progress.items.map((item) => [item.lessonId, item]));
-  const rootLessons = data.lessons.filter((lesson) => lesson.moduleId === null);
+
+  const allActivities = [
+    ...data.classwork.activities,
+    ...data.classwork.modules.flatMap((module) => module.activities),
+  ];
+  const percentage = data.progress.summary.progressPercentage ?? 0;
 
   return (
     <section className="page-section">
@@ -104,67 +140,57 @@ export function StudentCoursePage() {
           <p>{data.course.description || 'Chưa có mô tả.'}</p>
         </div>
         <div className="course-progress-summary">
-          <ProgressBar value={data.progress.summary.progressPercentage} label="Tiến độ khóa học" />
+          <ProgressBar value={percentage} label="Tiến độ khóa học" />
           <small>
-            {data.progress.summary.completedLessons}/{data.progress.summary.requiredLessons} bài bắt
-            buộc
+            {data.progress.summary.completedActivities}/{data.progress.summary.requiredActivities}{' '}
+            hoạt động bắt buộc
           </small>
         </div>
       </header>
-      {data.lessons.length === 0 ? (
+      {allActivities.length === 0 ? (
         <div className="list-state">
           <BookOpen size={30} />
-          <strong>Chưa có bài học</strong>
+          <strong>Chưa có hoạt động học tập</strong>
         </div>
       ) : (
         <div className="classwork-list">
-          {rootLessons.length > 0 ? (
+          {data.classwork.activities.length > 0 ? (
             <section className="classwork-module">
-              <h2>Bài học chung</h2>
+              <h2>Hoạt động chung</h2>
               <ul className="classwork-lessons">
-                {rootLessons.map((lesson) => {
-                  const progress = progressMap.get(lesson.id);
-                  return (
-                    <li className="classwork-lesson-row" key={lesson.id}>
-                      <div>
-                        <Link to={`/student/lessons/${lesson.id}`}>{lesson.title}</Link>
-                        <small>Hạn {displayLearningDate(lesson.completionDeadline)}</small>
-                      </div>
-                      {progress ? <ProgressStatusBadge status={progress.derivedStatus} /> : null}
-                    </li>
-                  );
-                })}
+                {data.classwork.activities.map((activity) => (
+                  <ActivityRow
+                    key={`${activity.activityType}-${activity.id}`}
+                    activity={activity}
+                  />
+                ))}
               </ul>
             </section>
           ) : null}
-          {data.modules.map((module) => (
+          {data.classwork.modules.map((module) => (
             <section className="classwork-module" id={`module-${module.id}`} key={module.id}>
               <h2>{module.title}</h2>
               {module.description ? <p>{module.description}</p> : null}
-              <ul className="classwork-lessons">
-                {data.lessons
-                  .filter((lesson) => lesson.moduleId === module.id)
-                  .map((lesson) => {
-                    const progress = progressMap.get(lesson.id);
-                    return (
-                      <li className="classwork-lesson-row" key={lesson.id}>
-                        <div>
-                          <Link to={`/student/lessons/${lesson.id}`}>{lesson.title}</Link>
-                          <small>Hạn {displayLearningDate(lesson.completionDeadline)}</small>
-                        </div>
-                        {progress ? <ProgressStatusBadge status={progress.derivedStatus} /> : null}
-                      </li>
-                    );
-                  })}
-              </ul>
+              {module.activities.length === 0 ? (
+                <p className="field-help">Chưa có hoạt động được xuất bản.</p>
+              ) : (
+                <ul className="classwork-lessons">
+                  {module.activities.map((activity) => (
+                    <ActivityRow
+                      key={`${activity.activityType}-${activity.id}`}
+                      activity={activity}
+                    />
+                  ))}
+                </ul>
+              )}
             </section>
           ))}
         </div>
       )}
-      {data.progress.summary.completedLessons === data.progress.summary.requiredLessons &&
-      data.progress.summary.requiredLessons > 0 ? (
+      {data.progress.summary.completedActivities === data.progress.summary.requiredActivities &&
+      data.progress.summary.requiredActivities > 0 ? (
         <div className="notice notice--success">
-          <CheckCircle2 size={17} /> Bạn đã hoàn thành toàn bộ bài học bắt buộc.
+          <CheckCircle2 size={17} /> Bạn đã hoàn thành toàn bộ hoạt động bắt buộc.
         </div>
       ) : null}
     </section>

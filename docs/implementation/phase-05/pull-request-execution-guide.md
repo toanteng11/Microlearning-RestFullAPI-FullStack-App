@@ -28,14 +28,29 @@ Expected: working tree sạch trước khi tạo branch.
 P05-PR01 Planning baseline
   -> P05-PR02 Foundation/data contracts
      -> P05-PR03 Quiz/Question authoring
-        -> P05-PR04 Attempt/scoring/review
+        -> P05-PR04 Attempt/scoring/result state
      -> P05-PR05 Assignment/Submission
-        -> P05-PR06 Grade/Deadline exception
+        -> P05-PR06 Grade/review/Deadline exception
            -> P05-PR07 Mixed learning/Web integration
               -> P05-PR08 Hardening/evidence/exit
 ```
 
 PR05 có thể bắt đầu sau PR02 trong team nhiều người, nhưng dự án cá nhân nên đi tuần tự PR03 -> PR04 -> PR05 để giảm merge conflict ở router/OpenAPI/Web shell.
+
+### 3.1 Coding Parts At A Glance
+
+| Part | Pull Request / Branch | WBS ownership duy nhất | Kết quả có thể kiểm chứng | Dependency |
+| --- | --- | --- | --- | --- |
+| 0 | P05-PR01 `docs/phase-05-planning-baseline` | `T001..008` | Baseline merge, Gate A `READY_TO_CODE` | P04 complete |
+| 1 | P05-PR02 `feature/phase-05-foundation` | `T009..020` | Permission/config/ports/models/repositories/indexes compile và integration pass | PR01 |
+| 2 | P05-PR03 `feature/phase-05-quiz-authoring` | `T021..035`, `T083` | Teacher tạo Question/Quiz và publish end-to-end | PR02 |
+| 3 | P05-PR04 `feature/phase-05-quiz-attempts` | `T036..052`, `T084` | Student làm objective Quiz; mixed Quiz dừng đúng ở `NEEDS_REVIEW` | PR03 |
+| 4 | P05-PR05 `feature/phase-05-assignments` | `T053..067`, `T085`, `T086` | Assignment/Submission end-to-end, chưa chấm điểm | PR04 trong dự án cá nhân |
+| 5 | P05-PR06 `feature/phase-05-grading-deadlines` | `T068..080`, `T087`, `T088`, `T090` | Teacher review/chấm/trả/chấm lại và deadline exception end-to-end | PR04 + PR05 |
+| 6 | P05-PR07 `feature/phase-05-learning-integration` | `T081`, `T082`, `T091`, `T093`; `T089/T092` N/A | Classwork/To-do/Progress mixed activities và navigation hoàn chỉnh | PR03..06 |
+| 7 | P05-PR08 `release/phase-05-quality-exit` | `T094..108` | Security/OpenAPI/E2E/performance/evidence và Phase Exit | PR07 |
+
+Không gán một WBS task cho hai PR. Mỗi Part chỉ bắt đầu từ `main` sau khi dependency đã merge và post-merge CI xanh.
 
 ## 4. P05-PR01 - Planning Baseline
 
@@ -133,35 +148,36 @@ Không đánh P05-PR01 Done chỉ vì tài liệu local đầy đủ; cần PR U
 
 Teacher tạo Quiz, thêm đủ loại Question, reorder, xem validation/preview và publish qua Web/Swagger; không có scoring key trong Student-safe payload.
 
-## 7. P05-PR04 - Quiz Attempt, Scoring And Review
+## 7. P05-PR04 - Quiz Attempt, Scoring And Result State
 
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Branch | `feature/phase-05-quiz-attempts` |
-| WBS | `P05-T036..052`, quiz part `P05-T068..073`, frontend `P05-T084/087` |
+| WBS | `P05-T036..052`, frontend `P05-T084` |
 | Depends | P05-PR03 merged |
+| Local implementation | `IMPLEMENTED_LOCALLY` trên working branch tổng hợp; chưa có PR/remote CI evidence |
 
 ### Included
 
 - Immutable attempt snapshot, active guard và attempt number transaction.
 - Student intro/start/resume/save/submit/history/result.
 - Exact objective scoring, timeout reconciliation, short-answer review.
-- Teacher result list/detail/review/finalize/release/regrade.
-- Quiz Player, Student Result, Teacher Results/Review UI.
+- Objective result release và mixed Quiz `NEEDS_REVIEW` pending state; chưa thực hiện Teacher review/Grade workflow.
+- Student Quiz Player và own Result UI.
 - Quiz completion update để later read-model integration consume.
 
 ### Required tests
 
 - Golden scoring policy tests.
-- `P05-IT-017..034` và Quiz-related `P05-IT-045..052`.
+- `P05-IT-017..034`.
 - Concurrent double-start/save/submit.
-- `P05-WEB-005..011`.
-- `P05-E2E-02..04`, Quiz branch of `P05-E2E-08/10`.
-- OpenAPI/runtime parity for 13 attempt/result operations.
+- `P05-WEB-005..008`.
+- `P05-E2E-02/04`, Quiz authorization branch của `P05-E2E-10`.
+- OpenAPI/runtime parity cho `7` Student Attempt/Result operations; Teacher review/Grade operations thuộc P05-PR06.
 
 ### Exit demo
 
-Student làm objective/mixed Quiz end-to-end; Teacher manual review/release/regrade; Student chỉ thấy own released result.
+Student làm objective Quiz end-to-end và thấy immediate own result. Mixed Quiz submit thành công nhưng giữ `NEEDS_REVIEW/resultPending=true`; không fake final score trước PR06.
 
 ## 8. P05-PR05 - Assignment And Submission
 
@@ -170,6 +186,7 @@ Student làm objective/mixed Quiz end-to-end; Teacher manual review/release/regr
 | Branch | `feature/phase-05-assignments` |
 | WBS | `P05-T053..067`, frontend `P05-T085/086` |
 | Depends | P05-PR02 merged; dự án cá nhân sau PR04 |
+| Local implementation | `IMPLEMENTED_LOCALLY` trên working branch tổng hợp; chưa có PR/remote CI evidence |
 
 ### Included
 
@@ -197,12 +214,13 @@ Teacher publish Assignment; Student save/turn in/unsubmit/resubmit theo policy; 
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Branch | `feature/phase-05-grading-deadlines` |
-| WBS | `P05-T068..080`, frontend `P05-T087..090` |
+| WBS | `P05-T068..080`, frontend `P05-T087`, `P05-T088`, `P05-T090`; `P05-T089` approved N/A |
 | Depends | P05-PR04 và P05-PR05 merged |
 
 ### Included
 
 - Generic Grade target adapters cho Quiz Attempt/Assignment Submission.
+- Teacher Quiz short-answer review/finalize và result release.
 - Grade draft/return/regrade/history và Student own returned Grade.
 - Transactional visibility boundary.
 - Generic deadline exception Lesson/Quiz/Assignment, resolver/set/revoke/history.
@@ -214,8 +232,8 @@ Teacher publish Assignment; Student save/turn in/unsubmit/resubmit theo policy; 
 - `P05-IT-045..060`.
 - Injected return transaction failure/rollback.
 - Student A/B scoped deadline effect.
-- `P05-WEB-016..020` relevant cases.
-- `P05-E2E-08..10`.
+- `P05-WEB-009..011` và `P05-WEB-016..020` relevant cases.
+- `P05-E2E-03`, `P05-E2E-08..10`.
 - OpenAPI parity cho 11 Grade/Deadline operations, cộng Conditional Gradebook nếu bật.
 
 ### Exit demo
@@ -227,7 +245,7 @@ Teacher chấm/trả/chấm lại; Student thấy đúng own returned Grade; Tea
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Branch | `feature/phase-05-learning-integration` |
-| WBS | `P05-T081..093` còn lại |
+| WBS | `P05-T081`, `P05-T082`, `P05-T091`, `P05-T093`; `P05-T089/T092` đã approved N/A |
 | Depends | P05-PR03..06 merged |
 
 ### Included

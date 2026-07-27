@@ -1,10 +1,12 @@
-export const LEARNING_PROGRESS_METRIC_VERSION = 'P04_LESSON_COMPLETION_V1' as const;
+import type { ActivityKey, LearningActivityType } from './learning-activity.reader.js';
+
+export const LEARNING_PROGRESS_METRIC_VERSION = 'P05_REQUIRED_ACTIVITY_COMPLETION_V1' as const;
 
 export type LearningProgressStatus = 'IN_PROGRESS' | 'COMPLETED';
 
 export interface LearningProgressSnapshot {
   studentId: string;
-  activityType: 'LESSON';
+  activityType: LearningActivityType;
   activityId: string;
   status: LearningProgressStatus;
   startedAt: string;
@@ -16,7 +18,9 @@ export interface LearningProgressReader {
   readonly metricVersion: typeof LEARNING_PROGRESS_METRIC_VERSION;
   listStudentProgress(
     studentId: string,
-    activityIds: readonly string[],
+    activities: readonly ActivityKey[],
   ): Promise<ReadonlyMap<string, LearningProgressSnapshot>>;
-  countCompletedByActivityIds(activityIds: readonly string[]): Promise<ReadonlyMap<string, number>>;
+  countCompletedByActivities(
+    activities: readonly ActivityKey[],
+  ): Promise<ReadonlyMap<string, number>>;
 }

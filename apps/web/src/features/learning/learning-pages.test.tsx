@@ -65,10 +65,15 @@ const learningResponse: TodoEnvelope = {
     items: [
       {
         id: '507f1f77bcf86cd799439041',
+        activityId: '507f1f77bcf86cd799439041',
+        activityType: 'LESSON',
         title: 'HTTP status codes',
         classroom: { id: classroomId, name: 'Backend Classroom' },
         course: { id: '507f1f77bcf86cd799439022', title: 'REST API Course' },
         completionDeadline: '2026-08-15T09:00:00.000Z',
+        defaultDeadline: '2026-08-15T09:00:00.000Z',
+        effectiveDeadline: '2026-08-15T09:00:00.000Z',
+        hasDeadlineException: false,
         progress: {
           status: null,
           startedAt: null,
@@ -79,6 +84,7 @@ const learningResponse: TodoEnvelope = {
         actionUrl: '/student/lessons/507f1f77bcf86cd799439041',
       },
     ],
+    scopeVersion: 'P05_MIXED_ACTIVITY_TODO_V2',
     asOf: '2026-07-20T09:00:00.000Z',
   },
   meta: {

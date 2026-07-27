@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
+  Award,
   CalendarClock,
   ListTodo,
   LogOut,
@@ -55,6 +56,9 @@ export function AppShell() {
               </NavLink>
               <NavLink to="/student/deadlines">
                 <CalendarClock size={17} /> Deadline
+              </NavLink>
+              <NavLink to="/student/grades">
+                <Award size={17} /> Điểm
               </NavLink>
             </>
           ) : null}

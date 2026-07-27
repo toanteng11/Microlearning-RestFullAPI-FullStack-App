@@ -48,6 +48,22 @@ export const testConfig: AppConfig = {
     learningResourcesEnabled: false,
     gcsUploadsEnabled: false,
   },
+  assessmentFeatures: {
+    questionImageUrlEnabled: false,
+    questionVideoUrlEnabled: false,
+    questionMediaAllowedHosts: [],
+    assignmentLinkSubmissionEnabled: false,
+    assignmentMarkDoneEnabled: false,
+    basicGradebookEnabled: false,
+    assessmentFileUploadEnabled: false,
+  },
+  assessmentRateLimits: {
+    mutationWindowSeconds: 60,
+    mutationIdentityMax: 120,
+    attemptStartIpMax: 300,
+    attemptStartIdentityMax: 20,
+    answerSaveIdentityMax: 180,
+  },
   rateLimits: {
     windowSeconds: 900,
     registerMax: 10,

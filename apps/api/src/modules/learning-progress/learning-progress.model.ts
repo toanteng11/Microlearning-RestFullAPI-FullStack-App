@@ -1,10 +1,12 @@
 import mongoose, { Schema, model, type Model, type Types } from 'mongoose';
 
 import { CONTENT_SCHEMA_VERSION } from '../learning-content/content.types.js';
+import {
+  LEARNING_ACTIVITY_TYPES,
+  type LearningActivityType,
+} from '../learning-content/learning-activity.reader.js';
 import type { LearningProgressStatus } from '../learning-content/learning-progress.reader.js';
 
-export const LEARNING_ACTIVITY_TYPES = ['LESSON'] as const;
-export type LearningActivityType = (typeof LEARNING_ACTIVITY_TYPES)[number];
 export const LEARNING_PROGRESS_STATUSES = ['IN_PROGRESS', 'COMPLETED'] as const;
 
 export interface LearningProgressRecord {

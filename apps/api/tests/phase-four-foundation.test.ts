@@ -113,11 +113,11 @@ describe('Phase 04 permissions and handoff contracts', () => {
     const progressReader: LearningProgressReader = {
       metricVersion: LEARNING_PROGRESS_METRIC_VERSION,
       listStudentProgress: async () => new Map(),
-      countCompletedByActivityIds: async () => new Map(),
+      countCompletedByActivities: async () => new Map(),
     };
 
-    expect(activityReader.descriptorVersion).toBe('P04_ACTIVITY_DESCRIPTOR_V1');
-    expect(progressReader.metricVersion).toBe('P04_LESSON_COMPLETION_V1');
+    expect(activityReader.descriptorVersion).toBe('P05_ACTIVITY_DESCRIPTOR_V2');
+    expect(progressReader.metricVersion).toBe('P05_REQUIRED_ACTIVITY_COMPLETION_V1');
     await expect(activityReader.listByCourseIds([], new Date(0))).resolves.toEqual(new Map());
     await expect(progressReader.listStudentProgress('student', [])).resolves.toEqual(new Map());
   });

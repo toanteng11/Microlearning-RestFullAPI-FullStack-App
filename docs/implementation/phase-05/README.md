@@ -13,15 +13,15 @@ Phase này đồng thời mở rộng Activity contract, Student To-do, Deadline
 | Phase ID | `P05` |
 | Tên | `Assessments And Grading` |
 | Dependency | Phase 04 đã hoàn thành và merge vào `main` tại `4860e45` |
-| Planning branch | `docs/phase-05-planning-baseline` |
+| Planning branch | `docs/phase-05-planning-baseline`, merged by PR [#13](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/13) |
 | Planning status | `READY_TO_CODE` |
 | Gate A | `APPROVED` - Product Owner đã chấp thuận baseline ngày `2026-07-22` |
-| Implementation status | `NOT_STARTED` |
-| Implementation branch đầu tiên | `feature/phase-05-foundation`; các branch sau theo `pull-request-execution-guide.md` |
+| Implementation status | `LOCAL_IMPLEMENTATION_COMPLETE` - Part 1-Part 7 và toàn bộ local quality evidence đã hoàn thành; commit, Pull Request, clean clone và remote CI còn pending |
+| Implementation branch hiện tại | `feature/phase-05-foundation`; source đang ở working tree local, chưa có implementation commit/merge evidence |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect |
 | Phase tiếp theo | `P06 - Reporting And Analytics` |
 
-`READY_TO_CODE` xác nhận scope, contract, decision, test catalog và thứ tự triển khai đã được chấp thuận. Trạng thái này không có nghĩa runtime đã được triển khai; Developer vẫn phải đưa planning baseline qua protected Pull Request và đồng bộ `main` trước khi tạo implementation branch đầu tiên.
+Planning baseline đã merge vào `main` tại `24084c0`. Runtime Part 1-Part 7 hiện có code và local evidence thật cho Quiz/Question authoring, Quiz Attempt/scoring/result state, Assignment/Submission, Grade/Regrade, deadline exception, mixed activity progress/To-do, React UI, Swagger, security, Docker và E2E. Phase 05 chưa được coi là hoàn thành cho tới khi source được commit, clean-clone tái lập thành công, implementation Pull Request được review, required CI xanh và merge qua protected branch.
 
 ## 3. Business Outcome
 

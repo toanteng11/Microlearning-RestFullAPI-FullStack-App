@@ -47,12 +47,13 @@ Tài liệu quản lý rủi ro nghiệp vụ, kỹ thuật, bảo mật và v�
 
 | ID | Vấn đề | Severity | Trạng thái | Hành động đóng |
 | --- | --- | --- | --- | --- |
-| P05-I01 | Planning baseline chưa được commit/push/merge qua protected Pull Request | Medium | Open | Mở planning PR, chờ required CI xanh và merge trước implementation branch |
+| P05-I01 | Planning baseline chưa được commit/push/merge qua protected Pull Request | Medium | Closed `2026-07-22` | PR #13 đã merge vào `main` tại `24084c0` |
 | P05-I02 | Các quyết định trong `technical-decisions.md` còn trạng thái `Proposed` | Medium | Closed `2026-07-22` | Tất cả Must decision đã chuyển `Accepted` |
 | P05-I03 | Conditional media/link/comment/basic Gradebook chưa có quyết định bật/defer cuối cùng | Low | Closed `2026-07-22` | Product Owner chấp thuận `Disabled` hoặc `Deferred/N/A` theo baseline |
-| P05-I04 | Chưa có runtime code/test/evidence của Phase 05 | Expected | Not started | Thực hiện theo WBS và PR strategy sau khi planning baseline merge |
+| P05-I04 | Chưa có runtime code/test/evidence của Phase 05 | Expected | Closed locally `2026-07-27` | Part 1-Part 7 và local unit/integration/OpenAPI/Docker/E2E evidence đã hoàn thành; remote verification theo Gate E còn pending |
+| P05-I05 | React Router có High advisory cho RSC/Server Action request handling trong dependency graph | Low runtime risk | Accepted until `2026-08-31` | Ứng dụng là Vite SPA, không dùng RSC/Server Actions; `audit:production` chỉ allow exact advisory/source/dependent package, có owner DevOps/Security và tự fail khi hết hạn hoặc xuất hiện advisory khác |
 
-Không issue nào ở trên chứng minh implementation bị lỗi vì implementation chưa bắt đầu. `P05-I01` là repository publication action còn lại; `P05-I04` là trạng thái dự kiến của phase vừa được cấp quyền code.
+Không có Critical/High runtime issue mở trong local review. Các việc còn lại là closure evidence: source commit, clean clone, formal AC, Pull Request/remote CI và approval. `P05-I05` là accepted risk có phạm vi và ngày hết hạn, không phải miễn audit vô thời hạn.
 
 ## 5. Escalation Rules
 

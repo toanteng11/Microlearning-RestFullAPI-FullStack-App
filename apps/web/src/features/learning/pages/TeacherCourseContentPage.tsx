@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowUp,
   BookOpen,
+  ClipboardList,
   Pencil,
   Plus,
   Save,
@@ -244,9 +245,17 @@ export function TeacherCourseContentPage() {
           <p className="eyebrow">Content manager</p>
           <h1>{course.title}</h1>
         </div>
-        <Link className="button-link" to={`/teacher/courses/${courseId}/lessons/new`}>
-          <Plus size={17} /> Tạo bài học
-        </Link>
+        <div className="inline-actions">
+          <Link
+            className="button-link button-link--secondary"
+            to={`/teacher/courses/${courseId}/assessments`}
+          >
+            <ClipboardList size={17} /> Bài kiểm tra
+          </Link>
+          <Link className="button-link" to={`/teacher/courses/${courseId}/lessons/new`}>
+            <Plus size={17} /> Tạo bài học
+          </Link>
+        </div>
       </header>
       {notice ? <div className="notice notice--success">{notice}</div> : null}
       {error ? <div className="notice notice--error">{error}</div> : null}

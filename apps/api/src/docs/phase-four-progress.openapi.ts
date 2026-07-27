@@ -92,7 +92,10 @@ export const PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS = [
 ] as const;
 
 export const phaseFourProgressTags: OpenAPIV3.TagObject[] = [
-  { name: 'Learning Progress', description: 'Student Classwork, Lesson Player state and To-do' },
+  {
+    name: 'Learning Progress',
+    description: 'Student Classwork, mixed learning activity progress, deadlines and To-do',
+  },
   {
     name: 'Teacher Course Dashboard',
     description: 'Owned Course completion metrics and deterministic Student ranking',
@@ -100,6 +103,10 @@ export const phaseFourProgressTags: OpenAPIV3.TagObject[] = [
 ];
 
 export const phaseFourProgressSchemas: Record<string, Schema> = {
+  LearningActivityType: {
+    type: 'string',
+    enum: ['LESSON', 'QUIZ', 'ASSIGNMENT'],
+  },
   DerivedLearningStatus: {
     type: 'string',
     enum: ['NOT_STARTED', 'IN_PROGRESS', 'MISSING', 'COMPLETED', 'LATE'],
@@ -116,18 +123,30 @@ export const phaseFourProgressSchemas: Record<string, Schema> = {
       derivedStatus: { $ref: '#/components/schemas/DerivedLearningStatus' },
     },
   },
-  ProgressMetricVersion: { type: 'string', enum: ['P04_LESSON_COMPLETION_V1'] },
+  ProgressMetricVersion: {
+    type: 'string',
+    enum: ['P05_REQUIRED_ACTIVITY_COMPLETION_V1'],
+  },
+  LearningActivityDescriptorVersion: {
+    type: 'string',
+    enum: ['P05_ACTIVITY_DESCRIPTOR_V2'],
+  },
 };
 
 export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
   const todoExample = {
     id: '507f1f77bcf86cd799439044',
-    title: 'REST Resource Naming',
+    activityId: '507f1f77bcf86cd799439044',
+    activityType: 'ASSIGNMENT',
+    title: 'Thiết kế REST endpoint',
     classroom: { id: '507f1f77bcf86cd799439021', name: 'Backend 01' },
     course: { id: '507f1f77bcf86cd799439041', title: 'Backend Fundamentals' },
     completionDeadline: '2026-08-10T16:59:59.000Z',
+    defaultDeadline: '2026-08-09T16:59:59.000Z',
+    effectiveDeadline: '2026-08-10T16:59:59.000Z',
+    hasDeadlineException: true,
     progress: { ...progressExample, status: null, completedAt: null, derivedStatus: 'NOT_STARTED' },
-    actionUrl: '/student/lessons/507f1f77bcf86cd799439044',
+    actionUrl: '/student/assignments/507f1f77bcf86cd799439044',
   };
   const teacherParameters = [
     courseId,
@@ -141,7 +160,7 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
       get: {
         tags: ['Learning Progress'],
         operationId: 'getStudentClasswork',
-        summary: 'Get the published Classwork tree for an active enrollment',
+        summary: 'Get published Lesson, Quiz and Assignment Classwork for an active enrollment',
         security,
         parameters: [classroomId],
         responses: {
@@ -150,6 +169,7 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
             data: {
               classroom: { id: '507f1f77bcf86cd799439021', name: 'Backend 01' },
               courses: [],
+              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
               asOf: '2026-07-20T08:00:00.000Z',
             },
           }),
@@ -203,7 +223,7 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
       get: {
         tags: ['Learning Progress'],
         operationId: 'listStudentTodo',
-        summary: 'List required incomplete Lessons with deadlines',
+        summary: 'List required incomplete learning activities with effective deadlines',
         security,
         parameters: [
           page,
@@ -220,7 +240,8 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
             success: true,
             data: {
               items: [todoExample],
-              scopeVersion: 'P04_LESSON_TODO_V1',
+              scopeVersion: 'P05_MIXED_ACTIVITY_TODO_V2',
+              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
               asOf: '2026-07-20T08:00:00.000Z',
             },
             meta: { page: 1, limit: 20, totalItems: 1, totalPages: 1 },
@@ -233,7 +254,7 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
       get: {
         tags: ['Learning Progress'],
         operationId: 'listStudentDeadlines',
-        summary: 'List visible Lesson deadlines in a bounded range',
+        summary: 'List visible Lesson, Quiz and Assignment deadlines in a bounded range',
         security,
         parameters: [
           page,
@@ -245,7 +266,11 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
         responses: {
           '200': ok('Student deadline list', {
             success: true,
-            data: { items: [todoExample], asOf: '2026-07-20T08:00:00.000Z' },
+            data: {
+              items: [todoExample],
+              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
+              asOf: '2026-07-20T08:00:00.000Z',
+            },
             meta: { page: 1, limit: 20, totalItems: 1, totalPages: 1 },
           }),
           ...protectedErrors,
@@ -265,9 +290,16 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
           '200': ok('Own Course progress', {
             success: true,
             data: {
-              metricVersion: 'P04_LESSON_COMPLETION_V1',
+              metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
+              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
               asOf: '2026-07-20T08:00:00.000Z',
-              summary: { requiredLessons: 4, completedLessons: 3, progressPercentage: 75 },
+              summary: {
+                requiredActivities: 6,
+                completedActivities: 4,
+                requiredLessons: 4,
+                completedLessons: 3,
+                progressPercentage: 66.7,
+              },
               items: [],
             },
           }),
@@ -286,12 +318,16 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
           '200': ok('Teacher Course dashboard', {
             success: true,
             data: {
-              metricVersion: 'P04_LESSON_COMPLETION_V1',
+              metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
+              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
               asOf: '2026-07-20T08:00:00.000Z',
               summary: {
                 totalLessons: 10,
                 publishedLessons: 8,
                 requiredLessons: 7,
+                totalActivities: 14,
+                publishedActivities: 12,
+                requiredActivities: 10,
                 activeStudents: 25,
                 averageProgressPercentage: 62.4,
               },

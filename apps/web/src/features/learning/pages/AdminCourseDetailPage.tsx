@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, Layers3 } from 'lucide-react';
+import { ArrowLeft, BookOpen, ClipboardList, FileText, Layers3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -79,11 +79,21 @@ export function AdminCourseDetailPage() {
             <strong>{course.lessonCount}</strong>
             <span>Bài học</span>
           </div>
+          <div>
+            <ClipboardList size={22} />
+            <strong>{course.quizCount}</strong>
+            <span>Bài kiểm tra</span>
+          </div>
+          <div>
+            <FileText size={22} />
+            <strong>{course.assignmentCount}</strong>
+            <span>Bài tập</span>
+          </div>
         </section>
       </div>
       <p className="security-note">
-        Màn hình quản trị chỉ hiển thị metadata. Nội dung bài học và tiến độ Student không được cung
-        cấp tại đây.
+        Màn hình quản trị chỉ hiển thị metadata. Nội dung, câu trả lời, bài nộp, điểm và tiến độ
+        Student không được cung cấp tại đây.
       </p>
     </section>
   );

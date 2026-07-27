@@ -33,6 +33,18 @@ const validEnvironment = {
   DASHBOARD_PAGE_MAX: '100',
   LEARNING_RESOURCES_ENABLED: 'false',
   GCS_UPLOADS_ENABLED: 'false',
+  QUESTION_IMAGE_URL_ENABLED: 'false',
+  QUESTION_VIDEO_URL_ENABLED: 'false',
+  QUESTION_MEDIA_ALLOWED_HOSTS: 'media.example.edu,video.example.edu',
+  ASSIGNMENT_LINK_SUBMISSION_ENABLED: 'false',
+  ASSIGNMENT_MARK_DONE_ENABLED: 'false',
+  BASIC_GRADEBOOK_ENABLED: 'false',
+  ASSESSMENT_FILE_UPLOAD_ENABLED: 'false',
+  QUIZ_ATTEMPT_START_IP_LIMIT: '300',
+  QUIZ_ATTEMPT_IDENTITY_LIMIT: '20',
+  QUIZ_ANSWER_SAVE_LIMIT: '180',
+  ASSESSMENT_MUTATION_WINDOW_SECONDS: '60',
+  ASSESSMENT_MUTATION_IDENTITY_LIMIT: '120',
   LOG_LEVEL: 'silent',
 };
 
@@ -91,12 +103,30 @@ describe('loadEnvironment', () => {
       learningResourcesEnabled: false,
       gcsUploadsEnabled: false,
     });
+    expect(config.assessmentFeatures).toEqual({
+      questionImageUrlEnabled: false,
+      questionVideoUrlEnabled: false,
+      questionMediaAllowedHosts: ['media.example.edu', 'video.example.edu'],
+      assignmentLinkSubmissionEnabled: false,
+      assignmentMarkDoneEnabled: false,
+      basicGradebookEnabled: false,
+      assessmentFileUploadEnabled: false,
+    });
+    expect(config.assessmentRateLimits).toEqual({
+      mutationWindowSeconds: 60,
+      mutationIdentityMax: 120,
+      attemptStartIpMax: 300,
+      attemptStartIdentityMax: 20,
+      answerSaveIdentityMax: 180,
+    });
     expect(Object.isFrozen(config)).toBe(true);
     expect(Object.isFrozen(config.rateLimits)).toBe(true);
     expect(Object.isFrozen(config.classroomRateLimits)).toBe(true);
     expect(Object.isFrozen(config.contentLimits)).toBe(true);
     expect(Object.isFrozen(config.learningRateLimits)).toBe(true);
     expect(Object.isFrozen(config.featureFlags)).toBe(true);
+    expect(Object.isFrozen(config.assessmentFeatures)).toBe(true);
+    expect(Object.isFrozen(config.assessmentRateLimits)).toBe(true);
   });
 
   it('fails fast without exposing a connection string when MongoDB config is invalid', () => {
@@ -137,6 +167,11 @@ describe('loadEnvironment', () => {
     ['LEARNING_ACTION_WINDOW_SECONDS', '0'],
     ['LEARNING_ACTION_IDENTITY_LIMIT', '0'],
     ['DASHBOARD_PAGE_MAX', '19'],
+    ['QUIZ_ATTEMPT_START_IP_LIMIT', '0'],
+    ['QUIZ_ATTEMPT_IDENTITY_LIMIT', '0'],
+    ['QUIZ_ANSWER_SAVE_LIMIT', '0'],
+    ['ASSESSMENT_MUTATION_WINDOW_SECONDS', '0'],
+    ['ASSESSMENT_MUTATION_IDENTITY_LIMIT', '0'],
   ])('rejects invalid %s boundaries', (field, value) => {
     expect(() => loadEnvironment({ ...validEnvironment, [field]: value })).toThrow(
       'Invalid application configuration',
@@ -151,6 +186,25 @@ describe('loadEnvironment', () => {
         GCS_UPLOADS_ENABLED: 'true',
       }),
     ).toThrow('GCS_UPLOADS_ENABLED requires LEARNING_RESOURCES_ENABLED=true');
+  });
+
+  it('rejects unsafe Phase 05 feature combinations and malformed media hosts', () => {
+    expect(() =>
+      loadEnvironment({ ...validEnvironment, ASSESSMENT_FILE_UPLOAD_ENABLED: 'true' }),
+    ).toThrow('ASSESSMENT_FILE_UPLOAD_ENABLED must remain false');
+    expect(() =>
+      loadEnvironment({
+        ...validEnvironment,
+        QUESTION_IMAGE_URL_ENABLED: 'true',
+        QUESTION_MEDIA_ALLOWED_HOSTS: '',
+      }),
+    ).toThrow('QUESTION_MEDIA_ALLOWED_HOSTS is required');
+    expect(() =>
+      loadEnvironment({
+        ...validEnvironment,
+        QUESTION_MEDIA_ALLOWED_HOSTS: 'https://media.example.edu/path',
+      }),
+    ).toThrow('must contain hostnames without scheme');
   });
 
   it('rejects malformed origins and secret reuse', () => {

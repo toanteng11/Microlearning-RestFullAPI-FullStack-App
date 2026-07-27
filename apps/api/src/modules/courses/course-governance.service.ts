@@ -48,6 +48,8 @@ function governanceDto(row: CourseGovernanceRow, asOf: Date) {
     owner: { id: row.owner._id.toString(), fullName: row.owner.fullName },
     moduleCount: row.moduleCount,
     lessonCount: row.lessonCount,
+    quizCount: row.quizCount,
+    assignmentCount: row.assignmentCount,
     createdAt: row.course.createdAt.toISOString(),
     updatedAt: row.course.updatedAt.toISOString(),
   };

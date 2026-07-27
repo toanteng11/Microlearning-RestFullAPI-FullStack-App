@@ -134,4 +134,4 @@
 | Must | 74 | 0 | 0 | 0 | 74 | 0 |
 | Conditional | 4 | 0 | 0 | 0 | 0 | 4 |
 
-Current phase execution status: `NOT_STARTED`. Planning package ở `READY_TO_CODE`; chỉ criteria có implementation evidence thật mới được đổi sang Pass.
+Current phase execution status: `LOCAL_IMPLEMENTATION_COMPLETE / PENDING_REMOTE_VERIFICATION`. Part 1-Part 7 đã có local implementation evidence; formal per-criterion evaluation vẫn giữ `Not Run` cho tới khi có implementation commit, clean clone và remote required CI để mỗi trạng thái `Pass` gắn với artifact tái lập được.

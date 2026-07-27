@@ -71,12 +71,19 @@ describe('Phase 02 security primitives', () => {
 
   it('resolves stable capabilities and secure refresh-cookie attributes', () => {
     expect(getCapabilities('STUDENT')).toEqual([
+      'assignment.view_assigned',
       'classroom.join',
       'classroom.view_enrolled',
+      'grade.view_own',
       'learning.complete_own',
       'learning.view_enrolled',
       'profile.update_own',
       'profile.view_own',
+      'quiz.attempt',
+      'quiz.result_view_own',
+      'quiz.view_assigned',
+      'submission.manage_own',
+      'submission.view_own',
     ]);
     expect(hasPermission('ADMIN', 'teacher_invitation.create')).toBe(true);
     expect(hasPermission('ADMIN', 'classroom.governance.view')).toBe(true);

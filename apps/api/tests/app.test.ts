@@ -7,6 +7,7 @@ import { createApp } from '../src/app.js';
 import {
   createOpenApiDocument,
   PHASE_FOUR_OPENAPI_OPERATIONS,
+  PHASE_FIVE_OPENAPI_OPERATIONS,
   PHASE_THREE_OPENAPI_OPERATIONS,
   PHASE_TWO_OPENAPI_OPERATIONS,
 } from '../src/docs/openapi.js';
@@ -295,6 +296,118 @@ describe('system API', () => {
     expect(documentedOperations).toEqual(expectedRoutes);
     expect([...documentedOperations.values()].sort()).toEqual(
       [...PHASE_FOUR_OPENAPI_OPERATIONS].sort(),
+    );
+  });
+
+  it('keeps Phase 05 Quiz authoring and Student Attempt routes in Swagger without answer-key leakage', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expectedRoutes = new Map([
+      ['GET /api/v1/teacher/courses/{courseId}/quizzes', 'listTeacherCourseQuizzes'],
+      ['POST /api/v1/teacher/courses/{courseId}/quizzes', 'createQuiz'],
+      ['GET /api/v1/teacher/quizzes/{quizId}', 'getTeacherQuiz'],
+      ['PATCH /api/v1/teacher/quizzes/{quizId}', 'updateQuiz'],
+      ['PATCH /api/v1/teacher/quizzes/{quizId}/status', 'changeQuizStatus'],
+      ['POST /api/v1/teacher/quizzes/{quizId}/preview', 'previewQuiz'],
+      ['GET /api/v1/teacher/quizzes/{quizId}/questions', 'listQuizQuestions'],
+      ['POST /api/v1/teacher/quizzes/{quizId}/questions', 'createQuizQuestion'],
+      ['PATCH /api/v1/teacher/questions/{questionId}', 'updateQuizQuestion'],
+      ['DELETE /api/v1/teacher/questions/{questionId}', 'archiveQuizQuestion'],
+      ['PATCH /api/v1/teacher/quizzes/{quizId}/questions/reorder', 'reorderQuizQuestions'],
+      ['PUT /api/v1/teacher/questions/{questionId}/media', 'setQuestionMedia'],
+      ['DELETE /api/v1/teacher/questions/{questionId}/media', 'removeQuestionMedia'],
+      ['GET /api/v1/students/quizzes/{quizId}', 'getStudentQuizIntro'],
+      ['POST /api/v1/students/quizzes/{quizId}/attempts', 'startQuizAttempt'],
+      ['GET /api/v1/students/quizzes/{quizId}/attempts', 'listOwnQuizAttempts'],
+      ['GET /api/v1/students/quiz-attempts/{attemptId}', 'getOwnQuizAttempt'],
+      ['PATCH /api/v1/students/quiz-attempts/{attemptId}/answers', 'saveQuizAnswers'],
+      ['POST /api/v1/students/quiz-attempts/{attemptId}/submit', 'submitQuizAttempt'],
+      ['GET /api/v1/students/quiz-attempts/{attemptId}/result', 'getOwnQuizResult'],
+      ['GET /api/v1/teacher/courses/{courseId}/assignments', 'listTeacherCourseAssignments'],
+      ['POST /api/v1/teacher/courses/{courseId}/assignments', 'createAssignment'],
+      ['GET /api/v1/teacher/assignments/{assignmentId}', 'getTeacherAssignment'],
+      ['PATCH /api/v1/teacher/assignments/{assignmentId}', 'updateAssignment'],
+      ['PATCH /api/v1/teacher/assignments/{assignmentId}/status', 'changeAssignmentStatus'],
+      ['POST /api/v1/teacher/assignments/{assignmentId}/preview', 'previewAssignment'],
+      ['GET /api/v1/teacher/assignments/{assignmentId}/submissions', 'listAssignmentSubmissions'],
+      ['GET /api/v1/teacher/submissions/{submissionId}', 'getTeacherSubmission'],
+      ['GET /api/v1/students/assignments/{assignmentId}', 'getStudentAssignment'],
+      ['GET /api/v1/students/assignments/{assignmentId}/submission', 'getOwnAssignmentSubmission'],
+      [
+        'PUT /api/v1/students/assignments/{assignmentId}/submission',
+        'saveAssignmentSubmissionDraft',
+      ],
+      ['POST /api/v1/students/submissions/{submissionId}/turn-in', 'turnInAssignment'],
+      ['POST /api/v1/students/submissions/{submissionId}/unsubmit', 'unsubmitAssignment'],
+      ['POST /api/v1/students/submissions/{submissionId}/resubmit', 'startAssignmentResubmission'],
+      ['GET /api/v1/students/submissions/{submissionId}/history', 'listOwnSubmissionHistory'],
+      ['GET /api/v1/teacher/quizzes/{quizId}/results', 'listQuizResults'],
+      ['GET /api/v1/teacher/quiz-attempts/{attemptId}', 'getTeacherQuizAttempt'],
+      ['PUT /api/v1/teacher/quiz-attempts/{attemptId}/review', 'saveQuizManualReview'],
+      [
+        'POST /api/v1/teacher/quiz-attempts/{attemptId}/review/finalize',
+        'finalizeQuizManualReview',
+      ],
+      ['POST /api/v1/teacher/quiz-attempts/{attemptId}/release', 'releaseQuizResult'],
+      ['POST /api/v1/teacher/quiz-attempts/{attemptId}/regrade', 'regradeQuizAttempt'],
+      ['PUT /api/v1/teacher/submissions/{submissionId}/grade', 'saveSubmissionGrade'],
+      ['POST /api/v1/teacher/submissions/{submissionId}/return', 'returnSubmission'],
+      ['POST /api/v1/teacher/grades/{gradeId}/regrade', 'regradeAssessment'],
+      ['GET /api/v1/teacher/grades/{gradeId}/history', 'listGradeHistory'],
+      ['GET /api/v1/students/me/grades', 'listOwnGrades'],
+      ['GET /api/v1/students/me/grades/{gradeId}', 'getOwnGrade'],
+      ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getBasicCourseGradebook'],
+      [
+        'GET /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions',
+        'listActivityDeadlineExceptions',
+      ],
+      [
+        'PUT /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions/{studentId}',
+        'setStudentDeadlineException',
+      ],
+      [
+        'POST /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions/{studentId}/revoke',
+        'revokeStudentDeadlineException',
+      ],
+      [
+        'GET /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions/{studentId}/history',
+        'listStudentDeadlineExceptionHistory',
+      ],
+    ]);
+    const actual = new Map<string, string>();
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (!pathItem) continue;
+      for (const method of ['get', 'post', 'patch', 'put', 'delete'] as const) {
+        const operation = pathItem[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_FIVE_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_FIVE_OPENAPI_OPERATIONS)[number],
+          )
+        )
+          continue;
+        actual.set(`${method.toUpperCase()} ${path}`, operation.operationId);
+        expect(operation.security).toEqual([{ bearerAuth: [] }]);
+        expect(Object.keys(operation.responses).some((code) => /^2\d\d$/u.test(code))).toBe(true);
+        expect(Object.keys(operation.responses).some((code) => /^4\d\d$/u.test(code))).toBe(true);
+      }
+    }
+    expect(actual).toEqual(expectedRoutes);
+    const previewSchema = document.components?.schemas?.StudentPreviewQuestion;
+    expect(JSON.stringify(previewSchema)).not.toMatch(
+      /correctOptionIds|correctBoolean|rubric|explanation/u,
+    );
+    const attemptSchema = document.components?.schemas?.StudentAttemptQuestion;
+    expect(JSON.stringify(attemptSchema)).not.toMatch(
+      /correctOptionIds|correctBoolean|rubric|explanation/u,
+    );
+    expect(document.components?.schemas?.ProgressMetricVersion).toMatchObject({
+      enum: ['P05_REQUIRED_ACTIVITY_COMPLETION_V1'],
+    });
+    expect(document.components?.schemas?.LearningActivityDescriptorVersion).toMatchObject({
+      enum: ['P05_ACTIVITY_DESCRIPTOR_V2'],
+    });
+    expect(JSON.stringify(document.components?.schemas?.CourseGovernanceSummary)).toMatch(
+      /quizCount.*assignmentCount/u,
     );
   });
 });

@@ -1,23 +1,40 @@
-import { BookOpen, Clock3, RefreshCw } from 'lucide-react';
+import { BookOpen, CalendarPlus, ClipboardList, FileText, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '../../../shared/auth/auth-context';
 import { displayLearningDate, requestErrorMessage } from '../learning-format';
-import type { ClassworkLesson, StudentClassworkEnvelope } from '../learning.types';
+import type { ClassworkActivity, StudentClassworkEnvelope } from '../learning.types';
 import { ProgressStatusBadge } from './LearningStatusBadge';
 
-function LessonRow({ lesson }: { lesson: ClassworkLesson }) {
+function ActivityIcon({ type }: { type: ClassworkActivity['activityType'] }) {
+  if (type === 'QUIZ') return <ClipboardList size={18} aria-hidden="true" />;
+  if (type === 'ASSIGNMENT') return <FileText size={18} aria-hidden="true" />;
+  return <BookOpen size={18} aria-hidden="true" />;
+}
+
+function ActivityRow({ activity }: { activity: ClassworkActivity }) {
   return (
     <li className="classwork-lesson-row">
+      <ActivityIcon type={activity.activityType} />
       <div>
-        <Link to={`/student/lessons/${lesson.id}`}>{lesson.title}</Link>
+        <Link to={activity.actionUrl}>{activity.title}</Link>
         <small>
-          <Clock3 size={14} /> {lesson.estimatedMinutes} phút · Hạn{' '}
-          {displayLearningDate(lesson.completionDeadline)}
+          {activity.activityType === 'LESSON'
+            ? 'Bài học'
+            : activity.activityType === 'QUIZ'
+              ? 'Bài kiểm tra'
+              : 'Bài tập'}{' '}
+          · Hạn {displayLearningDate(activity.effectiveDeadline)}
+          {activity.hasDeadlineException ? (
+            <>
+              {' '}
+              · <CalendarPlus size={14} /> Đã gia hạn
+            </>
+          ) : null}
         </small>
       </div>
-      <ProgressStatusBadge status={lesson.progress.derivedStatus} />
+      <ProgressStatusBadge status={activity.progress.derivedStatus} />
     </li>
   );
 }
@@ -83,10 +100,10 @@ export function StudentClassworkPanel({ classroomId }: { classroomId: string }) 
               {course.description ? <p>{course.description}</p> : null}
             </div>
           </header>
-          {course.lessons.length > 0 ? (
+          {course.activities.length > 0 ? (
             <ul className="classwork-lessons">
-              {course.lessons.map((lesson) => (
-                <LessonRow key={lesson.id} lesson={lesson} />
+              {course.activities.map((activity) => (
+                <ActivityRow key={`${activity.activityType}-${activity.id}`} activity={activity} />
               ))}
             </ul>
           ) : null}
@@ -95,8 +112,11 @@ export function StudentClassworkPanel({ classroomId }: { classroomId: string }) 
               <h3>{module.title}</h3>
               {module.description ? <p>{module.description}</p> : null}
               <ul className="classwork-lessons">
-                {module.lessons.map((lesson) => (
-                  <LessonRow key={lesson.id} lesson={lesson} />
+                {module.activities.map((activity) => (
+                  <ActivityRow
+                    key={`${activity.activityType}-${activity.id}`}
+                    activity={activity}
+                  />
                 ))}
               </ul>
             </section>
