@@ -55,7 +55,7 @@
 
 | ID | Evidence | Required | Planned location/result | Status |
 | --- | --- | --- | --- | --- |
-| P05-EV-027 | React component/integration test report | Có | `2026-07-27`: Web suite `96/96`; Quiz, Assignment, Grade, deadline, mixed learning states và unsaved guard Pass | Collected |
+| P05-EV-027 | React component/integration test report | Có | `2026-07-27`: Web suite `99/99`; Quiz settings normalization, Question option/rubric editing, Assignment, Grade, deadline, mixed learning states và unsaved guard Pass | Collected |
 | P05-EV-028 | Teacher Quiz authoring and result E2E | Có | `2026-07-27`: create/settings/question/preview/publish, result list, manual review và release browser journeys Pass | Collected |
 | P05-EV-029 | Student attempt/save/resume/submit/result E2E | Có | `2026-07-27`: start, select, save, hard reload/resume, submit, immediate result và attempt-limit UI Pass | Collected |
 | P05-EV-030 | Assignment/submission/grade E2E | Có | `2026-07-27`: Teacher create/publish; Student draft/turn-in/unsubmit/resubmit/history; Teacher roster/regrade; Student own Grade Pass | Collected |
@@ -74,7 +74,7 @@
 | P05-EV-037 | Docker API/Web image build | Có | `2026-07-27`: clean production API/Web image build Pass | Collected |
 | P05-EV-038 | Integrated stack readiness/smoke | Có | `2026-07-27`: API/Web/MongoDB healthy; Swagger/Web success; `52/52` P05 operations | Collected |
 | P05-EV-039 | Performance budgets and explain plans | Có | `2026-07-27`: Phase 05 p95 local < `500ms` cho 20 measured runs; named `IXSCAN`; P04 regression p95 todo `33.90ms`, dashboard `195.56ms`, ranking `185.61ms`, structure `40.73ms` | Collected |
-| P05-EV-040 | Full local quality gate | Có | `2026-07-27`: `npm run check` Pass; API `180/180`, Web `96/96`, Mongo integration `72/72`; statements `80.66%`, branches `60.95%`, functions `87.56%`, lines `82.97%` | Collected |
+| P05-EV-040 | Full local quality gate | Có | `2026-07-27`: `npm run check:ci` Pass; API `180/180`, Web `99/99`; API unit coverage `77.36/59.84/70.10/78.94%`, Web coverage `83.77/71.44/82.26/87.20%` theo statements/branches/functions/lines; Mongo integration `72/72` với integration coverage `80.66/60.95/87.56/82.97%` | Collected |
 | P05-EV-041 | Dependency audit | Có | `npm run audit:production` Pass; exact React Router RSC-only advisory exception owned và hết hạn `2026-08-31` | Collected |
 | P05-EV-042 | Secret Scan | Có | `2026-07-27`: Gitleaks quét tracked/untracked non-ignored source hiện tại (`~5.17 MB`) và toàn bộ `39` commit (`~7.72 MB`), không phát hiện leak; remote CI URL còn pending | Collected |
 | P05-EV-043 | Clean-clone onboarding | Có | fresh path, commit, commands/results | Planned |

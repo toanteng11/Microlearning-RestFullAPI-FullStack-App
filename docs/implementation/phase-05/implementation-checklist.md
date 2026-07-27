@@ -127,7 +127,7 @@ Gate D hiện tại: **IMPLEMENTED_LOCALLY**. Assignment/Submission/Grade/Regrad
 - [x] Authorization/IDOR/field leak matrix pass.
 - [x] Scoring golden fixtures và all concurrency/rollback tests pass.
 - [x] Performance/index budgets pass trên seeded dataset.
-- [x] React component/integration tests pass (`96/96`).
+- [x] React component/integration tests pass (`99/99`).
 - [x] Accessibility axe/keyboard/focus/responsive review pass trên Student Course và Admin governance critical screens.
 - [x] 12 critical browser journeys pass bằng API/MongoDB thật; full regression `26/26`.
 - [x] Deterministic demo seed không chứa PII/secret thật và repeat run không tạo trùng.

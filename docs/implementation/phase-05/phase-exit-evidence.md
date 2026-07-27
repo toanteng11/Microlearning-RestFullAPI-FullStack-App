@@ -46,13 +46,13 @@ Exit yêu cầu `74/74` Must Pass. Conditional phải Pass khi enabled hoặc c�
 | `npm ci` | Lockfile install Pass | Pass trước local validation | `2026-07-27` | Local shell |
 | `npm run lint` | Pass | Pass | `2026-07-27` | `npm run check` |
 | `npm run typecheck` | API/Web Pass | Pass | `2026-07-27` | `npm run check` |
-| `npm test` | API/Web Pass; ghi số test | API `180/180`; Web `96/96` | `2026-07-27` | `npm run check` |
+| `npm test` | API/Web Pass; ghi số test | API `180/180`; Web `99/99` | `2026-07-27` | `npm run check:ci` |
 | Mongo integration command | Replica-set suites Pass; ghi số test | `72/72` Pass | `2026-07-27` | `MONGODB_INTEGRATION_URI=...directConnection=true npm run test:integration:coverage --workspace @microlearning/api` |
 | OpenAPI contract command | Runtime parity Pass; ghi operation count | `9/9`; `52/52` P05 operations | `2026-07-27` | `npm run test:openapi --workspace @microlearning/api` |
-| Coverage command | Tất cả configured threshold Pass | Statements `80.66%`; branches `60.95%`; functions `87.56%`; lines `82.97%` | `2026-07-27` | `coverage-integration` |
-| `npm run build` | API/Web production builds Pass | Pass | `2026-07-27` | `npm run check` |
+| Coverage command | Tất cả configured threshold Pass | API unit `77.36/59.84/70.10/78.94%`; Web `83.77/71.44/82.26/87.20%`; API integration `80.66/60.95/87.56/82.97%` theo statements/branches/functions/lines | `2026-07-27` | `npm run check:ci` + `coverage-integration` |
+| `npm run build` | API/Web production builds Pass | Pass | `2026-07-27` | `npm run check:ci` |
 | E2E command | Critical journeys Pass; ghi browser/count | P05 `12/12`; full Chromium `26/26` | `2026-07-27` | `npm run test:e2e` |
-| Full CI-equivalent command | Full quality gate Pass | Local Pass | `2026-07-27` | `npm run check` |
+| Full CI-equivalent command | Full quality gate Pass | Local Pass | `2026-07-27` | `npm run check:ci` |
 | `npm run audit:production` | Không blocking production vulnerability | Pass với exact time-bound RSC-only exception | `2026-07-27` | Local shell |
 | Secret scan | Không blocking secret finding | Current non-ignored source + `39` Git commits Pass, không phát hiện leak | `2026-07-27` | Local Gitleaks |
 | `git diff --check` | No whitespace errors | Chạy lại sau cập nhật tài liệu | `2026-07-27` | Local shell |

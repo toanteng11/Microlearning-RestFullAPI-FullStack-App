@@ -23,7 +23,7 @@ Phase 05 dự kiến cung cấp workflow Teacher tạo/publish Quiz và Assignme
 
 ## 3. Delivered Outcome
 
-Part 1-Part 7 đã triển khai local cho data foundation, Quiz/Question/Attempt/scoring/result, Assignment/Submission/Grade/Regrade, deadline exception, mixed learning progress/To-do, React UI, Swagger, security/privacy, Docker seed và CI configuration. Local evidence đạt API `180/180`, Web `96/96`, Mongo integration `72/72`, OpenAPI `9/9`, Phase 05 E2E `12/12` và full browser regression `26/26`.
+Part 1-Part 7 đã triển khai local cho data foundation, Quiz/Question/Attempt/scoring/result, Assignment/Submission/Grade/Regrade, deadline exception, mixed learning progress/To-do, React UI, Swagger, security/privacy, Docker seed và CI configuration. Local evidence đạt API `180/180`, Web `99/99`, Mongo integration `72/72`, OpenAPI `9/9`, Phase 05 E2E `12/12` và full browser regression `26/26`.
 
 ## 4. Exit Conditions To Be Proven
 
@@ -43,8 +43,8 @@ Part 1-Part 7 đã triển khai local cho data foundation, Quiz/Question/Attempt
 
 | Category | Planned evidence | Final result |
 | --- | --- | --- |
-| Backend unit/integration | Test count, coverage, transaction/concurrency | Local Pass: unit `180/180`; integration `72/72`; statements `80.66%`, branches `60.95%`, functions `87.56%`, lines `82.97%` |
-| Frontend component/integration | Test count, coverage | Local Pass: `96/96` |
+| Backend unit/integration | Test count, coverage, transaction/concurrency | Local Pass: unit `180/180`, coverage `77.36/59.84/70.10/78.94%`; integration `72/72`, coverage `80.66/60.95/87.56/82.97%` theo statements/branches/functions/lines |
+| Frontend component/integration | Test count, coverage | Local Pass: `99/99`; coverage `83.77/71.44/82.26/87.20%` theo statements/branches/functions/lines |
 | OpenAPI | Operation count and parity | Local Pass: `52/52` P05 operations; contract `9/9` |
 | Browser E2E | Journey/browser count | Local Pass: P05 `12/12`; full Chromium regression `26/26` |
 | Security/privacy | Authorization/leak matrix | Local Pass: anonymous/role/ownership/IDOR/projection matrix; Gitleaks Pass |
