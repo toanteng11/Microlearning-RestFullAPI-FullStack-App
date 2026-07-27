@@ -2,7 +2,7 @@
 
 ## 1. Mục Đích
 
-Catalog này định nghĩa case tối thiểu trước khi implementation. Test ID là ổn định để dùng trong WBS, Pull Request, acceptance evaluation và evidence. Đổi behavior phải cập nhật catalog cùng contract, không chỉ sửa assertion cho xanh.
+Catalog này định nghĩa case tối thiểu trước khi implementation. Test ID là ổn định để dùng trong WBS, Pull Request, acceptance evaluation và evidence. Kết quả thực thi cuối cùng, bao gồm cách 74 scenario catalog được ánh xạ vào các test block tự động, nằm trong `test-case-execution-matrix.md`. Đổi behavior phải cập nhật catalog cùng contract, không chỉ sửa assertion cho xanh.
 
 ## 2. Test Harness Rules
 
