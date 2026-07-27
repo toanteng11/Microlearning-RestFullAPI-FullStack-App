@@ -13,7 +13,7 @@ Ma trận này là nguồn đối chiếu cấp Phase giữa Business Analysis, 
 - Task ID trỏ tới `work-breakdown-structure.md`.
 - File/module/service contract trỏ tới `source-file-blueprint.md` và `runtime-contract-catalog.md`.
 - API consumer và UI state trỏ tới `api-ui-integration-matrix.md`.
-- Trạng thái hiện tại của implementation là `NOT_STARTED`; các cột bên dưới là contract dự kiến, không phải bằng chứng đã chạy.
+- Trạng thái hiện tại là `LOCAL_IMPLEMENTATION_COMPLETE / PENDING_REMOTE_VERIFICATION`: Part 1-Part 7 có local evidence; các cột yêu cầu commit, clean clone, remote CI, formal AC và approval chưa phải bằng chứng đã xác minh.
 
 ## 3. Quiz Và Question
 

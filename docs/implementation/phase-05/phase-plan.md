@@ -118,7 +118,7 @@ Chi tiết branch, files, tests và exit demo cho từng PR nằm trong `pull-re
 | `COMPLETED` | Tất cả Gate và exit evidence Pass |
 | `BLOCKED` | Không thể tiến triển do dependency/decision cụ thể |
 
-Current status: `READY_TO_CODE`; Gate A đã được Product Owner phê duyệt ngày `2026-07-22`. Implementation chưa bắt đầu.
+Current status: `LOCAL_IMPLEMENTATION_COMPLETE / PENDING_REMOTE_VERIFICATION`; Gate A đã được Product Owner phê duyệt ngày `2026-07-22`; Part 1-Part 7 local gates Pass, closure/remote evidence chưa hoàn tất.
 
 ## 11. Change Control
 

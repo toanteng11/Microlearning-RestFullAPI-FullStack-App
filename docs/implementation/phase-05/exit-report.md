@@ -5,17 +5,17 @@
 | Field | Value |
 | --- | --- |
 | Phase | `P05 - Assessments And Grading` |
-| Report type | Pre-created exit template |
+| Report type | Local implementation closure snapshot |
 | Planning | `READY_TO_CODE` |
 | Gate A | `APPROVED` - `2026-07-22` |
-| Implementation | `NOT_STARTED` |
-| Exit decision | `NOT_EVALUATED` |
+| Implementation | `LOCAL_IMPLEMENTATION_COMPLETE` - Part 1-Part 7 implemented and tested locally |
+| Exit decision | `PENDING_REMOTE_VERIFICATION` |
 | Must acceptance | `0/74 Pass`, `74 Not Run` |
 | Conditional acceptance | `4/4 Not Applicable` by approved Gate A disposition |
 | Implementation PR | Pending |
 | Post-merge main CI | Pending |
 
-Đây chưa phải báo cáo hoàn thành. Tài liệu được tạo sẵn để ngăn việc đóng Phase thiếu bằng chứng và sẽ được cập nhật trong Pull Request closure riêng sau implementation merge.
+Đây chưa phải báo cáo `COMPLETED`. Local implementation đã hoàn thành, nhưng source commit, clean clone, formal Must AC evaluation, implementation PR, remote required CI, post-merge `main` CI và approval vẫn là điều kiện bắt buộc.
 
 ## 2. Intended Outcome
 
@@ -23,7 +23,7 @@ Phase 05 dự kiến cung cấp workflow Teacher tạo/publish Quiz và Assignme
 
 ## 3. Delivered Outcome
 
-`None yet.` Runtime implementation chưa bắt đầu. Planning documents không được tính là chức năng đã giao.
+Part 1-Part 7 đã triển khai local cho data foundation, Quiz/Question/Attempt/scoring/result, Assignment/Submission/Grade/Regrade, deadline exception, mixed learning progress/To-do, React UI, Swagger, security/privacy, Docker seed và CI configuration. Local evidence đạt API `180/180`, Web `96/96`, Mongo integration `72/72`, OpenAPI `9/9`, Phase 05 E2E `12/12` và full browser regression `26/26`.
 
 ## 4. Exit Conditions To Be Proven
 
@@ -43,15 +43,15 @@ Phase 05 dự kiến cung cấp workflow Teacher tạo/publish Quiz và Assignme
 
 | Category | Planned evidence | Final result |
 | --- | --- | --- |
-| Backend unit/integration | Test count, coverage, transaction/concurrency | Not run |
-| Frontend component/integration | Test count, coverage | Not run |
-| OpenAPI | Operation count and parity | Not run |
-| Browser E2E | Journey/browser count | Not run |
-| Security/privacy | Authorization/leak matrix | Not run |
-| Performance/index | Dataset, p95, explain | Not run |
-| Docker/seed/smoke | Image/health/idempotency | Not run |
-| Clean clone | Commit and commands | Not run |
-| Remote CI | PR/main URLs and job count | Not run |
+| Backend unit/integration | Test count, coverage, transaction/concurrency | Local Pass: unit `180/180`; integration `72/72`; statements `80.66%`, branches `60.95%`, functions `87.56%`, lines `82.97%` |
+| Frontend component/integration | Test count, coverage | Local Pass: `96/96` |
+| OpenAPI | Operation count and parity | Local Pass: `52/52` P05 operations; contract `9/9` |
+| Browser E2E | Journey/browser count | Local Pass: P05 `12/12`; full Chromium regression `26/26` |
+| Security/privacy | Authorization/leak matrix | Local Pass: anonymous/role/ownership/IDOR/projection matrix; Gitleaks Pass |
+| Performance/index | Dataset, p95, explain | Local Pass: Phase 05 p95 < `500ms`; expected named `IXSCAN`; no unapproved `COLLSCAN` |
+| Docker/seed/smoke | Image/health/idempotency | Local Pass: API/Web/Mongo healthy; P05 first `14` created, repeat `14` reused |
+| Clean clone | Commit and commands | Pending implementation commit |
+| Remote CI | PR/main URLs and job count | Pending |
 
 ## 6. Residual Scope Template
 
@@ -68,20 +68,21 @@ Khi đóng Phase, ghi rõ disposition cuối cùng:
 
 | Item | Required final state | Current state |
 | --- | --- | --- |
-| Critical defects | 0 open | Not evaluated |
-| High defects | 0 open | Not evaluated |
-| Medium/Low defects | Disposition + owner | Not evaluated |
-| Accepted risks | Owner + reason + review date | Not evaluated |
-| Data reconciliation | Completed or N/A evidence | Not evaluated |
+| Critical defects | 0 open | Local review: `0` |
+| High defects | 0 open | Local review: `0` |
+| Medium/Low defects | Disposition + owner | Local browser/axe closure hoàn tất; remote evidence và approval được theo dõi như exit work |
+| Accepted risks | Owner + reason + review date | React Router RSC-only advisory; owner DevOps/Security; expires `2026-08-31` |
+| Data reconciliation | Completed or N/A evidence | Migration preflight/rollback dry-run Pass; production migration N/A before deployment |
 
 ## 8. Final Decision Template
 
 ```text
-Decision: NOT_EVALUATED
-Evaluated release: Pending
+Decision: PENDING_REMOTE_VERIFICATION
+Evaluated release: Local working tree on feature/phase-05-foundation
 Must AC result: 0/74 Pass; 74 Not Run
 Conditional result: 4/4 Not Applicable by approved Gate A disposition
-Open blockers: implementation, validation and remote evidence
+Open blockers: source commit, clean clone, formal AC evaluation,
+PR/main CI, approval and P06 handoff
 ```
 
 ## 9. Approval Record
@@ -95,4 +96,4 @@ Open blockers: implementation, validation and remote evidence
 
 ## 10. Integrity Rule
 
-Không thay `NOT_EVALUATED` bằng `COMPLETED`, không điền test count/CI URL và không đánh AC Pass trước khi evidence tồn tại trên đúng source/merge commit. Nếu một Conditional bị defer, phải ghi approved N/A và phase nhận bàn giao thay vì xóa khỏi báo cáo.
+Không thay `PENDING_REMOTE_VERIFICATION` bằng `COMPLETED`, không điền CI URL và không đánh AC Pass trước khi evidence tồn tại trên đúng source/merge commit. Nếu một Conditional bị defer, phải ghi approved N/A và phase nhận bàn giao thay vì xóa khỏi báo cáo.

@@ -5,11 +5,11 @@
 | Field | Current value |
 | --- | --- |
 | Phase | `P05 - Assessments And Grading` |
-| Document purpose | Phase Exit evidence template |
+| Document purpose | Local implementation evidence snapshot |
 | Planning status | `READY_TO_CODE` |
 | Gate A | `APPROVED` - `2026-07-22` |
-| Implementation status | `NOT_STARTED` |
-| Evaluation status | `NOT_EVALUATED` |
+| Implementation status | `LOCAL_IMPLEMENTATION_COMPLETE` - Part 1-Part 7 local evidence collected |
+| Evaluation status | `PENDING_REMOTE_VERIFICATION` |
 | Source commit | Pending |
 | Implementation PR | Pending |
 | Merge commit | Pending |
@@ -31,11 +31,11 @@ Exit yêu cầu `74/74` Must Pass. Conditional phải Pass khi enabled hoặc c�
 
 | Gate | Expected evidence | Current result |
 | --- | --- | --- |
-| Gate A | Planning approval/readiness + PR/CI/merge publication | Content approved; repository publication pending |
-| Gate B | Domain/data/index/migration/transaction | Not started |
-| Gate C | Quiz/Attempt/scoring/result/privacy | Not started |
-| Gate D | Assignment/Submission/Grade/deadline | Not started |
-| Gate E | Integration/OpenAPI/E2E/CI/clean clone | Not started |
+| Gate A | Planning approval/readiness + PR/CI/merge publication | Pass; planning PR #13 merged at `24084c0` |
+| Gate B | Domain/data/index/migration/transaction | Local Pass; remote verification pending |
+| Gate C | Quiz/Attempt/scoring/result/privacy | Local Pass |
+| Gate D | Assignment/Submission/Grade/deadline | Local Pass |
+| Gate E | Integration/OpenAPI/E2E/CI/clean clone | Local gates Pass; clean clone, formal AC and remote CI pending |
 
 ## 4. Command Evidence Template
 
@@ -43,65 +43,65 @@ Exit yêu cầu `74/74` Must Pass. Conditional phải Pass khi enabled hoặc c�
 
 | Command | Expected | Result | Timestamp | Evidence/location |
 | --- | --- | --- | --- | --- |
-| `npm ci` | Lockfile install Pass | Not run | - | - |
-| `npm run lint` | Pass | Not run | - | - |
-| `npm run typecheck` | API/Web Pass | Not run | - | - |
-| `npm test` | API/Web Pass; ghi số test | Not run | - | - |
-| Mongo integration command | Replica-set suites Pass; ghi số test | Not run | - | - |
-| OpenAPI contract command | Runtime parity Pass; ghi operation count | Not run | - | - |
-| Coverage command | Tất cả configured threshold Pass | Not run | - | - |
-| `npm run build` | API/Web production builds Pass | Not run | - | - |
-| E2E command | Critical journeys Pass; ghi browser/count | Not run | - | - |
-| Full CI-equivalent command | Full quality gate Pass | Not run | - | - |
-| `npm audit --omit=dev --audit-level=high` | Không blocking production vulnerability | Not run | - | - |
-| Secret scan | Không blocking secret finding | Not run | - | - |
-| `git diff --check` | No whitespace errors | Not run | - | - |
+| `npm ci` | Lockfile install Pass | Pass trước local validation | `2026-07-27` | Local shell |
+| `npm run lint` | Pass | Pass | `2026-07-27` | `npm run check` |
+| `npm run typecheck` | API/Web Pass | Pass | `2026-07-27` | `npm run check` |
+| `npm test` | API/Web Pass; ghi số test | API `180/180`; Web `96/96` | `2026-07-27` | `npm run check` |
+| Mongo integration command | Replica-set suites Pass; ghi số test | `72/72` Pass | `2026-07-27` | `MONGODB_INTEGRATION_URI=...directConnection=true npm run test:integration:coverage --workspace @microlearning/api` |
+| OpenAPI contract command | Runtime parity Pass; ghi operation count | `9/9`; `52/52` P05 operations | `2026-07-27` | `npm run test:openapi --workspace @microlearning/api` |
+| Coverage command | Tất cả configured threshold Pass | Statements `80.66%`; branches `60.95%`; functions `87.56%`; lines `82.97%` | `2026-07-27` | `coverage-integration` |
+| `npm run build` | API/Web production builds Pass | Pass | `2026-07-27` | `npm run check` |
+| E2E command | Critical journeys Pass; ghi browser/count | P05 `12/12`; full Chromium `26/26` | `2026-07-27` | `npm run test:e2e` |
+| Full CI-equivalent command | Full quality gate Pass | Local Pass | `2026-07-27` | `npm run check` |
+| `npm run audit:production` | Không blocking production vulnerability | Pass với exact time-bound RSC-only exception | `2026-07-27` | Local shell |
+| Secret scan | Không blocking secret finding | Current non-ignored source + `39` Git commits Pass, không phát hiện leak | `2026-07-27` | Local Gitleaks |
+| `git diff --check` | No whitespace errors | Chạy lại sau cập nhật tài liệu | `2026-07-27` | Local shell |
 
 ## 5. Domain And Data Evidence Template
 
 | Check | Target | Result | Evidence |
 | --- | --- | --- | --- |
-| Quiz/Question aggregate | Validation/lifecycle/reorder correct | Not evaluated | - |
-| Attempt snapshot | Immutable and bounded | Not evaluated | - |
-| Active Attempt concurrency | One active natural key | Not evaluated | - |
-| Scoring | Golden fixtures exact | Not evaluated | - |
-| Submit/timeout | Idempotent terminal transition | Not evaluated | - |
-| Submission revision | Current pointer + immutable history | Not evaluated | - |
-| Grade/regrade | Revision/history/audit atomic | Not evaluated | - |
-| Deadline exception | Precedence/history/recalculation correct | Not evaluated | - |
-| Index manifest | Key/options/name correct | Not evaluated | - |
-| Query plans | Expected IXSCAN/no unapproved COLLSCAN | Not evaluated | - |
-| Migration/rollback | Preflight and dry-run Pass | Not evaluated | - |
+| Quiz/Question aggregate | Validation/lifecycle/reorder correct | Local Pass | Unit/integration/OpenAPI |
+| Attempt snapshot | Immutable and bounded | Local Pass | Snapshot/projection assertions |
+| Active Attempt concurrency | One active natural key | Local Pass | Concurrent start integration |
+| Scoring | Golden fixtures exact | Local Pass | Objective/manual review suites |
+| Submit/timeout | Idempotent terminal transition | Local Pass | Retry/concurrency integration |
+| Submission revision | Current pointer + immutable history | Local Pass | Transaction/history integration |
+| Grade/regrade | Revision/history/audit atomic | Local Pass | Integration + browser regrade |
+| Deadline exception | Precedence/history/recalculation correct | Local Pass | Integration + browser extension |
+| Index manifest | Key/options/name correct | Local Pass | Named index assertions |
+| Query plans | Expected IXSCAN/no unapproved COLLSCAN | Local Pass | Attempt/Grade/deadline explain |
+| Migration/rollback | Preflight and dry-run Pass | Local Pass | Migration integration |
 
 ## 6. Security And Privacy Evidence Template
 
 | Check | Target | Result | Evidence |
 | --- | --- | --- | --- |
-| RBAC/ownership/enrollment | Full negative matrix Pass | Not evaluated | - |
-| Answer secrecy | No key/scoring internals before release | Not evaluated | - |
-| Grade privacy | No draft/cross-student visibility | Not evaluated | - |
-| Submission privacy | Student only sees own work | Not evaluated | - |
-| IDOR | Foreign object IDs denied consistently | Not evaluated | - |
-| Audit/log redaction | No answer/grade/private content/secret leak | Not evaluated | - |
-| URL/media | HTTPS/allowlist/safe rendering when enabled | Not evaluated | - |
-| Upload boundary | No multipart/local disk implementation | Not evaluated | - |
+| RBAC/ownership/enrollment | Full negative matrix Pass | Local Pass | Anonymous/role/owner/student matrix |
+| Answer secrecy | No key/scoring internals before release | Local Pass | Recursive projection assertions |
+| Grade privacy | No draft/cross-student visibility | Local Pass | Integration + own Grade browser |
+| Submission privacy | Student only sees own work | Local Pass | Integration + returned work browser |
+| IDOR | Foreign object IDs denied consistently | Local Pass | Foreign Teacher/cross-Student tests |
+| Audit/log redaction | No answer/grade/private content/secret leak | Local Pass | Audit metadata allowlist |
+| URL/media | HTTPS/allowlist/safe rendering when enabled | N/A | Feature disabled by Gate A |
+| Upload boundary | No multipart/local disk implementation | Local Pass | Config/runtime review |
 
 ## 7. Runtime, Browser And Accessibility Template
 
 | Check | Target | Result | Evidence |
 | --- | --- | --- | --- |
-| Docker images | Clean API/Web production build | Not evaluated | - |
-| Mongo replica set | Healthy and transaction-capable | Not evaluated | - |
-| Deterministic seed | First/repeat counts stable | Not evaluated | - |
-| Swagger UI/JSON | HTTP 200 and P05 operations present | Not evaluated | - |
-| Teacher Quiz journey | Author/publish/review/regrade | Not evaluated | - |
-| Student Quiz journey | Start/save/resume/submit/result | Not evaluated | - |
-| Assignment journey | Create/draft/turn-in/grade/return | Not evaluated | - |
-| Deadline/To-do journey | Exception changes effective state | Not evaluated | - |
-| Desktop visual | No overlap/truncation/broken state | Not evaluated | - |
-| Mobile visual | No horizontal overflow; controls usable | Not evaluated | - |
-| Keyboard/axe | Critical screens accessible | Not evaluated | - |
-| Dirty navigation | Unsaved/unconfirmed work protected | Not evaluated | - |
+| Docker images | Clean API/Web production build | Local Pass | Docker build |
+| Mongo replica set | Healthy and transaction-capable | Local Pass | Compose health + `72/72` integration |
+| Deterministic seed | First/repeat counts stable | Local Pass | P05 `14 created`, repeat `14 reused` |
+| Swagger UI/JSON | HTTP 200 and P05 operations present | Local Pass | `52/52`, OpenAPI `9/9` |
+| Teacher Quiz journey | Author/publish/review/regrade | Local Pass | Create/question/preview/publish/review/release |
+| Student Quiz journey | Start/save/resume/submit/result | Local Pass | Start/save/hard reload/resume/submit/result/limit |
+| Assignment journey | Create/draft/turn-in/grade/return | Local Pass | Create/publish/draft/turn-in/unsubmit/resubmit/roster/regrade |
+| Deadline/To-do journey | Exception changes effective state | Local Pass | Dedicated browser journey |
+| Desktop visual | No overlap/truncation/broken state | Local Pass | `1280x720` manual/browser review |
+| Mobile visual | No horizontal overflow; controls usable | Local Pass | `390x844` browser/Playwright |
+| Keyboard/axe | Critical screens accessible | Local Pass | axe serious/critical scan + keyboard focus assertion |
+| Dirty navigation | Unsaved/unconfirmed work protected | Local Pass | Component tests + browser state review |
 | Clean clone | Setup/test/build/seed/smoke reproducible | Not evaluated | - |
 
 ## 8. Performance Template
@@ -110,11 +110,11 @@ Performance dataset, warm-up, request count, machine/CI context và percentile p
 
 | Query/journey | Budget | Result | Dataset/evidence |
 | --- | --- | --- | --- |
-| Student To-do mixed activities | Theo NFR/baseline đã chấp thuận | Not run | - |
-| Teacher Quiz result list | Theo NFR/baseline đã chấp thuận | Not run | - |
-| Teacher Assignment submission list | Theo NFR/baseline đã chấp thuận | Not run | - |
-| Student own Grade list | Theo NFR/baseline đã chấp thuận | Not run | - |
-| Course progress v2 | Theo NFR/baseline đã chấp thuận | Not run | - |
+| Student To-do mixed activities | Theo NFR/baseline đã chấp thuận | Local Pass | P04 regression p95 `33.90ms`; mixed activity integration |
+| Teacher Quiz result list | Theo NFR/baseline đã chấp thuận | Local Pass | Named IXSCAN; Phase 05 p95 < `500ms` |
+| Teacher Assignment submission list | Theo NFR/baseline đã chấp thuận | Local Pass | Named indexes + bounded paging |
+| Student own Grade list | Theo NFR/baseline đã chấp thuận | Local Pass | `grade_student_returned` IXSCAN |
+| Course progress v2 | Theo NFR/baseline đã chấp thuận | Local Pass | dashboard p95 `195.56ms`; metric version asserted |
 
 Không đặt một con số p95 mới trong exit evidence nếu planning baseline/NFR chưa chấp thuận con số đó.
 
@@ -122,10 +122,10 @@ Không đặt một con số p95 mới trong exit evidence nếu planning baseli
 
 | Severity | Open count | References/disposition |
 | --- | ---: | --- |
-| Critical | Not evaluated | - |
-| High | Not evaluated | - |
-| Medium | Not evaluated | - |
-| Low | Not evaluated | - |
+| Critical | 0 | Local review |
+| High | 0 | Local review |
+| Medium | 0 | - |
+| Low | 1 accepted risk | React Router RSC-only advisory; owner DevOps/Security; expiry `2026-08-31` |
 
 | Conditional item | Enabled? | Result | N/A approval/evidence |
 | --- | --- | --- | --- |
@@ -149,8 +149,10 @@ Không đặt một con số p95 mới trong exit evidence nếu planning baseli
 ## 11. Exit Decision
 
 ```text
-Decision: NOT_EVALUATED
-Reason: Phase 05 implementation has not started and no runtime/remote acceptance evidence exists.
+Decision: PENDING_REMOTE_VERIFICATION
+Reason: Part 1-Part 7 and local gates are complete. Implementation commit,
+clean clone, formal AC evaluation,
+implementation PR/main CI, approval and P06 handoff remain pending.
 ```
 
 Chỉ đổi decision thành `COMPLETED` sau khi checklist Gate A-E, Acceptance Criteria, risk/defect review và tất cả evidence bắt buộc đã được xác minh trên đúng release commit.

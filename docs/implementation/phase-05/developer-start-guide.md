@@ -94,10 +94,10 @@ Exit: Teacher tạo, sửa, kiểm tra lỗi và publish Quiz hợp lệ; Studen
 - Save/resume with revision.
 - Submit/timeout/lazy reconciliation.
 - Objective scoring + short-answer review state.
-- Result release, Teacher review và Student own result.
-- Student Quiz Player + Teacher Results.
+- Immediate objective result và Student own result; mixed Quiz giữ `NEEDS_REVIEW/resultPending`.
+- Student Quiz Player; Teacher review/Grade UI được thực hiện tại Slice 5.
 
-Exit: Gate C tests, E2E và privacy pass.
+Exit: objective Quiz end-to-end Pass; mixed Quiz không fake final score và chờ review đúng contract.
 
 ### Slice 4 - Assignment Và Submission
 
@@ -112,6 +112,7 @@ Exit: retry/concurrency/history và Assignment E2E pass.
 ### Slice 5 - Grade Và Deadline Exception
 
 - Teacher result/submission queries.
+- Short-answer review/finalize và result release.
 - Grade draft/return/regrade/history/audit.
 - Student own returned grades.
 - Per-Student deadline set/revoke/history.
