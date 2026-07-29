@@ -25,8 +25,8 @@ Việc dùng TypeScript không thay đổi nền tảng ReactJS/Node.js; nó b�
 | 02    | Authentication and Users | Student registration, login/session, RBAC, Admin user lists và Teacher invitation      | Phase 01                 | Merged; `39/39` Pass            |
 | 03    | Classroom Management     | Classroom CRUD, enrollment, class code, invite link, roster và enrollment policy       | Phase 02                 | Completed; `45/45` Pass         |
 | 04    | Learning Content         | Course, module, lesson, resource, publish lifecycle và deadline                        | Phase 03                 | Completed; `66/66` Must Pass    |
-| 05    | Assessments and Grading  | Quiz, assignment, submission, grading, feedback và deadline exception                  | Phase 04                 | Planning baseline `READY_FOR_REVIEW`; Gate A pending |
-| 06    | Reporting and Analytics  | Student To-do, progress, process score, ranking và Admin reports                       | Phase 05                 | Planned                         |
+| 05    | Assessments and Grading  | Quiz, assignment, submission, grading, feedback và deadline exception                  | Phase 04                 | Completed; `74/74` Must Pass; PR #14 merged |
+| 06    | Reporting and Analytics  | Student/Teacher/Admin dashboard, progress, Gradebook, process score và reports          | Phase 05                 | Gate A approved; `READY_TO_CODE_AFTER_PLANNING_MERGE` |
 | 07    | DevOps and Deployment    | Container registry, Staging/Production pipeline, Cloud, monitoring, backup và rollback | Phase 01-06              | Planned                         |
 | 08    | Testing and Release      | E2E, security/performance test, UAT, defect closure và MVP release                     | Phase 01-07              | Planned                         |
 

@@ -103,6 +103,9 @@ docs/implementation/
 |   |-- acceptance-criteria.md
 |   |-- traceability-matrix.md
 |   |-- work-breakdown-structure.md
+|   |-- execution-parts/
+|   |   |-- README.md
+|   |   `-- part-00-*.md ... part-17-*.md
 |   |-- implementation-checklist.md
 |   |-- risk-and-issues.md
 |   |-- developer-start-guide.md
@@ -133,6 +136,7 @@ docs/implementation/
 |   |-- devops-environment-and-seeding.md
 |   |-- testing-strategy.md
 |   |-- test-case-catalog.md
+|   |-- test-case-execution-matrix.md
 |   |-- acceptance-criteria.md
 |   |-- traceability-matrix.md
 |   |-- work-breakdown-structure.md
@@ -145,6 +149,49 @@ docs/implementation/
 |   |-- phase-exit-evidence.md
 |   `-- exit-report.md
 |-- phase-06/
+|   |-- README.md
+|   |-- phase-plan.md
+|   |-- scope-and-deliverables.md
+|   |-- ba-alignment-and-decisions.md
+|   |-- technical-decisions.md
+|   |-- gate-a-decision-sheet.md
+|   |-- architecture-and-module-design.md
+|   |-- compatibility-and-cutover-plan.md
+|   |-- metric-definition-and-process-score.md
+|   |-- course-gradebook-and-ranking.md
+|   |-- student-reporting-experience.md
+|   |-- teacher-reporting-experience.md
+|   |-- admin-reporting-and-governance.md
+|   |-- reporting-access-and-privacy.md
+|   |-- data-model-and-indexes.md
+|   |-- read-model-refresh-and-reconciliation.md
+|   |-- source-event-invalidation-matrix.md
+|   |-- migration-and-rollback.md
+|   |-- api-contract.md
+|   |-- report-dto-and-query-contracts.md
+|   |-- runtime-contract-catalog.md
+|   |-- api-ui-integration-matrix.md
+|   |-- backend-implementation-plan.md
+|   |-- frontend-implementation-plan.md
+|   |-- export-and-csv-safety.md
+|   |-- analytics-event-contract.md
+|   |-- source-file-blueprint.md
+|   |-- devops-environment-and-seeding.md
+|   |-- testing-strategy.md
+|   |-- test-case-catalog.md
+|   |-- test-case-execution-matrix.md
+|   |-- acceptance-criteria.md
+|   |-- traceability-matrix.md
+|   |-- work-breakdown-structure.md
+|   |-- implementation-checklist.md
+|   |-- risk-and-issues.md
+|   |-- developer-start-guide.md
+|   |-- pull-request-execution-guide.md
+|   |-- development-readiness-review.md
+|   |-- evidence-register.md
+|   |-- phase-exit-evidence.md
+|   |-- phase-07-handoff.md
+|   `-- exit-report.md
 |-- phase-07/
 |   |-- README.md
 |   `-- cloud-provider-baseline.md
@@ -159,8 +206,8 @@ docs/implementation/
 | `phase-02/` | Authentication and Users | Registration, login/session, RBAC, user admin, Teacher invitation   | Merged; `39/39` Pass            |
 | `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | Completed; `45/45` Pass; PR #6 merged |
 | `phase-04/` | Learning Content         | Course/module/lesson/deadline/completion/To-do và dashboard v1      | Completed; `66/66` Must Pass; PR #10 merged |
-| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Planning baseline `READY_TO_CODE`; Gate A approved 2026-07-22 |
-| `phase-06/` | Reporting and Analytics  | To-do/progress/process score/ranking/report                         | Planned                         |
+| `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Completed; `74/74` Must Pass; PR #14 merged |
+| `phase-06/` | Reporting and Analytics  | Dashboard/progress/process score/Gradebook/ranking/report           | Gate A `APPROVED`; `READY_TO_CODE_AFTER_PLANNING_MERGE` |
 | `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Provider accepted; Planned      |
 | `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                                | Planned                         |
 
