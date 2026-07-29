@@ -20,10 +20,11 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Gate A | `APPROVED` |
-| Implementation | `READY_TO_CODE_AFTER_PLANNING_MERGE` |
-| Part 00 | `IN_REVIEW` |
-| Part 01-17 | `BLOCKED_BY_PLANNING_MERGE` |
-| Quy tắc bắt đầu | Merge planning PR, pull `main`, đóng Part 00 rồi mới chuyển Part 01 `READY` |
+| Implementation | `READY_TO_CODE` |
+| Part 00 | `DONE` |
+| Part 01 | `READY` |
+| Part 02-17 | `BLOCKED_BY_DEPENDENCY` |
+| Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
 
 ## 3. Execution Map
 
@@ -121,7 +122,7 @@ E2E, Docker, benchmark và clean clone chạy tại Part có yêu cầu cụ th�
 
 ## 8. Status Vocabulary
 
-`BLOCKED_BY_PLANNING_MERGE`, `READY`, `IN_PROGRESS`, `IN_REVIEW`, `BLOCKED`, `DONE`,
+`BLOCKED_BY_DEPENDENCY`, `READY`, `IN_PROGRESS`, `IN_REVIEW`, `BLOCKED`, `DONE`,
 `APPROVED_NA`.
 
 `DONE` không chỉ có nghĩa code compile. Part phải có test Pass, tài liệu contract đồng bộ, không

@@ -20,16 +20,16 @@ version, freshness, khả năng rebuild và reconciliation.
 | Tên | `Reporting And Analytics` |
 | Dependency | Phase 05 đã hoàn thành tại merge commit `88404f3`; handoff `P05-P06-HANDOFF-V1` đã được chấp nhận |
 | Planning baseline date | `2026-07-29` |
-| Planning status | `APPROVED_FOR_MERGE` |
+| Planning status | `MERGED_TO_MAIN` |
 | Technical completeness | `ACCEPTED_AT_GATE_A` |
 | Gate A | `APPROVED` |
-| Implementation status | `READY_TO_CODE_AFTER_PLANNING_MERGE` |
+| Implementation status | `READY_TO_CODE` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect, evidence có thể tái lập |
 | Phase tiếp theo | `P07 - DevOps And Deployment` |
 
-Gate A và local baseline đã Pass; contract/execution plan không còn `TBD` kỹ thuật chặn Must
-scope. Trạng thái `READY_TO_CODE_AFTER_PLANNING_MERGE` có nghĩa developer chỉ bắt đầu Part 01
-sau khi planning PR CI xanh, merge vào protected `main` và local `main` đã pull merge commit.
+Gate A, local baseline và planning PR remote CI đã Pass. PR `#16` được squash-merge vào
+protected `main` tại `e7437bc`; local `main` đã đồng bộ commit này. Phase 06 hiện
+`READY_TO_CODE`: Part 01 được phép bắt đầu trên branch implementation riêng.
 
 ## 3. Business Outcome
 

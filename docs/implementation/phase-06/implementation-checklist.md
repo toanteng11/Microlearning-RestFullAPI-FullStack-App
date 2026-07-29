@@ -11,11 +11,11 @@
 - [x] Privacy/threshold/export/event decisions approved.
 - [x] API/data/UI/test/WBS reviewed.
 - [x] Execution Parts 00-17 mapped to Parent PR, owner and dependency.
-- [ ] Planning PR CI Pass and merged.
-- [ ] Status changed to `READY_TO_CODE`.
+- [x] Planning PR CI Pass and merged.
+- [x] Status changed to `READY_TO_CODE`.
 
-Gate A/local baseline evidence: `gate-a-review-evidence.md`. Hai item cuối chỉ được check sau
-protected merge; trạng thái trước merge là `READY_TO_CODE_AFTER_PLANNING_MERGE`.
+Gate A/local/remote evidence: `gate-a-review-evidence.md`; PR `#16`, Actions run
+`30448148966`, merge `e7437bc`.
 
 ## Gate B - Foundation
 

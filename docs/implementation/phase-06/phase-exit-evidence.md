@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Planning merge | Pending |
+| Planning merge | PR `#16`; commit `e7437bc`; CI `6/6` Pass |
 | Implementation PR | Pending |
 | Source commit | Pending |
 | Release merge commit | Pending |

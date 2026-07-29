@@ -35,7 +35,7 @@ P: Probability, I: Impact; `C` = Critical, `H` = High, `M` = Medium, `L` = Low.
 
 | ID | Item | Status | Resolution needed |
 | --- | --- | --- | --- |
-| P06-I01 | Planning baseline chưa merge protected `main` | In Review | PR CI Pass, approval và merge; không bypass |
+| P06-I01 | Planning baseline chưa merge protected `main` | Resolved | PR `#16`, CI `6/6`, merge `e7437bc` |
 | P06-I02 | CSV Conditional bật hay tắt | Resolved at Gate A | Implement bounded CSV; runtime default false |
 | P06-I03 | Analytics event Conditional | Resolved at Gate A | Implement safe foundation; runtime default false |
 | P06-I04 | Trend snapshot Conditional | Resolved at Gate A | Implement foundation; runtime default false/no-data |
@@ -46,7 +46,7 @@ Không item nào được im lặng mặc định thành scope implementation.
 
 ## 3. Risk Review Cadence
 
-- Gate A: core/Conditional decisions đã review; còn theo dõi planning merge.
+- Gate A: core/Conditional decisions và planning merge đã hoàn thành.
 - Mỗi PR: update trigger/status.
 - Before enabling Conditional: dedicated security/ops review.
 - Gate E: Critical/High residual risk cần explicit waiver; mặc định không close phase.

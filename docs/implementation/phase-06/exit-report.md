@@ -8,9 +8,9 @@
 
 | Field | Value |
 | --- | --- |
-| Planning status | `APPROVED_FOR_MERGE` |
+| Planning status | `MERGED_TO_MAIN` |
 | Gate A | Approved |
-| Implementation | Ready to Code after planning merge |
+| Implementation | Ready to Code; not started |
 | Release PR/commit | Pending |
 | Exit decision | `NOT_EVALUATED` |
 

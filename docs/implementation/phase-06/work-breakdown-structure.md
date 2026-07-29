@@ -3,8 +3,8 @@
 ## 1. Conventions
 
 Estimate dùng ideal developer-days, không phải cam kết lịch. Status implementation ban đầu
-`BACKLOG`; planning T01-T08 đã `DONE`, T09 còn `IN_REVIEW` đến protected merge. Owner roles:
-`TL`, `BE`, `FE`, `QA`, `DEVOPS`, `SEC`, `BA/PO`.
+`BACKLOG`; toàn bộ planning T01-T09 đã `DONE`. Owner roles: `TL`, `BE`, `FE`, `QA`, `DEVOPS`,
+`SEC`, `BA/PO`.
 
 WBS là nguồn task/estimate; thứ tự code hằng ngày và checkpoint nhỏ được trình bày tại
 `execution-parts/README.md`. Không tạo task mới trong Execution Parts nếu chưa ánh xạ về WBS,
@@ -22,7 +22,7 @@ acceptance và test tương ứng.
 | P06-E01-T06 | Approve Admin/privacy/threshold | SEC/PO | T03 | 0.5 | DONE |
 | P06-E01-T07 | Approve export/event flags | PO/SEC/DEVOPS | T03 | 0.5 | DONE |
 | P06-E01-T08 | Review DTO/query/cutover/invalidation/API/data/UI/test blueprint | TL/BE/FE/QA | T04-07 | 1.0 | DONE |
-| P06-E01-T09 | Merge planning PR/record Gate A | TL | T08 | 0.5 | IN_REVIEW |
+| P06-E01-T09 | Merge planning PR/record Gate A | TL | T08 | 0.5 | DONE |
 
 ## 3. E02 - Data And Read Model
 

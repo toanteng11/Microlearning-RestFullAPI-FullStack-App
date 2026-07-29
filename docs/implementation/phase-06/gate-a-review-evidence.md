@@ -114,13 +114,17 @@ Benchmark đầy đủ, explain/index evidence và rebuild resource measurement 
 - Gate A: `APPROVED`.
 - Technical decisions: `ACCEPTED_AT_GATE_A`.
 - Local baseline: `PASS`.
-- Planning package: `APPROVED_FOR_MERGE`.
-- Implementation: `READY_TO_CODE_AFTER_PLANNING_MERGE`.
+- Planning package: `MERGED_TO_MAIN`.
+- Implementation: `READY_TO_CODE`.
 - Planning PR: `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/16`.
-- PR CI: `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30448091250`
-  (rerun theo latest commit; chỉ chuyển Pass khi toàn bộ required checks xanh).
-- Remaining Part 00 evidence: planning merge commit, post-merge local sync và clean
-  `git status`.
+- PR CI: `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30448148966`,
+  `6/6` checks Pass.
+- Planning merge: squash commit `e7437bc` trên protected `main`.
+- Post-merge main CI:
+  `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30448420376`,
+  Pass.
+- Post-merge local sync: local `main` và `origin/main` cùng tại `e7437bc`, clean trước khi tạo
+  closure branch.
 
-Merge commit của planning PR là activation event duy nhất chuyển implementation sang
-`READY_TO_CODE`. Không bắt đầu Part 01 trên branch planning.
+Merge commit của planning PR đã kích hoạt implementation `READY_TO_CODE`. Part 01 phải bắt đầu
+trên branch implementation riêng, không dùng lại branch planning.
