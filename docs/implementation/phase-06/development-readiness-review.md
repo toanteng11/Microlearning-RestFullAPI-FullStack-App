@@ -7,11 +7,11 @@
 | Review date | `2026-07-29` |
 | Planning version | `P06-PLAN-V1` |
 | Dependency | P05 completed, handoff accepted |
-| Current status | `APPROVED_FOR_MERGE` |
+| Current status | `READY_TO_CODE` |
 | Technical completeness | `ACCEPTED_AT_GATE_A` |
 | Gate A | `APPROVED` |
-| Implementation | `READY_TO_CODE_AFTER_PLANNING_MERGE` |
-| Execution decision | `PLANNING_MERGE_REQUIRED` |
+| Implementation | `READY_TO_CODE` |
+| Execution decision | `START_PART_01` |
 
 ## 2. Readiness Assessment
 
@@ -44,7 +44,7 @@ Score không phải phần trăm hoàn thành code.
 | Crash gap source/invalidation | Đã đóng bằng durable write trong cùng transaction |
 | Refresh/reconciliation/rollback | Đã có bounded recovery và evidence contract |
 | API/UI/OpenAPI/test cutover | Đã map cùng increment |
-| Remaining blocker | Planning PR CI Pass và merge vào protected `main` |
+| Remaining blocker | Không có blocker cho Part 01 |
 
 ## 3. Mandatory Confirmations
 
@@ -101,6 +101,6 @@ Sau approvals, chỉ còn activation qua merge:
 ## 7. Current Decision
 
 Planning package đã đạt `ACCEPTED_AT_GATE_A`; không còn gap kỹ thuật/contract đã biết chặn Dev.
-Local CI/integration/OpenAPI/Docker smoke Pass. Package được ghi
-`READY_TO_CODE_AFTER_PLANNING_MERGE`: planning PR merge commit là activation event để bắt đầu
-Part 01 mà không cần thêm một vòng thiết kế.
+Local CI/integration/OpenAPI/Docker smoke Pass; PR `#16` remote CI `6/6` Pass và merge commit
+`e7437bc` đã được pull về local `main`. Phase 06 là `READY_TO_CODE`; bắt đầu Part 01 mà không cần
+thêm một vòng thiết kế.

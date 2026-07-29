@@ -7,9 +7,9 @@
 | Part | `P06-PART-00` |
 | Parent PR | `P06-PR01` |
 | Owner | Trần Đức Toàn |
-| Status | `IN_REVIEW` |
+| Status | `DONE` |
 | Gate A | `APPROVED` |
-| Implementation activation | `READY_TO_CODE_AFTER_PLANNING_MERGE` |
+| Implementation activation | `READY_TO_CODE` |
 | Business code | Không được phép trong Part 00 |
 | Last reviewed | `2026-07-29` |
 
@@ -107,9 +107,10 @@ Chi tiết command, performance observation và environment precondition nằm t
 | Decision rationale/local baseline | Pass | `../gate-a-review-evidence.md` |
 | Planning document validation | Pass | `../gate-a-review-evidence.md` |
 | Planning PR URL | Pass | `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/16` |
-| Planning PR CI URL | In Progress | Actions run `30448091250`; cập nhật theo latest commit |
-| Planning merge commit | Pending merge | Cập nhật sau protected merge |
-| Post-merge local sync/clean status | Pending merge | Chạy trên `main` sau merge |
+| Planning PR CI URL | Pass | Actions run `30448148966`; `6/6` checks Pass |
+| Planning merge commit | Pass | Squash merge `e7437bc` |
+| Post-merge main CI | Pass | Actions run `30448420376` |
+| Post-merge local sync/clean status | Pass | Local `main` at `e7437bc`, clean before closure branch |
 
 ## 8. Stop Conditions
 
@@ -148,5 +149,5 @@ git status --short
 - Phase 06 `READY_TO_CODE`.
 - Part 01 chuyển `READY`.
 
-Current result: decision/local baseline Pass; remote PR/CI/merge evidence còn bắt buộc. Vì vậy
-Part 00 hiện đúng ở trạng thái `IN_REVIEW`, chưa được tự khai `DONE`.
+Current result: `P06-AC-001..008` Pass, Gate A approved, planning PR merged và local activation
+verified. Part 00 là `DONE`; Part 01 chuyển `READY`.

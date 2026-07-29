@@ -31,10 +31,10 @@
 | P06-AC-005 | Pass | `gate-a-decision-sheet.md` P06-GA-004/005 |
 | P06-AC-006 | Pass | `technical-decisions.md`; freshness canonical contracts |
 | P06-AC-007 | Pass | `gate-a-review-evidence.md`; planning validation Pass |
-| P06-AC-008 | Pending Merge | PR CI URL và merge commit phải được ghi sau protected merge |
+| P06-AC-008 | Pass | PR `#16`, PR CI `6/6`, merge `e7437bc`, main CI `30448420376` Pass |
 
-Planning result hiện tại: `7/8 Pass`, `1/8 Pending Merge`. Không cộng local baseline vào
-implementation acceptance của Data/API/Web.
+Planning result hiện tại: `8/8 Pass`. Không cộng local baseline vào implementation acceptance
+của Data/API/Web.
 
 ## 3. Data And Read Model `009..018`
 
