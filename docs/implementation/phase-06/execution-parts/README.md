@@ -20,11 +20,13 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Gate A | `APPROVED` |
-| Implementation | `READY_TO_CODE` |
+| Implementation | `IN_REVIEW` |
 | Part 00 | `DONE` |
-| Part 01 | `READY` |
-| Part 02-17 | `BLOCKED_BY_DEPENDENCY` |
+| Part 01-05 | `DONE` |
+| Part 06 | `IN_REVIEW` |
+| Part 07-17 | `BLOCKED_BY_P06_PR02_MERGE` |
 | Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
+| Foundation implementation | Commit `1afe813`; local Gate B Pass; remote PR/CI pending |
 
 ## 3. Execution Map
 
@@ -140,3 +142,17 @@ Khi có khác biệt, ưu tiên theo thứ tự:
 6. file Execution Part này.
 
 Execution Part chỉ hướng dẫn thứ tự thực hiện, không được tự thay đổi business semantics.
+
+## 10. Foundation Implementation Evidence
+
+- Part 01-06 được triển khai tại commit `1afe813`.
+- `npm run check:ci`: Pass.
+- API unit coverage: `202/202` tests Pass, statements `78.19%`, lines `80.12%`.
+- Mongo replica-set integration coverage: `82/82` tests Pass, statements `78.65%`,
+  lines `81.29%`.
+- P06 focused Mongo foundation: `11/11` tests Pass.
+- Rebuild, reconcile dry-run, reconcile repair và benchmark CLI: Pass.
+- Chi tiết: `gate-b-foundation-evidence.md`.
+
+Part 06 chỉ chuyển `DONE` sau khi P06-PR02 có required CI Pass, review được xử lý và merge vào
+`main`. Trước thời điểm đó, Part 07-17 không được bắt đầu trên nhánh này.

@@ -51,6 +51,24 @@ của Data/API/Web.
 | P06-AC-017 | Migration/index/backfill chạy lại an toàn. |
 | P06-AC-018 | Explain plan chính dùng index, không unbounded scan/N+1. |
 
+### 3.1 Foundation Execution Result
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-009 | Local Pass | Versioned summary schema, invariants, unique/index tests; commit `1afe813` |
+| P06-AC-010 | Local Pass | No-PII schema review và prohibited-field migration test |
+| P06-AC-011 | Local Pass | Pure calculator/policy tests với fixed `asOf` |
+| P06-AC-012 | Local Pass | Reason union, newest watermark, broad-scope precedence và stale-worker CAS |
+| P06-AC-013 | Local Pass | Required real writer, source+intent rollback/commit và post-commit refresh fault test |
+| P06-AC-014 | Local Pass | Fresh/stale/partial/rebuilding/failed policy tests |
+| P06-AC-015 | Local Pass | Student/Course rebuild, bounded batch và idempotent CLI |
+| P06-AC-016 | Local Pass | Dry-run difference detection và explicit read-model-only repair |
+| P06-AC-017 | Local Pass | Index/migration preflight chạy lặp; legacy candidate `0` |
+| P06-AC-018 | Local Pass | Default ranking explain dùng named compound index; batched reader contract |
+
+Data/read-model result hiện tại: `10/10 Local Pass`. Kết quả chỉ chuyển thành `Pass` sau
+P06-PR02 required CI/review/merge.
+
 ## 4. Student `019..027`
 
 | ID | Criterion |

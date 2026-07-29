@@ -19,15 +19,18 @@ Gate A/local/remote evidence: `gate-a-review-evidence.md`; PR `#16`, Actions run
 
 ## Gate B - Foundation
 
-- [ ] Permissions and env validated.
-- [ ] Existing reporting route ownership cutover planned atomically.
-- [ ] Pure metric policies Pass.
-- [ ] Reader ports/adapters safe and batched.
-- [ ] Summary/invalidation schemas/indexes Pass.
-- [ ] Source transaction invalidation matrix Pass.
-- [ ] Migration/backfill idempotent.
-- [ ] Refresh/rebuild/reconcile Pass.
-- [ ] Fault isolation/concurrency Pass.
+- [x] Permissions and env validated.
+- [x] Existing reporting route ownership cutover planned atomically.
+- [x] Pure metric policies Pass.
+- [x] Reader ports/adapters safe and batched.
+- [x] Summary/invalidation schemas/indexes Pass.
+- [x] Source transaction invalidation matrix Pass.
+- [x] Migration/backfill idempotent với legacy candidate count `0`.
+- [x] Refresh/rebuild/reconcile Pass.
+- [x] Fault isolation/concurrency Pass.
+
+Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạng thái Gate B là
+`LOCAL_PASS_REMOTE_PENDING`; chỉ đổi thành `PASS` sau P06-PR02 CI/review/merge.
 
 ## Gate C - API And Security
 
@@ -90,4 +93,13 @@ npm run check:ci
 docker compose up -d --build
 ```
 
-Commands reporting-specific được thêm sau implementation scripts.
+Reporting-specific commands đã có:
+
+```text
+npm run reporting:rebuild -- --courseId=<id>
+npm run reporting:rebuild -- --all
+npm run reporting:reconcile -- --courseId=<id>
+npm run reporting:reconcile -- --all
+npm run reporting:reconcile -- --all --repair
+npm run reporting:benchmark -- --students=100 --activities=50 --iterations=3
+```

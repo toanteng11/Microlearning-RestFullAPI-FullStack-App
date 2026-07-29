@@ -65,3 +65,13 @@ Modify existing repositories chỉ khi cần batch/source watermark methods.
 - Adapters trả plain typed projections.
 - Query bounded, explicit projection và không N+1.
 - Negative leakage tests Pass.
+
+## Implementation Result
+
+`DONE` tại commit `1afe813`.
+
+- Bảy reader ports và Mongo adapters đã được triển khai bằng explicit allowlist projection.
+- Scope, roster, activity, progress, grade, governance và audit reads đều tách khỏi Express.
+- Bounded Student ID input và source watermark được enforce; không nhận raw aggregation pipeline.
+- Summary/model tests và migration denylist xác nhận không lưu email, tên hiển thị, answer,
+  feedback hoặc raw Submission.

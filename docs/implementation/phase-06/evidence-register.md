@@ -18,12 +18,12 @@ raw production data hoặc private CSV.
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-DATA-001 | Schema/index tests | Not Run | - |
-| P06-EV-DATA-002 | Migration idempotency | Not Run | - |
-| P06-EV-DATA-003 | Backfill output/count | Not Run | - |
-| P06-EV-DATA-004 | Refresh/concurrency/fault isolation | Not Run | - |
-| P06-EV-DATA-005 | Reconcile/repair | Not Run | - |
-| P06-EV-DATA-006 | No-PII read model review | Not Run | - |
+| P06-EV-DATA-001 | Schema/index tests | Pass | Commit `1afe813`; `phase-six-reporting-foundation.integration.test.ts` |
+| P06-EV-DATA-002 | Migration idempotency | Pass | Commit `1afe813`; migration preflight chạy lặp trong focused Mongo suite |
+| P06-EV-DATA-003 | Backfill output/count | Pass | Legacy candidate `0`; rebuild all `0` Course; `gate-b-foundation-evidence.md` |
+| P06-EV-DATA-004 | Refresh/concurrency/fault isolation | Pass | Commit `1afe813`; CAS, watermark race, stale worker, transaction rollback/fault tests |
+| P06-EV-DATA-005 | Reconcile/repair | Pass | `phase-six-reconciliation.test.ts`; CLI dry-run và explicit repair Pass |
+| P06-EV-DATA-006 | No-PII read model review | Pass | Summary schema denylist test và migration prohibited-field preflight |
 
 ## 4. API/Security Evidence
 
@@ -53,12 +53,12 @@ raw production data hoặc private CSV.
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-NFR-001 | 100x50 benchmark | Not Run | - |
-| P06-EV-NFR-002 | Explain/index review | Not Run | - |
-| P06-EV-NFR-003 | Rebuild batch resource use | Not Run | - |
+| P06-EV-NFR-001 | 100x50 benchmark | Pass | 3 iterations; p95 `278.75 ms`; heap `35 MB`; local 2026-07-29 |
+| P06-EV-NFR-002 | Explain/index review | Pass | Named index `report_summary_course_default_ranking` asserted in Mongo test |
+| P06-EV-NFR-003 | Rebuild batch resource use | Pass | Batch size `1` integration case; CLI default batch `50`; benchmark dataset `100x50` |
 | P06-EV-CI-001 | Docker integrated smoke | Baseline Pass | `gate-a-review-evidence.md`; rerun tại Gate E |
 | P06-EV-CI-002 | Clean clone | Not Run | - |
-| P06-EV-CI-003 | Implementation PR CI | Not Run | - |
+| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | `npm run check:ci`; replica-set integration coverage Pass |
 | P06-EV-CI-004 | Post-merge main CI | Not Run | - |
 | P06-EV-CI-005 | Dependency/secret scan | Baseline Partial | Production audit Pass; remote Secret Scan chờ PR CI |
 
@@ -68,7 +68,7 @@ raw production data hoặc private CSV.
 | --- | --- | --- | --- |
 | P06-EV-EXIT-001 | 68 Must AC result | Not Run | - |
 | P06-EV-EXIT-002 | Conditional disposition | Gate A Pass | `gate-a-decision-sheet.md`; runtime result cập nhật Gate E |
-| P06-EV-EXIT-003 | Regression result | Not Run | - |
+| P06-EV-EXIT-003 | Regression result | Foundation Local Pass | API `202`, Web `99`, integration `82`; full Gate E/E2E chưa chạy |
 | P06-EV-EXIT-004 | Defect/waiver review | Pending | - |
 | P06-EV-EXIT-005 | Exit report/signoff | Pending | - |
 | P06-EV-EXIT-006 | P07 handoff acceptance | Pending | - |

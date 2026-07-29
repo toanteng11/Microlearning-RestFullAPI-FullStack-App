@@ -59,3 +59,18 @@ Reporting CLI commands chỉ thêm vào `package.json` khi script thật đã t�
 - Fault/concurrency tests Pass.
 - P06-PR02 đủ review và CI trước merge.
 - Part 07, 09, 11 và 13 chuyển `READY` sau khi P06-PR02 merge main.
+
+## Implementation Result
+
+`IN_REVIEW` tại commit `1afe813`.
+
+- Student/Course rebuild, watermark retry, invalidation backoff, classroom expansion,
+  reconciliation dry-run/repair và migration preflight đã được triển khai.
+- `REBUILDING` là transient API freshness state; persisted summary giữ
+  `FRESH/STALE/PARTIAL/FAILED`. Part 07 sẽ compose trạng thái transient với invalidation lock.
+- Rebuild/reconcile CLI có strict arguments, structured JSON, explicit `--all`/`--repair` và
+  không in PII/secret.
+- Local Gate B: `npm run check:ci` Pass; API `202/202`, Web `99/99`, Mongo integration
+  `82/82`; focused P06 Mongo `11/11`.
+- Benchmark `100x50`, 3 iterations: p95 `278.75 ms`, heap `35 MB` trên máy local.
+- P06-PR02 remote CI/review/merge còn pending, vì vậy Part này chưa được đổi thành `DONE`.
