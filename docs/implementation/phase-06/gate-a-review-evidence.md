@@ -9,6 +9,7 @@
 | Reviewer | Trần Đức Toàn |
 | Review mode | Solo-project role-based self-review with automated verification |
 | Planning branch | `docs/phase-06-planning-baseline` |
+| Planning PR | `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/16` |
 | Base branch | `main` |
 | Base commit | `f3d6a89` |
 | P05 release | `88404f3` |
@@ -115,8 +116,11 @@ Benchmark đầy đủ, explain/index evidence và rebuild resource measurement 
 - Local baseline: `PASS`.
 - Planning package: `APPROVED_FOR_MERGE`.
 - Implementation: `READY_TO_CODE_AFTER_PLANNING_MERGE`.
-- Remaining Part 00 evidence: actual PR URL, PR CI URL, planning merge commit, post-merge local
-  sync và clean `git status`.
+- Planning PR: `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/16`.
+- PR CI: `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30448091250`
+  (rerun theo latest commit; chỉ chuyển Pass khi toàn bộ required checks xanh).
+- Remaining Part 00 evidence: planning merge commit, post-merge local sync và clean
+  `git status`.
 
 Merge commit của planning PR là activation event duy nhất chuyển implementation sang
 `READY_TO_CODE`. Không bắt đầu Part 01 trên branch planning.

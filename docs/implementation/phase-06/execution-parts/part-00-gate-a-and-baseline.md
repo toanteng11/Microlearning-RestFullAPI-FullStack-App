@@ -106,8 +106,8 @@ Chi tiết command, performance observation và environment precondition nằm t
 | Gate A approval record | Pass | `../gate-a-decision-sheet.md` |
 | Decision rationale/local baseline | Pass | `../gate-a-review-evidence.md` |
 | Planning document validation | Pass | `../gate-a-review-evidence.md` |
-| Planning PR URL | Pending remote | Cập nhật sau `gh pr create` |
-| Planning PR CI URL | Pending remote | Cập nhật sau Actions Pass |
+| Planning PR URL | Pass | `https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/16` |
+| Planning PR CI URL | In Progress | Actions run `30448091250`; cập nhật theo latest commit |
 | Planning merge commit | Pending merge | Cập nhật sau protected merge |
 | Post-merge local sync/clean status | Pending merge | Chạy trên `main` sau merge |
 

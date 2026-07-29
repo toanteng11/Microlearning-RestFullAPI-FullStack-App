@@ -11,7 +11,7 @@ raw production data hoặc private CSV.
 | --- | --- | --- | --- |
 | P06-EV-PLAN-001 | Planning document link/encoding validation | Pass | `gate-a-review-evidence.md` |
 | P06-EV-PLAN-002 | Gate A approvals | Pass | `gate-a-decision-sheet.md`; `gate-a-review-evidence.md` |
-| P06-EV-PLAN-003 | Planning PR CI | Pending Remote | PR/Actions URL cập nhật sau push |
+| P06-EV-PLAN-003 | Planning PR CI | In Progress | PR `#16`; Actions run `30448091250` |
 | P06-EV-PLAN-004 | Planning merge commit | Pending Merge | Merge SHA cập nhật sau protected merge |
 
 ## 3. Data Evidence
