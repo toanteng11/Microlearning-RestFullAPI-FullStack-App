@@ -5,6 +5,7 @@ import { AppError } from '../../shared/errors/app-error.js';
 import type { PhaseFourAuditWriter } from '../audit/phase-four-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { toLessonAuditValue } from '../lessons/lesson.dto.js';
 import type { LessonRepository } from '../lessons/lesson.repository.js';
 import { assertDeadlineChangeAllowed } from './lesson-deadline.policy.js';
@@ -39,6 +40,7 @@ export class LessonDeadlineService {
     private readonly deadlines: LessonDeadlineRepository,
     private readonly courseScopes: CourseScopeReader,
     private readonly audits: PhaseFourAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -129,6 +131,15 @@ export class LessonDeadlineService {
             fromDeadlineRevision: current.deadlineRevision,
             toDeadlineRevision: updated.deadlineRevision,
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: current.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
         },
         session,
       );

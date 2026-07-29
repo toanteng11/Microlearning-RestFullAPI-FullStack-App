@@ -45,6 +45,32 @@ const validEnvironment = {
   QUIZ_ANSWER_SAVE_LIMIT: '180',
   ASSESSMENT_MUTATION_WINDOW_SECONDS: '60',
   ASSESSMENT_MUTATION_IDENTITY_LIMIT: '120',
+  REPORTING_ENABLED: 'true',
+  REPORTING_TIMEZONE: 'Asia/Ho_Chi_Minh',
+  REPORTING_PAGE_MAX: '50',
+  REPORTING_DASHBOARD_PREVIEW_LIMIT: '5',
+  REPORTING_GRADEBOOK_ACTIVITY_MAX: '50',
+  REPORTING_STALE_AFTER_SECONDS: '300',
+  REPORTING_INLINE_REFRESH_MAX_STUDENTS: '5',
+  REPORTING_ON_DEMAND_COURSE_REFRESH_MAX_STUDENTS: '100',
+  REPORTING_REFRESH_REQUEST_BUDGET_MS: '900',
+  REPORTING_REBUILD_BATCH_SIZE: '50',
+  REPORTING_REBUILD_MAX_ATTEMPTS: '3',
+  REPORTING_CLASSROOM_EXPANSION_BATCH_SIZE: '50',
+  REPORTING_INVALIDATION_LOCK_SECONDS: '120',
+  REPORTING_INVALIDATION_MAX_ATTEMPTS: '3',
+  REPORTING_INVALIDATION_RETRY_BASE_SECONDS: '30',
+  REPORTING_INVALIDATION_RETRY_MAX_SECONDS: '300',
+  REPORTING_PRIVACY_MIN_GROUP_SIZE: '5',
+  REPORTING_MAX_DATE_RANGE_DAYS: '365',
+  REPORT_EXPORT_ENABLED: 'false',
+  REPORT_EXPORT_MAX_ROWS: '5000',
+  REPORT_EXPORT_MAX_DATE_RANGE_DAYS: '365',
+  ANALYTICS_EVENTS_ENABLED: 'false',
+  ANALYTICS_EVENT_RETENTION_DAYS: '90',
+  ANALYTICS_EVENT_BODY_MAX_BYTES: '16384',
+  STUDENT_PROGRESS_TREND_ENABLED: 'false',
+  WEIGHTED_PROCESS_SCORE_ENABLED: 'false',
   LOG_LEVEL: 'silent',
 };
 
@@ -119,6 +145,16 @@ describe('loadEnvironment', () => {
       attemptStartIdentityMax: 20,
       answerSaveIdentityMax: 180,
     });
+    expect(config.reporting).toMatchObject({
+      enabled: true,
+      timezone: 'Asia/Ho_Chi_Minh',
+      pageMax: 50,
+      dashboardPreviewLimit: 5,
+      onDemandCourseRefreshMaxStudents: 100,
+      rebuildBatchSize: 50,
+      invalidationMaxAttempts: 3,
+      privacyMinGroupSize: 5,
+    });
     expect(Object.isFrozen(config)).toBe(true);
     expect(Object.isFrozen(config.rateLimits)).toBe(true);
     expect(Object.isFrozen(config.classroomRateLimits)).toBe(true);
@@ -127,6 +163,7 @@ describe('loadEnvironment', () => {
     expect(Object.isFrozen(config.featureFlags)).toBe(true);
     expect(Object.isFrozen(config.assessmentFeatures)).toBe(true);
     expect(Object.isFrozen(config.assessmentRateLimits)).toBe(true);
+    expect(Object.isFrozen(config.reporting)).toBe(true);
   });
 
   it('fails fast without exposing a connection string when MongoDB config is invalid', () => {
@@ -172,6 +209,12 @@ describe('loadEnvironment', () => {
     ['QUIZ_ANSWER_SAVE_LIMIT', '0'],
     ['ASSESSMENT_MUTATION_WINDOW_SECONDS', '0'],
     ['ASSESSMENT_MUTATION_IDENTITY_LIMIT', '0'],
+    ['REPORTING_PAGE_MAX', '0'],
+    ['REPORTING_DASHBOARD_PREVIEW_LIMIT', '11'],
+    ['REPORTING_ON_DEMAND_COURSE_REFRESH_MAX_STUDENTS', '501'],
+    ['REPORTING_REFRESH_REQUEST_BUDGET_MS', '99'],
+    ['REPORTING_REBUILD_BATCH_SIZE', '0'],
+    ['REPORTING_PRIVACY_MIN_GROUP_SIZE', '1'],
   ])('rejects invalid %s boundaries', (field, value) => {
     expect(() => loadEnvironment({ ...validEnvironment, [field]: value })).toThrow(
       'Invalid application configuration',
@@ -225,6 +268,26 @@ describe('loadEnvironment', () => {
         CLASSROOM_CODE_PEPPER: validEnvironment.ACCESS_TOKEN_SECRET,
       }),
     ).toThrow('must be different');
+  });
+
+  it('rejects inconsistent reporting runtime controls', () => {
+    expect(() =>
+      loadEnvironment({
+        ...validEnvironment,
+        REPORTING_PAGE_MAX: '51',
+        DASHBOARD_PAGE_MAX: '50',
+      }),
+    ).toThrow('REPORTING_PAGE_MAX must not exceed DASHBOARD_PAGE_MAX');
+    expect(() =>
+      loadEnvironment({
+        ...validEnvironment,
+        REPORTING_INVALIDATION_RETRY_BASE_SECONDS: '301',
+        REPORTING_INVALIDATION_RETRY_MAX_SECONDS: '300',
+      }),
+    ).toThrow('REPORTING_INVALIDATION_RETRY_BASE_SECONDS');
+    expect(() =>
+      loadEnvironment({ ...validEnvironment, REPORTING_TIMEZONE: 'Not/A-Timezone' }),
+    ).toThrow('REPORTING_TIMEZONE must be a valid IANA timezone');
   });
 
   it('enforces HTTPS, secure cookies and non-placeholder secrets in production', () => {

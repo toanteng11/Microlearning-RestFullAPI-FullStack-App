@@ -98,6 +98,7 @@ import { CourseModuleService } from './modules/module.service.js';
 import { createPhaseFourFoundation } from './phase-four.foundation.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { UserRepository } from './users/user.repository.js';
+import type { ReportingInvalidationWriter } from './learning-content/reporting-invalidation.writer.js';
 
 function requestIdFrom(response: {
   getHeader(name: string): number | string | string[] | undefined;
@@ -134,7 +135,11 @@ function createLearningActionLimiter(windowSeconds: number, max: number) {
   });
 }
 
-export function createPhaseFourRouter(config: AppConfig, classrooms = new ClassroomRepository()) {
+export function createPhaseFourRouter(
+  config: AppConfig,
+  classrooms: ClassroomRepository,
+  reportingInvalidationWriter: ReportingInvalidationWriter,
+) {
   const router = Router();
   const users = new UserRepository();
   const sessions = new AuthSessionRepository();
@@ -166,6 +171,7 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
     foundation.classroomScopeReader,
     courseScopes,
     audits,
+    reportingInvalidationWriter,
     config.contentLimits.coursesPerClassroom,
   );
   const moduleService = new CourseModuleService(
@@ -183,6 +189,7 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
     deadlines,
     courseScopes,
     audits,
+    reportingInvalidationWriter,
     config.contentLimits.lessonsPerCourse,
   );
   const flashcardService = new FlashcardService(
@@ -193,7 +200,13 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
     audits,
     config.contentLimits.flashcardsPerLesson,
   );
-  const deadlineService = new LessonDeadlineService(lessons, deadlines, courseScopes, audits);
+  const deadlineService = new LessonDeadlineService(
+    lessons,
+    deadlines,
+    courseScopes,
+    audits,
+    reportingInvalidationWriter,
+  );
   const studentLearningService = new StudentLearningService(
     classrooms,
     enrollments,
@@ -206,6 +219,7 @@ export function createPhaseFourRouter(config: AppConfig, classrooms = new Classr
     courseScopes,
     activityReader,
     deadlineExceptions,
+    reportingInvalidationWriter,
   );
   const teacherDashboardService = new TeacherCourseDashboardService(
     classrooms,

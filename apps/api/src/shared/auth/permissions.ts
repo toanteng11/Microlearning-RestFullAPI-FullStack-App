@@ -55,6 +55,10 @@ export const PERMISSIONS = [
   'submission.view_owned',
   'grade.manage_owned',
   'deadline_exception.manage_owned',
+  'report.view_governance',
+  'report.export_owned',
+  'report.export_governance',
+  'report.audit_view',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
@@ -102,6 +106,7 @@ const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     'quiz.publish_owned',
     'quiz.results_view_owned',
     'quiz.review_owned',
+    'report.export_owned',
     'submission.view_owned',
   ],
   ADMIN: [
@@ -114,6 +119,9 @@ const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     'teacher_invitation.create',
     'teacher_invitation.revoke',
     'teacher_invitation.view',
+    'report.audit_view',
+    'report.export_governance',
+    'report.view_governance',
     'user.update_status',
     'user.view_admins',
     'user.view_students',

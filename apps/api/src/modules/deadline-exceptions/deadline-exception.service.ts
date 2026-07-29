@@ -8,6 +8,7 @@ import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
 import type { AssessmentScopeReader } from '../learning-content/assessment-scope.reader.js';
 import type { LearningActivityType } from '../learning-content/learning-activity.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import type { LessonRepository } from '../lessons/lesson.repository.js';
 import type { QuizRepository } from '../quizzes/quiz.repository.js';
 import { UserModel } from '../users/user.model.js';
@@ -74,6 +75,7 @@ export class DeadlineExceptionService {
     private readonly enrollments: EnrollmentRepository,
     private readonly scopes: AssessmentScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -294,6 +296,16 @@ export class DeadlineExceptionService {
           },
           session,
         );
+        await this.reportingInvalidationWriter.invalidateStudentCourse(
+          {
+            classroomId: scope.classroomId,
+            courseId: scope.courseId,
+            studentId: studentObjectId,
+            reasons: ['DEADLINE_EXCEPTION_CHANGED'],
+            sourceChangedAt: changedAt,
+          },
+          session,
+        );
         return {
           exception: toTeacherDeadlineExceptionDto(record, scope.defaultDeadline),
           auditId: audit._id.toString(),
@@ -392,6 +404,16 @@ export class DeadlineExceptionService {
             activityId: record.activityId.toString(),
             activityType: record.activityType,
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: scope.classroomId,
+          courseId: scope.courseId,
+          studentId: studentObjectId,
+          reasons: ['DEADLINE_EXCEPTION_CHANGED'],
+          sourceChangedAt: changedAt,
         },
         session,
       );

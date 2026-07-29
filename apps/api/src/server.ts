@@ -14,10 +14,15 @@ import {
 import { initializePhaseThreeIndexes } from './shared/database/phase-three-indexes.js';
 import { initializePhaseFourIndexes } from './shared/database/phase-four-indexes.js';
 import { initializePhaseFiveIndexes } from './shared/database/phase-five-indexes.js';
+import { initializePhaseSixIndexes } from './shared/database/phase-six-indexes.js';
 import {
   assertPhaseFiveMigrationPreflight,
   runPhaseFiveMigrationPreflight,
 } from './shared/database/phase-five-migration.js';
+import {
+  assertPhaseSixMigrationPreflight,
+  runPhaseSixMigrationPreflight,
+} from './shared/database/phase-six-migration.js';
 import { createLogger } from './shared/logging/logger.js';
 
 function loadLocalEnvironmentFile() {
@@ -41,6 +46,8 @@ async function bootstrap() {
   await initializePhaseFourIndexes(config.appEnvironment);
   assertPhaseFiveMigrationPreflight(await runPhaseFiveMigrationPreflight(mongoose.connection));
   await initializePhaseFiveIndexes(config.appEnvironment);
+  assertPhaseSixMigrationPreflight(await runPhaseSixMigrationPreflight(mongoose.connection));
+  await initializePhaseSixIndexes(config.appEnvironment);
   const enrollmentPolicy = await new EnrollmentPolicyRepository().ensureEnrollmentPolicy(
     config.classroomInviteDefaultTtlDays,
   );

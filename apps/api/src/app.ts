@@ -11,6 +11,7 @@ import { createPhaseTwoRouter } from './modules/phase-two.router.js';
 import { createPhaseThreeRouter } from './modules/phase-three.router.js';
 import { createPhaseFourRouter } from './modules/phase-four.router.js';
 import { createPhaseFiveRouter } from './modules/phase-five.router.js';
+import { createPhaseSixFoundation } from './modules/phase-six.foundation.js';
 import { ClassroomOwnershipRepositoryReader } from './modules/classrooms/classroom-ownership.reader.js';
 import { ClassroomRepository } from './modules/classrooms/classroom.repository.js';
 import { ClassroomContentRepositoryReader } from './modules/content-governance/classroom-content.repository-reader.js';
@@ -98,16 +99,36 @@ export function createApp(options: AppOptions) {
 
   app.use('/api/v1', createSystemRouter(options.runtimeInfo, options.dependencies));
   const classrooms = new ClassroomRepository();
+  const phaseSixFoundation = createPhaseSixFoundation(options.config);
   app.use(
     '/api/v1',
     createPhaseTwoRouter(options.config, new ClassroomOwnershipRepositoryReader(classrooms)),
   );
   app.use(
     '/api/v1',
-    createPhaseThreeRouter(options.config, classrooms, new ClassroomContentRepositoryReader()),
+    createPhaseThreeRouter(
+      options.config,
+      classrooms,
+      phaseSixFoundation.reportingInvalidationWriter,
+      new ClassroomContentRepositoryReader(),
+    ),
   );
-  app.use('/api/v1', createPhaseFourRouter(options.config, classrooms));
-  app.use('/api/v1', createPhaseFiveRouter(options.config, classrooms));
+  app.use(
+    '/api/v1',
+    createPhaseFourRouter(
+      options.config,
+      classrooms,
+      phaseSixFoundation.reportingInvalidationWriter,
+    ),
+  );
+  app.use(
+    '/api/v1',
+    createPhaseFiveRouter(
+      options.config,
+      classrooms,
+      phaseSixFoundation.reportingInvalidationWriter,
+    ),
+  );
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(options.logger, options.config.appEnvironment === 'development'));

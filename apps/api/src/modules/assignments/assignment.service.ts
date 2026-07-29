@@ -7,6 +7,7 @@ import type { PhaseFiveAuditWriter } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseRepository } from '../courses/course.repository.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import type { DeadlineExceptionRepository } from '../deadline-exceptions/deadline-exception.repository.js';
 import { resolveEffectiveDeadline } from '../deadline-exceptions/effective-deadline.resolver.js';
 import type { CourseModuleRepository } from '../modules/module.repository.js';
@@ -66,6 +67,7 @@ export class AssignmentService {
     private readonly audits: PhaseFiveAuditWriter,
     private readonly features: AssessmentFeatureFlagConfig,
     private readonly deadlineExceptions: DeadlineExceptionRepository,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -134,6 +136,15 @@ export class AssignmentService {
           requestId,
           newValue: toAssignmentAuditValue(assignment),
           metadata: { classroomId: scope.classroomId, courseId },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: courseObjectId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: assignment.updatedAt,
         },
         session,
       );
@@ -237,6 +248,15 @@ export class AssignmentService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: assignment.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
+        },
+        session,
+      );
       return {
         assignment: toTeacherAssignmentDto(updated, actor, this.now()),
         auditId: audit._id.toString(),
@@ -294,6 +314,15 @@ export class AssignmentService {
             fromContentRevision: assignment.contentRevision,
             toContentRevision: result.contentRevision,
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: assignment.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: result.updatedAt,
         },
         session,
       );

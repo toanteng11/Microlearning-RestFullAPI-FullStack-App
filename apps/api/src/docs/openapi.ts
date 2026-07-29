@@ -50,6 +50,10 @@ import {
   phaseFiveGradingDeadlineSchemas,
   phaseFiveGradingDeadlineTags,
 } from './phase-five-grading-deadlines.openapi.js';
+import {
+  phaseSixReportingSchemas,
+  phaseSixReportingTags,
+} from './phase-six-reporting.openapi.js';
 export { PHASE_THREE_OPENAPI_OPERATIONS } from './phase-three.openapi.js';
 
 export const PHASE_FOUR_OPENAPI_OPERATIONS = [
@@ -850,6 +854,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
       ...phaseFiveQuizAttemptTags,
       ...phaseFiveAssignmentTags,
       ...phaseFiveGradingDeadlineTags,
+      ...phaseSixReportingTags,
     ],
     paths,
     components: {
@@ -894,6 +899,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         ...phaseFiveQuizAttemptSchemas,
         ...phaseFiveAssignmentSchemas,
         ...phaseFiveGradingDeadlineSchemas,
+        ...phaseSixReportingSchemas,
         UserRole: {
           type: 'string',
           enum: ['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN'],

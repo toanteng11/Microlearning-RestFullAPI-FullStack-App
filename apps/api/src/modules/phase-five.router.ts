@@ -35,6 +35,7 @@ import {
   saveSubmissionGradeSchema,
 } from './grades/grade.schemas.js';
 import { LearningProgressRepository } from './learning-progress/learning-progress.repository.js';
+import type { ReportingInvalidationWriter } from './learning-content/reporting-invalidation.writer.js';
 import { LessonRepository } from './lessons/lesson.repository.js';
 import { CourseModuleRepository } from './modules/module.repository.js';
 import { createPhaseFiveFoundation } from './phase-five.foundation.js';
@@ -138,7 +139,11 @@ function createStudentAssessmentLimiter(config: AppConfig, limit: number, key: '
   });
 }
 
-export function createPhaseFiveRouter(config: AppConfig, classrooms = new ClassroomRepository()) {
+export function createPhaseFiveRouter(
+  config: AppConfig,
+  classrooms: ClassroomRepository,
+  reportingInvalidationWriter: ReportingInvalidationWriter,
+) {
   const router = Router();
   const users = new UserRepository();
   const sessions = new AuthSessionRepository();
@@ -162,6 +167,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     questions,
     foundation.assessmentScopeReader,
     audits,
+    reportingInvalidationWriter,
   );
   const questionService = new QuestionService(
     quizzes,
@@ -169,6 +175,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     foundation.assessmentScopeReader,
     audits,
     config.assessmentFeatures,
+    reportingInvalidationWriter,
   );
   const attemptService = new QuizAttemptService(
     quizzes,
@@ -178,6 +185,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     deadlineExceptions,
     foundation.assessmentScopeReader,
     audits,
+    reportingInvalidationWriter,
   );
   const assignmentService = new AssignmentService(
     courses,
@@ -187,6 +195,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     audits,
     config.assessmentFeatures,
     deadlineExceptions,
+    reportingInvalidationWriter,
   );
   const submissionService = new SubmissionService(
     assignments,
@@ -198,6 +207,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     foundation.assessmentScopeReader,
     audits,
     config.assessmentFeatures,
+    reportingInvalidationWriter,
   );
   const quizReviewService = new QuizReviewService(
     quizzes,
@@ -205,6 +215,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     grades,
     foundation.assessmentScopeReader,
     audits,
+    reportingInvalidationWriter,
   );
   const gradeService = new GradeService(
     grades,
@@ -214,6 +225,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     foundation.assessmentScopeReader,
     audits,
     config.assessmentFeatures,
+    reportingInvalidationWriter,
   );
   const deadlineExceptionService = new DeadlineExceptionService(
     deadlineExceptions,
@@ -223,6 +235,7 @@ export function createPhaseFiveRouter(config: AppConfig, classrooms = new Classr
     new EnrollmentRepository(),
     foundation.assessmentScopeReader,
     audits,
+    reportingInvalidationWriter,
   );
   const attemptStartIpLimiter = createStudentAssessmentLimiter(
     config,

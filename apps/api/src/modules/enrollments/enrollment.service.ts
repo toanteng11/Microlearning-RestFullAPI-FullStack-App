@@ -15,6 +15,7 @@ import type { ClassroomRepository } from '../classrooms/classroom.repository.js'
 import type { EnrollmentPolicyRepository } from '../enrollment-policy/enrollment-policy.repository.js';
 import type { EnrollmentPolicyValue } from '../enrollment-policy/system-setting.model.js';
 import type { UserRepository } from '../users/user.repository.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { isMongoDuplicateKeyError } from '../../shared/database/mongo-errors.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
@@ -63,6 +64,7 @@ export class EnrollmentService {
     private readonly users: UserRepository,
     private readonly audits: PhaseThreeAuditWriter,
     private readonly crypto: ClassroomCredentialCrypto,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -192,6 +194,14 @@ export class EnrollmentService {
           },
           session,
         );
+        await this.reportingInvalidationWriter.invalidateClassroom(
+          {
+            classroomId: classroom._id,
+            reasons: ['ROSTER_CHANGED'],
+            sourceChangedAt: enrollment.updatedAt,
+          },
+          session,
+        );
         return this.buildJoinResult(classroom, enrollment, false, session);
       });
     } catch (error) {
@@ -317,6 +327,14 @@ export class EnrollmentService {
             enrollmentId: removed._id.toString(),
             studentId: studentObjectId.toString(),
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateClassroom(
+        {
+          classroomId: classroomObjectId,
+          reasons: ['ROSTER_CHANGED'],
+          sourceChangedAt: removed.updatedAt,
         },
         session,
       );

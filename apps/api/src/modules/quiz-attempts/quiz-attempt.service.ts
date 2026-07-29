@@ -5,6 +5,7 @@ import { AppError } from '../../shared/errors/app-error.js';
 import type { PhaseFiveAuditWriter } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import type { DeadlineExceptionRepository } from '../deadline-exceptions/deadline-exception.repository.js';
 import { resolveEffectiveDeadline } from '../deadline-exceptions/effective-deadline.resolver.js';
 import type { LearningProgressRepository } from '../learning-progress/learning-progress.repository.js';
@@ -62,6 +63,7 @@ export class QuizAttemptService {
     private readonly deadlineExceptions: DeadlineExceptionRepository,
     private readonly scopes: CourseScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -173,6 +175,16 @@ export class QuizAttemptService {
             answeredCount: finalized.answers.length,
             resultReleased: finalized.releasedAt !== null,
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: finalized.classroomId,
+          courseId: finalized.courseId,
+          studentId: finalized.studentId,
+          reasons: ['PROGRESS_CHANGED', 'ASSESSMENT_CHANGED'],
+          sourceChangedAt: submittedAt,
         },
         session,
       );
@@ -338,6 +350,16 @@ export class QuizAttemptService {
               studentId: actor.id,
               attemptNumber,
             },
+          },
+          session,
+        );
+        await this.reportingInvalidationWriter.invalidateStudentCourse(
+          {
+            classroomId: attempt.classroomId,
+            courseId: attempt.courseId,
+            studentId: attempt.studentId,
+            reasons: ['PROGRESS_CHANGED'],
+            sourceChangedAt: startedAt,
           },
           session,
         );

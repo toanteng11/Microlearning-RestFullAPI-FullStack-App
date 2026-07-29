@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 
+import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { ClassroomRepository } from '../classrooms/classroom.repository.js';
@@ -36,6 +37,7 @@ import {
 } from '../learning-content/learning-activity.reader.js';
 import { STUDENT_TODO_SCOPE_VERSION as P05_STUDENT_TODO_SCOPE_VERSION } from '../learning-content/assessment.types.js';
 import { LEARNING_PROGRESS_METRIC_VERSION as P05_PROGRESS_METRIC_VERSION } from '../learning-content/learning-progress.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 
 export const STUDENT_TODO_SCOPE_VERSION = P05_STUDENT_TODO_SCOPE_VERSION;
 export const LEARNING_PROGRESS_METRIC_VERSION = P05_PROGRESS_METRIC_VERSION;
@@ -102,6 +104,7 @@ export class StudentLearningService {
     private readonly courseScopes: CourseScopeReader,
     private readonly activityReader: LearningActivityReader,
     private readonly deadlineExceptions: DeadlineExceptionRepository,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -332,14 +335,32 @@ export class StudentLearningService {
   async start(actor: AuthenticatedUser, lessonId: string) {
     const asOf = this.now();
     const { lesson, scope } = await this.requireVisibleLesson(actor, lessonId, asOf);
-    const result = await this.progress.startLesson({
-      studentId: objectId(actor.id, 'Student'),
-      classroomId: objectId(scope.classroomId, 'Classroom'),
-      courseId: lesson.courseId,
-      activityType: 'LESSON',
-      activityId: lesson._id,
-      startedAt: asOf,
-      lastActiveAt: asOf,
+    const studentId = objectId(actor.id, 'Student');
+    const classroomId = objectId(scope.classroomId, 'Classroom');
+    const result = await withMongoTransaction(async (session) => {
+      const progress = await this.progress.startLesson(
+        {
+          studentId,
+          classroomId,
+          courseId: lesson.courseId,
+          activityType: 'LESSON',
+          activityId: lesson._id,
+          startedAt: asOf,
+          lastActiveAt: asOf,
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          studentId,
+          classroomId,
+          courseId: lesson.courseId,
+          reasons: ['PROGRESS_CHANGED'],
+          sourceChangedAt: progress.progress.updatedAt,
+        },
+        session,
+      );
+      return progress;
     });
     return {
       progress: progressDto(result.progress, lesson.completionDeadline, asOf),
@@ -350,15 +371,33 @@ export class StudentLearningService {
   async complete(actor: AuthenticatedUser, lessonId: string) {
     const asOf = this.now();
     const { lesson, scope } = await this.requireVisibleLesson(actor, lessonId, asOf);
-    const result = await this.progress.completeLesson({
-      studentId: objectId(actor.id, 'Student'),
-      classroomId: objectId(scope.classroomId, 'Classroom'),
-      courseId: lesson.courseId,
-      activityType: 'LESSON',
-      activityId: lesson._id,
-      startedAt: asOf,
-      lastActiveAt: asOf,
-      completedAt: asOf,
+    const studentId = objectId(actor.id, 'Student');
+    const classroomId = objectId(scope.classroomId, 'Classroom');
+    const result = await withMongoTransaction(async (session) => {
+      const progress = await this.progress.completeLesson(
+        {
+          studentId,
+          classroomId,
+          courseId: lesson.courseId,
+          activityType: 'LESSON',
+          activityId: lesson._id,
+          startedAt: asOf,
+          lastActiveAt: asOf,
+          completedAt: asOf,
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          studentId,
+          classroomId,
+          courseId: lesson.courseId,
+          reasons: ['PROGRESS_CHANGED'],
+          sourceChangedAt: progress.progress.updatedAt,
+        },
+        session,
+      );
+      return progress;
     });
     return {
       progress: progressDto(result.progress, lesson.completionDeadline, asOf),

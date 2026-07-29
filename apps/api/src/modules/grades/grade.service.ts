@@ -8,6 +8,7 @@ import type { PhaseFiveAuditWriter } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
 import type { AssessmentScopeReader } from '../learning-content/assessment-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { QuizModel } from '../quizzes/quiz.model.js';
 import type { SubmissionRepository } from '../submissions/submission.repository.js';
 import { UserModel } from '../users/user.model.js';
@@ -62,6 +63,7 @@ export class GradeService {
     private readonly scopes: AssessmentScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
     private readonly features: AssessmentFeatureFlagConfig,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -194,6 +196,16 @@ export class GradeService {
           },
           session,
         );
+        await this.reportingInvalidationWriter.invalidateStudentCourse(
+          {
+            classroomId: grade.classroomId,
+            courseId: grade.courseId,
+            studentId: grade.studentId,
+            reasons: ['GRADE_CHANGED'],
+            sourceChangedAt: gradedAt,
+          },
+          session,
+        );
         return { grade: toTeacherGradeDto(grade), auditId: audit._id.toString() };
       });
     } catch (error) {
@@ -283,6 +295,16 @@ export class GradeService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: grade.classroomId,
+          courseId: grade.courseId,
+          studentId: grade.studentId,
+          reasons: ['GRADE_CHANGED'],
+          sourceChangedAt: returnedAt,
+        },
+        session,
+      );
       return { grade: toTeacherGradeDto(grade), auditId: audit._id.toString() };
     });
   }
@@ -343,6 +365,16 @@ export class GradeService {
             activityType: grade.activityType,
             studentId: grade.studentId.toString(),
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: grade.classroomId,
+          courseId: grade.courseId,
+          studentId: grade.studentId,
+          reasons: ['GRADE_CHANGED'],
+          sourceChangedAt: gradedAt,
         },
         session,
       );
