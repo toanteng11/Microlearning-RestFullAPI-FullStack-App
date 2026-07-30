@@ -36,23 +36,23 @@ Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạn
 
 - [x] Student APIs Pass locally; remote PR evidence pending.
 - [x] Teacher dashboard/ranking/detail Pass locally; remote PR evidence pending.
-- [ ] Gradebook Pass.
+- [x] Gradebook API/atomic cutover Pass locally; remote P06-PR05 evidence pending.
 - [ ] Admin governance/audit reports Pass.
 - [x] RBAC/ownership/enrollment/IDOR Pass for Student/Teacher reporting scope.
-- [x] Privacy/projection Pass for Student/Teacher reporting scope; Admin threshold pending.
-- [x] Query bounds Pass for Student/Teacher reporting scope; final rate hardening pending.
-- [x] OpenAPI parity Pass for Student/Teacher reporting operations.
-- [x] Unique Express/OpenAPI operation per moved Student/Teacher path Pass.
+- [x] Privacy/projection Pass for Student/Teacher/Gradebook scope; Admin threshold pending.
+- [x] Query bounds Pass for Student/Teacher/Gradebook scope; final rate hardening pending.
+- [x] OpenAPI parity Pass for Student/Teacher/Gradebook reporting operations.
+- [x] Unique Express/OpenAPI operation per moved Student/Teacher/Gradebook path Pass.
 
 ## Gate D - Web And Integration
 
 - [x] Student Dashboard/Progress Pass locally.
 - [x] Teacher Dashboard/Analytics/Detail Pass locally.
-- [ ] Gradebook Pass.
+- [x] Gradebook Web, URL state, mutation invalidation và browser E2E Pass locally.
 - [ ] Admin Dashboard/Reports Pass.
-- [x] Loading/empty/no-data/stale/error states for Student/Teacher reporting; remaining actors pending.
-- [x] Teacher Back/Forward/Back buttons/filter URL Pass.
-- [x] Student/Teacher responsive/visual/accessibility Pass.
+- [x] Loading/empty/no-data/stale/error states for Student/Teacher/Gradebook; remaining actors pending.
+- [x] Teacher/Gradebook Back/Forward/Back buttons/filter URL Pass.
+- [x] Student/Teacher/Gradebook responsive/visual/accessibility Pass.
 - [ ] 12 P06 E2E Pass.
 
 ## Conditional

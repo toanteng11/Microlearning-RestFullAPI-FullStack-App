@@ -57,3 +57,19 @@ grades/grade.service.ts
 - P05 Gradebook contract được retire atomically.
 - Runtime/OpenAPI chỉ còn một Gradebook operation.
 - Privacy, status precedence, average và performance tests Pass.
+
+## Implementation Result
+
+| Field | Result |
+| --- | --- |
+| Status | `IN_REVIEW_STACKED` |
+| Branch | `feature/phase-06-gradebook` |
+| Code commit | `fe36dda` |
+| Atomic cutover | Pass; P05 route/service/schema/OpenAPI/flag đã retire |
+| API/OpenAPI | Pass; một operation `getTeacherCourseGradebook` |
+| Unit/integration | API `215/215`; Mongo replica-set `90/90` |
+| Performance | `100x50`, p95 `160.69 ms`, target `<=1500 ms` |
+| Evidence | `gradebook-evidence.md` |
+
+Local Definition of Done đã đạt. Trạng thái chỉ đổi thành `DONE` sau P06-PR05 required CI,
+review, merge và post-merge `main` CI Pass.

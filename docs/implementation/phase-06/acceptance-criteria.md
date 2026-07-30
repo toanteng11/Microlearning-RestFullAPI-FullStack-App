@@ -114,13 +114,13 @@ P06-PR02 required CI/review/merge.
 | IDs | Result | Evidence |
 | --- | --- | --- |
 | P06-AC-028..034 | Local Pass | Dashboard, stable ranking, activity/assessment analytics; commit `9096d78` |
-| P06-AC-035..037 | Pending Parts 11-12 | Gradebook API/Web chưa triển khai; returned-grade policy đã được giữ trong Teacher reporting |
+| P06-AC-035..037 | Local Pass | Bounded stable Gradebook, orthogonal statuses và returned-points weighted average; commit `fe36dda` |
 | P06-AC-038..040 | Local Pass | Active-roster Student detail, cross-scope IDOR và deadline-aware aggregate tests Pass |
-| P06-AC-041 | Pending Parts 11-12 | Regrade Gradebook end-to-end chưa thuộc Part 09-10 |
-| P06-AC-042 | Local Pass | Teacher component `7/7`; Teacher E2E `2/2`; responsive/Axe Pass |
+| P06-AC-041 | Local Pass | Regrade invalidates Course reporting và Gradebook cell refresh E2E Pass |
+| P06-AC-042 | Local Pass | Teacher/Gradebook component và E2E; responsive/Axe Pass |
 
-Teacher result hiện tại: `11/15 Local Pass`, `4/15 Pending Parts 11-12`. Local Pass chỉ chuyển
-thành Pass sau P06-PR04 required CI/review/merge.
+Teacher result hiện tại: `15/15 Local Pass`. Local Pass chỉ chuyển thành Pass sau các Parent PR
+dependency và P06-PR05 required CI/review/merge.
 
 ## 6. Admin `043..050`
 
@@ -149,6 +149,19 @@ thành Pass sau P06-PR04 required CI/review/merge.
 | P06-AC-058 | OpenAPI khớp runtime route/schema/error/nullability và moved path chỉ có một handler/operation. |
 | P06-AC-059 | Structured errors có request ID, không stack/secret. |
 | P06-AC-060 | Rate/abuse controls không chặn normal dataset nhưng chặn vượt ngưỡng. |
+
+### 7.1 Security/API Current Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-051..053 | Local Pass | Auth/permission, ownership-before-query và strict query tests |
+| P06-AC-054 | Local Pass | Student rows/activity columns `<=50`; invalid bound `400` |
+| P06-AC-055 | Local Pass For Enabled Scope | Gradebook count/items dùng cùng filtered rows; Conditional export chờ Part 15 disposition |
+| P06-AC-056 | Local Pass | Actor-scoped query keys và auth private-cache clearing regression Pass |
+| P06-AC-057 | Local Pass | Gradebook payload denylist không có answer/Submission body/private feedback |
+| P06-AC-058 | Local Pass | P05 operation retire atomically; runtime/OpenAPI chỉ còn một P06 Gradebook operation |
+| P06-AC-059 | Local Pass | Structured error middleware regression Pass |
+| P06-AC-060 | Pending Part 16 | Final abuse/rate hardening chưa đánh giá |
 
 ## 8. Quality And Exit `061..068`
 
