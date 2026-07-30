@@ -84,7 +84,6 @@ export const PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS = [
   'completeLesson',
   'listStudentTodo',
   'listStudentDeadlines',
-  'getOwnCourseProgress',
   'getTeacherCourseDashboard',
   'listTeacherCourseActivities',
   'listTeacherCourseStudents',
@@ -272,36 +271,6 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
               asOf: '2026-07-20T08:00:00.000Z',
             },
             meta: { page: 1, limit: 20, totalItems: 1, totalPages: 1 },
-          }),
-          ...protectedErrors,
-        },
-      },
-    },
-    '/api/v1/students/me/progress': {
-      get: {
-        tags: ['Learning Progress'],
-        operationId: 'getOwnCourseProgress',
-        summary: 'Get current Student progress for one enrolled Course',
-        security,
-        parameters: [
-          { name: 'courseId', in: 'query', required: true, schema: { type: 'string', pattern: objectIdPattern } },
-        ],
-        responses: {
-          '200': ok('Own Course progress', {
-            success: true,
-            data: {
-              metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
-              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
-              asOf: '2026-07-20T08:00:00.000Z',
-              summary: {
-                requiredActivities: 6,
-                completedActivities: 4,
-                requiredLessons: 4,
-                completedLessons: 3,
-                progressPercentage: 66.7,
-              },
-              items: [],
-            },
           }),
           ...protectedErrors,
         },

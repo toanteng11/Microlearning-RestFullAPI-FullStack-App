@@ -17,7 +17,6 @@ import {
   AdminEnrollmentPolicyPage,
   InviteJoinPage,
   StudentClassroomDetailPage,
-  StudentClassroomsPage,
   TeacherClassroomDetailPage,
   TeacherClassroomsPage,
 } from '../features/classrooms/classroom-route-components';
@@ -54,6 +53,10 @@ import {
   TeacherLessonCreatePage,
   TeacherLessonEditorPage,
 } from '../features/learning/learning-route-components';
+import {
+  StudentProgressPage,
+  StudentReportingDashboardPage,
+} from '../features/reporting/reporting-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../shared/auth/RoleRoute';
 import { AppShell } from '../shared/components/AppShell';
@@ -89,7 +92,15 @@ export const router = createBrowserRouter([
             path: '/student/dashboard',
             element: (
               <RoleRoute roles={['STUDENT']}>
-                <StudentClassroomsPage />
+                <StudentReportingDashboardPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/progress',
+            element: (
+              <RoleRoute permission="learning.view_enrolled">
+                <StudentProgressPage />
               </RoleRoute>
             ),
           },

@@ -8,6 +8,7 @@ import {
   createOpenApiDocument,
   PHASE_FOUR_OPENAPI_OPERATIONS,
   PHASE_FIVE_OPENAPI_OPERATIONS,
+  PHASE_SIX_OPENAPI_OPERATIONS,
   PHASE_THREE_OPENAPI_OPERATIONS,
   PHASE_TWO_OPENAPI_OPERATIONS,
 } from '../src/docs/openapi.js';
@@ -257,7 +258,6 @@ describe('system API', () => {
       ['POST /api/v1/lessons/{lessonId}/complete', 'completeLesson'],
       ['GET /api/v1/students/me/todo', 'listStudentTodo'],
       ['GET /api/v1/students/me/deadlines', 'listStudentDeadlines'],
-      ['GET /api/v1/students/me/progress', 'getOwnCourseProgress'],
       ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherCourseDashboard'],
       ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherCourseActivities'],
       ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
@@ -409,5 +409,32 @@ describe('system API', () => {
     expect(JSON.stringify(document.components?.schemas?.CourseGovernanceSummary)).toMatch(
       /quizCount.*assignmentCount/u,
     );
+  });
+
+  it('keeps Phase 06 Student reporting routes unique and protected in Swagger', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expected = new Map([
+      ['GET /api/v1/students/me/dashboard', 'getStudentReportingDashboard'],
+      ['GET /api/v1/students/me/progress', 'getStudentCourseProgress'],
+      ['GET /api/v1/students/me/progress/courses', 'listStudentCourseProgress'],
+    ]);
+    const actual = new Map<string, string>();
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      const operation = pathItem?.get;
+      if (
+        !operation?.operationId ||
+        !PHASE_SIX_OPENAPI_OPERATIONS.includes(
+          operation.operationId as (typeof PHASE_SIX_OPENAPI_OPERATIONS)[number],
+        )
+      )
+        continue;
+      actual.set(`GET ${path}`, operation.operationId);
+      expect(operation.security).toEqual([{ bearerAuth: [] }]);
+      expect(operation.responses['200']).toBeDefined();
+      expect(operation.responses['401']).toBeDefined();
+      expect(operation.responses['403']).toBeDefined();
+    }
+    expect(actual).toEqual(expected);
+    expect(new Set(actual.values()).size).toBe(PHASE_SIX_OPENAPI_OPERATIONS.length);
   });
 });

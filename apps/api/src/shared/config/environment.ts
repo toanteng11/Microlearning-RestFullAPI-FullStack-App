@@ -46,6 +46,7 @@ const phaseFiveExplicitProductionFields = [
 const phaseSixExplicitProductionFields = [
   'REPORTING_ENABLED',
   'REPORTING_TIMEZONE',
+  'REPORTING_DUE_SOON_WINDOW_HOURS',
   'REPORTING_PAGE_MAX',
   'REPORTING_DASHBOARD_PREVIEW_LIMIT',
   'REPORTING_GRADEBOOK_ACTIVITY_MAX',
@@ -137,6 +138,7 @@ const environmentSchema = z.object({
   ASSESSMENT_MUTATION_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
   REPORTING_ENABLED: enabledByDefaultBooleanString,
   REPORTING_TIMEZONE: z.string().trim().min(1).max(100).default('Asia/Ho_Chi_Minh'),
+  REPORTING_DUE_SOON_WINDOW_HOURS: z.coerce.number().int().min(1).max(720).default(72),
   REPORTING_PAGE_MAX: z.coerce.number().int().min(1).max(100).default(50),
   REPORTING_DASHBOARD_PREVIEW_LIMIT: z.coerce.number().int().min(1).max(10).default(5),
   REPORTING_GRADEBOOK_ACTIVITY_MAX: z.coerce.number().int().min(1).max(100).default(50),
@@ -250,6 +252,7 @@ export interface AssessmentRateLimitConfig {
 export interface ReportingConfig {
   enabled: boolean;
   timezone: string;
+  dueSoonWindowHours: number;
   pageMax: number;
   dashboardPreviewLimit: number;
   gradebookActivityMax: number;
@@ -524,6 +527,7 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   const reporting = Object.freeze({
     enabled: parsed.data.REPORTING_ENABLED,
     timezone: parsed.data.REPORTING_TIMEZONE,
+    dueSoonWindowHours: parsed.data.REPORTING_DUE_SOON_WINDOW_HOURS,
     pageMax: parsed.data.REPORTING_PAGE_MAX,
     dashboardPreviewLimit: parsed.data.REPORTING_DASHBOARD_PREVIEW_LIMIT,
     gradebookActivityMax: parsed.data.REPORTING_GRADEBOOK_ACTIVITY_MAX,

@@ -196,6 +196,47 @@ export class StudentLearningService {
     });
   }
 
+  private async pendingTodoContexts(actor: AuthenticatedUser, asOf: Date) {
+    return (await this.loadAllVisible(actor, asOf))
+      .filter((item) => item.activity.isRequired)
+      .filter(
+        (item) =>
+          !isCompletedDerived(deriveLearningStatus(item.progress, item.effectiveDeadline, asOf)),
+      )
+      .sort((left, right) => {
+        const leftMissing =
+          deriveLearningStatus(left.progress, left.effectiveDeadline, asOf) === 'MISSING' ? 0 : 1;
+        const rightMissing =
+          deriveLearningStatus(right.progress, right.effectiveDeadline, asOf) === 'MISSING' ? 0 : 1;
+        return (
+          leftMissing - rightMissing ||
+          left.effectiveDeadline.getTime() - right.effectiveDeadline.getTime() ||
+          left.classroomTitle.localeCompare(right.classroomTitle) ||
+          left.course.displayOrder - right.course.displayOrder ||
+          left.activity.displayOrder - right.activity.displayOrder ||
+          left.activity.activityId.localeCompare(right.activity.activityId)
+        );
+      });
+  }
+
+  private todoItem(item: VisibleActivityContext, asOf: Date) {
+    return {
+      id: item.activity.activityId,
+      activityId: item.activity.activityId,
+      activityType: item.activity.activityType,
+      title: item.activity.title,
+      classroom: { id: item.classroomId, name: item.classroomTitle },
+      course: { id: item.course._id.toString(), title: item.course.title },
+      module: item.module ? { id: item.module._id.toString(), title: item.module.title } : null,
+      completionDeadline: item.effectiveDeadline.toISOString(),
+      defaultDeadline: item.defaultDeadline.toISOString(),
+      effectiveDeadline: item.effectiveDeadline.toISOString(),
+      hasDeadlineException: item.hasDeadlineException,
+      progress: progressDto(item.progress, item.effectiveDeadline, asOf),
+      actionUrl: item.activity.actionUrl,
+    };
+  }
+
   async classwork(actor: AuthenticatedUser, classroomId: string) {
     assertStudent(actor);
     const asOf = this.now();
@@ -407,55 +448,43 @@ export class StudentLearningService {
 
   async todo(actor: AuthenticatedUser, query: StudentTodoQuery) {
     const asOf = this.now();
-    const contexts = (await this.loadAllVisible(actor, asOf))
-      .filter((item) => item.activity.isRequired)
-      .filter(
-        (item) =>
-          !isCompletedDerived(deriveLearningStatus(item.progress, item.effectiveDeadline, asOf)),
-      )
+    const contexts = (await this.pendingTodoContexts(actor, asOf))
       .filter((item) => !query.classroomId || item.classroomId === query.classroomId)
       .filter((item) => {
         const status = deriveLearningStatus(item.progress, item.effectiveDeadline, asOf);
         if (query.scope === 'OVERDUE') return status === 'MISSING';
         if (query.scope === 'UPCOMING') return status !== 'MISSING';
         return true;
-      })
-      .sort((left, right) => {
-        const leftMissing =
-          deriveLearningStatus(left.progress, left.effectiveDeadline, asOf) === 'MISSING' ? 0 : 1;
-        const rightMissing =
-          deriveLearningStatus(right.progress, right.effectiveDeadline, asOf) === 'MISSING' ? 0 : 1;
-        return (
-          leftMissing - rightMissing ||
-          left.effectiveDeadline.getTime() - right.effectiveDeadline.getTime() ||
-          left.classroomTitle.localeCompare(right.classroomTitle) ||
-          left.course.displayOrder - right.course.displayOrder ||
-          left.activity.displayOrder - right.activity.displayOrder ||
-          left.activity.activityId.localeCompare(right.activity.activityId)
-        );
       });
     const start = (query.page - 1) * query.limit;
     return {
       data: {
-        items: contexts.slice(start, start + query.limit).map((item) => ({
-          id: item.activity.activityId,
-          activityId: item.activity.activityId,
-          activityType: item.activity.activityType,
-          title: item.activity.title,
-          classroom: { id: item.classroomId, name: item.classroomTitle },
-          course: { id: item.course._id.toString(), title: item.course.title },
-          module: item.module ? { id: item.module._id.toString(), title: item.module.title } : null,
-          completionDeadline: item.effectiveDeadline.toISOString(),
-          defaultDeadline: item.defaultDeadline.toISOString(),
-          effectiveDeadline: item.effectiveDeadline.toISOString(),
-          hasDeadlineException: item.hasDeadlineException,
-          progress: progressDto(item.progress, item.effectiveDeadline, asOf),
-          actionUrl: item.activity.actionUrl,
-        })),
+        items: contexts.slice(start, start + query.limit).map((item) => this.todoItem(item, asOf)),
         scopeVersion: STUDENT_TODO_SCOPE_VERSION,
         asOf: asOf.toISOString(),
       },
       meta: paginationMeta(query.page, query.limit, contexts.length),
+    };
+  }
+
+  async todoDashboard(actor: AuthenticatedUser, previewLimit: number, dueSoonWindowHours: number) {
+    const asOf = this.now();
+    const contexts = await this.pendingTodoContexts(actor, asOf);
+    const dueSoonCutoff = new Date(asOf.getTime() + dueSoonWindowHours * 60 * 60 * 1_000);
+    let missingCount = 0;
+    let dueSoonCount = 0;
+    for (const item of contexts) {
+      const status = deriveLearningStatus(item.progress, item.effectiveDeadline, asOf);
+      if (status === 'MISSING') missingCount += 1;
+      else if (item.effectiveDeadline <= dueSoonCutoff) dueSoonCount += 1;
+    }
+    return {
+      items: contexts.slice(0, previewLimit).map((item) => this.todoItem(item, asOf)),
+      totalItems: contexts.length,
+      missingCount,
+      dueSoonCount,
+      scopeVersion: STUDENT_TODO_SCOPE_VERSION,
+      asOf,
     };
   }
 

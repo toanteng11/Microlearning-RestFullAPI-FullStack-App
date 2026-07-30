@@ -91,6 +91,13 @@ export function createReportingQuerySchemas(options: {
     })
     .strict();
 
+  const studentCourseDetail = z
+    .object({
+      courseId: objectId,
+      timezone: timezone.optional(),
+    })
+    .strict();
+
   const teacherProgress = z
     .object({
       page,
@@ -168,6 +175,7 @@ export function createReportingQuerySchemas(options: {
     teacherStudentParams: z.object({ courseId: objectId, studentId: objectId }).strict(),
     studentDashboard,
     studentCourseList,
+    studentCourseDetail,
     teacherProgress,
     teacherActivities,
     adminAudit,
@@ -177,6 +185,12 @@ export function createReportingQuerySchemas(options: {
 
 export type StudentDashboardQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['studentDashboard']
+>;
+export type StudentCourseListQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['studentCourseList']
+>;
+export type StudentCourseDetailQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['studentCourseDetail']
 >;
 export type TeacherProgressQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['teacherProgress']

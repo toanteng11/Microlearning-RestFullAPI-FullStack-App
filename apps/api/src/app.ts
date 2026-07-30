@@ -12,6 +12,7 @@ import { createPhaseThreeRouter } from './modules/phase-three.router.js';
 import { createPhaseFourRouter } from './modules/phase-four.router.js';
 import { createPhaseFiveRouter } from './modules/phase-five.router.js';
 import { createPhaseSixFoundation } from './modules/phase-six.foundation.js';
+import { createPhaseSixRouter } from './modules/phase-six.router.js';
 import { ClassroomOwnershipRepositoryReader } from './modules/classrooms/classroom-ownership.reader.js';
 import { ClassroomRepository } from './modules/classrooms/classroom.repository.js';
 import { ClassroomContentRepositoryReader } from './modules/content-governance/classroom-content.repository-reader.js';
@@ -129,6 +130,7 @@ export function createApp(options: AppOptions) {
       phaseSixFoundation.reportingInvalidationWriter,
     ),
   );
+  app.use('/api/v1', createPhaseSixRouter(options.config, classrooms, phaseSixFoundation));
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(options.logger, options.config.appEnvironment === 'development'));

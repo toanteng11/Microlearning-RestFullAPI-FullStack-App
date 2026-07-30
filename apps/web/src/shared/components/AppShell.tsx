@@ -8,6 +8,7 @@ import {
   LogOut,
   School,
   Settings,
+  TrendingUp,
   UserRound,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
@@ -59,6 +60,9 @@ export function AppShell() {
               </NavLink>
               <NavLink to="/student/grades">
                 <Award size={17} /> Điểm
+              </NavLink>
+              <NavLink to="/student/progress">
+                <TrendingUp size={17} /> Tiến độ
               </NavLink>
             </>
           ) : null}

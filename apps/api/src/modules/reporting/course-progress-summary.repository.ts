@@ -162,4 +162,15 @@ export class CourseProgressSummaryRepository {
       .lean<CourseProgressSummaryRecord[]>()
       .exec();
   }
+
+  listByStudent(studentId: Types.ObjectId, session?: ClientSession) {
+    return CourseProgressSummaryModel.find({
+      studentId,
+      processScoreVersion: PROCESS_SCORE_VERSION,
+    })
+      .sort({ courseId: 1 })
+      .session(session ?? null)
+      .lean<CourseProgressSummaryRecord[]>()
+      .exec();
+  }
 }

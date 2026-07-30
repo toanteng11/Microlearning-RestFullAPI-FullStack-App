@@ -67,6 +67,7 @@ export const testConfig: AppConfig = {
   reporting: {
     enabled: true,
     timezone: 'Asia/Ho_Chi_Minh',
+    dueSoonWindowHours: 72,
     pageMax: 50,
     dashboardPreviewLimit: 5,
     gradebookActivityMax: 50,

@@ -70,7 +70,6 @@ import { LessonService } from './lessons/lesson.service.js';
 import { LearningProgressRepository } from './learning-progress/learning-progress.repository.js';
 import {
   learningLessonParamsSchema,
-  ownCourseProgressQuerySchema,
   studentClassworkParamsSchema,
   studentDeadlineQuerySchema,
   studentTodoQuerySchema,
@@ -677,19 +676,6 @@ export function createPhaseFourRouter(
       response.json({
         success: true,
         ...(await studentLearningService.deadlines(request.auth!, query)),
-      });
-    },
-  );
-
-  router.get(
-    '/students/me/progress',
-    requirePermission('learning.view_enrolled'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(ownCourseProgressQuerySchema, request.query);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        data: await studentLearningService.ownProgress(request.auth!, courseId),
       });
     },
   );
