@@ -34,25 +34,25 @@ Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạn
 
 ## Gate C - API And Security
 
-- [ ] Student APIs Pass.
-- [ ] Teacher dashboard/ranking/detail Pass.
+- [x] Student APIs Pass locally; remote PR evidence pending.
+- [x] Teacher dashboard/ranking/detail Pass locally; remote PR evidence pending.
 - [ ] Gradebook Pass.
 - [ ] Admin governance/audit reports Pass.
-- [ ] RBAC/ownership/enrollment/IDOR Pass.
-- [ ] Privacy/projection/threshold Pass.
-- [ ] Query bounds/rate limits Pass.
-- [ ] OpenAPI parity Pass.
-- [ ] Unique Express/OpenAPI operation per moved path Pass.
+- [x] RBAC/ownership/enrollment/IDOR Pass for Student/Teacher reporting scope.
+- [x] Privacy/projection Pass for Student/Teacher reporting scope; Admin threshold pending.
+- [x] Query bounds Pass for Student/Teacher reporting scope; final rate hardening pending.
+- [x] OpenAPI parity Pass for Student/Teacher reporting operations.
+- [x] Unique Express/OpenAPI operation per moved Student/Teacher path Pass.
 
 ## Gate D - Web And Integration
 
-- [ ] Student Dashboard/Progress Pass.
-- [ ] Teacher Dashboard/Analytics/Detail Pass.
+- [x] Student Dashboard/Progress Pass locally.
+- [x] Teacher Dashboard/Analytics/Detail Pass locally.
 - [ ] Gradebook Pass.
 - [ ] Admin Dashboard/Reports Pass.
-- [ ] Loading/empty/no-data/stale/partial/error states.
-- [ ] Back/Forward/Back buttons/filter URL.
-- [ ] Responsive/visual/accessibility Pass.
+- [x] Loading/empty/no-data/stale/error states for Student/Teacher reporting; remaining actors pending.
+- [x] Teacher Back/Forward/Back buttons/filter URL Pass.
+- [x] Student/Teacher responsive/visual/accessibility Pass.
 - [ ] 12 P06 E2E Pass.
 
 ## Conditional

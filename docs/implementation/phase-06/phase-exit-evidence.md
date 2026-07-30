@@ -34,8 +34,8 @@ High defects: Pending
 
 | Actor | API | Web | E2E | Privacy | Result |
 | --- | --- | --- | --- | --- | --- |
-| Student | Pending | Pending | Pending | Pending | Not Evaluated |
-| Teacher | Pending | Pending | Pending | Pending | Not Evaluated |
+| Student | Local Pass | Local Pass | Local Pass | Local Pass | Remote Pending |
+| Teacher | Local Pass | Local Pass | Local Pass | Local Pass | Remote Pending |
 | Admin | Pending | Pending | Pending | Pending | Not Evaluated |
 
 ## 5. Quality Evidence

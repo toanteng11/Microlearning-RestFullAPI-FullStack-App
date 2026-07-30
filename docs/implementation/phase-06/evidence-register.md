@@ -30,24 +30,24 @@ raw production data hoặc private CSV.
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
 | P06-EV-API-001 | Student APIs/OpenAPI | Local Pass/Committed | Commit `f560233`; `student-reporting-evidence.md`; API `206/206`; OpenAPI parity Pass |
-| P06-EV-API-002 | Teacher APIs/OpenAPI | Not Run | - |
+| P06-EV-API-002 | Teacher APIs/OpenAPI | Local Pass/Committed | Commit `9096d78`; `teacher-reporting-evidence.md`; API `210/210`; OpenAPI parity Pass |
 | P06-EV-API-003 | Gradebook APIs/OpenAPI | Not Run | - |
 | P06-EV-API-004 | Admin/Audit APIs/OpenAPI | Not Run | - |
-| P06-EV-SEC-001 | RBAC/IDOR | Unit Pass/Integration Pending | Actor-scoped service test; Mongo route test authored |
+| P06-EV-SEC-001 | RBAC/IDOR | Local Pass | Ownership-before-query, cross-Teacher và out-of-roster Mongo route tests Pass |
 | P06-EV-SEC-002 | Projection/privacy/threshold | Student Local Pass | Returned-only Grade adapter; draft leakage test authored |
-| P06-EV-SEC-003 | Query/rate/bound injection | Contract Pass/Integration Pending | Strict Zod query; bounded page/preview schemas |
+| P06-EV-SEC-003 | Query/rate/bound injection | Local Pass | Strict Zod query; invalid sort `400`; page max `50`; integration Pass |
 | P06-EV-SEC-004 | CSV/event Conditional | Not Run/N/A | - |
 
 ## 5. Web Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-WEB-001 | Student UI/component/E2E | Component Pass/E2E Pending | Web `102/102`; `student-reporting-evidence.md` |
-| P06-EV-WEB-002 | Teacher UI/component/E2E | Not Run | - |
+| P06-EV-WEB-001 | Student UI/component/E2E | Local Pass | Full Web `109/109`; full browser E2E `29/29`; `student-reporting-evidence.md` |
+| P06-EV-WEB-002 | Teacher UI/component/E2E | Local Pass/Committed | Commit `9096d78`; Teacher component `7/7`; Teacher E2E `2/2` |
 | P06-EV-WEB-003 | Gradebook UI/E2E | Not Run | - |
 | P06-EV-WEB-004 | Admin UI/E2E | Not Run | - |
-| P06-EV-WEB-005 | Responsive screenshots | Pending Runtime | Playwright journey authored; Docker stack unavailable |
-| P06-EV-WEB-006 | Accessibility report | Pending Runtime | Axe check authored in Phase 06 browser journey |
+| P06-EV-WEB-005 | Responsive review | Local Pass | Integrated browser suite; Teacher analytics `390x844`, no document overflow |
+| P06-EV-WEB-006 | Accessibility report | Local Pass | Axe WCAG 2A/2AA/2.1A/2.1AA; serious/critical `0` |
 
 ## 6. NFR/DevOps Evidence
 
@@ -56,9 +56,9 @@ raw production data hoặc private CSV.
 | P06-EV-NFR-001 | 100x50 benchmark | Pass | 3 iterations; p95 `278.75 ms`; heap `35 MB`; local 2026-07-29 |
 | P06-EV-NFR-002 | Explain/index review | Pass | Named index `report_summary_course_default_ranking` asserted in Mongo test |
 | P06-EV-NFR-003 | Rebuild batch resource use | Pass | Batch size `1` integration case; CLI default batch `50`; benchmark dataset `100x50` |
-| P06-EV-CI-001 | Docker integrated smoke | Baseline Pass | `gate-a-review-evidence.md`; rerun tại Gate E |
+| P06-EV-CI-001 | Docker integrated smoke | Local Pass | Mongo replica set + API + Web healthy; deterministic seed; browser `29/29` |
 | P06-EV-CI-002 | Clean clone | Not Run | - |
-| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | `npm run check:ci`; replica-set integration coverage Pass |
+| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | `npm run check:ci`; API `210`; Web `109`; integration `87`; E2E `29`; remote pending |
 | P06-EV-CI-004 | Post-merge main CI | Not Run | - |
 | P06-EV-CI-005 | Dependency/secret scan | Baseline Partial | Production audit Pass; remote Secret Scan chờ PR CI |
 
@@ -68,7 +68,7 @@ raw production data hoặc private CSV.
 | --- | --- | --- | --- |
 | P06-EV-EXIT-001 | 68 Must AC result | Not Run | - |
 | P06-EV-EXIT-002 | Conditional disposition | Gate A Pass | `gate-a-decision-sheet.md`; runtime result cập nhật Gate E |
-| P06-EV-EXIT-003 | Regression result | Foundation Local Pass | API `202`, Web `99`, integration `82`; full Gate E/E2E chưa chạy |
+| P06-EV-EXIT-003 | Regression result | Teacher Stack Local Pass | API `210`, Web `109`, integration `87`, browser E2E `29`; Gate E chưa chạy |
 | P06-EV-EXIT-004 | Defect/waiver review | Pending | - |
 | P06-EV-EXIT-005 | Exit report/signoff | Pending | - |
 | P06-EV-EXIT-006 | P07 handoff acceptance | Pending | - |

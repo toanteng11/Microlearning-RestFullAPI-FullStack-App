@@ -83,6 +83,12 @@ P06-PR02 required CI/review/merge.
 | P06-AC-026 | Draft Grade/private feedback không lộ. |
 | P06-AC-027 | Loading/empty/stale/partial/error/forbidden responsive và accessible. |
 
+### 4.1 Student Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-019..027 | Local Pass | Student API/Web, full Mongo integration `87/87`, Web `109/109`, browser E2E `29/29` |
+
 ## 5. Teacher `028..042`
 
 | ID | Criterion |
@@ -102,6 +108,19 @@ P06-PR02 required CI/review/merge.
 | P06-AC-040 | Deadline exception cập nhật missing/late đúng Student. |
 | P06-AC-041 | Grade return/regrade cập nhật Gradebook/average đúng. |
 | P06-AC-042 | Teacher UI states/navigation/Back/Forward/accessibility Pass. |
+
+### 5.1 Teacher Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-028..034 | Local Pass | Dashboard, stable ranking, activity/assessment analytics; commit `9096d78` |
+| P06-AC-035..037 | Pending Parts 11-12 | Gradebook API/Web chưa triển khai; returned-grade policy đã được giữ trong Teacher reporting |
+| P06-AC-038..040 | Local Pass | Active-roster Student detail, cross-scope IDOR và deadline-aware aggregate tests Pass |
+| P06-AC-041 | Pending Parts 11-12 | Regrade Gradebook end-to-end chưa thuộc Part 09-10 |
+| P06-AC-042 | Local Pass | Teacher component `7/7`; Teacher E2E `2/2`; responsive/Axe Pass |
+
+Teacher result hiện tại: `11/15 Local Pass`, `4/15 Pending Parts 11-12`. Local Pass chỉ chuyển
+thành Pass sau P06-PR04 required CI/review/merge.
 
 ## 6. Admin `043..050`
 

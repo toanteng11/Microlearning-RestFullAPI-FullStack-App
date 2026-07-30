@@ -24,11 +24,13 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Part 00 | `DONE` |
 | Part 01-05 | `DONE` |
 | Part 06 | `IN_REVIEW` |
-| Part 07-08 | `IN_REVIEW_STACKED`; local unit/component/OpenAPI Pass, runtime integration pending |
-| Part 09-17 | `BLOCKED_BY_P06_PR02_MERGE` |
+| Part 07-08 | `IN_REVIEW_STACKED`; local unit/component/OpenAPI/integration/E2E Pass, remote CI pending |
+| Part 09-10 | `IN_REVIEW_STACKED`; local CI/integration/OpenAPI/E2E Pass, remote CI pending |
+| Part 11-17 | `BLOCKED_BY_P06_PR04_MERGE` |
 | Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
 | Foundation implementation | Commit `1afe813`; local Gate B Pass; remote PR/CI pending |
 | Student reporting implementation | Commit `f560233`; `student-reporting-evidence.md`; P06-PR03 remote CI pending |
+| Teacher reporting implementation | Commit `9096d78`; `teacher-reporting-evidence.md`; P06-PR04 remote CI pending |
 
 ## 3. Execution Map
 

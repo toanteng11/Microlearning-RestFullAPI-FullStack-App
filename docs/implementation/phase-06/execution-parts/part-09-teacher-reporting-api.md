@@ -55,3 +55,16 @@ apps/api/tests/integration/phase-six-security.integration.test.ts
 - Cross-Teacher/Course/Student bị chặn.
 - Unknown filter/sort/operator trả controlled 400.
 - OpenAPI/runtime route uniqueness Pass.
+
+## Implementation Result - 2026-07-30
+
+- Status: `IN_REVIEW_STACKED`.
+- Code commit: `9096d78`.
+- Sáu operation Teacher reporting đã được triển khai và chỉ còn một runtime owner tại Phase 06.
+- Ownership được resolve trước roster/aggregate; cross-Teacher và Student ngoài active roster trả lỗi có kiểm soát.
+- Ranking mặc định dùng six-field stable order; search/filter/sort/page chạy phía server, giới hạn `limit <= 50`.
+- Activity và assessment analytics dùng batch readers, denominator rõ ràng và chỉ đưa Grade `RETURNED` vào average.
+- OpenAPI parser/runtime parity Pass; query không hợp lệ trả `400`.
+- API unit `210/210`, Mongo integration `87/87`, focused Teacher integration `2/2`.
+- Benchmark `100 Students x 50 Lessons`: Dashboard p95 `562.55 ms`, ranking p95 `278.44 ms`.
+- Chưa chuyển `DONE` cho tới khi Parent PR có remote CI Pass, review hoàn tất và merge.
