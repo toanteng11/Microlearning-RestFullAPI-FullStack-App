@@ -120,6 +120,12 @@ export function createReportingQuerySchemas(options: {
     })
     .strict();
 
+  const teacherDashboard = z
+    .object({
+      timezone: timezone.optional(),
+    })
+    .strict();
+
   const teacherActivities = z
     .object({
       page,
@@ -135,6 +141,28 @@ export function createReportingQuerySchemas(options: {
         .enum(['position', 'deadline', 'completionPercentage', 'missingCount', 'title'])
         .default('position'),
       sortOrder: z.enum(REPORTING_SORT_ORDERS).default('asc'),
+    })
+    .strict();
+
+  const teacherAssessments = z
+    .object({
+      page,
+      limit,
+      search: normalizedSearch.optional(),
+      activityType: z.enum(['QUIZ', 'ASSIGNMENT']).optional(),
+      lifecycleStatus: z
+        .enum(['DRAFT', 'SCHEDULED', 'PUBLISHED', 'UNPUBLISHED', 'CLOSED', 'ARCHIVED'])
+        .optional(),
+      sortBy: z
+        .enum(['position', 'title', 'submissionPercentage', 'returnedGradeAverage', 'missingCount'])
+        .default('position'),
+      sortOrder: z.enum(REPORTING_SORT_ORDERS).default('asc'),
+    })
+    .strict();
+
+  const teacherStudentDetail = z
+    .object({
+      timezone: timezone.optional(),
     })
     .strict();
 
@@ -176,8 +204,11 @@ export function createReportingQuerySchemas(options: {
     studentDashboard,
     studentCourseList,
     studentCourseDetail,
+    teacherDashboard,
     teacherProgress,
     teacherActivities,
+    teacherAssessments,
+    teacherStudentDetail,
     adminAudit,
     allowedActions: z.array(z.enum(REPORTING_ALLOWED_ACTIONS)),
   });
@@ -194,4 +225,16 @@ export type StudentCourseDetailQuery = z.infer<
 >;
 export type TeacherProgressQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['teacherProgress']
+>;
+export type TeacherDashboardQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['teacherDashboard']
+>;
+export type TeacherActivityQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['teacherActivities']
+>;
+export type TeacherAssessmentQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['teacherAssessments']
+>;
+export type TeacherStudentDetailQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['teacherStudentDetail']
 >;

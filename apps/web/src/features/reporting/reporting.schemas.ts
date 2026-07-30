@@ -123,3 +123,168 @@ export const studentCourseProgressListEnvelopeSchema = z.object({
   }),
   meta: paginationSchema,
 });
+
+const teacherStudentSchema = z.object({
+  id: z.string(),
+  fullName: z.string(),
+  email: z.string(),
+  studentCode: z.string().nullable(),
+});
+
+export const teacherProgressRowSchema = z.object({
+  rank: z.number().int().positive(),
+  student: teacherStudentSchema,
+  requiredActivityCount: z.number().int().nonnegative(),
+  completedRequiredCount: z.number().int().nonnegative(),
+  progressPercentage: percentage,
+  processScore: percentage,
+  progressStatus,
+  returnedGradeAverage: percentage,
+  missingCount: z.number().int().nonnegative(),
+  lateCount: z.number().int().nonnegative(),
+  ungradedCount: z.number().int().nonnegative(),
+  lastActiveAt: nullableDateTime,
+  courseCompleted: z.boolean(),
+  supportFlags: z.array(
+    z.enum([
+      'HAS_MISSING_WORK',
+      'HAS_UNGRADED_WORK',
+      'NO_RECENT_ACTIVITY',
+      'NO_REQUIRED_ACTIVITY',
+      'PARTIAL_DATA',
+    ]),
+  ),
+  allowedActions: z.array(z.string()),
+});
+
+export const teacherActivityAnalyticsRowSchema = z.object({
+  activityId: z.string(),
+  activityType: z.enum(['LESSON', 'QUIZ', 'ASSIGNMENT']),
+  title: z.string(),
+  isRequired: z.boolean(),
+  lifecycleStatus: z.string(),
+  defaultDeadline: nullableDateTime,
+  deadlineStatus: z.enum(['NO_DEADLINE', 'UPCOMING', 'DUE_SOON', 'OVERDUE']),
+  position: z.number().int().nonnegative(),
+  eligibleStudentCount: z.number().int().nonnegative(),
+  completedStudentCount: z.number().int().nonnegative(),
+  missingStudentCount: z.number().int().nonnegative(),
+  lateStudentCount: z.number().int().nonnegative(),
+  ungradedStudentCount: z.number().int().nonnegative(),
+  completionPercentage: percentage,
+  returnedGradeAverage: percentage,
+  actionUrl: z.string(),
+});
+
+export const teacherAssessmentAnalyticsRowSchema = z.object({
+  activityId: z.string(),
+  activityType: z.enum(['QUIZ', 'ASSIGNMENT']),
+  title: z.string(),
+  lifecycleStatus: z.string(),
+  position: z.number().int().nonnegative(),
+  eligibleStudentCount: z.number().int().nonnegative(),
+  notStartedCount: z.number().int().nonnegative(),
+  inProgressCount: z.number().int().nonnegative(),
+  submittedCount: z.number().int().nonnegative(),
+  needsReviewCount: z.number().int().nonnegative(),
+  draftGradeCount: z.number().int().nonnegative(),
+  returnedCount: z.number().int().nonnegative(),
+  missingCount: z.number().int().nonnegative(),
+  lateCount: z.number().int().nonnegative(),
+  submissionPercentage: percentage,
+  returnedGradeAverage: percentage,
+  scoreDistribution: z.array(
+    z.object({ bucket: z.string(), count: z.number().int().nonnegative() }),
+  ),
+  actionUrl: z.string(),
+});
+
+const courseIdentitySchema = z.object({ id: z.string(), title: z.string() });
+
+export const teacherReportingDashboardEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    course: z.object({
+      id: z.string(),
+      title: z.string(),
+      status: z.string(),
+      classroomId: z.string(),
+      classroomName: z.string(),
+    }),
+    summary: z.object({
+      totalActivityCount: z.number().int().nonnegative(),
+      publishedActivityCount: z.number().int().nonnegative(),
+      requiredActivityCount: z.number().int().nonnegative(),
+      activeStudentCount: z.number().int().nonnegative(),
+      averageProgressPercentage: percentage,
+      averageReturnedGrade: percentage,
+      missingActivityCount: z.number().int().nonnegative(),
+      lateActivityCount: z.number().int().nonnegative(),
+      ungradedActivityCount: z.number().int().nonnegative(),
+    }),
+    topActivities: z.array(teacherActivityAnalyticsRowSchema),
+    topStudents: z.array(teacherProgressRowSchema),
+    allowedActions: z.array(z.string()),
+    reporting: reportMetadataSchema,
+  }),
+});
+
+export const teacherProgressListEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    course: courseIdentitySchema,
+    items: z.array(teacherProgressRowSchema),
+    reporting: reportMetadataSchema,
+  }),
+  meta: paginationSchema,
+});
+
+export const teacherActivityListEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    course: courseIdentitySchema,
+    items: z.array(teacherActivityAnalyticsRowSchema),
+    reporting: reportMetadataSchema,
+  }),
+  meta: paginationSchema,
+});
+
+export const teacherAssessmentListEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    course: courseIdentitySchema,
+    items: z.array(teacherAssessmentAnalyticsRowSchema),
+    reporting: reportMetadataSchema,
+  }),
+  meta: paginationSchema,
+});
+
+export const teacherStudentProgressEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    student: teacherStudentSchema,
+    summary: teacherProgressRowSchema.omit({ rank: true, student: true, allowedActions: true }),
+    activities: z.array(
+      z.object({
+        activityId: z.string(),
+        activityType: z.enum(['LESSON', 'QUIZ', 'ASSIGNMENT']),
+        title: z.string(),
+        completionStatus: z.enum([
+          'NOT_APPLICABLE',
+          'NOT_STARTED',
+          'IN_PROGRESS',
+          'MISSING',
+          'COMPLETED',
+          'LATE',
+        ]),
+        gradingStatus: z.enum(['NOT_GRADABLE', 'NOT_READY', 'AWAITING_GRADE', 'DRAFT', 'RETURNED']),
+        effectiveDeadline: nullableDateTime,
+        completedAt: nullableDateTime,
+        score: z.number().nullable(),
+        maxScore: z.number().positive().nullable(),
+        actionUrl: z.string(),
+      }),
+    ),
+    reporting: reportMetadataSchema,
+  }),
+});

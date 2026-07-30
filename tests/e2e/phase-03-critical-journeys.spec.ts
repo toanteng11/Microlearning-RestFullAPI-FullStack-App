@@ -411,7 +411,7 @@ test('Phase 04 Teacher Dashboard reports Student completion deterministically', 
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
   await expect(page.getByRole('heading', { name: 'Lớp học của E2E Teacher' })).toBeVisible();
   await page.goto(teacherCoursePath);
-  await expect(page.getByText('P05_REQUIRED_ACTIVITY_COMPLETION_V1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tổng quan tiến độ' })).toBeVisible();
   await expect(page.getByText('Demo Student Active Two')).toBeVisible();
   await expect(page.getByText('100%')).toBeVisible();
   await expect(page.getByRole('link', { name: /Quản lý nội dung/u })).toBeVisible();

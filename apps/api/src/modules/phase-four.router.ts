@@ -73,16 +73,12 @@ import {
   studentClassworkParamsSchema,
   studentDeadlineQuerySchema,
   studentTodoQuerySchema,
-  teacherActivityQuerySchema,
-  teacherCourseParamsSchema,
-  teacherProgressQuerySchema,
 } from './learning-progress/learning-progress.schemas.js';
 import { StudentLearningService } from './learning-progress/student-learning.service.js';
 import { MongoLearningActivityReader } from './learning-progress/mongo-learning-activity.reader.js';
 import { QuizRepository } from './quizzes/quiz.repository.js';
 import { AssignmentRepository } from './assignments/assignment.repository.js';
 import { DeadlineExceptionRepository } from './deadline-exceptions/deadline-exception.repository.js';
-import { TeacherCourseDashboardService } from './learning-progress/teacher-course-dashboard.service.js';
 import {
   archiveModuleSchema,
   changeModuleStatusSchema,
@@ -219,17 +215,6 @@ export function createPhaseFourRouter(
     activityReader,
     deadlineExceptions,
     reportingInvalidationWriter,
-  );
-  const teacherDashboardService = new TeacherCourseDashboardService(
-    classrooms,
-    enrollments,
-    users,
-    courses,
-    lessons,
-    progress,
-    courseScopes,
-    activityReader,
-    deadlineExceptions,
   );
   const announcementService = new AnnouncementService(
     announcements,
@@ -676,61 +661,6 @@ export function createPhaseFourRouter(
       response.json({
         success: true,
         ...(await studentLearningService.deadlines(request.auth!, query)),
-      });
-    },
-  );
-
-  router.get(
-    '/teacher/courses/:courseId/dashboard',
-    requirePermission('course.progress_view_owned'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(teacherCourseParamsSchema, request.params);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        data: await teacherDashboardService.dashboard(request.auth!, courseId),
-      });
-    },
-  );
-
-  router.get(
-    '/teacher/courses/:courseId/activities',
-    requirePermission('course.progress_view_owned'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(teacherCourseParamsSchema, request.params);
-      const query = parseWithSchema(teacherActivityQuerySchema, request.query);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        ...(await teacherDashboardService.activities(request.auth!, courseId, query)),
-      });
-    },
-  );
-
-  router.get(
-    '/teacher/courses/:courseId/students',
-    requirePermission('course.progress_view_owned'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(teacherCourseParamsSchema, request.params);
-      const query = parseWithSchema(teacherProgressQuerySchema, request.query);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        ...(await teacherDashboardService.students(request.auth!, courseId, query)),
-      });
-    },
-  );
-
-  router.get(
-    '/teacher/courses/:courseId/progress',
-    requirePermission('course.progress_view_owned'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(teacherCourseParamsSchema, request.params);
-      const query = parseWithSchema(teacherProgressQuerySchema, request.query);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        ...(await teacherDashboardService.ranking(request.auth!, courseId, query)),
       });
     },
   );

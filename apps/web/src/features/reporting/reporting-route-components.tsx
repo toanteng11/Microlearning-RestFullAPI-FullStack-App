@@ -7,3 +7,11 @@ export const StudentReportingDashboardPage = lazy(async () => ({
 export const StudentProgressPage = lazy(async () => ({
   default: (await import('./pages/StudentProgressPage')).StudentProgressPage,
 }));
+
+export const TeacherRankingPage = lazy(async () => ({
+  default: (await import('./pages/TeacherRankingPage')).TeacherRankingPage,
+}));
+
+export const TeacherStudentDetailPage = lazy(async () => ({
+  default: (await import('./pages/TeacherStudentDetailPage')).TeacherStudentDetailPage,
+}));

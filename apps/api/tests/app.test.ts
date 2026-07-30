@@ -258,10 +258,6 @@ describe('system API', () => {
       ['POST /api/v1/lessons/{lessonId}/complete', 'completeLesson'],
       ['GET /api/v1/students/me/todo', 'listStudentTodo'],
       ['GET /api/v1/students/me/deadlines', 'listStudentDeadlines'],
-      ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherCourseDashboard'],
-      ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherCourseActivities'],
-      ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
-      ['GET /api/v1/teacher/courses/{courseId}/progress', 'listTeacherCourseProgress'],
       ['GET /api/v1/classrooms/{classroomId}/announcements', 'listClassroomAnnouncements'],
       ['POST /api/v1/classrooms/{classroomId}/announcements', 'createAnnouncement'],
       ['PATCH /api/v1/announcements/{announcementId}', 'updateAnnouncement'],
@@ -411,12 +407,21 @@ describe('system API', () => {
     );
   });
 
-  it('keeps Phase 06 Student reporting routes unique and protected in Swagger', () => {
+  it('keeps Phase 06 reporting routes unique and protected in Swagger', () => {
     const document = createOpenApiDocument(testRuntimeInfo);
     const expected = new Map([
       ['GET /api/v1/students/me/dashboard', 'getStudentReportingDashboard'],
       ['GET /api/v1/students/me/progress', 'getStudentCourseProgress'],
       ['GET /api/v1/students/me/progress/courses', 'listStudentCourseProgress'],
+      ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherReportingDashboard'],
+      ['GET /api/v1/teacher/courses/{courseId}/progress', 'listTeacherCourseProgress'],
+      ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
+      ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherActivityAnalytics'],
+      ['GET /api/v1/teacher/courses/{courseId}/assessments', 'listTeacherAssessmentAnalytics'],
+      [
+        'GET /api/v1/teacher/courses/{courseId}/students/{studentId}/progress',
+        'getTeacherStudentProgress',
+      ],
     ]);
     const actual = new Map<string, string>();
     for (const [path, pathItem] of Object.entries(document.paths)) {

@@ -1,7 +1,9 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
+import type { ZodType } from 'zod';
 
 import { createAuthenticateMiddleware, requirePermission } from '../shared/auth/authenticate.js';
 import type { AppConfig } from '../shared/config/environment.js';
+import { AppError } from '../shared/errors/app-error.js';
 import { parseWithSchema } from '../shared/validation/parse.js';
 import { AssignmentRepository } from './assignments/assignment.repository.js';
 import { AuthLoginStateRepository } from './auth/auth-login-state.repository.js';
@@ -21,10 +23,23 @@ import { createPhaseFourFoundation } from './phase-four.foundation.js';
 import type { PhaseSixFoundation } from './phase-six.foundation.js';
 import { QuizRepository } from './quizzes/quiz.repository.js';
 import { MongoStudentReportingSource } from './reporting/adapters/mongo-student-reporting.source.js';
+import { MongoTeacherReportingSource } from './reporting/adapters/mongo-teacher-reporting.source.js';
 import { createReportingQuerySchemas } from './reporting/reporting.schemas.js';
 import { StudentReportingService } from './reporting/student-reporting.service.js';
+import { TeacherReportingService } from './reporting/teacher-reporting.service.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { UserRepository } from './users/user.repository.js';
+
+function parseTeacherReportingQuery<T>(schema: ZodType<T>, input: unknown): T {
+  try {
+    return parseWithSchema(schema, input);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'VALIDATION_ERROR') {
+      throw new AppError(400, error.code, error.message, error.details);
+    }
+    throw error;
+  }
+}
 
 export function createPhaseSixRouter(
   config: AppConfig,
@@ -80,6 +95,21 @@ export function createPhaseSixRouter(
       dueSoonWindowHours: config.reporting.dueSoonWindowHours,
     },
   );
+  const teacherReporting = new TeacherReportingService(
+    foundation.scopeReader,
+    foundation.rosterReader,
+    foundation.activityReader,
+    foundation.progressReader,
+    foundation.gradeReader,
+    new MongoTeacherReportingSource(users, config.reporting.onDemandCourseRefreshMaxStudents),
+    foundation.calculator,
+    {
+      enabled: config.reporting.enabled,
+      timezone: config.reporting.timezone,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+      dueSoonWindowHours: config.reporting.dueSoonWindowHours,
+    },
+  );
   const schemas = createReportingQuerySchemas({
     pageMax: config.reporting.pageMax,
     maxDateRangeDays: config.reporting.maxDateRangeDays,
@@ -87,6 +117,7 @@ export function createPhaseSixRouter(
   });
 
   router.use('/students', authenticate);
+  router.use('/teacher', authenticate);
 
   router.get(
     '/students/me/dashboard',
@@ -115,6 +146,84 @@ export function createPhaseSixRouter(
       const query = parseWithSchema(schemas.studentCourseList, request.query);
       response.setHeader('Cache-Control', 'private, no-store');
       response.json({ success: true, ...(await reporting.courses(request.auth!, query)) });
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/dashboard',
+    requirePermission('course.progress_view_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.teacherDashboard, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        data: await teacherReporting.dashboard(request.auth!, courseId, query),
+      });
+    },
+  );
+
+  const listTeacherProgress = async (request: Request, response: Response) => {
+    const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+    const query = parseTeacherReportingQuery(schemas.teacherProgress, request.query);
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.json({
+      success: true,
+      ...(await teacherReporting.ranking(request.auth!, courseId, query)),
+    });
+  };
+
+  router.get(
+    '/teacher/courses/:courseId/progress',
+    requirePermission('course.progress_view_owned'),
+    listTeacherProgress,
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/students',
+    requirePermission('course.progress_view_owned'),
+    listTeacherProgress,
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/activities',
+    requirePermission('course.progress_view_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.teacherActivities, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        ...(await teacherReporting.activityAnalytics(request.auth!, courseId, query)),
+      });
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/assessments',
+    requirePermission('course.progress_view_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.teacherAssessments, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        ...(await teacherReporting.assessmentAnalytics(request.auth!, courseId, query)),
+      });
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/students/:studentId/progress',
+    requirePermission('course.progress_view_owned'),
+    async (request, response) => {
+      const { courseId, studentId } = parseWithSchema(schemas.teacherStudentParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.teacherStudentDetail, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        data: await teacherReporting.studentDetail(request.auth!, courseId, studentId, query),
+      });
     },
   );
 

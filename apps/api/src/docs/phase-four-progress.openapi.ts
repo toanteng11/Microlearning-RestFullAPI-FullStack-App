@@ -53,12 +53,6 @@ const classroomId: OpenAPIV3.ParameterObject = {
   required: true,
   schema: { type: 'string', pattern: objectIdPattern },
 };
-const courseId: OpenAPIV3.ParameterObject = {
-  name: 'courseId',
-  in: 'path',
-  required: true,
-  schema: { type: 'string', pattern: objectIdPattern },
-};
 const page: OpenAPIV3.ParameterObject = {
   name: 'page',
   in: 'query',
@@ -84,20 +78,12 @@ export const PHASE_FOUR_PROGRESS_OPENAPI_OPERATIONS = [
   'completeLesson',
   'listStudentTodo',
   'listStudentDeadlines',
-  'getTeacherCourseDashboard',
-  'listTeacherCourseActivities',
-  'listTeacherCourseStudents',
-  'listTeacherCourseProgress',
 ] as const;
 
 export const phaseFourProgressTags: OpenAPIV3.TagObject[] = [
   {
     name: 'Learning Progress',
     description: 'Student Classwork, mixed learning activity progress, deadlines and To-do',
-  },
-  {
-    name: 'Teacher Course Dashboard',
-    description: 'Owned Course completion metrics and deterministic Student ranking',
   },
 ];
 
@@ -147,13 +133,6 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
     progress: { ...progressExample, status: null, completedAt: null, derivedStatus: 'NOT_STARTED' },
     actionUrl: '/student/assignments/507f1f77bcf86cd799439044',
   };
-  const teacherParameters = [
-    courseId,
-    page,
-    limit,
-    { name: 'search', in: 'query', schema: { type: 'string', minLength: 1, maxLength: 100 } },
-  ] satisfies OpenAPIV3.ParameterObject[];
-
   return {
     '/api/v1/classrooms/{classroomId}/classwork': {
       get: {
@@ -274,82 +253,6 @@ export function createPhaseFourProgressPaths(): OpenAPIV3.PathsObject {
           }),
           ...protectedErrors,
         },
-      },
-    },
-    '/api/v1/teacher/courses/{courseId}/dashboard': {
-      get: {
-        tags: ['Teacher Course Dashboard'],
-        operationId: 'getTeacherCourseDashboard',
-        summary: 'Get owned Course summary and first activity and Student slices',
-        security,
-        parameters: [courseId],
-        responses: {
-          '200': ok('Teacher Course dashboard', {
-            success: true,
-            data: {
-              metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
-              descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
-              asOf: '2026-07-20T08:00:00.000Z',
-              summary: {
-                totalLessons: 10,
-                publishedLessons: 8,
-                requiredLessons: 7,
-                totalActivities: 14,
-                publishedActivities: 12,
-                requiredActivities: 10,
-                activeStudents: 25,
-                averageProgressPercentage: 62.4,
-              },
-              activities: [],
-              students: [],
-            },
-          }),
-          ...protectedErrors,
-        },
-      },
-    },
-    '/api/v1/teacher/courses/{courseId}/activities': {
-      get: {
-        tags: ['Teacher Course Dashboard'],
-        operationId: 'listTeacherCourseActivities',
-        summary: 'List published Course activities and completion metrics',
-        security,
-        parameters: [
-          ...teacherParameters,
-          {
-            name: 'deadlineStatus',
-            in: 'query',
-            schema: { type: 'string', enum: ['NO_DEADLINE', 'UPCOMING', 'OVERDUE'] },
-          },
-        ],
-        responses: { '200': ok('Activity metrics', { success: true, data: { items: [] } }), ...protectedErrors },
-      },
-    },
-    '/api/v1/teacher/courses/{courseId}/students': {
-      get: {
-        tags: ['Teacher Course Dashboard'],
-        operationId: 'listTeacherCourseStudents',
-        summary: 'List active Students and Course completion summaries',
-        security,
-        parameters: teacherParameters,
-        responses: { '200': ok('Student metrics', { success: true, data: { items: [] } }), ...protectedErrors },
-      },
-    },
-    '/api/v1/teacher/courses/{courseId}/progress': {
-      get: {
-        tags: ['Teacher Course Dashboard'],
-        operationId: 'listTeacherCourseProgress',
-        summary: 'List deterministic Course progress ranking',
-        security,
-        parameters: [
-          ...teacherParameters,
-          {
-            name: 'progressStatus',
-            in: 'query',
-            schema: { $ref: '#/components/schemas/DerivedLearningStatus' },
-          },
-        ],
-        responses: { '200': ok('Course ranking', { success: true, data: { items: [] } }), ...protectedErrors },
       },
     },
   };
