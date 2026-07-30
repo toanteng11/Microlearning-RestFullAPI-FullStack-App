@@ -1,5 +1,6 @@
 import type {
   StudentCourseProgressQuery,
+  GradebookQuery,
   TeacherActivityQuery,
   TeacherAssessmentQuery,
   TeacherProgressQuery,
@@ -23,4 +24,8 @@ export const reportingQueryKeys = {
     [...reportingQueryKeys.all(actorId), 'teacher-assessments', courseId, query] as const,
   teacherStudent: (actorId: string, courseId: string, studentId: string) =>
     [...reportingQueryKeys.all(actorId), 'teacher-student', courseId, studentId] as const,
+  teacherGradebooks: (actorId: string, courseId: string) =>
+    [...reportingQueryKeys.all(actorId), 'teacher-gradebook', courseId] as const,
+  teacherGradebook: (actorId: string, courseId: string, query: GradebookQuery) =>
+    [...reportingQueryKeys.teacherGradebooks(actorId, courseId), query] as const,
 };

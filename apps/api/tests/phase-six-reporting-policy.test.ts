@@ -214,6 +214,7 @@ describe('Phase 06 reporting metric policies', () => {
     ).toEqual({
       completionStatus: 'COMPLETED',
       gradingStatus: 'AWAITING_GRADE',
+      displayStatus: 'AWAITING_GRADE',
       score: null,
       maxScore: null,
     });
@@ -225,6 +226,26 @@ describe('Phase 06 reporting metric policies', () => {
         grade: null,
       }).gradingStatus,
     ).toBe('NOT_GRADABLE');
+    expect(
+      resolveGradebookCell({
+        completionStatus: 'LATE',
+        gradable: true,
+        terminalEvidence: true,
+        grade: {
+          gradeId: 'grade-1',
+          studentId: 'student-1',
+          courseId: 'course-1',
+          activityId: 'activity-1',
+          activityType: 'ASSIGNMENT',
+          status: 'RETURNED',
+          score: 8,
+          maxScore: 10,
+          returnedAt: new Date(),
+          revision: 1,
+          sourceUpdatedAt: new Date(),
+        },
+      }).displayStatus,
+    ).toBe('RETURNED');
   });
 
   it('publishes fresh, stale, partial, rebuilding and failed states honestly', () => {

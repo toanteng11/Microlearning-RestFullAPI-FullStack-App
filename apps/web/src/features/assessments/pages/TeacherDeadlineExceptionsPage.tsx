@@ -1,10 +1,12 @@
 import { ArrowLeft, CalendarPlus, Check, History, RotateCcw } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { displayLearningDate, requestErrorMessage } from '../../learning/learning-format';
+import { invalidateOwnedCourseReporting } from '../../reporting/reporting-invalidation';
 import { toLocalDateTime } from '../assessment-format';
 import type {
   DeadlineException,
@@ -15,6 +17,7 @@ import type {
 
 interface ActivitySummary {
   title: string;
+  courseId: string;
   defaultDeadline: string;
   backUrl: string;
 }
@@ -29,7 +32,8 @@ function apiActivityType(value: string) {
 export function TeacherDeadlineExceptionsPage() {
   const { activityType: rawActivityType = '', activityId = '' } = useParams();
   const activityType = apiActivityType(rawActivityType);
-  const { request } = useAuth();
+  const { request, user } = useAuth();
+  const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams();
   const [activity, setActivity] = useState<ActivitySummary | null>(null);
   const [items, setItems] = useState<DeadlineException[]>([]);
@@ -57,6 +61,7 @@ export function TeacherDeadlineExceptionsPage() {
         ? request<{ success: true; data: TeacherQuiz }>(`/teacher/quizzes/${activityId}`).then(
             (response) => ({
               title: response.data.title,
+              courseId: response.data.courseId,
               defaultDeadline: response.data.dueDate,
               backUrl: `/teacher/quizzes/${activityId}/results`,
             }),
@@ -66,16 +71,18 @@ export function TeacherDeadlineExceptionsPage() {
               `/teacher/assignments/${activityId}`,
             ).then((response) => ({
               title: response.data.title,
+              courseId: response.data.courseId,
               defaultDeadline: response.data.dueDate,
               backUrl: `/teacher/assignments/${activityId}/submissions`,
             }))
           : request<{
               success: true;
               data: {
-                lesson: { title: string; completionDeadline: string | null };
+                lesson: { courseId: string; title: string; completionDeadline: string | null };
               };
             }>(`/lessons/${activityId}`).then((response) => ({
               title: response.data.lesson.title,
+              courseId: response.data.lesson.courseId,
               defaultDeadline: response.data.lesson.completionDeadline ?? '',
               backUrl: `/teacher/lessons/${activityId}/edit`,
             }));
@@ -148,6 +155,7 @@ export function TeacherDeadlineExceptionsPage() {
       );
       setNotice('Đã lưu deadline riêng cho học viên.');
       await load();
+      await invalidateOwnedCourseReporting(queryClient, user?.id, activity?.courseId);
     } catch (requestError) {
       const fallback =
         requestError instanceof ApiError && requestError.status === 409
@@ -177,6 +185,7 @@ export function TeacherDeadlineExceptionsPage() {
       );
       setNotice('Đã thu hồi deadline riêng và khôi phục deadline mặc định.');
       await load();
+      await invalidateOwnedCourseReporting(queryClient, user?.id, activity?.courseId);
     } catch (requestError) {
       setError(requestErrorMessage(requestError, 'Không thể thu hồi deadline riêng.'));
     } finally {

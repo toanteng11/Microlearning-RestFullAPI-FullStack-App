@@ -7,8 +7,19 @@ import type {
 export interface GradebookCellState {
   completionStatus: ReportingActivityStatus;
   gradingStatus: ReportingGradingStatus;
+  displayStatus: ReportingActivityStatus | 'AWAITING_GRADE' | 'DRAFT_GRADE' | 'RETURNED';
   score: number | null;
   maxScore: number | null;
+}
+
+export function resolveGradebookDisplayStatus(
+  completionStatus: ReportingActivityStatus,
+  gradingStatus: ReportingGradingStatus,
+): GradebookCellState['displayStatus'] {
+  if (gradingStatus === 'RETURNED') return 'RETURNED';
+  if (gradingStatus === 'DRAFT') return 'DRAFT_GRADE';
+  if (gradingStatus === 'AWAITING_GRADE') return 'AWAITING_GRADE';
+  return completionStatus;
 }
 
 export function resolveGradebookCell(input: {
@@ -26,6 +37,7 @@ export function resolveGradebookCell(input: {
   return {
     completionStatus: input.completionStatus,
     gradingStatus,
+    displayStatus: resolveGradebookDisplayStatus(input.completionStatus, gradingStatus),
     score: input.grade?.score ?? null,
     maxScore: input.grade?.maxScore ?? null,
   };

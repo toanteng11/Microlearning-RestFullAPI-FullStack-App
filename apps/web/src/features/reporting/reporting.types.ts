@@ -285,3 +285,82 @@ export interface TeacherStudentProgressEnvelope {
     reporting: ReportMetadata;
   };
 }
+
+export type GradebookCompletionStatus =
+  'NOT_APPLICABLE' | 'NOT_STARTED' | 'IN_PROGRESS' | 'MISSING' | 'COMPLETED' | 'LATE';
+export type GradebookGradingStatus =
+  'NOT_GRADABLE' | 'NOT_READY' | 'AWAITING_GRADE' | 'DRAFT' | 'RETURNED';
+export type GradebookDisplayStatus =
+  GradebookCompletionStatus | 'AWAITING_GRADE' | 'DRAFT_GRADE' | 'RETURNED';
+
+export interface GradebookColumn {
+  activityId: string;
+  activityType: 'LESSON' | 'QUIZ' | 'ASSIGNMENT';
+  title: string;
+  isRequired: boolean;
+  maxScore: number | null;
+  effectiveDefaultDeadline: string | null;
+  lifecycleStatus: string;
+  position: number;
+}
+
+export interface GradebookCell {
+  activityId: string;
+  completionStatus: GradebookCompletionStatus;
+  gradingStatus: GradebookGradingStatus;
+  displayStatus: GradebookDisplayStatus;
+  score: number | null;
+  maxScore: number | null;
+  normalizedScore: number | null;
+  submittedAt: string | null;
+  returnedAt: string | null;
+  effectiveDeadline: string | null;
+  isDeadlineExceptionApplied: boolean;
+  allowedActions: string[];
+}
+
+export interface GradebookRow {
+  student: TeacherProgressRow['student'];
+  processScore: number | null;
+  progressPercentage: number | null;
+  returnedGradeAverage: number | null;
+  missingCount: number;
+  lateCount: number;
+  cells: GradebookCell[];
+}
+
+export interface GradebookQuery {
+  page: number;
+  limit: number;
+  search?: string;
+  activityType?: GradebookColumn['activityType'];
+  completionStatus?: GradebookCompletionStatus;
+  gradingStatus?: GradebookGradingStatus;
+  moduleId?: string;
+  activityLimit: number;
+  activityCursor?: string;
+  sortBy:
+    | 'processScore'
+    | 'progressPercentage'
+    | 'returnedGradeAverage'
+    | 'missingCount'
+    | 'lateCount'
+    | 'fullName';
+  sortOrder: 'asc' | 'desc';
+}
+
+export interface GradebookEnvelope {
+  success: true;
+  data: {
+    course: { id: string; title: string };
+    columns: GradebookColumn[];
+    rows: GradebookRow[];
+    activityPage: {
+      limit: number;
+      nextCursor: string | null;
+      truncated: boolean;
+    };
+    reporting: ReportMetadata;
+  };
+  meta: Pagination;
+}

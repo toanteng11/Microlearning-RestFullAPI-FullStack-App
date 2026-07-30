@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 
-import type { AssessmentFeatureFlagConfig } from '../../shared/config/environment.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
 import type { AssignmentRepository } from '../assignments/assignment.repository.js';
@@ -11,7 +10,6 @@ import type { AssessmentScopeReader } from '../learning-content/assessment-scope
 import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { QuizModel } from '../quizzes/quiz.model.js';
 import type { SubmissionRepository } from '../submissions/submission.repository.js';
-import { UserModel } from '../users/user.model.js';
 import { toStudentReturnedGradeDto, toTeacherGradeDto } from './grade.dto.js';
 import type { GradeRecord } from './grade.model.js';
 import type { GradeRepository } from './grade.repository.js';
@@ -62,7 +60,6 @@ export class GradeService {
     private readonly enrollments: EnrollmentRepository,
     private readonly scopes: AssessmentScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
-    private readonly features: AssessmentFeatureFlagConfig,
     private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
@@ -459,34 +456,6 @@ export class GradeService {
       percentage: Math.round((grade.score / grade.maxScore) * 10_000) / 100,
       evidenceType: grade.evidenceType,
       ...(await this.activityProjection(grade)),
-    };
-  }
-
-  async gradebook(actor: AuthenticatedUser, courseId: string) {
-    assertTeacher(actor);
-    if (!this.features.basicGradebookEnabled)
-      throw new AppError(409, 'FEATURE_NOT_ENABLED', 'Basic gradebook is not enabled');
-    const scope = await this.scopes.requireTeacherManage(actor.id, courseId);
-    const [enrollments, grades] = await Promise.all([
-      this.enrollments.listActiveByClassroom(objectId(scope.classroomId, 'Classroom')),
-      this.grades.listByCourse(objectId(courseId, 'Course')),
-    ]);
-    const users = await UserModel.find({
-      _id: { $in: enrollments.map((item) => item.studentId) },
-      status: 'ACTIVE',
-    })
-      .select({ fullName: 1, email: 1 })
-      .lean<Array<{ _id: Types.ObjectId; fullName: string; email: string }>>()
-      .exec();
-    return {
-      featureVersion: 'P05_BASIC_GRADEBOOK_V1',
-      courseId,
-      students: users.map((user) => ({
-        id: user._id.toString(),
-        fullName: user.fullName,
-        email: user.email,
-        grades: grades.filter((grade) => grade.studentId.equals(user._id)).map(toTeacherGradeDto),
-      })),
     };
   }
 }

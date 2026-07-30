@@ -1,10 +1,12 @@
 import { ArrowLeft, Check, RefreshCw, Send } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { requestErrorMessage } from '../../learning/learning-format';
+import { invalidateOwnedCourseReporting } from '../../reporting/reporting-invalidation';
 import { displayAssessmentDate } from '../assessment-format';
 import type { TeacherAssignment, TeacherGrade, TeacherSubmissionDetail } from '../assessment.types';
 import { ActivityStatusBadge } from '../components/ActivityStatusBadge';
@@ -22,7 +24,8 @@ interface GradeHistoryRow {
 
 export function TeacherSubmissionGradingPage() {
   const { submissionId = '' } = useParams();
-  const { request } = useAuth();
+  const { request, user } = useAuth();
+  const queryClient = useQueryClient();
   const [params] = useSearchParams();
   const [submission, setSubmission] = useState<TeacherSubmissionDetail | null>(null);
   const [assignment, setAssignment] = useState<TeacherAssignment | null>(null);
@@ -96,6 +99,7 @@ export function TeacherSubmissionGradingPage() {
       setSubmission({ ...submission, grade: response.data.grade, status: 'GRADED' });
       setNotice('Đã lưu bản nháp điểm.');
       setConflict(false);
+      await invalidateOwnedCourseReporting(queryClient, user?.id, submission.courseId);
     } catch (requestError) {
       handleError(requestError);
     } finally {
@@ -118,6 +122,7 @@ export function TeacherSubmissionGradingPage() {
       setSubmission({ ...submission, grade: response.data.grade, status: 'RETURNED' });
       setNotice('Đã trả điểm và nhận xét cho học viên.');
       setConflict(false);
+      await invalidateOwnedCourseReporting(queryClient, user?.id, submission.courseId);
     } catch (requestError) {
       handleError(requestError);
     } finally {
@@ -146,6 +151,7 @@ export function TeacherSubmissionGradingPage() {
       setReason('');
       setNotice('Đã chấm lại và lưu lịch sử thay đổi.');
       setConflict(false);
+      await invalidateOwnedCourseReporting(queryClient, user?.id, submission.courseId);
     } catch (requestError) {
       handleError(requestError);
     } finally {

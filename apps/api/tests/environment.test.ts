@@ -38,7 +38,6 @@ const validEnvironment = {
   QUESTION_MEDIA_ALLOWED_HOSTS: 'media.example.edu,video.example.edu',
   ASSIGNMENT_LINK_SUBMISSION_ENABLED: 'false',
   ASSIGNMENT_MARK_DONE_ENABLED: 'false',
-  BASIC_GRADEBOOK_ENABLED: 'false',
   ASSESSMENT_FILE_UPLOAD_ENABLED: 'false',
   QUIZ_ATTEMPT_START_IP_LIMIT: '300',
   QUIZ_ATTEMPT_IDENTITY_LIMIT: '20',
@@ -136,7 +135,6 @@ describe('loadEnvironment', () => {
       questionMediaAllowedHosts: ['media.example.edu', 'video.example.edu'],
       assignmentLinkSubmissionEnabled: false,
       assignmentMarkDoneEnabled: false,
-      basicGradebookEnabled: false,
       assessmentFileUploadEnabled: false,
     });
     expect(config.assessmentRateLimits).toEqual({

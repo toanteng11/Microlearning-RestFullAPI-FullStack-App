@@ -87,6 +87,7 @@ describe('Phase 06 reporting foundation', () => {
   it('strictly parses reporting queries and enforces bounded date ranges', () => {
     const schemas = createReportingQuerySchemas({
       pageMax: 50,
+      gradebookActivityMax: 50,
       maxDateRangeDays: 30,
       defaultTimezone: 'Asia/Ho_Chi_Minh',
     });

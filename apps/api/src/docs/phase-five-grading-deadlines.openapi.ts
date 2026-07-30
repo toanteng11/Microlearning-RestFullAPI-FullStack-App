@@ -52,7 +52,6 @@ export const PHASE_FIVE_GRADING_DEADLINE_OPENAPI_OPERATIONS = [
   'listGradeHistory',
   'listOwnGrades',
   'getOwnGrade',
-  'getBasicCourseGradebook',
   'listActivityDeadlineExceptions',
   'setStudentDeadlineException',
   'revokeStudentDeadlineException',
@@ -338,16 +337,6 @@ export function createPhaseFiveGradingDeadlinePaths(): OpenAPIV3.PathsObject {
         operationId: 'getOwnGrade',
         security,
         responses: { '200': response('Own Grade detail', read), ...errors },
-      },
-    },
-    '/api/v1/teacher/courses/{courseId}/gradebook': {
-      parameters: [id('courseId')],
-      get: {
-        tags: ['Grades'],
-        summary: 'Get feature-gated basic Gradebook',
-        operationId: 'getBasicCourseGradebook',
-        security,
-        responses: { '200': response('Basic Gradebook', read), ...errors },
       },
     },
     '/api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions': {

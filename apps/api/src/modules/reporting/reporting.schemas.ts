@@ -4,7 +4,9 @@ import { z } from 'zod';
 import {
   REPORT_DATA_STATES,
   REPORT_FRESHNESS_STATUSES,
+  REPORTING_ACTIVITY_STATUSES,
   REPORTING_ALLOWED_ACTIONS,
+  REPORTING_GRADING_STATUSES,
   REPORTING_PROGRESS_STATUSES,
   REPORTING_SORT_ORDERS,
   REPORTING_SUPPORT_FLAGS,
@@ -65,6 +67,7 @@ export const reportMetadataSchema = z
 
 export function createReportingQuerySchemas(options: {
   pageMax: number;
+  gradebookActivityMax: number;
   maxDateRangeDays: number;
   defaultTimezone: string;
 }) {
@@ -166,6 +169,36 @@ export function createReportingQuerySchemas(options: {
     })
     .strict();
 
+  const gradebook = z
+    .object({
+      page,
+      limit,
+      search: normalizedSearch.optional(),
+      activityType: z.enum(['LESSON', 'QUIZ', 'ASSIGNMENT']).optional(),
+      completionStatus: z.enum(REPORTING_ACTIVITY_STATUSES).optional(),
+      gradingStatus: z.enum(REPORTING_GRADING_STATUSES).optional(),
+      moduleId: objectId.optional(),
+      activityLimit: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(options.gradebookActivityMax)
+        .default(Math.min(25, options.gradebookActivityMax)),
+      activityCursor: z.string().trim().min(1).max(500).optional(),
+      sortBy: z
+        .enum([
+          'processScore',
+          'progressPercentage',
+          'returnedGradeAverage',
+          'missingCount',
+          'lateCount',
+          'fullName',
+        ])
+        .default('processScore'),
+      sortOrder: z.enum(REPORTING_SORT_ORDERS).default('desc'),
+    })
+    .strict();
+
   const adminAudit = z
     .object({
       page,
@@ -209,6 +242,7 @@ export function createReportingQuerySchemas(options: {
     teacherActivities,
     teacherAssessments,
     teacherStudentDetail,
+    gradebook,
     adminAudit,
     allowedActions: z.array(z.enum(REPORTING_ALLOWED_ACTIONS)),
   });
@@ -238,3 +272,4 @@ export type TeacherAssessmentQuery = z.infer<
 export type TeacherStudentDetailQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['teacherStudentDetail']
 >;
+export type GradebookQuery = z.infer<ReturnType<typeof createReportingQuerySchemas>['gradebook']>;

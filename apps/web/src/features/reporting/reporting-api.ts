@@ -3,6 +3,7 @@ import {
   studentCourseProgressEnvelopeSchema,
   studentCourseProgressListEnvelopeSchema,
   studentReportingDashboardEnvelopeSchema,
+  gradebookEnvelopeSchema,
   teacherActivityListEnvelopeSchema,
   teacherAssessmentListEnvelopeSchema,
   teacherProgressListEnvelopeSchema,
@@ -14,6 +15,8 @@ import type {
   StudentCourseProgressListEnvelope,
   StudentCourseProgressQuery,
   StudentReportingDashboardEnvelope,
+  GradebookEnvelope,
+  GradebookQuery,
   TeacherActivityListEnvelope,
   TeacherActivityQuery,
   TeacherAssessmentListEnvelope,
@@ -144,4 +147,28 @@ export async function getTeacherStudentProgress(
     `/teacher/courses/${courseId}/students/${studentId}/progress`,
   );
   return teacherStudentProgressEnvelopeSchema.parse(response) as TeacherStudentProgressEnvelope;
+}
+
+export async function getTeacherGradebook(
+  request: Request,
+  courseId: string,
+  query: GradebookQuery,
+): Promise<GradebookEnvelope> {
+  const search = new URLSearchParams({
+    page: String(query.page),
+    limit: String(query.limit),
+    activityLimit: String(query.activityLimit),
+    sortBy: query.sortBy,
+    sortOrder: query.sortOrder,
+  });
+  setOptional(search, 'search', query.search);
+  setOptional(search, 'activityType', query.activityType);
+  setOptional(search, 'completionStatus', query.completionStatus);
+  setOptional(search, 'gradingStatus', query.gradingStatus);
+  setOptional(search, 'moduleId', query.moduleId);
+  setOptional(search, 'activityCursor', query.activityCursor);
+  const response = await request<unknown>(
+    `/teacher/courses/${courseId}/gradebook?${search.toString()}`,
+  );
+  return gradebookEnvelopeSchema.parse(response) as GradebookEnvelope;
 }

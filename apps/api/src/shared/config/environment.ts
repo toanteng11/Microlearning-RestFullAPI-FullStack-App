@@ -34,7 +34,6 @@ const phaseFiveExplicitProductionFields = [
   'QUESTION_MEDIA_ALLOWED_HOSTS',
   'ASSIGNMENT_LINK_SUBMISSION_ENABLED',
   'ASSIGNMENT_MARK_DONE_ENABLED',
-  'BASIC_GRADEBOOK_ENABLED',
   'ASSESSMENT_FILE_UPLOAD_ENABLED',
   'QUIZ_ATTEMPT_START_IP_LIMIT',
   'QUIZ_ATTEMPT_IDENTITY_LIMIT',
@@ -129,7 +128,6 @@ const environmentSchema = z.object({
   QUESTION_MEDIA_ALLOWED_HOSTS: z.string().default(''),
   ASSIGNMENT_LINK_SUBMISSION_ENABLED: booleanString,
   ASSIGNMENT_MARK_DONE_ENABLED: booleanString,
-  BASIC_GRADEBOOK_ENABLED: booleanString,
   ASSESSMENT_FILE_UPLOAD_ENABLED: booleanString,
   QUIZ_ATTEMPT_START_IP_LIMIT: z.coerce.number().int().min(1).max(10_000).default(300),
   QUIZ_ATTEMPT_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(1_000).default(20),
@@ -237,7 +235,6 @@ export interface AssessmentFeatureFlagConfig {
   questionMediaAllowedHosts: readonly string[];
   assignmentLinkSubmissionEnabled: boolean;
   assignmentMarkDoneEnabled: boolean;
-  basicGradebookEnabled: boolean;
   assessmentFileUploadEnabled: false;
 }
 
@@ -514,7 +511,6 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     questionMediaAllowedHosts,
     assignmentLinkSubmissionEnabled: parsed.data.ASSIGNMENT_LINK_SUBMISSION_ENABLED,
     assignmentMarkDoneEnabled: parsed.data.ASSIGNMENT_MARK_DONE_ENABLED,
-    basicGradebookEnabled: parsed.data.BASIC_GRADEBOOK_ENABLED,
     assessmentFileUploadEnabled: false as const,
   });
   const assessmentRateLimits = Object.freeze({

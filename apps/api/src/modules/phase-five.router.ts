@@ -26,7 +26,6 @@ import { EnrollmentRepository } from './enrollments/enrollment.repository.js';
 import { GradeRepository } from './grades/grade.repository.js';
 import { GradeService } from './grades/grade.service.js';
 import {
-  gradeCourseParamsSchema,
   gradeHistoryQuerySchema,
   gradeParamsSchema,
   ownGradeListQuerySchema,
@@ -224,7 +223,6 @@ export function createPhaseFiveRouter(
     new EnrollmentRepository(),
     foundation.assessmentScopeReader,
     audits,
-    config.assessmentFeatures,
     reportingInvalidationWriter,
   );
   const deadlineExceptionService = new DeadlineExceptionService(
@@ -681,19 +679,6 @@ export function createPhaseFiveRouter(
       response.json({
         success: true,
         ...(await gradeService.history(request.auth!, gradeId, query)),
-      });
-    },
-  );
-
-  router.get(
-    '/teacher/courses/:courseId/gradebook',
-    requirePermission('grade.manage_owned'),
-    async (request, response) => {
-      const { courseId } = parseWithSchema(gradeCourseParamsSchema, request.params);
-      response.setHeader('Cache-Control', 'private, no-store');
-      response.json({
-        success: true,
-        data: await gradeService.gradebook(request.auth!, courseId),
       });
     },
   );

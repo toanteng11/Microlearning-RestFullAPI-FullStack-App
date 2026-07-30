@@ -2212,6 +2212,124 @@ button svg,
   min-height: 40px;
 }
 
+.reporting-heading-actions,
+.gradebook-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gradebook-filter-bar label {
+  flex: 1 1 175px;
+}
+
+.gradebook-table-scroll {
+  isolation: isolate;
+}
+
+.gradebook-table th,
+.gradebook-table td {
+  min-width: 150px;
+  max-width: 210px;
+}
+
+.gradebook-table .gradebook-student-column {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+  background: #ffffff;
+  box-shadow: 1px 0 #c7d1d5;
+}
+
+.gradebook-table thead .gradebook-student-column {
+  z-index: 3;
+  background: #f6f8f9;
+}
+
+.gradebook-table th > small,
+.gradebook-table td > small {
+  display: block;
+  margin-top: 5px;
+  color: #66767f;
+  font-weight: 500;
+}
+
+.gradebook-column-title {
+  display: block;
+  max-width: 185px;
+  overflow-wrap: anywhere;
+  text-transform: none;
+}
+
+.gradebook-cell {
+  display: grid;
+  min-height: 118px;
+  align-content: start;
+  gap: 7px;
+}
+
+.gradebook-cell > small {
+  color: #607078;
+  overflow-wrap: anywhere;
+}
+
+.gradebook-status {
+  width: fit-content;
+  max-width: 100%;
+  border-left: 3px solid #7b8990;
+  padding-left: 7px;
+  color: #41515a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.gradebook-status--returned,
+.gradebook-status--completed {
+  border-left-color: #23845e;
+  color: #146544;
+}
+
+.gradebook-status--draft_grade,
+.gradebook-status--awaiting_grade {
+  border-left-color: #9a6b08;
+  color: #765103;
+}
+
+.gradebook-status--missing,
+.gradebook-status--late {
+  border-left-color: #c54343;
+  color: #9c2f2f;
+}
+
+.gradebook-score {
+  font-size: 1rem;
+}
+
+.gradebook-exception,
+.gradebook-cell-action,
+.gradebook-student-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+}
+
+.gradebook-exception {
+  color: #65520b;
+}
+
+.gradebook-pagination-bands {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
 .teacher-reporting-dashboard {
   margin-top: 30px;
   border-top: 1px solid #bcc9ce;

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { BarChart3, CircleAlert, RefreshCw } from 'lucide-react';
+import { BarChart3, CircleAlert, RefreshCw, TableProperties } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
@@ -51,9 +51,17 @@ export function TeacherReportingDashboardPage({ courseId }: { courseId: string }
           <p className="eyebrow">Reporting</p>
           <h2 id="teacher-reporting-title">Tổng quan tiến độ</h2>
         </div>
-        <Link className="button-link" to={`/teacher/courses/${courseId}/analytics`}>
-          <BarChart3 size={17} aria-hidden="true" /> Phân tích chi tiết
-        </Link>
+        <div className="reporting-heading-actions">
+          <Link
+            className="button-link button-link--secondary"
+            to={`/teacher/courses/${courseId}/gradebook`}
+          >
+            <TableProperties size={17} aria-hidden="true" /> Gradebook
+          </Link>
+          <Link className="button-link" to={`/teacher/courses/${courseId}/analytics`}>
+            <BarChart3 size={17} aria-hidden="true" /> Phân tích chi tiết
+          </Link>
+        </div>
       </div>
       <ReportingFreshnessNotice
         metadata={data.reporting}

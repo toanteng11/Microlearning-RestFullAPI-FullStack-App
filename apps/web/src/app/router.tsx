@@ -57,6 +57,7 @@ import {
   StudentProgressPage,
   StudentReportingDashboardPage,
   TeacherRankingPage,
+  TeacherGradebookPage,
   TeacherStudentDetailPage,
 } from '../features/reporting/reporting-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
@@ -239,6 +240,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="course.progress_view_owned">
                 <TeacherRankingPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/gradebook',
+            element: (
+              <RoleRoute permission="grade.manage_owned">
+                <TeacherGradebookPage />
               </RoleRoute>
             ),
           },

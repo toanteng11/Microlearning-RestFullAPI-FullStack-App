@@ -4,6 +4,7 @@ import { AssignmentModel } from '../../assignments/assignment.model.js';
 import { CourseModel } from '../../courses/course.model.js';
 import { DeadlineExceptionModel } from '../../deadline-exceptions/deadline-exception.model.js';
 import { LessonModel } from '../../lessons/lesson.model.js';
+import { CourseModuleModel } from '../../modules/module.model.js';
 import { QuizModel } from '../../quizzes/quiz.model.js';
 import type { ReportingActivityReader } from '../reporting-activity.reader.js';
 import type { ReportingActivity } from '../reporting.types.js';
@@ -24,7 +25,11 @@ export class MongoReportingActivityReader implements ReportingActivityReader {
     const id = new Types.ObjectId(courseId);
     const course = await CourseModel.findById(id).select({ classroomId: 1 }).lean().exec();
     if (!course) return [];
-    const [lessons, quizzes, assignments] = await Promise.all([
+    const [courseModules, lessons, quizzes, assignments] = await Promise.all([
+      CourseModuleModel.find({ courseId: id, status: { $ne: 'ARCHIVED' } })
+        .select({ displayOrder: 1 })
+        .lean()
+        .exec(),
       LessonModel.find({ courseId: id, ...visibleFilter(asOf) })
         .select({
           moduleId: 1,
@@ -114,8 +119,13 @@ export class MongoReportingActivityReader implements ReportingActivityReader {
         sourceUpdatedAt: row.updatedAt,
       })),
     ];
+    const moduleOrder = new Map(
+      courseModules.map((courseModule) => [courseModule._id.toString(), courseModule.displayOrder]),
+    );
     return rows.sort(
       (left, right) =>
+        (moduleOrder.get(left.moduleId ?? '') ?? -1) -
+          (moduleOrder.get(right.moduleId ?? '') ?? -1) ||
         left.displayOrder - right.displayOrder ||
         left.activityType.localeCompare(right.activityType) ||
         left.activityId.localeCompare(right.activityId),
@@ -159,8 +169,12 @@ export class MongoReportingActivityReader implements ReportingActivityReader {
 
   async getSourceWatermark(courseId: string) {
     const id = new Types.ObjectId(courseId);
-    const [course, lesson, quiz, assignment, deadlineException] = await Promise.all([
+    const [course, courseModule, lesson, quiz, assignment, deadlineException] = await Promise.all([
       CourseModel.findById(id).select({ updatedAt: 1 }).lean().exec(),
+      CourseModuleModel.findOne({ courseId: id })
+        .select({ updatedAt: 1 })
+        .sort({ updatedAt: -1 })
+        .lean(),
       LessonModel.findOne({ courseId: id }).select({ updatedAt: 1 }).sort({ updatedAt: -1 }).lean(),
       QuizModel.findOne({ courseId: id }).select({ updatedAt: 1 }).sort({ updatedAt: -1 }).lean(),
       AssignmentModel.findOne({ courseId: id })
@@ -175,6 +189,7 @@ export class MongoReportingActivityReader implements ReportingActivityReader {
     return (
       [
         course?.updatedAt,
+        courseModule?.updatedAt,
         lesson?.updatedAt,
         quiz?.updatedAt,
         assignment?.updatedAt,

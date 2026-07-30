@@ -24,6 +24,7 @@ import type { PhaseSixFoundation } from './phase-six.foundation.js';
 import { QuizRepository } from './quizzes/quiz.repository.js';
 import { MongoStudentReportingSource } from './reporting/adapters/mongo-student-reporting.source.js';
 import { MongoTeacherReportingSource } from './reporting/adapters/mongo-teacher-reporting.source.js';
+import { GradebookReportingService } from './reporting/gradebook-reporting.service.js';
 import { createReportingQuerySchemas } from './reporting/reporting.schemas.js';
 import { StudentReportingService } from './reporting/student-reporting.service.js';
 import { TeacherReportingService } from './reporting/teacher-reporting.service.js';
@@ -95,13 +96,17 @@ export function createPhaseSixRouter(
       dueSoonWindowHours: config.reporting.dueSoonWindowHours,
     },
   );
+  const teacherSource = new MongoTeacherReportingSource(
+    users,
+    config.reporting.onDemandCourseRefreshMaxStudents,
+  );
   const teacherReporting = new TeacherReportingService(
     foundation.scopeReader,
     foundation.rosterReader,
     foundation.activityReader,
     foundation.progressReader,
     foundation.gradeReader,
-    new MongoTeacherReportingSource(users, config.reporting.onDemandCourseRefreshMaxStudents),
+    teacherSource,
     foundation.calculator,
     {
       enabled: config.reporting.enabled,
@@ -110,8 +115,24 @@ export function createPhaseSixRouter(
       dueSoonWindowHours: config.reporting.dueSoonWindowHours,
     },
   );
+  const gradebookReporting = new GradebookReportingService(
+    foundation.scopeReader,
+    foundation.rosterReader,
+    foundation.activityReader,
+    foundation.progressReader,
+    foundation.gradeReader,
+    teacherSource,
+    modules,
+    foundation.calculator,
+    {
+      enabled: config.reporting.enabled,
+      timezone: config.reporting.timezone,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+    },
+  );
   const schemas = createReportingQuerySchemas({
     pageMax: config.reporting.pageMax,
+    gradebookActivityMax: config.reporting.gradebookActivityMax,
     maxDateRangeDays: config.reporting.maxDateRangeDays,
     defaultTimezone: config.reporting.timezone,
   });
@@ -209,6 +230,20 @@ export function createPhaseSixRouter(
       response.json({
         success: true,
         ...(await teacherReporting.assessmentAnalytics(request.auth!, courseId, query)),
+      });
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/gradebook',
+    requirePermission('grade.manage_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.gradebook, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        ...(await gradebookReporting.gradebook(request.auth!, courseId, query)),
       });
     },
   );

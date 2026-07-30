@@ -351,7 +351,6 @@ describe('system API', () => {
       ['GET /api/v1/teacher/grades/{gradeId}/history', 'listGradeHistory'],
       ['GET /api/v1/students/me/grades', 'listOwnGrades'],
       ['GET /api/v1/students/me/grades/{gradeId}', 'getOwnGrade'],
-      ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getBasicCourseGradebook'],
       [
         'GET /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions',
         'listActivityDeadlineExceptions',
@@ -418,6 +417,7 @@ describe('system API', () => {
       ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
       ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherActivityAnalytics'],
       ['GET /api/v1/teacher/courses/{courseId}/assessments', 'listTeacherAssessmentAnalytics'],
+      ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getTeacherCourseGradebook'],
       [
         'GET /api/v1/teacher/courses/{courseId}/students/{studentId}/progress',
         'getTeacherStudentProgress',

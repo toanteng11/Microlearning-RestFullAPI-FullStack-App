@@ -54,7 +54,6 @@ export const testConfig: AppConfig = {
     questionMediaAllowedHosts: [],
     assignmentLinkSubmissionEnabled: false,
     assignmentMarkDoneEnabled: false,
-    basicGradebookEnabled: false,
     assessmentFileUploadEnabled: false,
   },
   assessmentRateLimits: {

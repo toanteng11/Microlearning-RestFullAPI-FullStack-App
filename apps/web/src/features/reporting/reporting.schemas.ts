@@ -288,3 +288,81 @@ export const teacherStudentProgressEnvelopeSchema = z.object({
     reporting: reportMetadataSchema,
   }),
 });
+
+const gradebookCompletionStatusSchema = z.enum([
+  'NOT_APPLICABLE',
+  'NOT_STARTED',
+  'IN_PROGRESS',
+  'MISSING',
+  'COMPLETED',
+  'LATE',
+]);
+const gradebookGradingStatusSchema = z.enum([
+  'NOT_GRADABLE',
+  'NOT_READY',
+  'AWAITING_GRADE',
+  'DRAFT',
+  'RETURNED',
+]);
+const gradebookColumnSchema = z.object({
+  activityId: z.string(),
+  activityType: z.enum(['LESSON', 'QUIZ', 'ASSIGNMENT']),
+  title: z.string(),
+  isRequired: z.boolean(),
+  maxScore: z.number().nonnegative().nullable(),
+  effectiveDefaultDeadline: nullableDateTime,
+  lifecycleStatus: z.string(),
+  position: z.number().int().nonnegative(),
+});
+const gradebookCellSchema = z.object({
+  activityId: z.string(),
+  completionStatus: gradebookCompletionStatusSchema,
+  gradingStatus: gradebookGradingStatusSchema,
+  displayStatus: z.enum([
+    'NOT_APPLICABLE',
+    'NOT_STARTED',
+    'IN_PROGRESS',
+    'MISSING',
+    'COMPLETED',
+    'LATE',
+    'AWAITING_GRADE',
+    'DRAFT_GRADE',
+    'RETURNED',
+  ]),
+  score: z.number().nonnegative().nullable(),
+  maxScore: z.number().nonnegative().nullable(),
+  normalizedScore: percentage,
+  submittedAt: nullableDateTime,
+  returnedAt: nullableDateTime,
+  effectiveDeadline: nullableDateTime,
+  isDeadlineExceptionApplied: z.boolean(),
+  allowedActions: z.array(z.string()),
+});
+
+export const gradebookEnvelopeSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    course: courseIdentitySchema,
+    columns: z.array(gradebookColumnSchema).max(50),
+    rows: z
+      .array(
+        z.object({
+          student: teacherStudentSchema,
+          processScore: percentage,
+          progressPercentage: percentage,
+          returnedGradeAverage: percentage,
+          missingCount: z.number().int().nonnegative(),
+          lateCount: z.number().int().nonnegative(),
+          cells: z.array(gradebookCellSchema).max(50),
+        }),
+      )
+      .max(50),
+    activityPage: z.object({
+      limit: z.number().int().min(1).max(50),
+      nextCursor: z.string().nullable(),
+      truncated: z.boolean(),
+    }),
+    reporting: reportMetadataSchema,
+  }),
+  meta: paginationSchema,
+});
