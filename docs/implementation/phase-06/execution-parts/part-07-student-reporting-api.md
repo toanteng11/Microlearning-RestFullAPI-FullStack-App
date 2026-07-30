@@ -8,6 +8,15 @@ Cung cấp Student Dashboard và Course progress APIs đúng own scope, privacy 
 
 `P06-PR03 - Student Reporting`
 
+## Implementation Status
+
+`IN_REVIEW_STACKED`
+
+- API, RBAC, route cutover, OpenAPI và unit tests đã triển khai.
+- Source commit: `f560233`.
+- MongoDB integration test đã viết nhưng chưa chạy vì local Docker daemon chưa hoạt động.
+- Bằng chứng: `../student-reporting-evidence.md`.
+
 ## Dependencies
 
 - Part 06 `DONE` và P06-PR02 merged.
@@ -19,8 +28,8 @@ student-reporting.service.ts
 apps/api/src/modules/phase-six.router.ts
 apps/api/src/docs/phase-six-student-reporting.openapi.ts
 apps/api/src/docs/openapi.ts
-apps/api/tests/integration/phase-six-reporting.integration.test.ts
-apps/api/tests/integration/phase-six-security.integration.test.ts
+apps/api/tests/phase-six-student-reporting.test.ts
+apps/api/tests/integration/phase-six-student-reporting.integration.test.ts
 ```
 
 ## Work

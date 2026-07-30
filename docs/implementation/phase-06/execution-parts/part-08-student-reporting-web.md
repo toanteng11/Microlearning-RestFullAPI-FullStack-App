@@ -8,6 +8,15 @@ Tích hợp Student reporting vào React mà không làm mất join-by-code, Cla
 
 `P06-PR03 - Student Reporting`
 
+## Implementation Status
+
+`IN_REVIEW_STACKED`
+
+- Dashboard, Progress page, component tests và private cache behavior đã triển khai.
+- Source commit: `f560233`.
+- Playwright/Axe journey đã viết nhưng chưa chạy vì integrated local stack chưa hoạt động.
+- Bằng chứng: `../student-reporting-evidence.md`.
+
 ## Dependencies
 
 - Part 07 API contract stable.
@@ -22,8 +31,12 @@ apps/web/src/features/reporting/reporting-query-keys.ts
 apps/web/src/features/reporting/reporting-api.ts
 apps/web/src/features/reporting/pages/StudentReportingDashboardPage.tsx
 apps/web/src/features/reporting/pages/StudentProgressPage.tsx
+apps/web/src/features/reporting/components/ReportingFreshnessNotice.tsx
+apps/web/src/features/reporting/components/StudentCourseProgressTable.tsx
+apps/web/src/features/reporting/reporting.test.tsx
 apps/web/src/features/classrooms/pages/StudentClassroomsPage.tsx
 apps/web/src/app/router.tsx
+tests/e2e/phase-06-student-reporting.spec.ts
 ```
 
 ## Work

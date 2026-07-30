@@ -29,25 +29,25 @@ raw production data hoặc private CSV.
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-API-001 | Student APIs/OpenAPI | Not Run | - |
+| P06-EV-API-001 | Student APIs/OpenAPI | Local Pass/Committed | Commit `f560233`; `student-reporting-evidence.md`; API `206/206`; OpenAPI parity Pass |
 | P06-EV-API-002 | Teacher APIs/OpenAPI | Not Run | - |
 | P06-EV-API-003 | Gradebook APIs/OpenAPI | Not Run | - |
 | P06-EV-API-004 | Admin/Audit APIs/OpenAPI | Not Run | - |
-| P06-EV-SEC-001 | RBAC/IDOR | Not Run | - |
-| P06-EV-SEC-002 | Projection/privacy/threshold | Not Run | - |
-| P06-EV-SEC-003 | Query/rate/bound injection | Not Run | - |
+| P06-EV-SEC-001 | RBAC/IDOR | Unit Pass/Integration Pending | Actor-scoped service test; Mongo route test authored |
+| P06-EV-SEC-002 | Projection/privacy/threshold | Student Local Pass | Returned-only Grade adapter; draft leakage test authored |
+| P06-EV-SEC-003 | Query/rate/bound injection | Contract Pass/Integration Pending | Strict Zod query; bounded page/preview schemas |
 | P06-EV-SEC-004 | CSV/event Conditional | Not Run/N/A | - |
 
 ## 5. Web Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-WEB-001 | Student UI/component/E2E | Not Run | - |
+| P06-EV-WEB-001 | Student UI/component/E2E | Component Pass/E2E Pending | Web `102/102`; `student-reporting-evidence.md` |
 | P06-EV-WEB-002 | Teacher UI/component/E2E | Not Run | - |
 | P06-EV-WEB-003 | Gradebook UI/E2E | Not Run | - |
 | P06-EV-WEB-004 | Admin UI/E2E | Not Run | - |
-| P06-EV-WEB-005 | Responsive screenshots | Not Run | - |
-| P06-EV-WEB-006 | Accessibility report | Not Run | - |
+| P06-EV-WEB-005 | Responsive screenshots | Pending Runtime | Playwright journey authored; Docker stack unavailable |
+| P06-EV-WEB-006 | Accessibility report | Pending Runtime | Axe check authored in Phase 06 browser journey |
 
 ## 6. NFR/DevOps Evidence
 
