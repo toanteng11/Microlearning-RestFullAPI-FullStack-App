@@ -32,9 +32,9 @@ raw production data hoặc private CSV.
 | P06-EV-API-001 | Student APIs/OpenAPI | Local Pass/Committed | Commit `f560233`; `student-reporting-evidence.md`; API `206/206`; OpenAPI parity Pass |
 | P06-EV-API-002 | Teacher APIs/OpenAPI | Local Pass/Committed | Commit `9096d78`; `teacher-reporting-evidence.md`; API `210/210`; OpenAPI parity Pass |
 | P06-EV-API-003 | Gradebook APIs/OpenAPI | Local Pass/Committed | Commit `fe36dda`; `gradebook-evidence.md`; unique P06 operation |
-| P06-EV-API-004 | Admin/Audit APIs/OpenAPI | Not Run | - |
+| P06-EV-API-004 | Admin/Audit APIs/OpenAPI | Local Pass/Committed | Commit `2bbbc2d`; `admin-reporting-api-evidence.md`; API `220/220`; OpenAPI parity Pass |
 | P06-EV-SEC-001 | RBAC/IDOR | Local Pass | Ownership-before-query, cross-Teacher và out-of-roster Mongo route tests Pass |
-| P06-EV-SEC-002 | Projection/privacy/threshold | Gradebook Local Pass | Returned-only average; private answer/feedback denylist Pass; Admin threshold pending |
+| P06-EV-SEC-002 | Projection/privacy/threshold | Admin API Local Pass | Safe AuditLog projection; Grade/answer/Submission/feedback denylist; threshold policy applies equally to Admin/Super Admin |
 | P06-EV-SEC-003 | Query/rate/bound injection | Local Pass | Strict Zod query; invalid sort `400`; page max `50`; integration Pass |
 | P06-EV-SEC-004 | CSV/event Conditional | Not Run/N/A | - |
 
@@ -57,9 +57,10 @@ raw production data hoặc private CSV.
 | P06-EV-NFR-002 | Explain/index review | Pass | Named index `report_summary_course_default_ranking` asserted in Mongo test |
 | P06-EV-NFR-003 | Rebuild batch resource use | Pass | Batch size `1` integration case; CLI default batch `50`; benchmark dataset `100x50` |
 | P06-EV-NFR-004 | Gradebook endpoint benchmark | Local Pass | `100x50`, 10 measured requests, p95 `160.69 ms`; target `<=1500 ms` |
+| P06-EV-NFR-005 | Admin Audit indexed filter | Local Pass | `200` AuditLog rows, 10 requests, p95 `28.07 ms`; named actor-role index; target `<=1200 ms` |
 | P06-EV-CI-001 | Docker integrated smoke | Local Pass | Mongo replica set + API + Web healthy; clean deterministic seed; browser `32/32` |
 | P06-EV-CI-002 | Clean clone | Not Run | - |
-| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | `npm run check:ci`; API `215`; Web `115`; integration `90`; E2E `32`; remote pending |
+| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | `npm run check:ci`; API `220`; Web `115`; Part 13 focused integration `4/4`; prior E2E `32`; remote pending |
 | P06-EV-CI-004 | Post-merge main CI | Not Run | - |
 | P06-EV-CI-005 | Dependency/secret scan | Baseline Partial | Production audit Pass; remote Secret Scan chờ PR CI |
 

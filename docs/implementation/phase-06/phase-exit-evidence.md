@@ -26,8 +26,8 @@ High defects: Pending
 ## 3. Contract Evidence
 
 - P05 Gradebook version/operation retirement: Local Pass tại commit `fe36dda`.
-- P06 metric/Gradebook versions: Local Pass; Admin version Pending.
-- Student/Teacher/Gradebook OpenAPI/runtime parity: Local Pass; Admin Pending.
+- P06 metric/Gradebook/Admin governance versions: Local Pass.
+- Student/Teacher/Gradebook/Admin API OpenAPI/runtime parity: Local Pass; Admin Web Pending.
 - Migration/backfill/reconcile: Foundation Local Pass; remote evidence Pending.
 
 ## 4. Actor Evidence
@@ -36,14 +36,14 @@ High defects: Pending
 | --- | --- | --- | --- | --- | --- |
 | Student | Local Pass | Local Pass | Local Pass | Local Pass | Remote Pending |
 | Teacher | Local Pass | Local Pass | Local Pass | Local Pass | Remote Pending |
-| Admin | Pending | Pending | Pending | Pending | Not Evaluated |
+| Admin | Local Pass | Pending Part 14 | Pending Part 14 | Local API Pass | Remote Pending |
 
 ## 5. Quality Evidence
 
-- Unit/integration/coverage: Gradebook stack Local Pass; API `215`, Web `115`, integration `90`.
-- OpenAPI: Student/Teacher/Gradebook Local Pass; Admin Pending.
+- Unit/integration/coverage: Admin API stack Local Pass; API `220`, Web `115`; focused Admin Mongo `4/4`.
+- OpenAPI: Student/Teacher/Gradebook/Admin API Local Pass.
 - Browser E2E `12/12`: Pending.
-- Performance/explain: Gradebook `100x50` p95 `160.69 ms`; remaining Part 13-16 Pending.
+- Performance/explain: Gradebook `100x50` p95 `160.69 ms`; Admin Audit p95 `28.07 ms`; Part 14-16 Pending.
 - Docker/seed: Local Pass; clean deterministic browser database `32/32`.
 - Clean clone: Pending.
 - Dependency/secret scan: Pending.

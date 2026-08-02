@@ -274,6 +274,10 @@ Student row pagination dùng standard API `meta`; activity columns dùng cursor 
 ```ts
 interface AdminDashboardData {
   users: Record<'STUDENT' | 'TEACHER' | 'ADMIN' | 'SUPER_ADMIN', UserStatusCounts>;
+  registrationSources: Record<
+    'SELF_REGISTRATION' | 'TEACHER_INVITATION' | 'ADMIN_BOOTSTRAP',
+    number
+  >;
   invitations: Record<'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'REVOKED', number>;
   classrooms: Record<'ACTIVE' | 'ARCHIVED' | 'LOCKED', number>;
   courses: Record<
@@ -307,6 +311,7 @@ interface AdminAuditSummary {
 
 interface AdminGovernanceReportData {
   users: AdminDashboardData['users'];
+  registrationSources: AdminDashboardData['registrationSources'];
   invitations: AdminDashboardData['invitations'];
   classrooms: AdminDashboardData['classrooms'];
   courses: AdminDashboardData['courses'];

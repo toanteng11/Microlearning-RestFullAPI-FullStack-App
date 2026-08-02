@@ -86,6 +86,11 @@ Admin không gửi organization scope tùy ý; server force current platform sco
 - Không thể suy ngược bằng cách thay filter chồng lấn; query review cần test differencing cơ bản.
 - Governance counts không nhạy cảm có thể được exempt bằng documented definition.
 
+Quyết định triển khai Part 13: các count quản trị account/invitation/Classroom/Course/enrollment là
+governance count không nhạy cảm nên được miễn suppression. Policy `minimumGroupSize=5` vẫn được cài
+đặt và kiểm thử độc lập cho learning outcome/average/distribution ở Part 15; Admin và Super Admin dùng
+cùng policy, không có cơ chế bypass theo role.
+
 ## 8. Audit Requirements
 
 Các action phải AuditLog:

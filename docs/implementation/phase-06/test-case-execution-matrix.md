@@ -2,7 +2,7 @@
 
 ## 1. Status
 
-`GRADEBOOK_LOCAL_PASS_REMOTE_PENDING`. Part 01-12 đã có local code/test evidence; Parent PR,
+`ADMIN_API_LOCAL_PASS_REMOTE_PENDING`. Part 01-13 đã có local code/test evidence; Parent PR,
 remote required CI, review và merge vẫn đang chờ.
 
 ## 2. Execution Rules
@@ -31,7 +31,7 @@ remote required CI, review và merge vẫn đang chờ.
 | `P06-IT-021..028` | Student | 8 | Pass | Full Mongo integration `87/87`; Student reporting suite Pass |
 | `P06-IT-029..038,042` | Teacher | 11 | Pass | Teacher service/route/integration tests; ownership, ranking, analytics và detail Pass |
 | `P06-IT-039..041` | Gradebook | 3 | Pass | `phase-six-gradebook.integration.test.ts`; full Mongo `90/90` |
-| `P06-IT-043..050` | Admin/privacy | 8 | Not Run | - |
+| `P06-IT-043..050` | Admin/privacy | 8 | Local Pass | `phase-six-admin-reporting.test.ts`; focused Mongo integration `4/4`; commit `2bbbc2d` |
 | `P06-IT-051..060` | Conditional/security | 10 | Not Run/N/A | - |
 
 ## 5. Web And Browser
@@ -55,13 +55,14 @@ remote required CI, review và merge vẫn đang chờ.
 | `P06-PERF-001` | 1 | Pass | Calculator benchmark `100x50`, p95 `278.75 ms`, heap `35 MB` |
 | `P06-PERF-002..003` | 2 | Pass | `100x50`: Dashboard p95 `562.55 ms`; ranking p95 `278.44 ms` |
 | `P06-PERF-004` | 1 | Pass | Gradebook endpoint `100x50`, p95 `160.69 ms`, target `<=1500 ms` |
-| `P06-PERF-005..006` | 2 | Not Run | Admin/remaining hardening |
+| `P06-PERF-005` | 1 | Pass | Rebuild batch resource evidence từ Part 06 |
+| `P06-PERF-006` | 1 | Local Pass | Audit filter, 200 rows/10 requests, p95 `28.07 ms`, named index, target `<=1200 ms` |
 
 ## 7. Contract And Regression
 
 | Suite | Result | Evidence |
 | --- | --- | --- |
-| OpenAPI parser/parity | Student + Teacher + Gradebook Pass local | Unique operations; API suite `215/215` |
+| OpenAPI parser/parity | Student + Teacher + Gradebook + Admin Pass local | 13 unique P06 operations; API suite `220/220` |
 | P05 version assertions | Pass | P05 Gradebook operation/flag retired; one P06 operation |
 | P02-P05 regression | Pass local | API `215/215`, Web `115/115`, integration `90/90`, E2E `32/32` |
 | Docker replica-set smoke | Pass | Integrated Mongo/API/Web stack và deterministic seed |
@@ -71,11 +72,11 @@ remote required CI, review và merge vẫn đang chờ.
 ## 8. Final Summary
 
 ```text
-Unit/component: API 215/215; Web 115/115; coverage gates Pass
-Integration: 90/90 full Mongo replica-set Pass
-Web: Student, Teacher và Gradebook required Part 07-12 cases Pass
+Unit/component: API 220/220; Web 115/115; coverage gates Pass
+Integration: prior full replica-set 90/90; Part 13 focused local Mongo 4/4; remote replica-set rerun pending
+Web: Student, Teacher và Gradebook required Part 07-12 cases Pass; Admin Web is Part 14
 Browser E2E: 32/32 full regression Pass; Gradebook 3/3
-Performance: 4/6 Pass; remaining cases belong to later Parts
-OpenAPI/regression/operations: Student + Teacher + Gradebook local Pass
-Decision: GRADEBOOK_LOCAL_PASS_REMOTE_PENDING
+Performance: 6/6 local evidence present; final hardening rerun belongs to Part 16
+OpenAPI/regression/operations: Student + Teacher + Gradebook + Admin local Pass
+Decision: ADMIN_API_LOCAL_PASS_REMOTE_PENDING
 ```
