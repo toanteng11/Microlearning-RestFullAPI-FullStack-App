@@ -72,6 +72,12 @@ import {
   phaseSixGradebookSchemas,
   phaseSixGradebookTags,
 } from './phase-six-gradebook.openapi.js';
+import {
+  createPhaseSixAdminReportingPaths,
+  PHASE_SIX_ADMIN_REPORTING_OPENAPI_OPERATIONS,
+  phaseSixAdminReportingSchemas,
+  phaseSixAdminReportingTags,
+} from './phase-six-admin-reporting.openapi.js';
 export { PHASE_THREE_OPENAPI_OPERATIONS } from './phase-three.openapi.js';
 
 export const PHASE_FOUR_OPENAPI_OPERATIONS = [
@@ -92,6 +98,7 @@ export const PHASE_SIX_OPENAPI_OPERATIONS = [
   ...PHASE_SIX_STUDENT_REPORTING_OPENAPI_OPERATIONS,
   ...PHASE_SIX_TEACHER_REPORTING_OPENAPI_OPERATIONS,
   ...PHASE_SIX_GRADEBOOK_OPENAPI_OPERATIONS,
+  ...PHASE_SIX_ADMIN_REPORTING_OPENAPI_OPERATIONS,
 ] as const;
 
 type Schema = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
@@ -853,6 +860,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
   Object.assign(paths, createPhaseSixStudentReportingPaths());
   Object.assign(paths, createPhaseSixTeacherReportingPaths());
   Object.assign(paths, createPhaseSixGradebookPaths());
+  Object.assign(paths, createPhaseSixAdminReportingPaths());
 
   return {
     openapi: '3.0.3',
@@ -885,6 +893,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
       ...phaseSixStudentReportingTags,
       ...phaseSixTeacherReportingTags,
       ...phaseSixGradebookTags,
+      ...phaseSixAdminReportingTags,
     ],
     paths,
     components: {
@@ -933,6 +942,7 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
         ...phaseSixStudentReportingSchemas,
         ...phaseSixTeacherReportingSchemas,
         ...phaseSixGradebookSchemas,
+        ...phaseSixAdminReportingSchemas,
         UserRole: {
           type: 'string',
           enum: ['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN'],

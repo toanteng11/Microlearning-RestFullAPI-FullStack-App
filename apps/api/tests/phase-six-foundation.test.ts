@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { describe, expect, it } from 'vitest';
 
+import { AuditLogModel } from '../src/modules/audit/audit-log.model.js';
 import { CourseProgressSummaryModel } from '../src/modules/reporting/course-progress-summary.model.js';
 import { ReportingInvalidationModel } from '../src/modules/reporting/reporting-invalidation.model.js';
 import { createReportingQuerySchemas } from '../src/modules/reporting/reporting.schemas.js';
@@ -33,6 +34,9 @@ describe('Phase 06 reporting foundation', () => {
     const invalidationIndexNames = (
       ReportingInvalidationModel.schema.indexes() as Array<[unknown, { name?: string }]>
     ).map(([, options]) => options.name);
+    const auditIndexNames = (
+      AuditLogModel.schema.indexes() as Array<[unknown, { name?: string }]>
+    ).map(([, options]) => options.name);
     expect(summaryIndexNames).toEqual(
       expect.arrayContaining([
         'report_summary_course_student_version_unique',
@@ -41,6 +45,13 @@ describe('Phase 06 reporting foundation', () => {
       ]),
     );
     expect(invalidationIndexNames).toContain('report_invalidation_scope_unique');
+    expect(auditIndexNames).toEqual(
+      expect.arrayContaining([
+        'ix_audit_logs_actor_role_created',
+        'ix_audit_logs_action_created',
+        'ix_audit_logs_resource_created_stable',
+      ]),
+    );
     for (const field of ['fullName', 'email', 'studentCode', 'answers', 'feedback', 'submission']) {
       expect(CourseProgressSummaryModel.schema.path(field)).toBeUndefined();
     }
@@ -84,7 +95,7 @@ describe('Phase 06 reporting foundation', () => {
     await expect(invalidScope.validate()).rejects.toMatchObject({ name: 'ValidationError' });
   });
 
-  it('strictly parses reporting queries and enforces bounded date ranges', () => {
+  it('strictly parses reporting queries while leaving semantic date bounds to the service', () => {
     const schemas = createReportingQuerySchemas({
       pageMax: 50,
       gradebookActivityMax: 50,
@@ -101,11 +112,13 @@ describe('Phase 06 reporting foundation', () => {
     expect(() =>
       schemas.teacherProgress.parse({ page: '1', limit: '20', unknown: 'rejected' }),
     ).toThrow();
-    expect(() =>
+    expect(
       schemas.adminAudit.parse({
-        from: '2026-01-01T00:00:00.000Z',
+        from: '2026-01-01',
         to: '2026-02-15T00:00:00.000Z',
       }),
-    ).toThrow();
+    ).toMatchObject({ from: '2026-01-01', to: '2026-02-15T00:00:00.000Z' });
+    expect(() => schemas.adminAudit.parse({ from: 'not-a-date' })).toThrow();
+    expect(() => schemas.adminDashboard.parse({ unknown: 'rejected' })).toThrow();
   });
 });

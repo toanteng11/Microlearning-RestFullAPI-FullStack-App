@@ -24,7 +24,9 @@ import type { PhaseSixFoundation } from './phase-six.foundation.js';
 import { QuizRepository } from './quizzes/quiz.repository.js';
 import { MongoStudentReportingSource } from './reporting/adapters/mongo-student-reporting.source.js';
 import { MongoTeacherReportingSource } from './reporting/adapters/mongo-teacher-reporting.source.js';
+import { AdminReportingService } from './reporting/admin-reporting.service.js';
 import { GradebookReportingService } from './reporting/gradebook-reporting.service.js';
+import { ReportingAuditWriter } from './reporting/reporting-audit.writer.js';
 import { createReportingQuerySchemas } from './reporting/reporting.schemas.js';
 import { StudentReportingService } from './reporting/student-reporting.service.js';
 import { TeacherReportingService } from './reporting/teacher-reporting.service.js';
@@ -40,6 +42,10 @@ function parseTeacherReportingQuery<T>(schema: ZodType<T>, input: unknown): T {
     }
     throw error;
   }
+}
+
+function requestIdFrom(response: Response) {
+  return String(response.getHeader('x-request-id') ?? 'unknown');
 }
 
 export function createPhaseSixRouter(
@@ -130,6 +136,17 @@ export function createPhaseSixRouter(
       staleAfterSeconds: config.reporting.staleAfterSeconds,
     },
   );
+  const adminReporting = new AdminReportingService(
+    foundation.governanceReader,
+    foundation.auditReader,
+    new ReportingAuditWriter(),
+    {
+      enabled: config.reporting.enabled,
+      timezone: config.reporting.timezone,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+      maxDateRangeDays: config.reporting.maxDateRangeDays,
+    },
+  );
   const schemas = createReportingQuerySchemas({
     pageMax: config.reporting.pageMax,
     gradebookActivityMax: config.reporting.gradebookActivityMax,
@@ -139,6 +156,7 @@ export function createPhaseSixRouter(
 
   router.use('/students', authenticate);
   router.use('/teacher', authenticate);
+  router.use('/admin', authenticate);
 
   router.get(
     '/students/me/dashboard',
@@ -147,6 +165,45 @@ export function createPhaseSixRouter(
       const query = parseWithSchema(schemas.studentDashboard, request.query);
       response.setHeader('Cache-Control', 'private, no-store');
       response.json({ success: true, data: await reporting.dashboard(request.auth!, query) });
+    },
+  );
+
+  router.get(
+    '/admin/dashboard',
+    requirePermission('report.view_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminDashboard, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        data: await adminReporting.dashboard(request.auth!, query),
+      });
+    },
+  );
+
+  router.get(
+    '/admin/reports/governance',
+    requirePermission('report.view_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminGovernance, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        data: await adminReporting.governanceReport(request.auth!, query, requestIdFrom(response)),
+      });
+    },
+  );
+
+  router.get(
+    '/admin/audit-logs',
+    requirePermission('report.audit_view'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminAudit, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        ...(await adminReporting.auditLogs(request.auth!, query, requestIdFrom(response))),
+      });
     },
   );
 

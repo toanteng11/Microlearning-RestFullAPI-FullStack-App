@@ -1,5 +1,12 @@
 import { AuditLogModel } from '../../audit/audit-log.model.js';
+import { USER_ROLES, type UserRole } from '../../users/user.types.js';
 import type { ReportingAuditQuery, ReportingAuditReader } from '../reporting-audit.reader.js';
+
+const SAFE_ACTOR_ROLES = new Set<string>([...USER_ROLES, 'SYSTEM']);
+
+function safeActorRole(value: string): UserRole | 'SYSTEM' {
+  return SAFE_ACTOR_ROLES.has(value) ? (value as UserRole | 'SYSTEM') : 'SYSTEM';
+}
 
 export class MongoReportingAuditReader implements ReportingAuditReader {
   async listSafe(query: ReportingAuditQuery) {
@@ -37,7 +44,7 @@ export class MongoReportingAuditReader implements ReportingAuditReader {
       items: rows.map((row) => ({
         id: row._id.toString(),
         actorId: row.actorId?.toString() ?? null,
-        actorRole: row.actorRole,
+        actorRole: safeActorRole(row.actorRole),
         action: row.action,
         resourceType: row.resourceType,
         resourceId: row.resourceId,

@@ -418,6 +418,9 @@ describe('system API', () => {
       ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherActivityAnalytics'],
       ['GET /api/v1/teacher/courses/{courseId}/assessments', 'listTeacherAssessmentAnalytics'],
       ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getTeacherCourseGradebook'],
+      ['GET /api/v1/admin/dashboard', 'getAdminReportingDashboard'],
+      ['GET /api/v1/admin/reports/governance', 'getAdminGovernanceReport'],
+      ['GET /api/v1/admin/audit-logs', 'listAdminReportingAuditLogs'],
       [
         'GET /api/v1/teacher/courses/{courseId}/students/{studentId}/progress',
         'getTeacherStudentProgress',
@@ -441,5 +444,11 @@ describe('system API', () => {
     }
     expect(actual).toEqual(expected);
     expect(new Set(actual.values()).size).toBe(PHASE_SIX_OPENAPI_OPERATIONS.length);
+    const adminAuditSchema = document.components?.schemas?.AdminAuditSummary;
+    expect(JSON.stringify(adminAuditSchema)).not.toMatch(
+      /oldValue|newValue|metadata|passwordHash|tokenHash|answer|submission|feedback/u,
+    );
+    const adminGovernanceSchema = document.components?.schemas?.AdminGovernanceReportData;
+    expect(JSON.stringify(adminGovernanceSchema)).not.toMatch(/grade|answer|submission|feedback/u);
   });
 });

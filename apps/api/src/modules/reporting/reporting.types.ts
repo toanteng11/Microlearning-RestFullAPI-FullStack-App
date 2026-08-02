@@ -1,6 +1,10 @@
 import type { ClientSession, Types } from 'mongoose';
 
 import type { CommonContentStatus } from '../learning-content/content.types.js';
+import type { ClassroomStatus } from '../classrooms/classroom.types.js';
+import type { EnrollmentStatus } from '../enrollments/enrollment.model.js';
+import type { InvitationStatus } from '../teacher-invitations/teacher-invitation.model.js';
+import type { RegistrationSource, UserRole, UserStatus } from '../users/user.types.js';
 import type { LearningActivityType } from '../learning-content/learning-activity.reader.js';
 import type { GradeStatus } from '../learning-content/assessment.types.js';
 import type {
@@ -131,17 +135,18 @@ export interface ReportingDeadlineException {
 }
 
 export interface ReportingGovernanceCounts {
-  activeEnrollmentCount: number;
-  userCounts: Readonly<Record<string, number>>;
-  classroomCounts: Readonly<Record<string, number>>;
-  courseCounts: Readonly<Record<string, number>>;
-  invitationCounts: Readonly<Record<string, number>>;
+  userCounts: Readonly<Record<UserRole, Readonly<Record<UserStatus, number>>>>;
+  registrationSourceCounts: Readonly<Record<RegistrationSource, number>>;
+  classroomCounts: Readonly<Record<ClassroomStatus, number>>;
+  courseCounts: Readonly<Record<CommonContentStatus, number>>;
+  invitationCounts: Readonly<Record<InvitationStatus, number>>;
+  enrollmentCounts: Readonly<Record<EnrollmentStatus, number>>;
 }
 
 export interface ReportingAuditRow {
   id: string;
   actorId: string | null;
-  actorRole: string;
+  actorRole: UserRole | 'SYSTEM';
   action: string;
   resourceType: string;
   resourceId: string;

@@ -11,6 +11,10 @@ import {
   REPORTING_SORT_ORDERS,
   REPORTING_SUPPORT_FLAGS,
 } from './reporting.constants.js';
+import { CLASSROOM_STATUSES } from '../classrooms/classroom.types.js';
+import { COMMON_CONTENT_STATUSES } from '../learning-content/content.types.js';
+import { INVITATION_STATUSES } from '../teacher-invitations/teacher-invitation.model.js';
+import { USER_ROLES, USER_STATUSES } from '../users/user.types.js';
 
 const objectId = z.string().refine(isValidObjectId, 'Invalid ObjectId');
 const normalizedSearch = z
@@ -22,6 +26,7 @@ const strictBoolean = z.preprocess((value) => {
   if (value === 'false') return false;
   return value;
 }, z.boolean());
+const isoDateOrDateTime = z.union([z.iso.date(), z.iso.datetime({ offset: true })]);
 
 export function isValidIanaTimezone(value: string): boolean {
   try {
@@ -199,12 +204,32 @@ export function createReportingQuerySchemas(options: {
     })
     .strict();
 
+  const adminDashboard = z
+    .object({
+      timezone: timezone.optional(),
+      recentLimit: z.coerce.number().int().min(1).max(20).default(10),
+    })
+    .strict();
+
+  const adminGovernance = z
+    .object({
+      from: isoDateOrDateTime.optional(),
+      to: isoDateOrDateTime.optional(),
+      timezone: timezone.optional(),
+      role: z.enum(USER_ROLES).optional(),
+      userStatus: z.enum(USER_STATUSES).optional(),
+      invitationStatus: z.enum(INVITATION_STATUSES).optional(),
+      classroomStatus: z.enum(CLASSROOM_STATUSES).optional(),
+      courseStatus: z.enum(COMMON_CONTENT_STATUSES).optional(),
+    })
+    .strict();
+
   const adminAudit = z
     .object({
       page,
       limit,
-      from: z.iso.datetime({ offset: true }).optional(),
-      to: z.iso.datetime({ offset: true }).optional(),
+      from: isoDateOrDateTime.optional(),
+      to: isoDateOrDateTime.optional(),
       timezone: timezone.optional(),
       actorRole: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN', 'SYSTEM']).optional(),
       action: normalizedSearch.optional(),
@@ -212,24 +237,7 @@ export function createReportingQuerySchemas(options: {
       resourceId: normalizedSearch.optional(),
       sortOrder: z.enum(REPORTING_SORT_ORDERS).default('desc'),
     })
-    .strict()
-    .superRefine((value, context) => {
-      if (!value.from || !value.to) return;
-      const from = new Date(value.from);
-      const to = new Date(value.to);
-      if (from >= to) {
-        context.addIssue({ code: 'custom', path: ['to'], message: 'to must be after from' });
-        return;
-      }
-      const rangeDays = (to.getTime() - from.getTime()) / 86_400_000;
-      if (rangeDays > options.maxDateRangeDays) {
-        context.addIssue({
-          code: 'custom',
-          path: ['to'],
-          message: `date range must not exceed ${options.maxDateRangeDays} days`,
-        });
-      }
-    });
+    .strict();
 
   return Object.freeze({
     courseParams: z.object({ courseId: objectId }).strict(),
@@ -243,6 +251,8 @@ export function createReportingQuerySchemas(options: {
     teacherAssessments,
     teacherStudentDetail,
     gradebook,
+    adminDashboard,
+    adminGovernance,
     adminAudit,
     allowedActions: z.array(z.enum(REPORTING_ALLOWED_ACTIONS)),
   });
@@ -273,3 +283,10 @@ export type TeacherStudentDetailQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['teacherStudentDetail']
 >;
 export type GradebookQuery = z.infer<ReturnType<typeof createReportingQuerySchemas>['gradebook']>;
+export type AdminDashboardQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['adminDashboard']
+>;
+export type AdminGovernanceQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['adminGovernance']
+>;
+export type AdminAuditQuery = z.infer<ReturnType<typeof createReportingQuerySchemas>['adminAudit']>;
