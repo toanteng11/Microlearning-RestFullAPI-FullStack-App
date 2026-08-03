@@ -40,6 +40,7 @@ interface GradebookReportingOptions {
   enabled: boolean;
   timezone: string;
   staleAfterSeconds: number;
+  exportEnabled: boolean;
 }
 
 interface GradebookSnapshot {
@@ -460,6 +461,7 @@ export class GradebookReportingService {
         columns,
         rows: pagedRows,
         activityPage,
+        allowedActions: this.options.exportEnabled ? (['EXPORT_REPORT'] as const) : ([] as const),
         reporting: this.metadata(
           snapshot,
           {

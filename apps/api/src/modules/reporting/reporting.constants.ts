@@ -8,6 +8,9 @@ export const TEACHER_RANKING_VERSION = 'P06_TEACHER_RANKING_V1' as const;
 export const GRADEBOOK_VERSION = 'P06_GRADEBOOK_V1' as const;
 export const ADMIN_GOVERNANCE_REPORT_VERSION = 'P06_ADMIN_GOVERNANCE_V1' as const;
 export const STUDENT_DASHBOARD_VERSION = 'P06_STUDENT_DASHBOARD_V1' as const;
+export const STUDENT_PROGRESS_TREND_VERSION = 'P06_STUDENT_PROGRESS_TREND_V1' as const;
+export const ADMIN_LEARNING_OUTCOME_VERSION = 'P06_ADMIN_LEARNING_OUTCOME_V1' as const;
+export const ANALYTICS_EVENT_SCHEMA_VERSION = 1 as const;
 
 export const REPORTING_SOURCE_METRIC_VERSION = LEARNING_PROGRESS_METRIC_VERSION;
 export const REPORTING_DESCRIPTOR_VERSION = LEARNING_ACTIVITY_DESCRIPTOR_VERSION;
@@ -60,6 +63,32 @@ export const REPORTING_ALLOWED_ACTIONS = [
   'OPEN_GRADING',
   'EXPORT_REPORT',
   'VIEW_SOURCE_LIST',
+  'VIEW_PROGRESS_TREND',
+  'VIEW_LEARNING_OUTCOMES',
+  'VIEW_ANALYTICS_ADOPTION',
+] as const;
+
+export const ANALYTICS_EVENT_NAMES = [
+  'account_activated',
+  'login_succeeded',
+  'classroom_created',
+  'classroom_joined',
+  'course_published',
+  'lesson_started',
+  'lesson_completed',
+  'quiz_started',
+  'quiz_submitted',
+  'assignment_opened',
+  'assignment_submitted',
+  'submission_graded',
+  'deadline_exception_created',
+  'teacher_invitation_created',
+  'teacher_invitation_accepted',
+  'report_export_requested',
+  'report_export_completed',
+  'report_viewed',
+  'report_filter_changed',
+  'report_tab_changed',
 ] as const;
 
 export const REPORTING_INVALIDATION_REASONS = [

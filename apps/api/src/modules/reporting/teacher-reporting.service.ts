@@ -51,6 +51,7 @@ interface TeacherReportingOptions {
   timezone: string;
   staleAfterSeconds: number;
   dueSoonWindowHours: number;
+  exportEnabled: boolean;
 }
 
 interface TeacherStudentRow {
@@ -555,7 +556,10 @@ export class TeacherReportingService {
         )
         .slice(0, 5),
       topStudents: ranked.slice(0, 5).map((row) => this.studentDto(row, row.rank)),
-      allowedActions: ['VIEW_SOURCE_LIST', 'EXPORT_REPORT'] as const,
+      allowedActions: [
+        'VIEW_SOURCE_LIST' as const,
+        ...(this.options.exportEnabled ? (['EXPORT_REPORT'] as const) : []),
+      ],
       reporting: this.metadata(
         snapshot,
         TEACHER_RANKING_VERSION,

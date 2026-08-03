@@ -40,6 +40,7 @@ export interface StudentCourseProgressSummary {
   courseCompleted: boolean;
   actionUrl: string;
   recalculatedAt: string;
+  allowedActions: string[];
 }
 
 export interface StudentReturnedGradeSummary {
@@ -360,6 +361,7 @@ export interface GradebookEnvelope {
       nextCursor: string | null;
       truncated: boolean;
     };
+    allowedActions: string[];
     reporting: ReportMetadata;
   };
   meta: Pagination;
@@ -396,6 +398,7 @@ export interface AdminDashboardEnvelope {
     courses: Record<'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED', number>;
     activeEnrollmentCount: number;
     recentGovernanceEvents: AdminAuditSummary[];
+    allowedActions: string[];
     reporting: ReportMetadata;
   };
 }
@@ -420,6 +423,7 @@ export interface AdminGovernanceEnvelope {
     classrooms: AdminDashboardEnvelope['data']['classrooms'];
     courses: AdminDashboardEnvelope['data']['courses'];
     enrollments: Record<'ACTIVE' | 'REMOVED' | 'LEFT' | 'BLOCKED', number>;
+    allowedActions: string[];
     reporting: ReportMetadata;
   };
 }
@@ -444,4 +448,83 @@ export interface AdminAuditEnvelope {
     reporting: ReportMetadata;
   };
   meta: Pagination;
+}
+
+export interface StudentProgressTrendQuery {
+  courseId: string;
+  from?: string;
+  to?: string;
+  timezone?: string;
+}
+
+export interface StudentProgressTrendEnvelope {
+  success: true;
+  data: {
+    course: { id: string; title: string };
+    points: Array<{
+      capturedAt: string;
+      progressPercentage: number | null;
+      processScore: number | null;
+      returnedGradeAverage: number | null;
+      completedRequiredCount: number;
+      requiredActivityCount: number;
+      missingCount: number;
+      lateCount: number;
+    }>;
+    change: {
+      progressPercentage: number | null;
+      processScore: number | null;
+      returnedGradeAverage: number | null;
+    };
+    noDataReason: 'INSUFFICIENT_SNAPSHOTS' | 'INCOMPATIBLE_VERSION' | null;
+    reporting: ReportMetadata;
+  };
+}
+
+export interface AdminLearningOutcomeQuery {
+  from?: string;
+  to?: string;
+  timezone?: string;
+  courseStatus?: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
+}
+
+export interface AdminLearningOutcomeEnvelope {
+  success: true;
+  data: {
+    items: Array<{
+      course: { id: string; title: string; status: string };
+      studentCountBucket: string;
+      averageProgressPercentage: number | null;
+      completionPercentage: number | null;
+      returnedGradeAverage: number | null;
+      missingActivityCount: number | null;
+      lateActivityCount: number | null;
+      dataState: 'READY' | 'SUPPRESSED';
+      suppressionReason: 'SMALL_GROUP' | null;
+    }>;
+    reporting: ReportMetadata;
+  };
+}
+
+export interface AdminAnalyticsAdoptionQuery {
+  from?: string;
+  to?: string;
+  timezone?: string;
+  interval: 'DAY' | 'WEEK' | 'MONTH';
+}
+
+export interface AdminAnalyticsAdoptionEnvelope {
+  success: true;
+  data: {
+    items: Array<{
+      periodStart: string;
+      eventName: string;
+      actorRole: string;
+      eventCount: number | null;
+      distinctActorCountBucket: string;
+      dataState: 'READY' | 'SUPPRESSED';
+      suppressionReason: 'SMALL_GROUP' | null;
+    }>;
+    reporting: ReportMetadata;
+  };
 }

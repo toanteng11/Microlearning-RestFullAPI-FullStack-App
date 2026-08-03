@@ -121,6 +121,7 @@ export const adminDashboardEnvelopeSchema = z
         courses: courseCountsSchema,
         activeEnrollmentCount: z.number().int().nonnegative(),
         recentGovernanceEvents: z.array(adminAuditSummarySchema).max(20),
+        allowedActions: z.array(z.string()).default([]),
         reporting: reportMetadataSchema,
       })
       .strict(),
@@ -145,6 +146,7 @@ export const adminGovernanceEnvelopeSchema = z
             BLOCKED: z.number().int().nonnegative(),
           })
           .strict(),
+        allowedActions: z.array(z.string()).default([]),
         reporting: reportMetadataSchema,
       })
       .strict(),
@@ -186,6 +188,7 @@ export const studentCourseProgressSchema = z.object({
   courseCompleted: z.boolean(),
   actionUrl: z.string(),
   recalculatedAt: z.iso.datetime({ offset: true }),
+  allowedActions: z.array(z.string()).default([]),
 });
 
 const returnedGradeSchema = z.object({
@@ -348,7 +351,7 @@ export const teacherReportingDashboardEnvelopeSchema = z.object({
     }),
     topActivities: z.array(teacherActivityAnalyticsRowSchema),
     topStudents: z.array(teacherProgressRowSchema),
-    allowedActions: z.array(z.string()),
+    allowedActions: z.array(z.string()).default([]),
     reporting: reportMetadataSchema,
   }),
 });
@@ -486,7 +489,93 @@ export const gradebookEnvelopeSchema = z.object({
       nextCursor: z.string().nullable(),
       truncated: z.boolean(),
     }),
+    allowedActions: z.array(z.string()).default([]),
     reporting: reportMetadataSchema,
   }),
   meta: paginationSchema,
 });
+
+export const studentProgressTrendEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        course: z.object({ id: z.string(), title: z.string() }).strict(),
+        points: z.array(
+          z
+            .object({
+              capturedAt: z.iso.datetime({ offset: true }),
+              progressPercentage: percentage,
+              processScore: percentage,
+              returnedGradeAverage: percentage,
+              completedRequiredCount: z.number().int().nonnegative(),
+              requiredActivityCount: z.number().int().nonnegative(),
+              missingCount: z.number().int().nonnegative(),
+              lateCount: z.number().int().nonnegative(),
+            })
+            .strict(),
+        ),
+        change: z
+          .object({
+            progressPercentage: z.number().nullable(),
+            processScore: z.number().nullable(),
+            returnedGradeAverage: z.number().nullable(),
+          })
+          .strict(),
+        noDataReason: z.enum(['INSUFFICIENT_SNAPSHOTS', 'INCOMPATIBLE_VERSION']).nullable(),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+  })
+  .strict();
+
+const protectedAggregateState = z.enum(['READY', 'SUPPRESSED']);
+export const adminLearningOutcomeEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        items: z.array(
+          z
+            .object({
+              course: z.object({ id: z.string(), title: z.string(), status: z.string() }).strict(),
+              studentCountBucket: z.string(),
+              averageProgressPercentage: percentage,
+              completionPercentage: percentage,
+              returnedGradeAverage: percentage,
+              missingActivityCount: z.number().int().nonnegative().nullable(),
+              lateActivityCount: z.number().int().nonnegative().nullable(),
+              dataState: protectedAggregateState,
+              suppressionReason: z.literal('SMALL_GROUP').nullable(),
+            })
+            .strict(),
+        ),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+  })
+  .strict();
+
+export const adminAnalyticsAdoptionEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        items: z.array(
+          z
+            .object({
+              periodStart: z.iso.datetime({ offset: true }),
+              eventName: z.string(),
+              actorRole: z.string(),
+              eventCount: z.number().int().nonnegative().nullable(),
+              distinctActorCountBucket: z.string(),
+              dataState: protectedAggregateState,
+              suppressionReason: z.literal('SMALL_GROUP').nullable(),
+            })
+            .strict(),
+        ),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+  })
+  .strict();

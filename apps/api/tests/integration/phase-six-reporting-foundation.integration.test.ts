@@ -3,6 +3,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 
 import { CourseModel } from '../../src/modules/courses/course.model.js';
 import { CourseProgressSummaryModel } from '../../src/modules/reporting/course-progress-summary.model.js';
+import { CourseProgressSnapshotModel } from '../../src/modules/reporting/course-progress-snapshot.model.js';
+import { AnalyticsEventModel } from '../../src/modules/reporting/analytics-event.model.js';
 import { CourseProgressSummaryRepository } from '../../src/modules/reporting/course-progress-summary.repository.js';
 import type { ReportingActivityReader } from '../../src/modules/reporting/reporting-activity.reader.js';
 import type { ReportingGradeReader } from '../../src/modules/reporting/reporting-grade.reader.js';
@@ -98,6 +100,8 @@ describe('Phase 06 reporting data foundation on MongoDB replica set', () => {
   beforeEach(async () => {
     await Promise.all([
       CourseProgressSummaryModel.deleteMany({}),
+      CourseProgressSnapshotModel.deleteMany({}),
+      AnalyticsEventModel.deleteMany({}),
       ReportingInvalidationModel.deleteMany({}),
       CourseModel.deleteMany({}),
     ]);
@@ -114,8 +118,18 @@ describe('Phase 06 reporting data foundation on MongoDB replica set', () => {
     const invalidationIndexes = (await ReportingInvalidationModel.collection.indexes()).map(
       (index) => index.name,
     );
+    const snapshotIndexes = (await CourseProgressSnapshotModel.collection.indexes()).map(
+      (index) => index.name,
+    );
+    const analyticsIndexes = (await AnalyticsEventModel.collection.indexes()).map(
+      (index) => index.name,
+    );
     expect(summaryIndexes).toContain('report_summary_course_student_version_unique');
     expect(invalidationIndexes).toContain('report_invalidation_scope_unique');
+    expect(snapshotIndexes).toContain('uq_progress_snapshot_summary_revision');
+    expect(analyticsIndexes).toEqual(
+      expect.arrayContaining(['uq_analytics_event_id', 'ttl_analytics_event']),
+    );
 
     const first = await runPhaseSixMigrationPreflight(mongoose.connection);
     const second = await runPhaseSixMigrationPreflight(mongoose.connection);

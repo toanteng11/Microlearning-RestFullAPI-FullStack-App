@@ -9,12 +9,14 @@ import { MongoReportingRosterReader } from './reporting/adapters/mongo-reporting
 import { MongoReportingScopeReader } from './reporting/adapters/mongo-reporting-scope.reader.js';
 import { CourseProgressCalculator } from './reporting/course-progress.calculator.js';
 import { CourseProgressSummaryRepository } from './reporting/course-progress-summary.repository.js';
+import { CourseProgressSnapshotRepository } from './reporting/course-progress-snapshot.repository.js';
 import { ReportingInvalidationRepository } from './reporting/reporting-invalidation.repository.js';
 import { ReportingReconciliationService } from './reporting/reporting-reconciliation.service.js';
 import { ReportingRefreshService } from './reporting/reporting-refresh.service.js';
 
 export function createPhaseSixFoundation(config: AppConfig) {
-  const summaries = new CourseProgressSummaryRepository();
+  const snapshots = new CourseProgressSnapshotRepository();
+  const summaries = new CourseProgressSummaryRepository(snapshots);
   const invalidations = new ReportingInvalidationRepository(
     config.reporting.invalidationLockSeconds,
     config.reporting.invalidationMaxAttempts,
@@ -50,6 +52,7 @@ export function createPhaseSixFoundation(config: AppConfig) {
   return Object.freeze({
     reportingInvalidationWriter: new MongoReportingInvalidationWriter(invalidations),
     summaries,
+    snapshots,
     invalidations,
     scopeReader: new MongoReportingScopeReader(),
     rosterReader,

@@ -193,6 +193,7 @@ export const phaseSixStudentReportingSchemas: SchemaMap = {
       'courseCompleted',
       'actionUrl',
       'recalculatedAt',
+      'allowedActions',
     ],
     properties: {
       classroom: {
@@ -217,6 +218,7 @@ export const phaseSixStudentReportingSchemas: SchemaMap = {
       courseCompleted: { type: 'boolean' },
       actionUrl: { type: 'string' },
       recalculatedAt: { type: 'string', format: 'date-time' },
+      allowedActions: { type: 'array', items: { type: 'string', enum: ['VIEW_PROGRESS_TREND'] } },
     },
   },
   StudentReturnedGradeSummary: {

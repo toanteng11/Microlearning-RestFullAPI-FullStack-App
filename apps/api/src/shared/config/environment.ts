@@ -68,7 +68,9 @@ const phaseSixExplicitProductionFields = [
   'ANALYTICS_EVENTS_ENABLED',
   'ANALYTICS_EVENT_RETENTION_DAYS',
   'ANALYTICS_EVENT_BODY_MAX_BYTES',
+  'ANALYTICS_EVENT_IDENTITY_LIMIT',
   'STUDENT_PROGRESS_TREND_ENABLED',
+  'ADMIN_LEARNING_OUTCOMES_ENABLED',
   'WEIGHTED_PROCESS_SCORE_ENABLED',
 ] as const;
 
@@ -164,7 +166,9 @@ const environmentSchema = z.object({
   ANALYTICS_EVENTS_ENABLED: booleanString,
   ANALYTICS_EVENT_RETENTION_DAYS: z.coerce.number().int().min(1).max(365).default(90),
   ANALYTICS_EVENT_BODY_MAX_BYTES: z.coerce.number().int().min(1_024).max(65_536).default(16_384),
+  ANALYTICS_EVENT_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
   STUDENT_PROGRESS_TREND_ENABLED: booleanString,
+  ADMIN_LEARNING_OUTCOMES_ENABLED: booleanString,
   WEIGHTED_PROCESS_SCORE_ENABLED: booleanString,
   RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REGISTER_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(10),
@@ -272,7 +276,9 @@ export interface ReportingConfig {
   analyticsEventsEnabled: boolean;
   analyticsEventRetentionDays: number;
   analyticsEventBodyMaxBytes: number;
+  analyticsEventIdentityLimit: number;
   studentProgressTrendEnabled: boolean;
+  adminLearningOutcomesEnabled: boolean;
   weightedProcessScoreEnabled: boolean;
 }
 
@@ -546,7 +552,9 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     analyticsEventsEnabled: parsed.data.ANALYTICS_EVENTS_ENABLED,
     analyticsEventRetentionDays: parsed.data.ANALYTICS_EVENT_RETENTION_DAYS,
     analyticsEventBodyMaxBytes: parsed.data.ANALYTICS_EVENT_BODY_MAX_BYTES,
+    analyticsEventIdentityLimit: parsed.data.ANALYTICS_EVENT_IDENTITY_LIMIT,
     studentProgressTrendEnabled: parsed.data.STUDENT_PROGRESS_TREND_ENABLED,
+    adminLearningOutcomesEnabled: parsed.data.ADMIN_LEARNING_OUTCOMES_ENABLED,
     weightedProcessScoreEnabled: parsed.data.WEIGHTED_PROCESS_SCORE_ENABLED,
   });
 

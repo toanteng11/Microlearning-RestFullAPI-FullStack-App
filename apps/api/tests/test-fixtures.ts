@@ -89,7 +89,9 @@ export const testConfig: AppConfig = {
     analyticsEventsEnabled: false,
     analyticsEventRetentionDays: 90,
     analyticsEventBodyMaxBytes: 16_384,
+    analyticsEventIdentityLimit: 120,
     studentProgressTrendEnabled: false,
+    adminLearningOutcomesEnabled: false,
     weightedProcessScoreEnabled: false,
   },
   rateLimits: {

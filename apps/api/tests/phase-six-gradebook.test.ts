@@ -217,6 +217,7 @@ function fixture() {
       enabled: true,
       timezone: 'Asia/Ho_Chi_Minh',
       staleAfterSeconds: 300,
+      exportEnabled: false,
     },
     () => now,
   );

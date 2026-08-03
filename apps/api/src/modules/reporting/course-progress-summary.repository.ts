@@ -16,6 +16,7 @@ import type {
   ReportingInvalidationReason,
   SummaryReplaceInput,
 } from './reporting.types.js';
+import { CourseProgressSnapshotRepository } from './course-progress-snapshot.repository.js';
 
 function persistenceValues(input: SummaryReplaceInput['values']) {
   return {
@@ -29,6 +30,8 @@ function persistenceValues(input: SummaryReplaceInput['values']) {
 }
 
 export class CourseProgressSummaryRepository {
+  constructor(private readonly snapshots = new CourseProgressSnapshotRepository()) {}
+
   findStudent(
     courseId: Types.ObjectId,
     studentId: Types.ObjectId,
@@ -102,7 +105,9 @@ export class CourseProgressSummaryRepository {
         const created = await new CourseProgressSummaryModel({ ...values, revision: 1 }).save({
           session,
         });
-        return created.toObject();
+        const record = created.toObject();
+        await this.snapshots.record(record, session);
+        return record;
       } catch (error) {
         if ((error as { code?: number }).code !== 11000) throw error;
         throw reportingError(
@@ -131,6 +136,7 @@ export class CourseProgressSummaryRepository {
         'Reporting summary was concurrently modified',
       );
     }
+    await this.snapshots.record(updated, session);
     return updated;
   }
 

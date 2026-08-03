@@ -123,6 +123,7 @@ function serviceFixture(input?: {
       inlineRefreshMaxStudents: 5,
       refreshRequestBudgetMs: 900,
       dueSoonWindowHours: 72,
+      trendEnabled: false,
     },
     () => now,
   );

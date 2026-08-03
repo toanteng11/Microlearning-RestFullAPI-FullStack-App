@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { AuditLogModel } from '../src/modules/audit/audit-log.model.js';
 import { CourseProgressSummaryModel } from '../src/modules/reporting/course-progress-summary.model.js';
+import { CourseProgressSnapshotModel } from '../src/modules/reporting/course-progress-snapshot.model.js';
+import { AnalyticsEventModel } from '../src/modules/reporting/analytics-event.model.js';
 import { ReportingInvalidationModel } from '../src/modules/reporting/reporting-invalidation.model.js';
 import { createReportingQuerySchemas } from '../src/modules/reporting/reporting.schemas.js';
 import { PHASE_SIX_MODELS } from '../src/shared/database/phase-six-indexes.js';
@@ -27,12 +29,18 @@ describe('Phase 06 reporting foundation', () => {
   });
 
   it('registers named reporting indexes and excludes prohibited projection fields', () => {
-    expect(PHASE_SIX_MODELS).toHaveLength(2);
+    expect(PHASE_SIX_MODELS).toHaveLength(4);
     const summaryIndexNames = (
       CourseProgressSummaryModel.schema.indexes() as Array<[unknown, { name?: string }]>
     ).map(([, options]) => options.name);
     const invalidationIndexNames = (
       ReportingInvalidationModel.schema.indexes() as Array<[unknown, { name?: string }]>
+    ).map(([, options]) => options.name);
+    const snapshotIndexNames = (
+      CourseProgressSnapshotModel.schema.indexes() as Array<[unknown, { name?: string }]>
+    ).map(([, options]) => options.name);
+    const analyticsIndexNames = (
+      AnalyticsEventModel.schema.indexes() as Array<[unknown, { name?: string }]>
     ).map(([, options]) => options.name);
     const auditIndexNames = (
       AuditLogModel.schema.indexes() as Array<[unknown, { name?: string }]>
@@ -45,6 +53,20 @@ describe('Phase 06 reporting foundation', () => {
       ]),
     );
     expect(invalidationIndexNames).toContain('report_invalidation_scope_unique');
+    expect(snapshotIndexNames).toEqual(
+      expect.arrayContaining([
+        'uq_progress_snapshot_summary_revision',
+        'ix_progress_snapshot_student_course_time',
+      ]),
+    );
+    expect(analyticsIndexNames).toEqual(
+      expect.arrayContaining([
+        'uq_analytics_event_id',
+        'ttl_analytics_event',
+        'ix_analytics_adoption_period',
+        'ix_analytics_actor_course_time',
+      ]),
+    );
     expect(auditIndexNames).toEqual(
       expect.arrayContaining([
         'ix_audit_logs_actor_role_created',

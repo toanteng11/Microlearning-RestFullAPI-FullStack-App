@@ -34,6 +34,7 @@ export default defineConfig({
         'src/features/assessments/pages/**',
         'src/features/learning/learning-route-components.tsx',
         'src/features/learning/pages/**',
+        'src/features/reporting/reporting-route-components.tsx',
       ],
       thresholds: {
         statements: 80,

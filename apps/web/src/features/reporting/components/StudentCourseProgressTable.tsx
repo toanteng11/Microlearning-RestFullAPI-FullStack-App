@@ -59,9 +59,16 @@ export function StudentCourseProgressTable({
                 {displayReportingDate(item.lastActiveAt, timezone)}
               </td>
               <td data-label="Thao tác">
-                <Link className="row-link" to={item.actionUrl}>
-                  Mở khóa học
-                </Link>
+                <span className="row-actions">
+                  <Link className="row-link" to={item.actionUrl}>
+                    Mở khóa học
+                  </Link>
+                  {item.allowedActions.includes('VIEW_PROGRESS_TREND') ? (
+                    <Link className="row-link" to={`/student/progress/${item.course.id}/trend`}>
+                      Xu hướng
+                    </Link>
+                  ) : null}
+                </span>
               </td>
             </tr>
           ))}

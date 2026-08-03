@@ -1,11 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, CircleAlert, RefreshCw } from 'lucide-react';
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  CircleAlert,
+  GraduationCap,
+  RefreshCw,
+} from 'lucide-react';
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { AdminSummary } from '../components/AdminSummary';
+import { ExportCsvButton } from '../components/ExportCsvButton';
 import { ReportingFreshnessNotice } from '../components/ReportingFreshnessNotice';
 import { getAdminGovernanceReport, listAdminAuditLogs } from '../reporting-api';
 import { displayReportingDate } from '../reporting-format';
@@ -79,6 +87,15 @@ export function AdminGovernanceReportPage() {
     setParams(next, { replace: true });
   }
 
+  const governanceExportSearch = new URLSearchParams();
+  for (const [key, value] of Object.entries(governanceQuery)) {
+    if (value) governanceExportSearch.set(key, value);
+  }
+  const auditExportSearch = new URLSearchParams();
+  for (const [key, value] of Object.entries(auditQuery)) {
+    if (key !== 'page' && key !== 'limit' && value) auditExportSearch.set(key, String(value));
+  }
+
   if (governance.isPending || audit.isPending) {
     return (
       <div className="reporting-loading" aria-live="polite">
@@ -111,6 +128,27 @@ export function AdminGovernanceReportPage() {
           <p className="eyebrow">Admin reporting</p>
           <h1 id="governance-title">Báo cáo quản trị</h1>
         </div>
+        <div className="reporting-heading-actions">
+          {data.allowedActions.includes('VIEW_ANALYTICS_ADOPTION') ? (
+            <Link className="button-link button-link--secondary" to="/admin/reports/adoption">
+              <BarChart3 size={17} aria-hidden="true" /> Adoption
+            </Link>
+          ) : null}
+          {data.allowedActions.includes('VIEW_LEARNING_OUTCOMES') ? (
+            <Link
+              className="button-link button-link--secondary"
+              to="/admin/reports/learning-outcomes"
+            >
+              <GraduationCap size={17} aria-hidden="true" /> Learning outcomes
+            </Link>
+          ) : null}
+          {data.allowedActions.includes('EXPORT_REPORT') ? (
+            <ExportCsvButton
+              path={`/admin/reports/governance/export${governanceExportSearch.size ? `?${governanceExportSearch.toString()}` : ''}`}
+              filename="admin-governance-report.csv"
+            />
+          ) : null}
+        </div>
       </header>
       <div className="reporting-filter-bar admin-reporting-filters" aria-label="Bộ lọc báo cáo">
         <label>
@@ -142,6 +180,7 @@ export function AdminGovernanceReportPage() {
         <label>
           Role
           <select
+            aria-label="Role"
             value={governanceQuery.role ?? ''}
             onChange={(event) => setFilter('role', event.target.value)}
           >
@@ -212,7 +251,16 @@ export function AdminGovernanceReportPage() {
       <section className="work-panel" aria-labelledby="audit-log-title">
         <div className="section-heading">
           <h2 id="audit-log-title">Audit Log</h2>
-          <span>{audit.data.meta.totalItems} bản ghi</span>
+          <div className="reporting-heading-actions">
+            <span>{audit.data.meta.totalItems} bản ghi</span>
+            {data.allowedActions.includes('EXPORT_REPORT') ? (
+              <ExportCsvButton
+                path={`/admin/audit-logs/export${auditExportSearch.size ? `?${auditExportSearch.toString()}` : ''}`}
+                filename="admin-audit-log.csv"
+                label="Tải Audit CSV"
+              />
+            ) : null}
+          </div>
         </div>
         <div className="reporting-filter-bar">
           <label>

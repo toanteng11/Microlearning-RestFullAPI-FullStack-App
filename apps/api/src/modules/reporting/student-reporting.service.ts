@@ -37,6 +37,7 @@ interface StudentReportingOptions {
   inlineRefreshMaxStudents: number;
   refreshRequestBudgetMs: number;
   dueSoonWindowHours: number;
+  trendEnabled: boolean;
 }
 
 interface CourseSummaryContext {
@@ -76,7 +77,7 @@ function progressStatus(summary: CourseProgressSummaryRecord): ReportingProgress
   return 'IN_PROGRESS';
 }
 
-function courseSummaryDto(context: CourseSummaryContext) {
+function courseSummaryDto(context: CourseSummaryContext, trendEnabled: boolean) {
   const { scope, summary } = context;
   return {
     classroom: { id: scope.classroomId, name: scope.classroomName },
@@ -93,6 +94,7 @@ function courseSummaryDto(context: CourseSummaryContext) {
     courseCompleted: summary.courseCompleted,
     actionUrl: `/student/courses/${scope.courseId}`,
     recalculatedAt: summary.recalculatedAt.toISOString(),
+    allowedActions: trendEnabled ? (['VIEW_PROGRESS_TREND'] as const) : ([] as const),
   };
 }
 
@@ -242,7 +244,9 @@ export class StudentReportingService {
         totalItems: todo.totalItems,
         scopeVersion: todo.scopeVersion,
       },
-      courses: courseContexts.map(courseSummaryDto),
+      courses: courseContexts.map((context) =>
+        courseSummaryDto(context, this.options.trendEnabled),
+      ),
       recentGrades: recentGrades.map((grade) => ({
         ...grade,
         returnedAt: grade.returnedAt.toISOString(),
@@ -273,7 +277,7 @@ export class StudentReportingService {
     if (!summary) throw new AppError(404, 'RESOURCE_NOT_FOUND', 'Course was not found');
     const context = { scope, summary };
     return {
-      ...courseSummaryDto(context),
+      ...courseSummaryDto(context, this.options.trendEnabled),
       metricVersion: REPORTING_SOURCE_METRIC_VERSION,
       descriptorVersion: REPORTING_DESCRIPTOR_VERSION,
       reporting: this.metadata(
@@ -325,7 +329,9 @@ export class StudentReportingService {
     const start = (query.page - 1) * query.limit;
     return {
       data: {
-        items: filtered.slice(start, start + query.limit).map(courseSummaryDto),
+        items: filtered
+          .slice(start, start + query.limit)
+          .map((context) => courseSummaryDto(context, this.options.trendEnabled)),
         reporting: this.metadata(
           REPORTING_SOURCE_METRIC_VERSION,
           loaded.items,

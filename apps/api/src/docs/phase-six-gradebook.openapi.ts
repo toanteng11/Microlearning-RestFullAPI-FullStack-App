@@ -194,7 +194,7 @@ export const phaseSixGradebookSchemas: SchemaMap = {
   GradebookData: {
     type: 'object',
     additionalProperties: false,
-    required: ['course', 'columns', 'rows', 'activityPage', 'reporting'],
+    required: ['course', 'columns', 'rows', 'activityPage', 'allowedActions', 'reporting'],
     properties: {
       course: {
         type: 'object',
@@ -225,6 +225,7 @@ export const phaseSixGradebookSchemas: SchemaMap = {
           truncated: { type: 'boolean' },
         },
       },
+      allowedActions: { type: 'array', items: { type: 'string', enum: ['EXPORT_REPORT'] } },
       reporting: { $ref: '#/components/schemas/ReportMetadata' },
     },
   },

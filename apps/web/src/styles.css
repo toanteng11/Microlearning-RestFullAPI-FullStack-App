@@ -2286,6 +2286,32 @@ button svg,
   gap: 10px;
 }
 
+.export-control {
+  display: grid;
+  gap: 4px;
+}
+
+.export-control button {
+  min-height: 40px;
+}
+
+.export-control .field-error {
+  max-width: 260px;
+}
+
+.conditional-report-table td:first-child {
+  min-width: 190px;
+}
+
+.conditional-report-table td:first-child strong,
+.conditional-report-table td:first-child small {
+  display: block;
+}
+
+.conditional-report-table code {
+  overflow-wrap: anywhere;
+}
+
 .gradebook-filter-bar label {
   flex: 1 1 175px;
 }

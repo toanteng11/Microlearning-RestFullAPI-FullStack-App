@@ -76,6 +76,9 @@ function dependencies(overrides?: { enabled?: boolean }) {
       timezone: 'Asia/Ho_Chi_Minh',
       staleAfterSeconds: 300,
       maxDateRangeDays: 365,
+      exportEnabled: false,
+      analyticsEventsEnabled: false,
+      learningOutcomesEnabled: false,
     },
     () => new Date(fixedNow),
   );

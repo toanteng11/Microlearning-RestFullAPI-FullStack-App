@@ -6,6 +6,9 @@ import type {
   TeacherProgressQuery,
   AdminAuditQuery,
   AdminGovernanceQuery,
+  StudentProgressTrendQuery,
+  AdminLearningOutcomeQuery,
+  AdminAnalyticsAdoptionQuery,
 } from './reporting.types';
 
 export const reportingQueryKeys = {
@@ -16,6 +19,8 @@ export const reportingQueryKeys = {
     [...reportingQueryKeys.all(actorId), 'student-courses', query] as const,
   studentCourse: (actorId: string, courseId: string) =>
     [...reportingQueryKeys.all(actorId), 'student-course', courseId] as const,
+  studentTrend: (actorId: string, query: StudentProgressTrendQuery) =>
+    [...reportingQueryKeys.all(actorId), 'student-trend', query] as const,
   teacherDashboard: (actorId: string, courseId: string) =>
     [...reportingQueryKeys.all(actorId), 'teacher-dashboard', courseId] as const,
   teacherProgress: (actorId: string, courseId: string, query: TeacherProgressQuery) =>
@@ -36,4 +41,8 @@ export const reportingQueryKeys = {
     [...reportingQueryKeys.all(actorId), 'admin-governance', query] as const,
   adminAudit: (actorId: string, query: AdminAuditQuery) =>
     [...reportingQueryKeys.all(actorId), 'admin-audit', query] as const,
+  adminLearningOutcomes: (actorId: string, query: AdminLearningOutcomeQuery) =>
+    [...reportingQueryKeys.all(actorId), 'admin-learning-outcomes', query] as const,
+  adminAnalyticsAdoption: (actorId: string, query: AdminAnalyticsAdoptionQuery) =>
+    [...reportingQueryKeys.all(actorId), 'admin-analytics-adoption', query] as const,
 };

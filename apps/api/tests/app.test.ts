@@ -421,6 +421,17 @@ describe('system API', () => {
       ['GET /api/v1/admin/dashboard', 'getAdminReportingDashboard'],
       ['GET /api/v1/admin/reports/governance', 'getAdminGovernanceReport'],
       ['GET /api/v1/admin/audit-logs', 'listAdminReportingAuditLogs'],
+      ['GET /api/v1/students/me/progress/trend', 'getStudentProgressTrend'],
+      ['GET /api/v1/teacher/courses/{courseId}/progress/export', 'exportTeacherCourseProgressCsv'],
+      [
+        'GET /api/v1/teacher/courses/{courseId}/gradebook/export',
+        'exportTeacherCourseGradebookCsv',
+      ],
+      ['GET /api/v1/admin/reports/adoption', 'getAdminAnalyticsAdoption'],
+      ['GET /api/v1/admin/reports/learning-outcomes', 'getAdminLearningOutcomes'],
+      ['GET /api/v1/admin/reports/governance/export', 'exportAdminGovernanceCsv'],
+      ['GET /api/v1/admin/audit-logs/export', 'exportAdminAuditCsv'],
+      ['POST /api/v1/analytics/events', 'ingestAnalyticsEvent'],
       [
         'GET /api/v1/teacher/courses/{courseId}/students/{studentId}/progress',
         'getTeacherStudentProgress',
@@ -428,19 +439,21 @@ describe('system API', () => {
     ]);
     const actual = new Map<string, string>();
     for (const [path, pathItem] of Object.entries(document.paths)) {
-      const operation = pathItem?.get;
-      if (
-        !operation?.operationId ||
-        !PHASE_SIX_OPENAPI_OPERATIONS.includes(
-          operation.operationId as (typeof PHASE_SIX_OPENAPI_OPERATIONS)[number],
+      for (const method of ['get', 'post'] as const) {
+        const operation = pathItem?.[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_SIX_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_SIX_OPENAPI_OPERATIONS)[number],
+          )
         )
-      )
-        continue;
-      actual.set(`GET ${path}`, operation.operationId);
-      expect(operation.security).toEqual([{ bearerAuth: [] }]);
-      expect(operation.responses['200']).toBeDefined();
-      expect(operation.responses['401']).toBeDefined();
-      expect(operation.responses['403']).toBeDefined();
+          continue;
+        actual.set(`${method.toUpperCase()} ${path}`, operation.operationId);
+        expect(operation.security).toEqual([{ bearerAuth: [] }]);
+        expect(operation.responses['200']).toBeDefined();
+        expect(operation.responses['401']).toBeDefined();
+        expect(operation.responses['403']).toBeDefined();
+      }
     }
     expect(actual).toEqual(expected);
     expect(new Set(actual.values()).size).toBe(PHASE_SIX_OPENAPI_OPERATIONS.length);

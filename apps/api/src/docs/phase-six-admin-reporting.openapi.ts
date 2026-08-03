@@ -127,6 +127,7 @@ export const phaseSixAdminReportingSchemas: SchemaMap = {
       'courses',
       'activeEnrollmentCount',
       'recentGovernanceEvents',
+      'allowedActions',
       'reporting',
     ],
     properties: {
@@ -141,6 +142,7 @@ export const phaseSixAdminReportingSchemas: SchemaMap = {
         maxItems: 20,
         items: { $ref: '#/components/schemas/AdminAuditSummary' },
       },
+      allowedActions: { type: 'array', items: { type: 'string' } },
       reporting: { $ref: '#/components/schemas/ReportMetadata' },
     },
   },
@@ -154,6 +156,7 @@ export const phaseSixAdminReportingSchemas: SchemaMap = {
       'classrooms',
       'courses',
       'enrollments',
+      'allowedActions',
       'reporting',
     ],
     properties: {
@@ -163,6 +166,7 @@ export const phaseSixAdminReportingSchemas: SchemaMap = {
       classrooms: { $ref: '#/components/schemas/AdminClassroomCounts' },
       courses: { $ref: '#/components/schemas/AdminCourseCounts' },
       enrollments: { $ref: '#/components/schemas/AdminEnrollmentCounts' },
+      allowedActions: { type: 'array', items: { type: 'string' } },
       reporting: { $ref: '#/components/schemas/ReportMetadata' },
     },
   },

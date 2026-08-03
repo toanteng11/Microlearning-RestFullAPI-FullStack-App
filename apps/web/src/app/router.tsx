@@ -54,11 +54,14 @@ import {
 } from '../features/learning/learning-route-components';
 import {
   StudentProgressPage,
+  StudentProgressTrendPage,
   StudentReportingDashboardPage,
   TeacherRankingPage,
   TeacherGradebookPage,
   TeacherStudentDetailPage,
   AdminGovernanceReportPage,
+  AdminLearningOutcomesPage,
+  AdminAnalyticsAdoptionPage,
   AdminReportingDashboardPage,
 } from '../features/reporting/reporting-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
@@ -105,6 +108,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="learning.view_enrolled">
                 <StudentProgressPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/progress/:courseId/trend',
+            element: (
+              <RoleRoute permission="learning.view_enrolled">
+                <StudentProgressTrendPage />
               </RoleRoute>
             ),
           },
@@ -377,6 +388,22 @@ export const router = createBrowserRouter([
             element: (
               <RoleRoute permission="report.view_governance">
                 <AdminGovernanceReportPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/learning-outcomes',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminLearningOutcomesPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/adoption',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminAnalyticsAdoptionPage />
               </RoleRoute>
             ),
           },

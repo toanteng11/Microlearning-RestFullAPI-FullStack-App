@@ -12,6 +12,9 @@ import {
   adminAuditEnvelopeSchema,
   adminDashboardEnvelopeSchema,
   adminGovernanceEnvelopeSchema,
+  studentProgressTrendEnvelopeSchema,
+  adminLearningOutcomeEnvelopeSchema,
+  adminAnalyticsAdoptionEnvelopeSchema,
 } from './reporting.schemas';
 import type {
   StudentCourseProgressEnvelope,
@@ -33,6 +36,12 @@ import type {
   AdminDashboardEnvelope,
   AdminGovernanceEnvelope,
   AdminGovernanceQuery,
+  StudentProgressTrendEnvelope,
+  StudentProgressTrendQuery,
+  AdminLearningOutcomeEnvelope,
+  AdminLearningOutcomeQuery,
+  AdminAnalyticsAdoptionEnvelope,
+  AdminAnalyticsAdoptionQuery,
 } from './reporting.types';
 
 type Request = AuthContextValue['request'];
@@ -214,4 +223,39 @@ export async function listAdminAuditLogs(
   }
   const response = await request<unknown>(`/admin/audit-logs?${search.toString()}`);
   return adminAuditEnvelopeSchema.parse(response) as AdminAuditEnvelope;
+}
+
+export async function getStudentProgressTrend(
+  request: Request,
+  query: StudentProgressTrendQuery,
+): Promise<StudentProgressTrendEnvelope> {
+  const search = new URLSearchParams({ courseId: query.courseId });
+  setOptional(search, 'from', query.from);
+  setOptional(search, 'to', query.to);
+  setOptional(search, 'timezone', query.timezone);
+  const response = await request<unknown>(`/students/me/progress/trend?${search.toString()}`);
+  return studentProgressTrendEnvelopeSchema.parse(response) as StudentProgressTrendEnvelope;
+}
+
+export async function getAdminLearningOutcomes(
+  request: Request,
+  query: AdminLearningOutcomeQuery,
+): Promise<AdminLearningOutcomeEnvelope> {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) setOptional(search, key, value);
+  const suffix = search.size ? `?${search.toString()}` : '';
+  const response = await request<unknown>(`/admin/reports/learning-outcomes${suffix}`);
+  return adminLearningOutcomeEnvelopeSchema.parse(response) as AdminLearningOutcomeEnvelope;
+}
+
+export async function getAdminAnalyticsAdoption(
+  request: Request,
+  query: AdminAnalyticsAdoptionQuery,
+): Promise<AdminAnalyticsAdoptionEnvelope> {
+  const search = new URLSearchParams({ interval: query.interval });
+  setOptional(search, 'from', query.from);
+  setOptional(search, 'to', query.to);
+  setOptional(search, 'timezone', query.timezone);
+  const response = await request<unknown>(`/admin/reports/adoption?${search.toString()}`);
+  return adminAnalyticsAdoptionEnvelopeSchema.parse(response) as AdminAnalyticsAdoptionEnvelope;
 }

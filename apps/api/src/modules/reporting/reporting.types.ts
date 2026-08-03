@@ -19,6 +19,7 @@ import type {
   REPORTING_PROGRESS_STATUSES,
   REPORTING_SORT_ORDERS,
   REPORTING_SUPPORT_FLAGS,
+  ANALYTICS_EVENT_NAMES,
 } from './reporting.constants.js';
 
 export type ReportFreshnessStatus = (typeof REPORT_FRESHNESS_STATUSES)[number];
@@ -32,6 +33,7 @@ export type ReportingInvalidationReason = (typeof REPORTING_INVALIDATION_REASONS
 export type ReportingInvalidationScopeType = (typeof REPORTING_INVALIDATION_SCOPE_TYPES)[number];
 export type ReportingInvalidationStatus = (typeof REPORTING_INVALIDATION_STATUSES)[number];
 export type ReportingSortOrder = (typeof REPORTING_SORT_ORDERS)[number];
+export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
 export type ReportFilterValue = string | number | boolean | null | readonly string[];
 
 export interface ReportFreshness {

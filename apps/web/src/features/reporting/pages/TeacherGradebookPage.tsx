@@ -4,6 +4,7 @@ import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { ExportCsvButton } from '../components/ExportCsvButton';
 import { GradebookFilters, type GradebookFilterValues } from '../components/GradebookFilters';
 import { GradebookTable } from '../components/GradebookTable';
 import { ReportingFreshnessNotice } from '../components/ReportingFreshnessNotice';
@@ -108,6 +109,16 @@ export function TeacherGradebookPage() {
   };
   const resetFilters = () => setParams(new URLSearchParams());
   const returnTo = `${location.pathname}${location.search}`;
+  const exportSearch = new URLSearchParams({
+    activityLimit: String(query.activityLimit),
+    sortBy: query.sortBy,
+    sortOrder: query.sortOrder,
+  });
+  if (query.search) exportSearch.set('search', query.search);
+  if (query.activityType) exportSearch.set('activityType', query.activityType);
+  if (query.completionStatus) exportSearch.set('completionStatus', query.completionStatus);
+  if (query.gradingStatus) exportSearch.set('gradingStatus', query.gradingStatus);
+  if (query.moduleId) exportSearch.set('moduleId', query.moduleId);
 
   return (
     <section className="page-section gradebook-page" aria-labelledby="gradebook-title">
@@ -118,6 +129,12 @@ export function TeacherGradebookPage() {
           <p>Theo dõi tiến độ và trạng thái chấm điểm của từng Student.</p>
         </div>
         <div className="gradebook-header-actions">
+          {gradebook.data?.data.allowedActions.includes('EXPORT_REPORT') ? (
+            <ExportCsvButton
+              path={`/teacher/courses/${courseId}/gradebook/export?${exportSearch.toString()}`}
+              filename={`course-${courseId}-gradebook.csv`}
+            />
+          ) : null}
           <Link className="button-link button-link--secondary" to={`/teacher/courses/${courseId}`}>
             <ChevronLeft size={17} aria-hidden="true" /> Course
           </Link>

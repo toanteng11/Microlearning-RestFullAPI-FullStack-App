@@ -6,7 +6,8 @@ import type { AuthenticatedUser } from '../auth/auth.types.js';
 export interface ReportingViewAuditCommand {
   actor: AuthenticatedUser;
   requestId: string;
-  reportId: 'RPT-ADM-GOVERNANCE' | 'RPT-ADM-AUDIT';
+  reportId:
+    'RPT-ADM-GOVERNANCE' | 'RPT-ADM-AUDIT' | 'RPT-ADM-LEARNING-OUTCOMES' | 'RPT-ADM-ADOPTION';
   definitionVersion: string;
   filterFields: readonly string[];
   dateRangeDays: number;

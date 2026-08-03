@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
+import { ExportCsvButton } from '../components/ExportCsvButton';
 import { getTeacherReportingDashboard } from '../reporting-api';
 import { displayReportingPercentage } from '../reporting-format';
 import { reportingQueryKeys } from '../reporting-query-keys';
@@ -52,6 +53,12 @@ export function TeacherReportingDashboardPage({ courseId }: { courseId: string }
           <h2 id="teacher-reporting-title">Tổng quan tiến độ</h2>
         </div>
         <div className="reporting-heading-actions">
+          {data.allowedActions.includes('EXPORT_REPORT') ? (
+            <ExportCsvButton
+              path={`/teacher/courses/${courseId}/progress/export`}
+              filename={`course-${courseId}-progress.csv`}
+            />
+          ) : null}
           <Link
             className="button-link button-link--secondary"
             to={`/teacher/courses/${courseId}/gradebook`}

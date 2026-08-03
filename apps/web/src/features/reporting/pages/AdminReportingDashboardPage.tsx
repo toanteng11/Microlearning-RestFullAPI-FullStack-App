@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { AdminSummary } from '../components/AdminSummary';
+import { ExportCsvButton } from '../components/ExportCsvButton';
 import { ReportingFreshnessNotice } from '../components/ReportingFreshnessNotice';
 import { getAdminReportingDashboard } from '../reporting-api';
 import { displayReportingDate } from '../reporting-format';
@@ -68,9 +69,30 @@ export function AdminReportingDashboardPage() {
           <p className="eyebrow">Admin reporting</p>
           <h1 id="admin-dashboard-title">Tổng quan hệ thống</h1>
         </div>
-        <Link className="button-link" to="/admin/reports/governance">
-          <BarChart3 size={17} aria-hidden="true" /> Báo cáo quản trị
-        </Link>
+        <div className="reporting-heading-actions">
+          {data.allowedActions.includes('VIEW_ANALYTICS_ADOPTION') ? (
+            <Link className="button-link button-link--secondary" to="/admin/reports/adoption">
+              <BarChart3 size={17} aria-hidden="true" /> Adoption
+            </Link>
+          ) : null}
+          {data.allowedActions.includes('VIEW_LEARNING_OUTCOMES') ? (
+            <Link
+              className="button-link button-link--secondary"
+              to="/admin/reports/learning-outcomes"
+            >
+              <GraduationCap size={17} aria-hidden="true" /> Learning outcomes
+            </Link>
+          ) : null}
+          {data.allowedActions.includes('EXPORT_REPORT') ? (
+            <ExportCsvButton
+              path="/admin/reports/governance/export"
+              filename="admin-governance-report.csv"
+            />
+          ) : null}
+          <Link className="button-link" to="/admin/reports/governance">
+            <BarChart3 size={17} aria-hidden="true" /> Báo cáo quản trị
+          </Link>
+        </div>
       </header>
 
       <ReportingFreshnessNotice

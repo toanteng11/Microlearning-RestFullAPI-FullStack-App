@@ -1,4 +1,7 @@
 import { Router, type Request, type Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { pipeline } from 'node:stream/promises';
+import { Readable } from 'node:stream';
 import type { ZodType } from 'zod';
 
 import { createAuthenticateMiddleware, requirePermission } from '../shared/auth/authenticate.js';
@@ -25,10 +28,20 @@ import { QuizRepository } from './quizzes/quiz.repository.js';
 import { MongoStudentReportingSource } from './reporting/adapters/mongo-student-reporting.source.js';
 import { MongoTeacherReportingSource } from './reporting/adapters/mongo-teacher-reporting.source.js';
 import { AdminReportingService } from './reporting/admin-reporting.service.js';
+import { AdminLearningOutcomeRepository } from './reporting/admin-learning-outcome.repository.js';
+import { AdminLearningOutcomeService } from './reporting/admin-learning-outcome.service.js';
+import { AnalyticsEventRepository } from './reporting/analytics-event.repository.js';
+import { AnalyticsEventService } from './reporting/analytics-event.service.js';
 import { GradebookReportingService } from './reporting/gradebook-reporting.service.js';
 import { ReportingAuditWriter } from './reporting/reporting-audit.writer.js';
+import { ReportingExportAuditWriter } from './reporting/reporting-export-audit.writer.js';
+import {
+  ReportingExportService,
+  type PreparedCsvExport,
+} from './reporting/reporting-export.service.js';
 import { createReportingQuerySchemas } from './reporting/reporting.schemas.js';
 import { StudentReportingService } from './reporting/student-reporting.service.js';
+import { StudentProgressTrendService } from './reporting/student-progress-trend.service.js';
 import { TeacherReportingService } from './reporting/teacher-reporting.service.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { UserRepository } from './users/user.repository.js';
@@ -46,6 +59,28 @@ function parseTeacherReportingQuery<T>(schema: ZodType<T>, input: unknown): T {
 
 function requestIdFrom(response: Response) {
   return String(response.getHeader('x-request-id') ?? 'unknown');
+}
+
+function createAnalyticsEventLimiter(config: AppConfig) {
+  return rateLimit({
+    windowMs: config.rateLimits.windowSeconds * 1_000,
+    limit: config.reporting.analyticsEventIdentityLimit,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    keyGenerator: (request) => request.auth?.id ?? 'unauthenticated',
+    handler: (_request, _response, next) =>
+      next(new AppError(429, 'RATE_LIMITED', 'Too many analytics events. Try again later')),
+  });
+}
+
+async function sendCsv(response: Response, prepared: PreparedCsvExport) {
+  response.status(200);
+  response.setHeader('Cache-Control', 'private, no-store');
+  response.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  response.setHeader('Content-Disposition', `attachment; filename="${prepared.filename}"`);
+  response.setHeader('X-Content-Type-Options', 'nosniff');
+  response.setHeader('X-Report-Row-Count', String(prepared.rowCount));
+  await pipeline(Readable.from(prepared.content), response);
 }
 
 export function createPhaseSixRouter(
@@ -100,6 +135,7 @@ export function createPhaseSixRouter(
       inlineRefreshMaxStudents: config.reporting.inlineRefreshMaxStudents,
       refreshRequestBudgetMs: config.reporting.refreshRequestBudgetMs,
       dueSoonWindowHours: config.reporting.dueSoonWindowHours,
+      trendEnabled: config.reporting.studentProgressTrendEnabled,
     },
   );
   const teacherSource = new MongoTeacherReportingSource(
@@ -119,6 +155,7 @@ export function createPhaseSixRouter(
       timezone: config.reporting.timezone,
       staleAfterSeconds: config.reporting.staleAfterSeconds,
       dueSoonWindowHours: config.reporting.dueSoonWindowHours,
+      exportEnabled: config.reporting.exportEnabled,
     },
   );
   const gradebookReporting = new GradebookReportingService(
@@ -134,17 +171,70 @@ export function createPhaseSixRouter(
       enabled: config.reporting.enabled,
       timezone: config.reporting.timezone,
       staleAfterSeconds: config.reporting.staleAfterSeconds,
+      exportEnabled: config.reporting.exportEnabled,
     },
   );
+  const reportingAuditWriter = new ReportingAuditWriter();
   const adminReporting = new AdminReportingService(
     foundation.governanceReader,
     foundation.auditReader,
-    new ReportingAuditWriter(),
+    reportingAuditWriter,
     {
       enabled: config.reporting.enabled,
       timezone: config.reporting.timezone,
       staleAfterSeconds: config.reporting.staleAfterSeconds,
       maxDateRangeDays: config.reporting.maxDateRangeDays,
+      exportEnabled: config.reporting.exportEnabled,
+      analyticsEventsEnabled: config.reporting.analyticsEventsEnabled,
+      learningOutcomesEnabled: config.reporting.adminLearningOutcomesEnabled,
+    },
+  );
+  const studentTrend = new StudentProgressTrendService(
+    foundation.scopeReader,
+    foundation.snapshots,
+    foundation.refreshService,
+    {
+      enabled: config.reporting.studentProgressTrendEnabled,
+      timezone: config.reporting.timezone,
+      maxDateRangeDays: config.reporting.maxDateRangeDays,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+    },
+  );
+  const analytics = new AnalyticsEventService(
+    new AnalyticsEventRepository(),
+    foundation.scopeReader,
+    {
+      enabled: config.reporting.analyticsEventsEnabled,
+      retentionDays: config.reporting.analyticsEventRetentionDays,
+      environment: config.appEnvironment,
+      appVersion: config.appVersion,
+      timezone: config.reporting.timezone,
+      maxDateRangeDays: config.reporting.maxDateRangeDays,
+      privacyMinGroupSize: config.reporting.privacyMinGroupSize,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+    },
+  );
+  const learningOutcomes = new AdminLearningOutcomeService(
+    new AdminLearningOutcomeRepository(),
+    reportingAuditWriter,
+    {
+      enabled: config.reporting.adminLearningOutcomesEnabled,
+      timezone: config.reporting.timezone,
+      maxDateRangeDays: config.reporting.maxDateRangeDays,
+      privacyMinGroupSize: config.reporting.privacyMinGroupSize,
+      staleAfterSeconds: config.reporting.staleAfterSeconds,
+    },
+  );
+  const exports = new ReportingExportService(
+    teacherReporting,
+    gradebookReporting,
+    adminReporting,
+    new ReportingExportAuditWriter(),
+    {
+      enabled: config.reporting.exportEnabled,
+      maxRows: config.reporting.exportMaxRows,
+      pageMax: config.reporting.pageMax,
+      gradebookActivityMax: config.reporting.gradebookActivityMax,
     },
   );
   const schemas = createReportingQuerySchemas({
@@ -157,6 +247,7 @@ export function createPhaseSixRouter(
   router.use('/students', authenticate);
   router.use('/teacher', authenticate);
   router.use('/admin', authenticate);
+  router.use('/analytics', authenticate);
 
   router.get(
     '/students/me/dashboard',
@@ -208,6 +299,53 @@ export function createPhaseSixRouter(
   );
 
   router.get(
+    '/admin/reports/adoption',
+    requirePermission('report.view_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminAdoption, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({ success: true, data: await analytics.adoption(request.auth!, query) });
+    },
+  );
+
+  router.get(
+    '/admin/reports/learning-outcomes',
+    requirePermission('report.view_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminLearningOutcomes, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({
+        success: true,
+        data: await learningOutcomes.report(request.auth!, query, requestIdFrom(response)),
+      });
+    },
+  );
+
+  router.get(
+    '/admin/reports/governance/export',
+    requirePermission('report.export_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminGovernance, request.query);
+      await sendCsv(
+        response,
+        await exports.adminGovernance(request.auth!, query, requestIdFrom(response)),
+      );
+    },
+  );
+
+  router.get(
+    '/admin/audit-logs/export',
+    requirePermission('report.export_governance'),
+    async (request, response) => {
+      const query = parseTeacherReportingQuery(schemas.adminAuditExport, request.query);
+      await sendCsv(
+        response,
+        await exports.adminAudit(request.auth!, query, requestIdFrom(response)),
+      );
+    },
+  );
+
+  router.get(
     '/students/me/progress',
     requirePermission('learning.view_enrolled'),
     async (request, response) => {
@@ -224,6 +362,16 @@ export function createPhaseSixRouter(
       const query = parseWithSchema(schemas.studentCourseList, request.query);
       response.setHeader('Cache-Control', 'private, no-store');
       response.json({ success: true, ...(await reporting.courses(request.auth!, query)) });
+    },
+  );
+
+  router.get(
+    '/students/me/progress/trend',
+    requirePermission('learning.view_enrolled'),
+    async (request, response) => {
+      const query = parseWithSchema(schemas.studentTrend, request.query);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.json({ success: true, data: await studentTrend.trend(request.auth!, query) });
     },
   );
 
@@ -302,6 +450,55 @@ export function createPhaseSixRouter(
         success: true,
         ...(await gradebookReporting.gradebook(request.auth!, courseId, query)),
       });
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/progress/export',
+    requirePermission('report.export_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.teacherProgressExport, request.query);
+      await sendCsv(
+        response,
+        await exports.teacherProgress(request.auth!, courseId, query, requestIdFrom(response)),
+      );
+    },
+  );
+
+  router.get(
+    '/teacher/courses/:courseId/gradebook/export',
+    requirePermission('report.export_owned'),
+    async (request, response) => {
+      const { courseId } = parseWithSchema(schemas.courseParams, request.params);
+      const query = parseTeacherReportingQuery(schemas.gradebookExport, request.query);
+      await sendCsv(
+        response,
+        await exports.teacherGradebook(request.auth!, courseId, query, requestIdFrom(response)),
+      );
+    },
+  );
+
+  router.post(
+    '/analytics/events',
+    createAnalyticsEventLimiter(config),
+    async (request, response) => {
+      if (
+        Buffer.byteLength(JSON.stringify(request.body ?? null), 'utf8') >
+        config.reporting.analyticsEventBodyMaxBytes
+      ) {
+        throw new AppError(413, 'PAYLOAD_TOO_LARGE', 'Analytics event payload is too large');
+      }
+      const input = parseWithSchema(schemas.analyticsEvent, request.body);
+      const result = await analytics.ingest(request.auth!, input);
+      if (!result.stored) {
+        request.log.warn(
+          { event: 'analytics_event_storage_failed', requestId: requestIdFrom(response) },
+          'Analytics event accepted without persistence',
+        );
+      }
+      response.status(result.duplicate ? 200 : 202).setHeader('Cache-Control', 'private, no-store');
+      response.json({ success: true, data: result });
     },
   );
 

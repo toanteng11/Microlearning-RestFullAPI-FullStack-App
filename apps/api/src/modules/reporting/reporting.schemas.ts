@@ -10,6 +10,7 @@ import {
   REPORTING_PROGRESS_STATUSES,
   REPORTING_SORT_ORDERS,
   REPORTING_SUPPORT_FLAGS,
+  ANALYTICS_EVENT_NAMES,
 } from './reporting.constants.js';
 import { CLASSROOM_STATUSES } from '../classrooms/classroom.types.js';
 import { COMMON_CONTENT_STATUSES } from '../learning-content/content.types.js';
@@ -102,6 +103,15 @@ export function createReportingQuerySchemas(options: {
   const studentCourseDetail = z
     .object({
       courseId: objectId,
+      timezone: timezone.optional(),
+    })
+    .strict();
+
+  const studentTrend = z
+    .object({
+      courseId: objectId,
+      from: isoDateOrDateTime.optional(),
+      to: isoDateOrDateTime.optional(),
       timezone: timezone.optional(),
     })
     .strict();
@@ -239,12 +249,101 @@ export function createReportingQuerySchemas(options: {
     })
     .strict();
 
+  const adminAdoption = z
+    .object({
+      from: isoDateOrDateTime.optional(),
+      to: isoDateOrDateTime.optional(),
+      timezone: timezone.optional(),
+      interval: z.enum(['DAY', 'WEEK', 'MONTH']).default('DAY'),
+    })
+    .strict();
+
+  const adminLearningOutcomes = z
+    .object({
+      from: isoDateOrDateTime.optional(),
+      to: isoDateOrDateTime.optional(),
+      timezone: timezone.optional(),
+      courseStatus: z.enum(COMMON_CONTENT_STATUSES).optional(),
+    })
+    .strict();
+
+  const analyticsProperties = z
+    .object({
+      reportId: z.string().trim().min(1).max(100).optional(),
+      surface: z.string().trim().min(1).max(100).optional(),
+      filterName: z.string().trim().min(1).max(100).optional(),
+      tabName: z.string().trim().min(1).max(100).optional(),
+      lifecycleStatus: z.string().trim().min(1).max(50).optional(),
+      durationBucket: z.enum(['LT_10S', '10S_1M', '1M_5M', 'GT_5M']).optional(),
+      rowCountBucket: z.enum(['0', '1_9', '10_49', '50_199', '200_PLUS']).optional(),
+      result: z.enum(['SUCCESS', 'FAILED']).optional(),
+      clientVersion: z.string().trim().min(1).max(50).optional(),
+    })
+    .strict();
+  const analyticsEvent = z
+    .object({
+      eventId: z.uuid(),
+      eventName: z.enum(ANALYTICS_EVENT_NAMES),
+      schemaVersion: z.literal('1'),
+      occurredAt: z.iso.datetime({ offset: true }),
+      context: z
+        .object({
+          classroomId: objectId.optional(),
+          courseId: objectId.optional(),
+          activityType: z.enum(['LESSON', 'QUIZ', 'ASSIGNMENT']).optional(),
+          activityId: objectId.optional(),
+        })
+        .strict()
+        .default({}),
+      properties: analyticsProperties.default({}),
+    })
+    .strict()
+    .superRefine((event, context) => {
+      if (event.context.activityId && (!event.context.courseId || !event.context.activityType)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['context', 'activityId'],
+          message: 'activityId requires courseId and activityType',
+        });
+      }
+      if (event.eventName.startsWith('report_') && !event.properties.reportId) {
+        context.addIssue({
+          code: 'custom',
+          path: ['properties', 'reportId'],
+          message: 'reportId is required for reporting events',
+        });
+      }
+      if (event.eventName === 'report_filter_changed' && !event.properties.filterName) {
+        context.addIssue({
+          code: 'custom',
+          path: ['properties', 'filterName'],
+          message: 'filterName is required for report_filter_changed',
+        });
+      }
+      if (event.eventName === 'report_tab_changed' && !event.properties.tabName) {
+        context.addIssue({
+          code: 'custom',
+          path: ['properties', 'tabName'],
+          message: 'tabName is required for report_tab_changed',
+        });
+      }
+    });
+
+  const teacherProgressExport = teacherProgress.omit({ page: true, limit: true });
+  const gradebookExport = gradebook.omit({
+    page: true,
+    limit: true,
+    activityCursor: true,
+  });
+  const adminAuditExport = adminAudit.omit({ page: true, limit: true });
+
   return Object.freeze({
     courseParams: z.object({ courseId: objectId }).strict(),
     teacherStudentParams: z.object({ courseId: objectId, studentId: objectId }).strict(),
     studentDashboard,
     studentCourseList,
     studentCourseDetail,
+    studentTrend,
     teacherDashboard,
     teacherProgress,
     teacherActivities,
@@ -254,6 +353,12 @@ export function createReportingQuerySchemas(options: {
     adminDashboard,
     adminGovernance,
     adminAudit,
+    adminAdoption,
+    adminLearningOutcomes,
+    analyticsEvent,
+    teacherProgressExport,
+    gradebookExport,
+    adminAuditExport,
     allowedActions: z.array(z.enum(REPORTING_ALLOWED_ACTIONS)),
   });
 }
@@ -266,6 +371,9 @@ export type StudentCourseListQuery = z.infer<
 >;
 export type StudentCourseDetailQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['studentCourseDetail']
+>;
+export type StudentTrendQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['studentTrend']
 >;
 export type TeacherProgressQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['teacherProgress']
@@ -290,3 +398,21 @@ export type AdminGovernanceQuery = z.infer<
   ReturnType<typeof createReportingQuerySchemas>['adminGovernance']
 >;
 export type AdminAuditQuery = z.infer<ReturnType<typeof createReportingQuerySchemas>['adminAudit']>;
+export type AdminAdoptionQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['adminAdoption']
+>;
+export type AdminLearningOutcomesQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['adminLearningOutcomes']
+>;
+export type AnalyticsEventInput = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['analyticsEvent']
+>;
+export type TeacherProgressExportQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['teacherProgressExport']
+>;
+export type GradebookExportQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['gradebookExport']
+>;
+export type AdminAuditExportQuery = z.infer<
+  ReturnType<typeof createReportingQuerySchemas>['adminAuditExport']
+>;
