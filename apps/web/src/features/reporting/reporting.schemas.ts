@@ -47,6 +47,130 @@ export const reportMetadataSchema = z.object({
   filters: z.record(z.string(), z.unknown()),
 });
 
+const adminUserStatusCountsSchema = z
+  .object({
+    total: z.number().int().nonnegative(),
+    PENDING: z.number().int().nonnegative(),
+    ACTIVE: z.number().int().nonnegative(),
+    INACTIVE: z.number().int().nonnegative(),
+    BLOCKED: z.number().int().nonnegative(),
+    DELETED: z.number().int().nonnegative(),
+  })
+  .strict();
+const adminUsersByRoleSchema = z
+  .object({
+    STUDENT: adminUserStatusCountsSchema,
+    TEACHER: adminUserStatusCountsSchema,
+    ADMIN: adminUserStatusCountsSchema,
+    SUPER_ADMIN: adminUserStatusCountsSchema,
+  })
+  .strict();
+const registrationSourceCountsSchema = z
+  .object({
+    SELF_REGISTRATION: z.number().int().nonnegative(),
+    TEACHER_INVITATION: z.number().int().nonnegative(),
+    ADMIN_BOOTSTRAP: z.number().int().nonnegative(),
+  })
+  .strict();
+const invitationCountsSchema = z
+  .object({
+    PENDING: z.number().int().nonnegative(),
+    ACCEPTED: z.number().int().nonnegative(),
+    EXPIRED: z.number().int().nonnegative(),
+    REVOKED: z.number().int().nonnegative(),
+  })
+  .strict();
+const classroomCountsSchema = z
+  .object({
+    ACTIVE: z.number().int().nonnegative(),
+    LOCKED: z.number().int().nonnegative(),
+    ARCHIVED: z.number().int().nonnegative(),
+  })
+  .strict();
+const courseCountsSchema = z
+  .object({
+    DRAFT: z.number().int().nonnegative(),
+    SCHEDULED: z.number().int().nonnegative(),
+    PUBLISHED: z.number().int().nonnegative(),
+    UNPUBLISHED: z.number().int().nonnegative(),
+    ARCHIVED: z.number().int().nonnegative(),
+  })
+  .strict();
+const adminAuditSummarySchema = z
+  .object({
+    id: z.string(),
+    actorId: z.string().nullable(),
+    actorRole: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN', 'SYSTEM']),
+    action: z.string().min(1).max(100),
+    resourceType: z.string().min(1).max(100),
+    resourceId: z.string().min(1).max(100),
+    requestId: z.string().min(1).max(200),
+    createdAt: z.iso.datetime({ offset: true }),
+  })
+  .strict();
+
+export const adminDashboardEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        users: adminUsersByRoleSchema,
+        registrationSources: registrationSourceCountsSchema,
+        invitations: invitationCountsSchema,
+        classrooms: classroomCountsSchema,
+        courses: courseCountsSchema,
+        activeEnrollmentCount: z.number().int().nonnegative(),
+        recentGovernanceEvents: z.array(adminAuditSummarySchema).max(20),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+  })
+  .strict();
+
+export const adminGovernanceEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        users: adminUsersByRoleSchema,
+        registrationSources: registrationSourceCountsSchema,
+        invitations: invitationCountsSchema,
+        classrooms: classroomCountsSchema,
+        courses: courseCountsSchema,
+        enrollments: z
+          .object({
+            ACTIVE: z.number().int().nonnegative(),
+            REMOVED: z.number().int().nonnegative(),
+            LEFT: z.number().int().nonnegative(),
+            BLOCKED: z.number().int().nonnegative(),
+          })
+          .strict(),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+  })
+  .strict();
+
+export const adminAuditEnvelopeSchema = z
+  .object({
+    success: z.literal(true),
+    data: z
+      .object({
+        items: z.array(adminAuditSummarySchema).max(50),
+        reporting: reportMetadataSchema,
+      })
+      .strict(),
+    meta: z.object({
+      page: z.number().int().positive(),
+      limit: z.number().int().positive().max(50),
+      totalItems: z.number().int().nonnegative(),
+      totalPages: z.number().int().nonnegative(),
+      hasNextPage: z.boolean(),
+      hasPreviousPage: z.boolean(),
+    }),
+  })
+  .strict();
+
 export const studentCourseProgressSchema = z.object({
   classroom: z.object({ id: z.string(), name: z.string() }),
   course: z.object({ id: z.string(), title: z.string() }),

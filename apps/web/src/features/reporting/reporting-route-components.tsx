@@ -19,3 +19,11 @@ export const TeacherStudentDetailPage = lazy(async () => ({
 export const TeacherGradebookPage = lazy(async () => ({
   default: (await import('./pages/TeacherGradebookPage')).TeacherGradebookPage,
 }));
+
+export const AdminReportingDashboardPage = lazy(async () => ({
+  default: (await import('./pages/AdminReportingDashboardPage')).AdminReportingDashboardPage,
+}));
+
+export const AdminGovernanceReportPage = lazy(async () => ({
+  default: (await import('./pages/AdminGovernanceReportPage')).AdminGovernanceReportPage,
+}));

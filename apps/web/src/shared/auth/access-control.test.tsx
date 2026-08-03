@@ -3,7 +3,7 @@ import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router-d
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApplicationProviders } from '../../app/providers';
-import { AdminHomePage, TeacherHomePage } from '../../features/role-home/RoleHomePage';
+import { TeacherHomePage } from '../../features/role-home/RoleHomePage';
 import { AuthContext, type AuthContextValue, type CurrentUser } from './auth-context';
 import { ProtectedRoute } from './ProtectedRoute';
 import { RoleRoute } from './RoleRoute';
@@ -110,21 +110,9 @@ describe('route access control', () => {
     expect(await screen.findByText('Forbidden destination')).toBeInTheDocument();
   });
 
-  it('renders Teacher and Admin role workspaces', () => {
-    const first = render(<MemoryRouter>{withAuth(<TeacherHomePage />, authValue())}</MemoryRouter>);
+  it('renders the Teacher role workspace', () => {
+    render(<MemoryRouter>{withAuth(<TeacherHomePage />, authValue())}</MemoryRouter>);
     expect(screen.getByRole('heading', { name: 'Khóa học của tôi' })).toBeInTheDocument();
-    first.unmount();
-
-    const admin = { ...teacher, role: 'ADMIN' as const, email: 'admin@example.com' };
-    render(<MemoryRouter>{withAuth(<AdminHomePage />, authValue({ user: admin }))}</MemoryRouter>);
-    expect(screen.getByRole('link', { name: /Quản lý người dùng/ })).toHaveAttribute(
-      'href',
-      '/admin/users',
-    );
-    expect(screen.getByRole('link', { name: /Lời mời Teacher/ })).toHaveAttribute(
-      'href',
-      '/admin/teacher-invitations',
-    );
   });
 
   it('composes query and authentication providers around route outlets', async () => {

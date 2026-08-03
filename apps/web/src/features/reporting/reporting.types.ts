@@ -364,3 +364,84 @@ export interface GradebookEnvelope {
   };
   meta: Pagination;
 }
+
+export type AdminReportRole = 'STUDENT' | 'TEACHER' | 'ADMIN' | 'SUPER_ADMIN';
+export type AdminUserStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'BLOCKED' | 'DELETED';
+
+export interface AdminUserStatusCounts extends Record<AdminUserStatus, number> {
+  total: number;
+}
+
+export interface AdminAuditSummary {
+  id: string;
+  actorId: string | null;
+  actorRole: AdminReportRole | 'SYSTEM';
+  action: string;
+  resourceType: string;
+  resourceId: string;
+  requestId: string;
+  createdAt: string;
+}
+
+export interface AdminDashboardEnvelope {
+  success: true;
+  data: {
+    users: Record<AdminReportRole, AdminUserStatusCounts>;
+    registrationSources: Record<
+      'SELF_REGISTRATION' | 'TEACHER_INVITATION' | 'ADMIN_BOOTSTRAP',
+      number
+    >;
+    invitations: Record<'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'REVOKED', number>;
+    classrooms: Record<'ACTIVE' | 'LOCKED' | 'ARCHIVED', number>;
+    courses: Record<'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED', number>;
+    activeEnrollmentCount: number;
+    recentGovernanceEvents: AdminAuditSummary[];
+    reporting: ReportMetadata;
+  };
+}
+
+export interface AdminGovernanceQuery {
+  from?: string;
+  to?: string;
+  timezone?: string;
+  role?: AdminReportRole;
+  userStatus?: AdminUserStatus;
+  invitationStatus?: 'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'REVOKED';
+  classroomStatus?: 'ACTIVE' | 'LOCKED' | 'ARCHIVED';
+  courseStatus?: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
+}
+
+export interface AdminGovernanceEnvelope {
+  success: true;
+  data: {
+    users: Record<AdminReportRole, AdminUserStatusCounts>;
+    registrationSources: AdminDashboardEnvelope['data']['registrationSources'];
+    invitations: AdminDashboardEnvelope['data']['invitations'];
+    classrooms: AdminDashboardEnvelope['data']['classrooms'];
+    courses: AdminDashboardEnvelope['data']['courses'];
+    enrollments: Record<'ACTIVE' | 'REMOVED' | 'LEFT' | 'BLOCKED', number>;
+    reporting: ReportMetadata;
+  };
+}
+
+export interface AdminAuditQuery {
+  page: number;
+  limit: number;
+  from?: string;
+  to?: string;
+  timezone?: string;
+  actorRole?: AdminReportRole | 'SYSTEM';
+  action?: string;
+  resourceType?: string;
+  resourceId?: string;
+  sortOrder: 'asc' | 'desc';
+}
+
+export interface AdminAuditEnvelope {
+  success: true;
+  data: {
+    items: AdminAuditSummary[];
+    reporting: ReportMetadata;
+  };
+  meta: Pagination;
+}

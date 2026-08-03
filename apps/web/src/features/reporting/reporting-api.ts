@@ -9,6 +9,9 @@ import {
   teacherProgressListEnvelopeSchema,
   teacherReportingDashboardEnvelopeSchema,
   teacherStudentProgressEnvelopeSchema,
+  adminAuditEnvelopeSchema,
+  adminDashboardEnvelopeSchema,
+  adminGovernanceEnvelopeSchema,
 } from './reporting.schemas';
 import type {
   StudentCourseProgressEnvelope,
@@ -25,6 +28,11 @@ import type {
   TeacherProgressQuery,
   TeacherReportingDashboardEnvelope,
   TeacherStudentProgressEnvelope,
+  AdminAuditEnvelope,
+  AdminAuditQuery,
+  AdminDashboardEnvelope,
+  AdminGovernanceEnvelope,
+  AdminGovernanceQuery,
 } from './reporting.types';
 
 type Request = AuthContextValue['request'];
@@ -171,4 +179,39 @@ export async function getTeacherGradebook(
     `/teacher/courses/${courseId}/gradebook?${search.toString()}`,
   );
   return gradebookEnvelopeSchema.parse(response) as GradebookEnvelope;
+}
+
+export async function getAdminReportingDashboard(
+  request: Request,
+): Promise<AdminDashboardEnvelope> {
+  const response = await request<unknown>('/admin/dashboard?recentLimit=10');
+  return adminDashboardEnvelopeSchema.parse(response) as AdminDashboardEnvelope;
+}
+
+export async function getAdminGovernanceReport(
+  request: Request,
+  query: AdminGovernanceQuery,
+): Promise<AdminGovernanceEnvelope> {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) setOptional(search, key, value);
+  const suffix = search.size > 0 ? `?${search.toString()}` : '';
+  const response = await request<unknown>(`/admin/reports/governance${suffix}`);
+  return adminGovernanceEnvelopeSchema.parse(response) as AdminGovernanceEnvelope;
+}
+
+export async function listAdminAuditLogs(
+  request: Request,
+  query: AdminAuditQuery,
+): Promise<AdminAuditEnvelope> {
+  const search = new URLSearchParams({
+    page: String(query.page),
+    limit: String(query.limit),
+    sortOrder: query.sortOrder,
+  });
+  for (const [key, value] of Object.entries(query)) {
+    if (!['page', 'limit', 'sortOrder'].includes(key))
+      setOptional(search, key, String(value ?? ''));
+  }
+  const response = await request<unknown>(`/admin/audit-logs?${search.toString()}`);
+  return adminAuditEnvelopeSchema.parse(response) as AdminAuditEnvelope;
 }

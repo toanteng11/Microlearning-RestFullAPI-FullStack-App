@@ -4,6 +4,8 @@ import type {
   TeacherActivityQuery,
   TeacherAssessmentQuery,
   TeacherProgressQuery,
+  AdminAuditQuery,
+  AdminGovernanceQuery,
 } from './reporting.types';
 
 export const reportingQueryKeys = {
@@ -28,4 +30,10 @@ export const reportingQueryKeys = {
     [...reportingQueryKeys.all(actorId), 'teacher-gradebook', courseId] as const,
   teacherGradebook: (actorId: string, courseId: string, query: GradebookQuery) =>
     [...reportingQueryKeys.teacherGradebooks(actorId, courseId), query] as const,
+  adminDashboard: (actorId: string) =>
+    [...reportingQueryKeys.all(actorId), 'admin-dashboard'] as const,
+  adminGovernance: (actorId: string, query: AdminGovernanceQuery) =>
+    [...reportingQueryKeys.all(actorId), 'admin-governance', query] as const,
+  adminAudit: (actorId: string, query: AdminAuditQuery) =>
+    [...reportingQueryKeys.all(actorId), 'admin-audit', query] as const,
 };

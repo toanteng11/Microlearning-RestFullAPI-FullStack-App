@@ -10,7 +10,6 @@ import { ProfilePage } from '../features/profile/ProfilePage';
 import { AdminTeacherInvitationDetailPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationDetailPage';
 import { AdminTeacherInvitationsPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationsPage';
 import { TeacherInvitationActivationPage } from '../features/teacher-invitations/pages/TeacherInvitationActivationPage';
-import { AdminHomePage } from '../features/role-home/RoleHomePage';
 import {
   AdminClassroomDetailPage,
   AdminClassroomsPage,
@@ -59,6 +58,8 @@ import {
   TeacherRankingPage,
   TeacherGradebookPage,
   TeacherStudentDetailPage,
+  AdminGovernanceReportPage,
+  AdminReportingDashboardPage,
 } from '../features/reporting/reporting-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../shared/auth/RoleRoute';
@@ -367,7 +368,15 @@ export const router = createBrowserRouter([
             path: '/admin/dashboard',
             element: (
               <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
-                <AdminHomePage />
+                <AdminReportingDashboardPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/governance',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminGovernanceReportPage />
               </RoleRoute>
             ),
           },

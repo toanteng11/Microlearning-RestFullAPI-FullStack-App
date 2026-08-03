@@ -1,5 +1,4 @@
-import { BookOpenCheck, ClipboardList, GraduationCap, UsersRound } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { BookOpenCheck, ClipboardList, GraduationCap } from 'lucide-react';
 
 import { useAuth } from '../../shared/auth/auth-context';
 
@@ -56,37 +55,6 @@ export function TeacherHomePage() {
           <p>Các lớp học do Teacher phụ trách được tổng hợp tại trang lớp học.</p>
         </div>
       </section>
-    </section>
-  );
-}
-
-export function AdminHomePage() {
-  const { user } = useAuth();
-  return (
-    <section className="page-section">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Admin workspace</p>
-          <h1>Quản trị hệ thống</h1>
-          <p>Đăng nhập với {user?.email}</p>
-        </div>
-      </header>
-      <div className="action-list">
-        <Link className="action-row" to="/admin/users">
-          <UsersRound size={21} />
-          <span>
-            <strong>Quản lý người dùng</strong>
-            <small>Student, Teacher và Admin theo danh sách riêng.</small>
-          </span>
-        </Link>
-        <Link className="action-row" to="/admin/teacher-invitations">
-          <GraduationCap size={21} />
-          <span>
-            <strong>Lời mời Teacher</strong>
-            <small>Tạo và quản lý link mời thủ công.</small>
-          </span>
-        </Link>
-      </div>
     </section>
   );
 }
