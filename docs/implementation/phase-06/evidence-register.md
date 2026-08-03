@@ -61,20 +61,20 @@ raw production data hoặc private CSV.
 | P06-EV-NFR-005 | Admin Audit indexed filter | Local Pass | `200` AuditLog rows, 10 requests, p95 `28.07 ms`; named actor-role index; target `<=1200 ms` |
 | P06-EV-CI-001 | Docker integrated smoke | Local Pass | Mongo replica set + API + Web healthy; deterministic seed; fresh browser `34/34` |
 | P06-EV-CI-002 | Clean clone | Local Pass | `C:\tmp\phase06-clean-20260803-1115`; `npm ci` + `npm run check:ci`; `quality-hardening-evidence.md` |
-| P06-EV-CI-003 | Implementation PR CI | Local Pass/Remote Pending | API `230`; Web `126`; integration `97`; OpenAPI `10`; E2E `34`; remote pending |
-| P06-EV-CI-004 | Post-merge main CI | Not Run | - |
-| P06-EV-CI-005 | Dependency/secret scan | Local Partial/Remote Pending | Production audit Pass with managed time-bound exceptions; remote Secret Scan pending |
+| P06-EV-CI-003 | Implementation PR CI | Pass | [PR run `30786303279`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786303279); required checks `6/6` Pass |
+| P06-EV-CI-004 | Post-merge main CI | Pass | [Main run `30786783937`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786783937); commit `d2abe52`; `6/6` jobs Pass |
+| P06-EV-CI-005 | Dependency/secret scan | Pass | Production audit and Secret Scan Pass on PR and post-merge main CI |
 
 ## 7. Exit Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P06-EV-EXIT-001 | 68 Must AC result | Local 66/68; Remote Pending | `acceptance-criteria.md`; AC-066/068 require remote evidence |
+| P06-EV-EXIT-001 | 68 Must AC result | Pass `68/68` | `acceptance-criteria.md`; AC-066/068 backed by PR/main CI and P07 acceptance |
 | P06-EV-EXIT-002 | Conditional disposition | Local Pass | 4 enabled capabilities Pass, 2 `APPROVED_NA`; `conditional-reporting-evidence.md` |
 | P06-EV-EXIT-003 | Regression result | Local Pass | API `230`, Web `126`, integration `97`, browser E2E `34` |
 | P06-EV-EXIT-004 | Defect/waiver review | Local Pass | Critical `0`, High `0`; `quality-hardening-evidence.md`, `risk-and-issues.md` |
-| P06-EV-EXIT-005 | Exit report/signoff | Local Draft Complete/Approval Pending | `exit-report.md`, `phase-exit-evidence.md` |
-| P06-EV-EXIT-006 | P07 handoff acceptance | Ready For Review | `phase-07-handoff.md`; consumer acceptance pending |
+| P06-EV-EXIT-005 | Exit report/signoff | Pass | `exit-report.md`, `phase-exit-evidence.md`; release identity and signoff recorded |
+| P06-EV-EXIT-006 | P07 handoff acceptance | Accepted | `phase-07-handoff.md`; Project Owner/P07 consumer accepted on `2026-08-03` |
 
 ## 8. Evidence Capture Format
 

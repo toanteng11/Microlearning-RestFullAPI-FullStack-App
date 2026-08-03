@@ -31,14 +31,14 @@
 ## Release Summary
 
 ```text
-Must: <passed>/68
-Conditional: <passed>/<enabled>, <approved-na>/<disabled>
+Must: 68/68
+Conditional: 5 Pass, 1 Approved N/A
 Critical: 0
 High: 0
-PR CI: <url>
-Main CI: <url>
-Release commit: <sha>
-Decision: PASS | FAIL | CONDITIONAL_PASS
+PR CI: https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786303279
+Main CI: https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786783937
+Release commit: d2abe5222acff47b85c40cbb9b82c4bf3ee3efff
+Decision: PASS
 ```
 
 ## Stop Conditions
@@ -59,14 +59,9 @@ Decision: PASS | FAIL | CONDITIONAL_PASS
 
 ## Current Execution Status
 
-`LOCAL_COMPLETE_REMOTE_PENDING`.
+`DONE`.
 
-Đã hoàn thành tại local: test matrix, acceptance result, evidence register, risk review, clean clone,
-exit report draft và P07 handoff package. Chưa được phép đánh dấu `COMPLETED` vì các bước sau cần
-thực hiện trên GitHub/protected branch:
-
-1. push branch `quality/phase-06-release-hardening`;
-2. mở release PR và để toàn bộ required checks Pass;
-3. resolve review rồi merge qua protected `main`;
-4. xác nhận post-merge main CI;
-5. ghi PR/Actions/merge URLs và P07 acceptance.
+Test matrix, acceptance result, evidence register, risk review, clean clone, exit report và P07
+handoff đã hoàn thành. Branch `quality/phase-06-release-hardening` được phát hành qua PR `#18`;
+required checks và post-merge main CI đều Pass, merge commit là `d2abe52`, và P07 handoff đã được
+Project Owner/P07 consumer chấp nhận ngày `2026-08-03`.

@@ -137,9 +137,9 @@ export format hoặc event PII phải:
 
 ## 7. Review Checklist
 
-- [ ] Product Owner chấp nhận `P06_PROCESS_SCORE_V1`.
-- [ ] BA xác nhận Grade average không thay process score.
-- [ ] Security reviewer chấp nhận Admin projection và threshold.
-- [ ] DevOps xác nhận CSV sync không dùng local disk.
-- [ ] QA xác nhận tie-breaker, null denominator và freshness có test được.
-- [ ] Technical Lead xác nhận read-model/port boundary.
+- [x] Product Owner chấp nhận `P06_PROCESS_SCORE_V1`.
+- [x] BA xác nhận Grade average không thay process score.
+- [x] Security reviewer chấp nhận Admin projection và threshold.
+- [x] DevOps xác nhận CSV sync không dùng local disk.
+- [x] QA xác nhận tie-breaker, null denominator và freshness có test được.
+- [x] Technical Lead xác nhận read-model/port boundary.

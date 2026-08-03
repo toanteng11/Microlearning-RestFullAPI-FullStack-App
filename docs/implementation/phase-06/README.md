@@ -23,14 +23,14 @@ version, freshness, khả năng rebuild và reconciliation.
 | Planning status | `MERGED_TO_MAIN` |
 | Technical completeness | `ACCEPTED_AT_GATE_A` |
 | Gate A | `APPROVED` |
-| Implementation status | `LOCAL_RELEASE_CANDIDATE_REMOTE_PENDING` |
+| Implementation status | `COMPLETED` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect, evidence có thể tái lập |
 | Phase tiếp theo | `P07 - DevOps And Deployment` |
 
-Gate A, planning baseline và planning PR remote CI đã Pass. Toàn bộ Part 01-16 đã có runtime
-implementation và local quality evidence. Part 17 đã hoàn thành phần evidence tại local; Phase 06
-đang là `LOCAL_RELEASE_CANDIDATE_REMOTE_PENDING` cho đến khi quality branch được mở PR, required CI
-Pass, merge qua protected `main`, post-merge main CI Pass và P07 consumer chấp nhận handoff.
+Gate A, planning baseline và toàn bộ Part 01-17 đã hoàn thành. Release PR `#18` có đủ sáu required
+checks Pass, được merge qua protected `main` tại commit `d2abe52`; post-merge main CI tiếp tục Pass.
+Project Owner đồng thời là P07 consumer đã chấp nhận gói handoff. Phase 06 đạt `68/68` Must và được
+đánh dấu `COMPLETED` từ ngày `2026-08-03`.
 
 ## 3. Business Outcome
 

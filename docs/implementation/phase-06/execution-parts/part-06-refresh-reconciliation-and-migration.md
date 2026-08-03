@@ -62,7 +62,7 @@ Reporting CLI commands chỉ thêm vào `package.json` khi script thật đã t�
 
 ## Implementation Result
 
-`IN_REVIEW` tại commit `1afe813`.
+`DONE` tại release commit `d2abe52`.
 
 - Student/Course rebuild, watermark retry, invalidation backoff, classroom expansion,
   reconciliation dry-run/repair và migration preflight đã được triển khai.
@@ -73,4 +73,4 @@ Reporting CLI commands chỉ thêm vào `package.json` khi script thật đã t�
 - Local Gate B: `npm run check:ci` Pass; API `202/202`, Web `99/99`, Mongo integration
   `82/82`; focused P06 Mongo `11/11`.
 - Benchmark `100x50`, 3 iterations: p95 `278.75 ms`, heap `35 MB` trên máy local.
-- P06-PR02 remote CI/review/merge còn pending, vì vậy Part này chưa được đổi thành `DONE`.
+- Foundation dependency đã được kiểm chứng lại trong release PR `#18`; Part này là `DONE`.

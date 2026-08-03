@@ -52,7 +52,7 @@ apps/web/src/styles.css
 
 | Field | Result |
 | --- | --- |
-| Status | `LOCAL_PASS_REMOTE_PENDING` |
+| Status | `DONE` |
 | Branch | `feature/phase-06-gradebook` |
 | Code commit | `fe36dda` |
 | Web component | Full Web `115/115`; Gradebook focused `6/6` |

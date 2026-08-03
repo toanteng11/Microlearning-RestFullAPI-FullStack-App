@@ -20,27 +20,27 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Gate A | `APPROVED` |
-| Implementation | `IN_REVIEW` |
+| Implementation | `COMPLETED` |
 | Part 00 | `DONE` |
 | Part 01-05 | `DONE` |
-| Part 06 | `LOCAL_PASS_REMOTE_PENDING` |
-| Part 07-08 | `LOCAL_PASS_REMOTE_PENDING` |
-| Part 09-10 | `LOCAL_PASS_REMOTE_PENDING` |
-| Part 11-12 | `LOCAL_PASS_REMOTE_PENDING` |
-| Part 13 | `LOCAL_PASS_REMOTE_PENDING` |
-| Part 14 | `LOCAL_PASS_REMOTE_PENDING`; Admin UI/E2E/privacy Pass |
-| Part 15 | `LOCAL_PASS_REMOTE_PENDING`; four enabled capabilities Pass, two capabilities `APPROVED_NA` |
-| Part 16 | `LOCAL_PASS`; full quality, Docker, performance, visual và clean clone Pass |
-| Part 17 | `LOCAL_COMPLETE_REMOTE_PENDING`; protected PR/main CI và P07 acceptance pending |
+| Part 06 | `DONE` |
+| Part 07-08 | `DONE` |
+| Part 09-10 | `DONE` |
+| Part 11-12 | `DONE` |
+| Part 13 | `DONE` |
+| Part 14 | `DONE`; Admin UI/E2E/privacy Pass |
+| Part 15 | `DONE`; four enabled capabilities Pass, two capabilities `APPROVED_NA` |
+| Part 16 | `DONE`; full quality, Docker, performance, visual và clean clone Pass |
+| Part 17 | `DONE`; protected PR/main CI và P07 acceptance Pass |
 | Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
-| Foundation implementation | Commit `1afe813`; local Gate B Pass; remote PR/CI pending |
-| Student reporting implementation | Commit `f560233`; `student-reporting-evidence.md`; P06-PR03 remote CI pending |
-| Teacher reporting implementation | Commit `9096d78`; `teacher-reporting-evidence.md`; P06-PR04 remote CI pending |
-| Gradebook implementation | Commit `fe36dda`; `gradebook-evidence.md`; P06-PR05 remote CI pending |
-| Admin Reporting API implementation | Commit `2bbbc2d`; `admin-reporting-api-evidence.md`; P06-PR06 remote CI pending |
+| Foundation implementation | Commit `1afe813`; Gate B Pass; included in release PR `#18` |
+| Student reporting implementation | Commit `f560233`; `student-reporting-evidence.md`; release CI Pass |
+| Teacher reporting implementation | Commit `9096d78`; `teacher-reporting-evidence.md`; release CI Pass |
+| Gradebook implementation | Commit `fe36dda`; `gradebook-evidence.md`; release CI Pass |
+| Admin Reporting API implementation | Commit `2bbbc2d`; `admin-reporting-api-evidence.md`; release CI Pass |
 | Admin Reporting Web implementation | Commit `c1f5fa9`; `admin-reporting-web-evidence.md` |
 | Conditional reporting implementation | Commit `f1baf06`; `conditional-reporting-evidence.md` |
-| Quality hardening | `quality-hardening-evidence.md`; local release candidate Pass |
+| Quality hardening | `quality-hardening-evidence.md`; PR `#18` và post-merge main CI Pass |
 
 ## 3. Execution Map
 
@@ -168,5 +168,5 @@ Execution Part chỉ hướng dẫn thứ tự thực hiện, không được t�
 - Rebuild, reconcile dry-run, reconcile repair và benchmark CLI: Pass.
 - Chi tiết: `gate-b-foundation-evidence.md`.
 
-Part 06 chỉ chuyển `DONE` sau khi P06-PR02 có required CI Pass, review được xử lý và merge vào
-`main`. Trước thời điểm đó, Part 07-17 không được bắt đầu trên nhánh này.
+Part 01-17 đã được kiểm chứng trong release PR `#18`, merge vào `main` tại `d2abe52`; required CI và
+post-merge main CI đều Pass.
