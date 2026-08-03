@@ -148,7 +148,9 @@ Delivery controls:
 | Developer/operator | View/log theo nhiệm vụ; deploy Production không dùng shared owner credential. |
 | Atlas application user | Read/write đúng application database; không dùng Atlas owner/admin credential. |
 
-Secret tối thiểu gồm `MONGODB_URI`, access-token signing material, refresh/session signing material và các protected bootstrap/monitoring values còn hiệu lực. Secret version cũ phải rotate/destroy theo runbook; không giữ nhiều active version chỉ vì tiện debug.
+Secret tối thiểu gồm `MONGODB_URI`, `ACCESS_TOKEN_SECRET`, `AUTH_IDENTITY_PEPPER`,
+`CLASSROOM_CODE_PEPPER` và các protected test/bootstrap values còn hiệu lực. Secret version cũ phải
+rotate/destroy theo runbook; không giữ nhiều active version chỉ vì tiện debug.
 
 ## 10. MongoDB Atlas baseline
 
@@ -262,4 +264,3 @@ Các quyết định dưới đây chưa được suy diễn thành đã hoàn t
 - Environment and secrets: `../../../business-analysis/15-devops-deployment/deployment-environment-matrix.md`, `../../../business-analysis/15-devops-deployment/configuration-secret-management.md`.
 - Registry: `../../../business-analysis/15-devops-deployment/container-registry-image-management.md`.
 - Risk: `../../../business-analysis/20-risk-management/risk-register.md`.
-

@@ -194,7 +194,46 @@ docs/implementation/
 |   `-- exit-report.md
 |-- phase-07/
 |   |-- README.md
-|   `-- cloud-provider-baseline.md
+|   |-- phase-plan.md
+|   |-- scope-and-deliverables.md
+|   |-- ba-alignment-and-decisions.md
+|   |-- technical-decisions.md
+|   |-- gate-a-decision-sheet.md
+|   |-- cloud-provider-baseline.md
+|   |-- architecture-and-deployment-topology.md
+|   |-- production-runtime-contract.md
+|   |-- single-origin-routing-contract.md
+|   |-- production-container-contract.md
+|   |-- infrastructure-as-code-design.md
+|   |-- iam-and-workload-identity.md
+|   |-- secret-and-configuration-management.md
+|   |-- staging-configuration-baseline.md
+|   |-- mongodb-atlas-integration.md
+|   |-- github-actions-cd-design.md
+|   |-- staging-deployment-runbook.md
+|   |-- production-promotion-runbook.md
+|   |-- smoke-and-e2e-strategy.md
+|   |-- observability-and-alerting.md
+|   |-- backup-restore-disaster-recovery.md
+|   |-- rollback-and-incident-response.md
+|   |-- testing-strategy.md
+|   |-- test-case-catalog.md
+|   |-- test-case-execution-matrix.md
+|   |-- acceptance-criteria.md
+|   |-- traceability-matrix.md
+|   |-- work-breakdown-structure.md
+|   |-- planning-validation-evidence.md
+|   |-- execution-parts/
+|   |   |-- README.md
+|   |   `-- part-00-*.md ... part-17-*.md
+|   |-- implementation-checklist.md
+|   |-- risk-and-issues.md
+|   |-- developer-start-guide.md
+|   |-- development-readiness-review.md
+|   |-- evidence-register.md
+|   |-- phase-exit-evidence.md
+|   |-- phase-08-handoff.md
+|   `-- exit-report.md
 `-- phase-08/
 ```
 
@@ -208,7 +247,7 @@ docs/implementation/
 | `phase-04/` | Learning Content         | Course/module/lesson/deadline/completion/To-do và dashboard v1      | Completed; `66/66` Must Pass; PR #10 merged |
 | `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Completed; `74/74` Must Pass; PR #14 merged |
 | `phase-06/` | Reporting and Analytics  | Dashboard/progress/process score/Gradebook/ranking/report           | Local release candidate; remote PR/main CI/P07 acceptance pending |
-| `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Provider accepted; Planned      |
+| `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Detailed baseline drafted; Gate A pending |
 | `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                                | Planned                         |
 
 ## 4. Trình tự sử dụng
