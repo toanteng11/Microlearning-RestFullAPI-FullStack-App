@@ -8,6 +8,7 @@ import {
   createOpenApiDocument,
   PHASE_FOUR_OPENAPI_OPERATIONS,
   PHASE_FIVE_OPENAPI_OPERATIONS,
+  PHASE_SIX_OPENAPI_OPERATIONS,
   PHASE_THREE_OPENAPI_OPERATIONS,
   PHASE_TWO_OPENAPI_OPERATIONS,
 } from '../src/docs/openapi.js';
@@ -257,11 +258,6 @@ describe('system API', () => {
       ['POST /api/v1/lessons/{lessonId}/complete', 'completeLesson'],
       ['GET /api/v1/students/me/todo', 'listStudentTodo'],
       ['GET /api/v1/students/me/deadlines', 'listStudentDeadlines'],
-      ['GET /api/v1/students/me/progress', 'getOwnCourseProgress'],
-      ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherCourseDashboard'],
-      ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherCourseActivities'],
-      ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
-      ['GET /api/v1/teacher/courses/{courseId}/progress', 'listTeacherCourseProgress'],
       ['GET /api/v1/classrooms/{classroomId}/announcements', 'listClassroomAnnouncements'],
       ['POST /api/v1/classrooms/{classroomId}/announcements', 'createAnnouncement'],
       ['PATCH /api/v1/announcements/{announcementId}', 'updateAnnouncement'],
@@ -355,7 +351,6 @@ describe('system API', () => {
       ['GET /api/v1/teacher/grades/{gradeId}/history', 'listGradeHistory'],
       ['GET /api/v1/students/me/grades', 'listOwnGrades'],
       ['GET /api/v1/students/me/grades/{gradeId}', 'getOwnGrade'],
-      ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getBasicCourseGradebook'],
       [
         'GET /api/v1/teacher/activities/{activityType}/{activityId}/deadline-exceptions',
         'listActivityDeadlineExceptions',
@@ -409,5 +404,64 @@ describe('system API', () => {
     expect(JSON.stringify(document.components?.schemas?.CourseGovernanceSummary)).toMatch(
       /quizCount.*assignmentCount/u,
     );
+  });
+
+  it('keeps Phase 06 reporting routes unique and protected in Swagger', () => {
+    const document = createOpenApiDocument(testRuntimeInfo);
+    const expected = new Map([
+      ['GET /api/v1/students/me/dashboard', 'getStudentReportingDashboard'],
+      ['GET /api/v1/students/me/progress', 'getStudentCourseProgress'],
+      ['GET /api/v1/students/me/progress/courses', 'listStudentCourseProgress'],
+      ['GET /api/v1/teacher/courses/{courseId}/dashboard', 'getTeacherReportingDashboard'],
+      ['GET /api/v1/teacher/courses/{courseId}/progress', 'listTeacherCourseProgress'],
+      ['GET /api/v1/teacher/courses/{courseId}/students', 'listTeacherCourseStudents'],
+      ['GET /api/v1/teacher/courses/{courseId}/activities', 'listTeacherActivityAnalytics'],
+      ['GET /api/v1/teacher/courses/{courseId}/assessments', 'listTeacherAssessmentAnalytics'],
+      ['GET /api/v1/teacher/courses/{courseId}/gradebook', 'getTeacherCourseGradebook'],
+      ['GET /api/v1/admin/dashboard', 'getAdminReportingDashboard'],
+      ['GET /api/v1/admin/reports/governance', 'getAdminGovernanceReport'],
+      ['GET /api/v1/admin/audit-logs', 'listAdminReportingAuditLogs'],
+      ['GET /api/v1/students/me/progress/trend', 'getStudentProgressTrend'],
+      ['GET /api/v1/teacher/courses/{courseId}/progress/export', 'exportTeacherCourseProgressCsv'],
+      [
+        'GET /api/v1/teacher/courses/{courseId}/gradebook/export',
+        'exportTeacherCourseGradebookCsv',
+      ],
+      ['GET /api/v1/admin/reports/adoption', 'getAdminAnalyticsAdoption'],
+      ['GET /api/v1/admin/reports/learning-outcomes', 'getAdminLearningOutcomes'],
+      ['GET /api/v1/admin/reports/governance/export', 'exportAdminGovernanceCsv'],
+      ['GET /api/v1/admin/audit-logs/export', 'exportAdminAuditCsv'],
+      ['POST /api/v1/analytics/events', 'ingestAnalyticsEvent'],
+      [
+        'GET /api/v1/teacher/courses/{courseId}/students/{studentId}/progress',
+        'getTeacherStudentProgress',
+      ],
+    ]);
+    const actual = new Map<string, string>();
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      for (const method of ['get', 'post'] as const) {
+        const operation = pathItem?.[method];
+        if (
+          !operation?.operationId ||
+          !PHASE_SIX_OPENAPI_OPERATIONS.includes(
+            operation.operationId as (typeof PHASE_SIX_OPENAPI_OPERATIONS)[number],
+          )
+        )
+          continue;
+        actual.set(`${method.toUpperCase()} ${path}`, operation.operationId);
+        expect(operation.security).toEqual([{ bearerAuth: [] }]);
+        expect(operation.responses['200']).toBeDefined();
+        expect(operation.responses['401']).toBeDefined();
+        expect(operation.responses['403']).toBeDefined();
+      }
+    }
+    expect(actual).toEqual(expected);
+    expect(new Set(actual.values()).size).toBe(PHASE_SIX_OPENAPI_OPERATIONS.length);
+    const adminAuditSchema = document.components?.schemas?.AdminAuditSummary;
+    expect(JSON.stringify(adminAuditSchema)).not.toMatch(
+      /oldValue|newValue|metadata|passwordHash|tokenHash|answer|submission|feedback/u,
+    );
+    const adminGovernanceSchema = document.components?.schemas?.AdminGovernanceReportData;
+    expect(JSON.stringify(adminGovernanceSchema)).not.toMatch(/grade|answer|submission|feedback/u);
   });
 });

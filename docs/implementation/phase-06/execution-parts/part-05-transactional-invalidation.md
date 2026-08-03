@@ -66,3 +66,14 @@ Student Learning service
 - Source rollback không để intent mồ côi.
 - Refresh failure sau commit không rollback source.
 - Production composition test xác nhận đúng một real writer.
+
+## Implementation Result
+
+`DONE` tại commit `1afe813`.
+
+- Một neutral writer port và một real Mongo writer được tạo đúng composition root.
+- Writer bắt buộc được inject qua Phase Three/Four/Five; không có production noop/default.
+- Các source mutations trong matrix ghi invalidation bằng cùng session; `saveAnswers` không
+  invalidate theo V1.
+- Replica-set tests chứng minh source+intent cùng commit/rollback, stale worker không xóa intent
+  mới và refresh lỗi sau commit không rollback source.

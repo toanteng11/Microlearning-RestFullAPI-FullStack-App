@@ -1,10 +1,12 @@
 import { ArrowLeft, Check, RefreshCw, Send } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { ApiError } from '../../../shared/api/api-error';
 import { useAuth } from '../../../shared/auth/auth-context';
 import { requestErrorMessage } from '../../learning/learning-format';
+import { invalidateOwnedCourseReporting } from '../../reporting/reporting-invalidation';
 import type { TeacherAttemptReview } from '../assessment.types';
 import { ActivityStatusBadge } from '../components/ActivityStatusBadge';
 
@@ -15,7 +17,8 @@ interface ReviewDraft {
 
 export function TeacherQuizAttemptReviewPage() {
   const { attemptId = '' } = useParams();
-  const { request } = useAuth();
+  const { request, user } = useAuth();
+  const queryClient = useQueryClient();
   const [attempt, setAttempt] = useState<TeacherAttemptReview | null>(null);
   const [drafts, setDrafts] = useState<Record<string, ReviewDraft>>({});
   const [reason, setReason] = useState('');
@@ -94,6 +97,7 @@ export function TeacherQuizAttemptReviewPage() {
       applyAttempt(response.data);
       setConflict(false);
       setNotice(successMessage);
+      await invalidateOwnedCourseReporting(queryClient, user?.id, response.data.courseId);
     } catch (requestError) {
       setConflict(requestError instanceof ApiError && requestError.status === 409);
       setError(requestErrorMessage(requestError, 'Không thể cập nhật kết quả bài kiểm tra.'));

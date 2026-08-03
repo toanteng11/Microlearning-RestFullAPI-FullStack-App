@@ -10,7 +10,17 @@ import type { TodoEnvelope } from '../../learning/learning.types';
 import { ClassroomStatusBadge } from '../components/ClassroomStatusBadge';
 import type { ClassroomListEnvelope } from '../classroom.types';
 
-export function StudentClassroomsPage() {
+interface StudentClassroomsPageProps {
+  embedded?: boolean;
+  showHeader?: boolean;
+  showTodo?: boolean;
+}
+
+export function StudentClassroomsPage({
+  embedded = false,
+  showHeader = true,
+  showTodo = true,
+}: StudentClassroomsPageProps = {}) {
   const { request, user } = useAuth();
   const [reloadKey, setReloadKey] = useState(0);
   const [result, setResult] = useState<ClassroomListEnvelope | null>(null);
@@ -43,6 +53,9 @@ export function StudentClassroomsPage() {
   }, [reloadKey, request]);
 
   useEffect(() => {
+    if (!showTodo) {
+      return undefined;
+    }
     let active = true;
     void request<TodoEnvelope>('/students/me/todo?page=1&limit=5&scope=ALL')
       .then((response) => {
@@ -54,7 +67,7 @@ export function StudentClassroomsPage() {
     return () => {
       active = false;
     };
-  }, [reloadKey, request]);
+  }, [reloadKey, request, showTodo]);
 
   async function joinByCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -87,50 +100,60 @@ export function StudentClassroomsPage() {
   }
 
   return (
-    <section className="page-section">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Student workspace</p>
-          <h1>Xin chào, {user?.fullName}</h1>
-        </div>
-      </header>
-
-      <div className="student-dashboard-grid">
-        <section className="task-band">
-          <div className="panel-title">
-            <BookOpen size={20} />
-            <h2>Việc cần làm</h2>
+    <section className={embedded ? 'student-classroom-workspace' : 'page-section'}>
+      {showHeader ? (
+        <header className="page-header">
+          <div>
+            <p className="eyebrow">Student workspace</p>
+            <h1>Xin chào, {user?.fullName}</h1>
           </div>
-          {todo?.data.items.length === 0 ? (
-            <div className="empty-state">
-              <strong>Chưa có bài học cần hoàn thành</strong>
+        </header>
+      ) : null}
+
+      <div
+        className={
+          showTodo
+            ? 'student-dashboard-grid'
+            : 'student-dashboard-grid student-dashboard-grid--join-only'
+        }
+      >
+        {showTodo ? (
+          <section className="task-band">
+            <div className="panel-title">
+              <BookOpen size={20} />
+              <h2>Việc cần làm</h2>
             </div>
-          ) : null}
-          {todo && todo.data.items.length > 0 ? (
-            <div className="dashboard-todo-list">
-              {todo.data.items.map((item) => (
-                <article key={item.id}>
-                  <div>
-                    <Link to={item.actionUrl}>{item.title}</Link>
-                    <small>
-                      {item.course.title} · {displayLearningDate(item.completionDeadline)}
-                    </small>
-                  </div>
-                  <ProgressStatusBadge status={item.progress.derivedStatus} />
-                </article>
-              ))}
-              <Link className="row-link" to="/student/todo">
-                Xem tất cả
-              </Link>
-            </div>
-          ) : null}
-          {!todo ? (
-            <div className="empty-state">
-              <CalendarClock size={24} />
-              <span>Đang tải việc cần làm...</span>
-            </div>
-          ) : null}
-        </section>
+            {todo?.data.items.length === 0 ? (
+              <div className="empty-state">
+                <strong>Chưa có bài học cần hoàn thành</strong>
+              </div>
+            ) : null}
+            {todo && todo.data.items.length > 0 ? (
+              <div className="dashboard-todo-list">
+                {todo.data.items.map((item) => (
+                  <article key={item.id}>
+                    <div>
+                      <Link to={item.actionUrl}>{item.title}</Link>
+                      <small>
+                        {item.course.title} · {displayLearningDate(item.completionDeadline)}
+                      </small>
+                    </div>
+                    <ProgressStatusBadge status={item.progress.derivedStatus} />
+                  </article>
+                ))}
+                <Link className="row-link" to="/student/todo">
+                  Xem tất cả
+                </Link>
+              </div>
+            ) : null}
+            {!todo ? (
+              <div className="empty-state">
+                <CalendarClock size={24} />
+                <span>Đang tải việc cần làm...</span>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
         <section className="join-band">
           <div className="panel-title">
             <KeyRound size={20} />

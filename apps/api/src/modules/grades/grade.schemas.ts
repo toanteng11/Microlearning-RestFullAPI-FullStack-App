@@ -11,7 +11,6 @@ const feedback = z
   .default(null);
 
 export const gradeParamsSchema = z.object({ gradeId: objectId }).strict();
-export const gradeCourseParamsSchema = z.object({ courseId: objectId }).strict();
 
 export const saveSubmissionGradeSchema = z
   .object({

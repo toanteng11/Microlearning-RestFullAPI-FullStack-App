@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,7 +20,14 @@ describe('Phase 05 Student assessment pages', () => {
 
   function renderRoute(path: string, routePath: string, element: ReactNode) {
     const router = createMemoryRouter([{ path: routePath, element }], { initialEntries: [path] });
-    return render(<RouterProvider router={router} />);
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>,
+    );
   }
 
   it('saves a Student Quiz answer with the canonical Attempt revision', async () => {

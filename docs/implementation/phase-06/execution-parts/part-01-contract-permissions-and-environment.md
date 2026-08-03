@@ -65,3 +65,13 @@ Chỉ dùng đường dẫn thực tế tương ứng nếu repository đặt co
 - Env thiếu/sai trả configuration error rõ ràng.
 - `npm run lint`, `npm run typecheck`, API unit tests và build Pass.
 - Không thay đổi behavior P02-P05.
+
+## Implementation Result
+
+`DONE` tại commit `1afe813`.
+
+- Canonical reporting constants/types/schemas/DTO/errors đã được tạo.
+- Permissions mới được gắn vào role map hiện hữu, deny-by-default được kiểm thử.
+- Reporting/Conditional env có default, production explicit-field checks và validation biên.
+- OpenAPI component schemas được thêm nhưng chưa expose reporting runtime path.
+- Focused unit, environment, OpenAPI, typecheck và build đều Pass.

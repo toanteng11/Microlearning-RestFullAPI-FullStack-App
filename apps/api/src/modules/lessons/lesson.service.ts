@@ -7,6 +7,7 @@ import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseRepository } from '../courses/course.repository.js';
 import type { LessonDeadlineRepository } from '../deadlines/lesson-deadline.repository.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { assertContentTransition } from '../learning-content/content-lifecycle.policy.js';
 import { assignExactOrder } from '../learning-content/content-ordering.policy.js';
 import {
@@ -62,6 +63,7 @@ export class LessonService {
     private readonly deadlines: LessonDeadlineRepository,
     private readonly courseScopes: CourseScopeReader,
     private readonly audits: PhaseFourAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly maxLessonsPerCourse: number,
     private readonly now: () => Date = () => new Date(),
   ) {}
@@ -178,6 +180,15 @@ export class LessonService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: lesson.updatedAt,
+        },
+        session,
+      );
       return {
         lesson: toTeacherLessonDto(lesson, actor, changedAt),
         structureRevision: revisedCourse.structureRevision,
@@ -280,6 +291,15 @@ export class LessonService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: lesson.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
+        },
+        session,
+      );
       return {
         lesson: toTeacherLessonDto(updated, actor, this.now()),
         auditId: audit._id.toString(),
@@ -342,6 +362,15 @@ export class LessonService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: lesson.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
+        },
+        session,
+      );
       return {
         lesson: toTeacherLessonDto(updated, actor, changedAt),
         auditId: audit._id.toString(),
@@ -388,6 +417,15 @@ export class LessonService {
           oldValue: toLessonAuditValue(lesson),
           newValue: toLessonAuditValue(archived),
           metadata: { courseId: scope.courseId, moduleId: lesson.moduleId?.toString() ?? null },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: lesson.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: archived.updatedAt,
         },
         session,
       );
@@ -457,6 +495,15 @@ export class LessonService {
             fromStructureRevision: input.expectedStructureRevision,
             toStructureRevision: revisedCourse.structureRevision,
           },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: courseObjectId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: revisedCourse.updatedAt,
         },
         session,
       );

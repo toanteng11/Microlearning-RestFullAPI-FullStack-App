@@ -6,6 +6,7 @@ import type { PhaseFiveAuditWriter } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseRepository } from '../courses/course.repository.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { assertFutureSchedule } from '../learning-content/content-schedule.policy.js';
 import type { CourseModuleRepository } from '../modules/module.repository.js';
 import { toStudentQuestionDto } from '../questions/question.dto.js';
@@ -82,6 +83,7 @@ export class QuizService {
     private readonly questions: QuestionRepository,
     private readonly scopes: CourseScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -147,6 +149,15 @@ export class QuizService {
           requestId,
           newValue: toQuizAuditValue(quiz),
           metadata: { classroomId: scope.classroomId, courseId },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: courseObjectId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: quiz.updatedAt,
         },
         session,
       );
@@ -244,6 +255,15 @@ export class QuizService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: quiz.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
+        },
+        session,
+      );
       return { quiz: toTeacherQuizDto(updated, actor, this.now()), auditId: audit._id.toString() };
     });
   }
@@ -299,6 +319,15 @@ export class QuizService {
           oldValue: toQuizAuditValue(quiz),
           newValue: toQuizAuditValue(updated),
           metadata: { classroomId: scope.classroomId, courseId: scope.courseId },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateCourse(
+        {
+          classroomId: objectId(scope.classroomId, 'Classroom'),
+          courseId: quiz.courseId,
+          reasons: ['ACTIVITY_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
         },
         session,
       );

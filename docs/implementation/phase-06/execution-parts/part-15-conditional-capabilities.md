@@ -69,3 +69,16 @@ Chỉ thực hiện khi `P06-GA-C04=Approved`.
 - Mỗi enabled subpart có flag, permission/allowedAction, tests và evidence riêng.
 - Disabled subpart có approval N/A, không có route/file/service mồ côi.
 - Một subpart fail không buộc merge các subpart khác.
+
+## Implementation Status
+
+| Gate A item | Runtime result |
+| --- | --- |
+| `P06-GA-C01` bounded CSV | `LOCAL_PASS_REMOTE_PENDING` |
+| `P06-GA-C02` analytics event foundation | `LOCAL_PASS_REMOTE_PENDING` |
+| `P06-GA-C03` Student trend | `LOCAL_PASS_REMOTE_PENDING` |
+| `P06-GA-C04` Admin learning outcomes | `LOCAL_PASS_REMOTE_PENDING` |
+| `P06-GA-C05` weighted process score V2 | `APPROVED_NA`; flag false, không có V2 runtime |
+| `P06-GA-C06` XLSX/async/private export | `APPROVED_NA`; deferred P07 |
+
+Implementation commit: `f1baf06`. Evidence: `conditional-reporting-evidence.md`.

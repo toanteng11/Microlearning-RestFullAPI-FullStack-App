@@ -46,3 +46,16 @@ apps/web/src/shared/components/AppShell.tsx
 - Cross-Course URL không hiển thị cached data.
 - Desktop/mobile visual review Pass.
 - P06-PR04 CI Pass trước merge.
+
+## Implementation Result - 2026-07-30
+
+- Status: `LOCAL_PASS_REMOTE_PENDING`.
+- Code commit: `9096d78`.
+- Course Dashboard giữ nguyên content-management actions và bổ sung reporting summary/top Student.
+- Analytics có các tab Progress, Activities, Assessments và Support; filter/sort/page được lưu trong URL.
+- Student detail kiểm tra `returnTo` an toàn và Back giữ nguyên filter/page.
+- Query key chứa actor/course/filter, response private dùng `no-store`; route đổi scope không hiển thị cache cũ.
+- Web suite `109/109`, function coverage `80.15%`, production build Pass.
+- Browser E2E toàn hệ thống `29/29`; Teacher journey `2/2`, responsive `390x844` và Axe serious/critical `0`.
+- Đã sửa overflow do nhãn screen-reader trong table và compatibility của Student Course với DTO Phase 06.
+- Chưa chuyển `DONE` cho tới khi Parent PR có remote CI Pass, review hoàn tất và merge.

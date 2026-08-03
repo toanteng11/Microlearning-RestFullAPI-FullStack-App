@@ -59,3 +59,19 @@ docker compose up -d --build
 - Critical/High defects bằng `0`.
 - Không bypass quality gate.
 - Release candidate commit có thể clean-clone.
+
+## Implementation Status
+
+`LOCAL_PASS` tại ngày `2026-08-03`.
+
+- `npm run check:ci`: Pass; API `230/230`, Web `126/126`.
+- Mongo replica-set integration coverage: `97/97`.
+- OpenAPI: `10/10`.
+- Fresh Docker stack và deterministic seed: Pass.
+- Full browser E2E: `34/34`.
+- 100x50 Gradebook p95: `78.87 ms`; reporting calculator p95: `1069.79 ms`.
+- Desktop/mobile visual, overflow và Axe serious/critical: Pass/`0`.
+- Clean clone `npm ci` + `npm run check:ci`: Pass.
+- Production dependency audit: Pass với time-bound React Router exceptions đã được policy quản lý.
+
+Chi tiết tại `quality-hardening-evidence.md`.

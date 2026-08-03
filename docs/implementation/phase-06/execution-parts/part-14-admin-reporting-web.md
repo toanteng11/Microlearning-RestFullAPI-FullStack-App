@@ -48,3 +48,18 @@ apps/web/src/shared/components/AppShell.tsx
 - Không hiển thị raw/private learning data.
 - Suppression và role-specific lists đúng.
 - P06-PR06 CI Pass trước merge.
+
+## Implementation Status
+
+| Field | Result |
+| --- | --- |
+| Local status | `LOCAL_PASS_REMOTE_PENDING` |
+| Implementation commit | `c1f5fa9` |
+| Admin Dashboard/Reports | Pass |
+| Management workflow regression | Pass |
+| Privacy projection | Pass |
+| Browser evidence | Fresh-stack suite `34/34`; Admin reporting `2/2` |
+| Evidence | `admin-reporting-web-evidence.md` |
+
+Remote required CI/review/merge vẫn phải được ghi tại P06-PR06 hoặc release PR trước khi đổi thành
+`DONE`.

@@ -40,8 +40,20 @@ const auditLogSchema = new Schema<AuditLogRecord>(
 auditLogSchema.index({ createdAt: -1 }, { name: 'ix_audit_logs_created' });
 auditLogSchema.index({ actorId: 1, createdAt: -1 }, { name: 'ix_audit_logs_actor_created' });
 auditLogSchema.index(
+  { actorRole: 1, createdAt: -1, _id: -1 },
+  { name: 'ix_audit_logs_actor_role_created' },
+);
+auditLogSchema.index(
+  { action: 1, createdAt: -1, _id: -1 },
+  { name: 'ix_audit_logs_action_created' },
+);
+auditLogSchema.index(
   { resourceType: 1, resourceId: 1, createdAt: -1 },
   { name: 'ix_audit_logs_resource_created' },
+);
+auditLogSchema.index(
+  { resourceType: 1, resourceId: 1, createdAt: -1, _id: -1 },
+  { name: 'ix_audit_logs_resource_created_stable' },
 );
 auditLogSchema.index(
   { actorId: 1, action: 1, idempotencyKey: 1 },

@@ -53,3 +53,13 @@ apps/api/tests/phase-six-gradebook-policy.test.ts
 - Các policy deterministic với cùng input/asOf.
 - Unit tests boundary, tie, null, timezone và deadline exception Pass.
 - `P06-AC-003..006`, `P06-AC-011` có automated evidence.
+
+## Implementation Result
+
+`DONE` tại commit `1afe813`.
+
+- Completion, deadline, process score, grade average, ranking, Gradebook cell và freshness
+  policies được giữ pure/deterministic.
+- Denominator `0`, half-up one-decimal, deadline exception, draft Grade exclusion, points-weighted
+  average và six-field tie-breaker đều có automated tests.
+- Unit policy/foundation group Pass; không có MongoDB/Express/system clock trực tiếp trong policy.

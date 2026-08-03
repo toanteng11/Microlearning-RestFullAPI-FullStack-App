@@ -143,7 +143,7 @@ test('Admin creates a manual invitation and Teacher activates then logs in', asy
   await page.getByLabel('Email').fill('admin.active@example.test');
   await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
-  await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tổng quan hệ thống' })).toBeVisible();
   await page.getByRole('link', { name: /Lời mời Teacher/u }).click();
   await expect(page.getByRole('heading', { name: 'Lời mời Teacher' })).toBeVisible();
 
@@ -411,7 +411,7 @@ test('Phase 04 Teacher Dashboard reports Student completion deterministically', 
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
   await expect(page.getByRole('heading', { name: 'Lớp học của E2E Teacher' })).toBeVisible();
   await page.goto(teacherCoursePath);
-  await expect(page.getByText('P05_REQUIRED_ACTIVITY_COMPLETION_V1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tổng quan tiến độ' })).toBeVisible();
   await expect(page.getByText('Demo Student Active Two')).toBeVisible();
   await expect(page.getByText('100%')).toBeVisible();
   await expect(page.getByRole('link', { name: /Quản lý nội dung/u })).toBeVisible();
@@ -422,7 +422,7 @@ test('Phase 04 Admin governance exposes metadata without lesson content', async 
   await page.getByLabel('Email').fill('admin.active@example.test');
   await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
-  await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tổng quan hệ thống' })).toBeVisible();
   await page.goto('/admin/courses');
   const courseRow = page.getByRole('row').filter({ hasText: courseName });
   await expect(courseRow).toBeVisible();
@@ -478,7 +478,7 @@ test('Admin updates Enrollment Policy and direct cross-role routes are denied', 
   await page.getByLabel('Email').fill('admin.active@example.test');
   await page.getByLabel('Mật khẩu', { exact: true }).fill(demoPassword);
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
-  await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tổng quan hệ thống' })).toBeVisible();
   await page.goto('/admin/settings/enrollment-policy');
   await expect(page.getByRole('heading', { name: 'Enrollment Policy' })).toBeVisible();
   const revisionRow = page.getByText('Revision').locator('..');

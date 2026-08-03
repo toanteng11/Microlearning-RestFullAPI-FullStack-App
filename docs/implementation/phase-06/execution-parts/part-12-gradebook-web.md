@@ -47,3 +47,19 @@ apps/web/src/styles.css
 - Desktop/mobile không overlap và không mất tên hàng/cột.
 - Regrade/deadline refresh đúng cell/summary.
 - P06-PR05 CI Pass trước merge.
+
+## Implementation Result
+
+| Field | Result |
+| --- | --- |
+| Status | `LOCAL_PASS_REMOTE_PENDING` |
+| Branch | `feature/phase-06-gradebook` |
+| Code commit | `fe36dda` |
+| Web component | Full Web `115/115`; Gradebook focused `6/6` |
+| Integrated browser | Full `32/32`; Gradebook `3/3` |
+| Responsive | `390x844`, document overflow `0` |
+| Accessibility | Axe serious/critical `0` |
+| Evidence | `gradebook-evidence.md` |
+
+Local Definition of Done đã đạt. Remote P06-PR05 CI/review/merge và post-merge `main` CI vẫn là
+exit condition bắt buộc.

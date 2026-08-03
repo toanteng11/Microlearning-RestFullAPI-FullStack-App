@@ -51,6 +51,24 @@ của Data/API/Web.
 | P06-AC-017 | Migration/index/backfill chạy lại an toàn. |
 | P06-AC-018 | Explain plan chính dùng index, không unbounded scan/N+1. |
 
+### 3.1 Foundation Execution Result
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-009 | Local Pass | Versioned summary schema, invariants, unique/index tests; commit `1afe813` |
+| P06-AC-010 | Local Pass | No-PII schema review và prohibited-field migration test |
+| P06-AC-011 | Local Pass | Pure calculator/policy tests với fixed `asOf` |
+| P06-AC-012 | Local Pass | Reason union, newest watermark, broad-scope precedence và stale-worker CAS |
+| P06-AC-013 | Local Pass | Required real writer, source+intent rollback/commit và post-commit refresh fault test |
+| P06-AC-014 | Local Pass | Fresh/stale/partial/rebuilding/failed policy tests |
+| P06-AC-015 | Local Pass | Student/Course rebuild, bounded batch và idempotent CLI |
+| P06-AC-016 | Local Pass | Dry-run difference detection và explicit read-model-only repair |
+| P06-AC-017 | Local Pass | Index/migration preflight chạy lặp; legacy candidate `0` |
+| P06-AC-018 | Local Pass | Default ranking explain dùng named compound index; batched reader contract |
+
+Data/read-model result hiện tại: `10/10 Local Pass`. Kết quả chỉ chuyển thành `Pass` sau
+P06-PR02 required CI/review/merge.
+
 ## 4. Student `019..027`
 
 | ID | Criterion |
@@ -64,6 +82,12 @@ của Data/API/Web.
 | P06-AC-025 | Completed activity rời pending và summary refresh. |
 | P06-AC-026 | Draft Grade/private feedback không lộ. |
 | P06-AC-027 | Loading/empty/stale/partial/error/forbidden responsive và accessible. |
+
+### 4.1 Student Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-019..027 | Local Pass | Student API/Web, full Mongo integration `87/87`, Web `109/109`, browser E2E `29/29` |
 
 ## 5. Teacher `028..042`
 
@@ -85,6 +109,19 @@ của Data/API/Web.
 | P06-AC-041 | Grade return/regrade cập nhật Gradebook/average đúng. |
 | P06-AC-042 | Teacher UI states/navigation/Back/Forward/accessibility Pass. |
 
+### 5.1 Teacher Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-028..034 | Local Pass | Dashboard, stable ranking, activity/assessment analytics; commit `9096d78` |
+| P06-AC-035..037 | Local Pass | Bounded stable Gradebook, orthogonal statuses và returned-points weighted average; commit `fe36dda` |
+| P06-AC-038..040 | Local Pass | Active-roster Student detail, cross-scope IDOR và deadline-aware aggregate tests Pass |
+| P06-AC-041 | Local Pass | Regrade invalidates Course reporting và Gradebook cell refresh E2E Pass |
+| P06-AC-042 | Local Pass | Teacher/Gradebook component và E2E; responsive/Axe Pass |
+
+Teacher result hiện tại: `15/15 Local Pass`. Local Pass chỉ chuyển thành Pass sau các Parent PR
+dependency và P06-PR05 required CI/review/merge.
+
 ## 6. Admin `043..050`
 
 | ID | Criterion |
@@ -97,6 +134,12 @@ của Data/API/Web.
 | P06-AC-048 | Small-group aggregate bị suppress đúng threshold. |
 | P06-AC-049 | Super Admin giữ redaction/audit. |
 | P06-AC-050 | Sensitive report view có safe AuditLog. |
+
+### 6.1 Admin Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-043..050 | Local Pass | Admin API commit `2bbbc2d`, Web commit `c1f5fa9`, privacy/integration/Web/E2E Pass; `admin-reporting-api-evidence.md`, `admin-reporting-web-evidence.md` |
 
 ## 7. Security/API/Privacy `051..060`
 
@@ -113,6 +156,19 @@ của Data/API/Web.
 | P06-AC-059 | Structured errors có request ID, không stack/secret. |
 | P06-AC-060 | Rate/abuse controls không chặn normal dataset nhưng chặn vượt ngưỡng. |
 
+### 7.1 Security/API Current Execution Result
+
+| IDs | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-051..053 | Local Pass | Auth/permission, ownership-before-query và strict query tests |
+| P06-AC-054 | Local Pass | Student rows/activity columns `<=50`; invalid bound `400` |
+| P06-AC-055 | Local Pass For Enabled Scope | Gradebook count/items dùng cùng filtered rows; Conditional export chờ Part 15 disposition |
+| P06-AC-056 | Local Pass | Actor-scoped query keys và auth private-cache clearing regression Pass |
+| P06-AC-057 | Local Pass | Gradebook payload denylist không có answer/Submission body/private feedback |
+| P06-AC-058 | Local Pass | P05 operation retire atomically; runtime/OpenAPI chỉ còn một P06 Gradebook operation |
+| P06-AC-059 | Local Pass | Structured error middleware regression Pass |
+| P06-AC-060 | Local Pass | Reporting/analytics request bounds và identity rate limit tests Pass; normal `100x50` dataset không bị chặn |
+
 ## 8. Quality And Exit `061..068`
 
 | ID | Criterion |
@@ -126,6 +182,19 @@ của Data/API/Web.
 | P06-AC-067 | Critical/High defects = 0, risks/debt có disposition. |
 | P06-AC-068 | Evidence/exit report/P07 handoff được review và accepted. |
 
+### 8.1 Quality And Exit Execution Result
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-061 | Local Pass | API `230/230`, Web `126/126`, integration `97/97`, OpenAPI `10/10`, E2E `34/34` |
+| P06-AC-062 | Local Pass | Full fresh-stack regression Phase 02-05 trong E2E `34/34` và all-workspace coverage |
+| P06-AC-063 | Local Pass | `100x50` calculator/Gradebook/dashboard/ranking results trong `quality-hardening-evidence.md` |
+| P06-AC-064 | Local Pass | Mongo replica set, API, Web healthy; deterministic seed create/rerun Pass |
+| P06-AC-065 | Local Pass | Fresh clone `npm ci` + `npm run check:ci` Pass |
+| P06-AC-066 | Remote Pending | Release PR required checks và post-merge main CI chưa tồn tại |
+| P06-AC-067 | Local Pass | Critical `0`, High `0`; risk/debt disposition đã cập nhật |
+| P06-AC-068 | Remote Pending | Local handoff package Ready for Review; P07 consumer chưa ký nhận |
+
 ## 9. Conditional `069..074`
 
 | ID | Criterion |
@@ -136,6 +205,17 @@ của Data/API/Web.
 | P06-AC-072 | Student trend chỉ dùng compatible snapshots và có NO_DATA. |
 | P06-AC-073 | Admin outcome aggregate threshold/differencing review Pass. |
 | P06-AC-074 | Weighted score V2 chỉ bật khi formula/migration/history riêng được approve. |
+
+### 9.1 Conditional Execution Result
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| P06-AC-069 | Local Pass | Flag + permission + backend `allowedActions` conjunction; disabled UI/E2E path Pass |
+| P06-AC-070 | Local Pass | Scoped bounded stream CSV, fixed projection, formula neutralization và audit tests Pass |
+| P06-AC-071 | Local Pass | Analytics allowlist/dedupe/TTL/rate/privacy/failure-isolation tests Pass |
+| P06-AC-072 | Local Pass | Versioned snapshot trend và `NO_DATA` compatibility tests Pass |
+| P06-AC-073 | Local Pass | Aggregate-only outcome và minimum group size `5` tests Pass |
+| P06-AC-074 | `APPROVED_NA` | Weighted V2 deferred; flag false, V1 remains canonical |
 
 ## 10. Exit Summary Template
 
@@ -148,4 +228,19 @@ PR CI: <url>
 Main CI: <url>
 Release commit: <sha>
 Decision: PASS | FAIL | CONDITIONAL_PASS
+```
+
+## 11. Current Exit Summary
+
+```text
+Must local result: 66/68 Pass
+Must remote pending: P06-AC-066, P06-AC-068
+Conditional criteria: 5 Pass, 1 Approved N/A
+Conditional capabilities: 4 enabled Pass, 2 Approved N/A
+Critical: 0
+High: 0
+PR CI: Pending
+Main CI: Pending
+Release commit: Pending
+Decision: LOCAL_PASS_REMOTE_PENDING
 ```

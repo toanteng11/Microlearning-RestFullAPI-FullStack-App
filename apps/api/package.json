@@ -15,7 +15,10 @@
     "test:openapi": "vitest run tests/app.test.ts",
     "test:coverage": "vitest run --coverage",
     "bootstrap:admin": "tsx src/scripts/bootstrap-admin.ts",
-    "seed:demo": "tsx src/scripts/seed-demo.ts"
+    "seed:demo": "tsx src/scripts/seed-demo.ts",
+    "reporting:rebuild": "tsx src/scripts/reporting-rebuild.ts",
+    "reporting:reconcile": "tsx src/scripts/reporting-reconcile.ts",
+    "reporting:benchmark": "tsx src/scripts/reporting-benchmark.ts"
   },
   "dependencies": {
     "argon2": "^0.44.0",

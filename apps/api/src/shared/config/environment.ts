@@ -4,6 +4,10 @@ const booleanString = z.preprocess(
   (value) => value ?? 'false',
   z.enum(['true', 'false']).transform((value) => value === 'true'),
 );
+const enabledByDefaultBooleanString = z.preprocess(
+  (value) => value ?? 'true',
+  z.enum(['true', 'false']).transform((value) => value === 'true'),
+);
 
 const secretSchema = z.string().refine((value) => Buffer.byteLength(value, 'utf8') >= 32, {
   message: 'must contain at least 32 UTF-8 bytes',
@@ -30,13 +34,44 @@ const phaseFiveExplicitProductionFields = [
   'QUESTION_MEDIA_ALLOWED_HOSTS',
   'ASSIGNMENT_LINK_SUBMISSION_ENABLED',
   'ASSIGNMENT_MARK_DONE_ENABLED',
-  'BASIC_GRADEBOOK_ENABLED',
   'ASSESSMENT_FILE_UPLOAD_ENABLED',
   'QUIZ_ATTEMPT_START_IP_LIMIT',
   'QUIZ_ATTEMPT_IDENTITY_LIMIT',
   'QUIZ_ANSWER_SAVE_LIMIT',
   'ASSESSMENT_MUTATION_WINDOW_SECONDS',
   'ASSESSMENT_MUTATION_IDENTITY_LIMIT',
+] as const;
+
+const phaseSixExplicitProductionFields = [
+  'REPORTING_ENABLED',
+  'REPORTING_TIMEZONE',
+  'REPORTING_DUE_SOON_WINDOW_HOURS',
+  'REPORTING_PAGE_MAX',
+  'REPORTING_DASHBOARD_PREVIEW_LIMIT',
+  'REPORTING_GRADEBOOK_ACTIVITY_MAX',
+  'REPORTING_STALE_AFTER_SECONDS',
+  'REPORTING_INLINE_REFRESH_MAX_STUDENTS',
+  'REPORTING_ON_DEMAND_COURSE_REFRESH_MAX_STUDENTS',
+  'REPORTING_REFRESH_REQUEST_BUDGET_MS',
+  'REPORTING_REBUILD_BATCH_SIZE',
+  'REPORTING_REBUILD_MAX_ATTEMPTS',
+  'REPORTING_CLASSROOM_EXPANSION_BATCH_SIZE',
+  'REPORTING_INVALIDATION_LOCK_SECONDS',
+  'REPORTING_INVALIDATION_MAX_ATTEMPTS',
+  'REPORTING_INVALIDATION_RETRY_BASE_SECONDS',
+  'REPORTING_INVALIDATION_RETRY_MAX_SECONDS',
+  'REPORTING_PRIVACY_MIN_GROUP_SIZE',
+  'REPORTING_MAX_DATE_RANGE_DAYS',
+  'REPORT_EXPORT_ENABLED',
+  'REPORT_EXPORT_MAX_ROWS',
+  'REPORT_EXPORT_MAX_DATE_RANGE_DAYS',
+  'ANALYTICS_EVENTS_ENABLED',
+  'ANALYTICS_EVENT_RETENTION_DAYS',
+  'ANALYTICS_EVENT_BODY_MAX_BYTES',
+  'ANALYTICS_EVENT_IDENTITY_LIMIT',
+  'STUDENT_PROGRESS_TREND_ENABLED',
+  'ADMIN_LEARNING_OUTCOMES_ENABLED',
+  'WEIGHTED_PROCESS_SCORE_ENABLED',
 ] as const;
 
 const environmentSchema = z.object({
@@ -95,13 +130,46 @@ const environmentSchema = z.object({
   QUESTION_MEDIA_ALLOWED_HOSTS: z.string().default(''),
   ASSIGNMENT_LINK_SUBMISSION_ENABLED: booleanString,
   ASSIGNMENT_MARK_DONE_ENABLED: booleanString,
-  BASIC_GRADEBOOK_ENABLED: booleanString,
   ASSESSMENT_FILE_UPLOAD_ENABLED: booleanString,
   QUIZ_ATTEMPT_START_IP_LIMIT: z.coerce.number().int().min(1).max(10_000).default(300),
   QUIZ_ATTEMPT_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(1_000).default(20),
   QUIZ_ANSWER_SAVE_LIMIT: z.coerce.number().int().min(1).max(10_000).default(180),
   ASSESSMENT_MUTATION_WINDOW_SECONDS: z.coerce.number().int().min(1).max(3_600).default(60),
   ASSESSMENT_MUTATION_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
+  REPORTING_ENABLED: enabledByDefaultBooleanString,
+  REPORTING_TIMEZONE: z.string().trim().min(1).max(100).default('Asia/Ho_Chi_Minh'),
+  REPORTING_DUE_SOON_WINDOW_HOURS: z.coerce.number().int().min(1).max(720).default(72),
+  REPORTING_PAGE_MAX: z.coerce.number().int().min(1).max(100).default(50),
+  REPORTING_DASHBOARD_PREVIEW_LIMIT: z.coerce.number().int().min(1).max(10).default(5),
+  REPORTING_GRADEBOOK_ACTIVITY_MAX: z.coerce.number().int().min(1).max(100).default(50),
+  REPORTING_STALE_AFTER_SECONDS: z.coerce.number().int().min(1).max(86_400).default(300),
+  REPORTING_INLINE_REFRESH_MAX_STUDENTS: z.coerce.number().int().min(1).max(20).default(5),
+  REPORTING_ON_DEMAND_COURSE_REFRESH_MAX_STUDENTS: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(100),
+  REPORTING_REFRESH_REQUEST_BUDGET_MS: z.coerce.number().int().min(100).max(1_500).default(900),
+  REPORTING_REBUILD_BATCH_SIZE: z.coerce.number().int().min(1).max(500).default(50),
+  REPORTING_REBUILD_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(3),
+  REPORTING_CLASSROOM_EXPANSION_BATCH_SIZE: z.coerce.number().int().min(1).max(100).default(50),
+  REPORTING_INVALIDATION_LOCK_SECONDS: z.coerce.number().int().min(1).max(3_600).default(120),
+  REPORTING_INVALIDATION_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(3),
+  REPORTING_INVALIDATION_RETRY_BASE_SECONDS: z.coerce.number().int().min(1).max(3_600).default(30),
+  REPORTING_INVALIDATION_RETRY_MAX_SECONDS: z.coerce.number().int().min(1).max(3_600).default(300),
+  REPORTING_PRIVACY_MIN_GROUP_SIZE: z.coerce.number().int().min(2).max(100).default(5),
+  REPORTING_MAX_DATE_RANGE_DAYS: z.coerce.number().int().min(1).max(3_650).default(365),
+  REPORT_EXPORT_ENABLED: booleanString,
+  REPORT_EXPORT_MAX_ROWS: z.coerce.number().int().min(1).max(100_000).default(5_000),
+  REPORT_EXPORT_MAX_DATE_RANGE_DAYS: z.coerce.number().int().min(1).max(3_650).default(365),
+  ANALYTICS_EVENTS_ENABLED: booleanString,
+  ANALYTICS_EVENT_RETENTION_DAYS: z.coerce.number().int().min(1).max(365).default(90),
+  ANALYTICS_EVENT_BODY_MAX_BYTES: z.coerce.number().int().min(1_024).max(65_536).default(16_384),
+  ANALYTICS_EVENT_IDENTITY_LIMIT: z.coerce.number().int().min(1).max(10_000).default(120),
+  STUDENT_PROGRESS_TREND_ENABLED: booleanString,
+  ADMIN_LEARNING_OUTCOMES_ENABLED: booleanString,
+  WEIGHTED_PROCESS_SCORE_ENABLED: booleanString,
   RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REGISTER_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(10),
   LOGIN_RATE_LIMIT_MAX: z.coerce.number().int().min(1).max(1000).default(30),
@@ -171,7 +239,6 @@ export interface AssessmentFeatureFlagConfig {
   questionMediaAllowedHosts: readonly string[];
   assignmentLinkSubmissionEnabled: boolean;
   assignmentMarkDoneEnabled: boolean;
-  basicGradebookEnabled: boolean;
   assessmentFileUploadEnabled: false;
 }
 
@@ -181,6 +248,38 @@ export interface AssessmentRateLimitConfig {
   attemptStartIpMax: number;
   attemptStartIdentityMax: number;
   answerSaveIdentityMax: number;
+}
+
+export interface ReportingConfig {
+  enabled: boolean;
+  timezone: string;
+  dueSoonWindowHours: number;
+  pageMax: number;
+  dashboardPreviewLimit: number;
+  gradebookActivityMax: number;
+  staleAfterSeconds: number;
+  inlineRefreshMaxStudents: number;
+  onDemandCourseRefreshMaxStudents: number;
+  refreshRequestBudgetMs: number;
+  rebuildBatchSize: number;
+  rebuildMaxAttempts: number;
+  classroomExpansionBatchSize: number;
+  invalidationLockSeconds: number;
+  invalidationMaxAttempts: number;
+  invalidationRetryBaseSeconds: number;
+  invalidationRetryMaxSeconds: number;
+  privacyMinGroupSize: number;
+  maxDateRangeDays: number;
+  exportEnabled: boolean;
+  exportMaxRows: number;
+  exportMaxDateRangeDays: number;
+  analyticsEventsEnabled: boolean;
+  analyticsEventRetentionDays: number;
+  analyticsEventBodyMaxBytes: number;
+  analyticsEventIdentityLimit: number;
+  studentProgressTrendEnabled: boolean;
+  adminLearningOutcomesEnabled: boolean;
+  weightedProcessScoreEnabled: boolean;
 }
 
 export interface AppConfig {
@@ -212,6 +311,7 @@ export interface AppConfig {
   featureFlags: FeatureFlagConfig;
   assessmentFeatures: AssessmentFeatureFlagConfig;
   assessmentRateLimits: AssessmentRateLimitConfig;
+  reporting: ReportingConfig;
   rateLimits: RateLimitConfig;
   bootstrapAdminEnabled: boolean;
   logLevel: LogLevel;
@@ -219,6 +319,15 @@ export interface AppConfig {
 
 function configurationError(message: string): never {
   throw new Error(`Invalid application configuration: ${message}`);
+}
+
+function isValidIanaTimezone(value: string): boolean {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: value }).format();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function normalizeOrigin(value: string, field: string): string {
@@ -303,6 +412,7 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     const missingFields = [
       ...phaseFourExplicitProductionFields,
       ...phaseFiveExplicitProductionFields,
+      ...phaseSixExplicitProductionFields,
     ].filter((field) => !input[field]?.trim());
     if (missingFields.length > 0) {
       configurationError(
@@ -407,7 +517,6 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     questionMediaAllowedHosts,
     assignmentLinkSubmissionEnabled: parsed.data.ASSIGNMENT_LINK_SUBMISSION_ENABLED,
     assignmentMarkDoneEnabled: parsed.data.ASSIGNMENT_MARK_DONE_ENABLED,
-    basicGradebookEnabled: parsed.data.BASIC_GRADEBOOK_ENABLED,
     assessmentFileUploadEnabled: false as const,
   });
   const assessmentRateLimits = Object.freeze({
@@ -416,6 +525,37 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     attemptStartIpMax: parsed.data.QUIZ_ATTEMPT_START_IP_LIMIT,
     attemptStartIdentityMax: parsed.data.QUIZ_ATTEMPT_IDENTITY_LIMIT,
     answerSaveIdentityMax: parsed.data.QUIZ_ANSWER_SAVE_LIMIT,
+  });
+  const reporting = Object.freeze({
+    enabled: parsed.data.REPORTING_ENABLED,
+    timezone: parsed.data.REPORTING_TIMEZONE,
+    dueSoonWindowHours: parsed.data.REPORTING_DUE_SOON_WINDOW_HOURS,
+    pageMax: parsed.data.REPORTING_PAGE_MAX,
+    dashboardPreviewLimit: parsed.data.REPORTING_DASHBOARD_PREVIEW_LIMIT,
+    gradebookActivityMax: parsed.data.REPORTING_GRADEBOOK_ACTIVITY_MAX,
+    staleAfterSeconds: parsed.data.REPORTING_STALE_AFTER_SECONDS,
+    inlineRefreshMaxStudents: parsed.data.REPORTING_INLINE_REFRESH_MAX_STUDENTS,
+    onDemandCourseRefreshMaxStudents: parsed.data.REPORTING_ON_DEMAND_COURSE_REFRESH_MAX_STUDENTS,
+    refreshRequestBudgetMs: parsed.data.REPORTING_REFRESH_REQUEST_BUDGET_MS,
+    rebuildBatchSize: parsed.data.REPORTING_REBUILD_BATCH_SIZE,
+    rebuildMaxAttempts: parsed.data.REPORTING_REBUILD_MAX_ATTEMPTS,
+    classroomExpansionBatchSize: parsed.data.REPORTING_CLASSROOM_EXPANSION_BATCH_SIZE,
+    invalidationLockSeconds: parsed.data.REPORTING_INVALIDATION_LOCK_SECONDS,
+    invalidationMaxAttempts: parsed.data.REPORTING_INVALIDATION_MAX_ATTEMPTS,
+    invalidationRetryBaseSeconds: parsed.data.REPORTING_INVALIDATION_RETRY_BASE_SECONDS,
+    invalidationRetryMaxSeconds: parsed.data.REPORTING_INVALIDATION_RETRY_MAX_SECONDS,
+    privacyMinGroupSize: parsed.data.REPORTING_PRIVACY_MIN_GROUP_SIZE,
+    maxDateRangeDays: parsed.data.REPORTING_MAX_DATE_RANGE_DAYS,
+    exportEnabled: parsed.data.REPORT_EXPORT_ENABLED,
+    exportMaxRows: parsed.data.REPORT_EXPORT_MAX_ROWS,
+    exportMaxDateRangeDays: parsed.data.REPORT_EXPORT_MAX_DATE_RANGE_DAYS,
+    analyticsEventsEnabled: parsed.data.ANALYTICS_EVENTS_ENABLED,
+    analyticsEventRetentionDays: parsed.data.ANALYTICS_EVENT_RETENTION_DAYS,
+    analyticsEventBodyMaxBytes: parsed.data.ANALYTICS_EVENT_BODY_MAX_BYTES,
+    analyticsEventIdentityLimit: parsed.data.ANALYTICS_EVENT_IDENTITY_LIMIT,
+    studentProgressTrendEnabled: parsed.data.STUDENT_PROGRESS_TREND_ENABLED,
+    adminLearningOutcomesEnabled: parsed.data.ADMIN_LEARNING_OUTCOMES_ENABLED,
+    weightedProcessScoreEnabled: parsed.data.WEIGHTED_PROCESS_SCORE_ENABLED,
   });
 
   if (featureFlags.gcsUploadsEnabled && !featureFlags.learningResourcesEnabled) {
@@ -430,6 +570,17 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   ) {
     configurationError(
       'QUESTION_MEDIA_ALLOWED_HOSTS is required when Question URL media is enabled',
+    );
+  }
+  if (!isValidIanaTimezone(reporting.timezone)) {
+    configurationError('REPORTING_TIMEZONE must be a valid IANA timezone');
+  }
+  if (reporting.pageMax > contentLimits.dashboardPageMax) {
+    configurationError('REPORTING_PAGE_MAX must not exceed DASHBOARD_PAGE_MAX');
+  }
+  if (reporting.invalidationRetryBaseSeconds > reporting.invalidationRetryMaxSeconds) {
+    configurationError(
+      'REPORTING_INVALIDATION_RETRY_BASE_SECONDS must not exceed REPORTING_INVALIDATION_RETRY_MAX_SECONDS',
     );
   }
 
@@ -462,6 +613,7 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     featureFlags,
     assessmentFeatures,
     assessmentRateLimits,
+    reporting,
     rateLimits,
     bootstrapAdminEnabled: parsed.data.BOOTSTRAP_ADMIN_ENABLED,
     logLevel: parsed.data.LOG_LEVEL,

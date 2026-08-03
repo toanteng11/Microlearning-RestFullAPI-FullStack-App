@@ -47,8 +47,16 @@ export default defineConfig({
         'src/modules/quiz-attempts/quiz-attempt.service.ts',
         'src/modules/quiz-attempts/quiz-review.service.ts',
         'src/modules/submissions/submission.service.ts',
+        // Phase 06 Mongo adapters and rebuild orchestration are exercised by replica-set suites
+        // and command evidence; pure reporting contracts and policies remain in unit coverage.
+        'src/modules/phase-six.foundation.ts',
+        'src/modules/reporting/adapters/**',
+        'src/modules/reporting/reporting-refresh.service.ts',
+        'src/scripts/reporting-*.ts',
         'src/shared/database/index-compatibility.ts',
         'src/shared/database/phase-five-migration.ts',
+        'src/shared/database/phase-six-indexes.ts',
+        'src/shared/database/phase-six-migration.ts',
         'src/shared/database/phase-four-indexes.ts',
         'src/shared/database/phase-three-indexes.ts',
       ],

@@ -29,13 +29,9 @@ interface CourseData {
 interface ProgressData {
   metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1';
   descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2';
-  summary: {
-    requiredActivities: number;
-    completedActivities: number;
-    requiredLessons: number;
-    completedLessons: number;
-    progressPercentage: number | null;
-  };
+  requiredActivityCount: number;
+  completedRequiredCount: number;
+  progressPercentage: number | null;
 }
 
 function ActivityIcon({ type }: { type: ClassworkActivity['activityType'] }) {
@@ -123,7 +119,7 @@ export function StudentCoursePage() {
     ...data.classwork.activities,
     ...data.classwork.modules.flatMap((module) => module.activities),
   ];
-  const percentage = data.progress.summary.progressPercentage ?? 0;
+  const percentage = data.progress.progressPercentage ?? 0;
 
   return (
     <section className="page-section">
@@ -142,8 +138,8 @@ export function StudentCoursePage() {
         <div className="course-progress-summary">
           <ProgressBar value={percentage} label="Tiến độ khóa học" />
           <small>
-            {data.progress.summary.completedActivities}/{data.progress.summary.requiredActivities}{' '}
-            hoạt động bắt buộc
+            {data.progress.completedRequiredCount}/{data.progress.requiredActivityCount} hoạt động
+            bắt buộc
           </small>
         </div>
       </header>
@@ -187,8 +183,8 @@ export function StudentCoursePage() {
           ))}
         </div>
       )}
-      {data.progress.summary.completedActivities === data.progress.summary.requiredActivities &&
-      data.progress.summary.requiredActivities > 0 ? (
+      {data.progress.completedRequiredCount === data.progress.requiredActivityCount &&
+      data.progress.requiredActivityCount > 0 ? (
         <div className="notice notice--success">
           <CheckCircle2 size={17} /> Bạn đã hoàn thành toàn bộ hoạt động bắt buộc.
         </div>

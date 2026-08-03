@@ -7,6 +7,7 @@ import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { GradeRecord } from '../grades/grade.model.js';
 import type { GradeRepository } from '../grades/grade.repository.js';
 import type { AssessmentScopeReader } from '../learning-content/assessment-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import type { QuizRepository } from '../quizzes/quiz.repository.js';
 import { UserModel } from '../users/user.model.js';
 import { toTeacherAttemptReviewDto } from './quiz-review.dto.js';
@@ -50,6 +51,7 @@ export class QuizReviewService {
     private readonly grades: GradeRepository,
     private readonly scopes: AssessmentScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -200,6 +202,24 @@ export class QuizReviewService {
     return grade;
   }
 
+  private invalidateAttempt(
+    attempt: QuizAttemptRecord,
+    reasons: readonly ('ASSESSMENT_CHANGED' | 'GRADE_CHANGED')[],
+    sourceChangedAt: Date,
+    session: ClientSession,
+  ) {
+    return this.reportingInvalidationWriter.invalidateStudentCourse(
+      {
+        classroomId: attempt.classroomId,
+        courseId: attempt.courseId,
+        studentId: attempt.studentId,
+        reasons,
+        sourceChangedAt,
+      },
+      session,
+    );
+  }
+
   async listResults(actor: AuthenticatedUser, quizId: string, query: QuizResultListQueryInput) {
     const quiz = await this.requireQuiz(actor, quizId);
     const attempts = await this.attempts.listByQuiz(quiz._id);
@@ -295,35 +315,42 @@ export class QuizReviewService {
     const reviewedAt = this.now();
     const reviews = this.buildReviews(current, input.answers, actor, reviewedAt);
     const manualScore = reviews.reduce((sum, review) => sum + review.awardedPoints, 0);
-    const updated = await this.attempts.saveReviewCas(
-      current._id,
-      input.expectedReviewRevision,
-      reviews,
-      manualScore,
-      current.objectiveScore + manualScore,
-      reviewedAt,
-    );
-    if (!updated)
-      throw new AppError(409, 'CONCURRENT_MODIFICATION', 'Quiz review was modified elsewhere');
-    await this.audits.append({
-      actorId: objectId(actor.id, 'Teacher'),
-      actorRole: actor.role,
-      action: 'QUIZ_REVIEW_SAVED',
-      resourceId: updated._id.toString(),
-      requestId,
-      newValue: {
-        reviewRevision: updated.reviewRevision,
-        manualScore: updated.manualScore,
-        totalScore: updated.totalScore,
-      },
-      metadata: {
-        classroomId: updated.classroomId.toString(),
-        courseId: updated.courseId.toString(),
-        quizId: updated.quizId.toString(),
-        studentId: updated.studentId.toString(),
-      },
+    return withMongoTransaction(async (session) => {
+      const updated = await this.attempts.saveReviewCas(
+        current._id,
+        input.expectedReviewRevision,
+        reviews,
+        manualScore,
+        current.objectiveScore + manualScore,
+        reviewedAt,
+        session,
+      );
+      if (!updated)
+        throw new AppError(409, 'CONCURRENT_MODIFICATION', 'Quiz review was modified elsewhere');
+      await this.audits.append(
+        {
+          actorId: objectId(actor.id, 'Teacher'),
+          actorRole: actor.role,
+          action: 'QUIZ_REVIEW_SAVED',
+          resourceId: updated._id.toString(),
+          requestId,
+          newValue: {
+            reviewRevision: updated.reviewRevision,
+            manualScore: updated.manualScore,
+            totalScore: updated.totalScore,
+          },
+          metadata: {
+            classroomId: updated.classroomId.toString(),
+            courseId: updated.courseId.toString(),
+            quizId: updated.quizId.toString(),
+            studentId: updated.studentId.toString(),
+          },
+        },
+        session,
+      );
+      await this.invalidateAttempt(updated, ['ASSESSMENT_CHANGED'], reviewedAt, session);
+      return toTeacherAttemptReviewDto(updated);
     });
-    return toTeacherAttemptReviewDto(updated);
   }
 
   async finalizeReview(
@@ -385,6 +412,12 @@ export class QuizReviewService {
         },
         session,
       );
+      await this.invalidateAttempt(
+        updated,
+        ['ASSESSMENT_CHANGED', 'GRADE_CHANGED'],
+        completedAt,
+        session,
+      );
       return toTeacherAttemptReviewDto(updated);
     });
   }
@@ -430,6 +463,12 @@ export class QuizReviewService {
             resultReleased: true,
           },
         },
+        session,
+      );
+      await this.invalidateAttempt(
+        updated,
+        ['ASSESSMENT_CHANGED', 'GRADE_CHANGED'],
+        releasedAt,
         session,
       );
       return toTeacherAttemptReviewDto(updated);
@@ -489,6 +528,12 @@ export class QuizReviewService {
             studentId: updated.studentId.toString(),
           },
         },
+        session,
+      );
+      await this.invalidateAttempt(
+        updated,
+        ['ASSESSMENT_CHANGED', 'GRADE_CHANGED'],
+        reviewedAt,
         session,
       );
       return toTeacherAttemptReviewDto(updated);

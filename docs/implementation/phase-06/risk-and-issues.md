@@ -41,6 +41,9 @@ P: Probability, I: Impact; `C` = Critical, `H` = High, `M` = Medium, `L` = Low.
 | P06-I04 | Trend snapshot Conditional | Resolved at Gate A | Implement foundation; runtime default false/no-data |
 | P06-I05 | Existing basic Gradebook flag migration | Resolved in planning | Same route/permission; replace V1 contract; retire old flag |
 | P06-I06 | P05 Teacher progress `0` khi denominator 0 | Resolved in planning | Coordinated nullable contract correction |
+| P06-I07 | Admin E2E dùng heading cũ và Role locator mơ hồ | Resolved locally | Updated semantic heading assertion and explicit `aria-label`; fresh E2E `34/34` |
+| P06-I08 | Privacy E2E thiếu `await` | Resolved locally | Matcher awaited; focused Admin E2E `2/2` and full E2E `34/34` |
+| P06-I09 | Release PR/main CI/P07 acceptance chưa có | Open external gate | Push quality branch, protected PR, post-merge CI and consumer acceptance |
 
 Không item nào được im lặng mặc định thành scope implementation.
 
@@ -62,3 +65,15 @@ Không item nào được im lặng mặc định thành scope implementation.
 
 Debt được chấp nhận phải có ID, impact, owner, target phase và không ảnh hưởng security/
 correctness. “Sẽ sửa sau” không có owner/date không hợp lệ.
+
+## 6. Gate E Local Review
+
+| Severity | Open defects | Decision |
+| --- | ---: | --- |
+| Critical | 0 | Local Pass |
+| High | 0 | Local Pass |
+| Medium/Low | 0 blocking | No release blocker identified |
+
+Residual external gap P06-I09 chặn status `COMPLETED` nhưng không phải runtime defect. Dependency
+audit exceptions cho `react-router` và `react-router-dom` được quản lý theo time-bound policy; không
+được mở rộng hoặc bỏ qua khi hết hạn.

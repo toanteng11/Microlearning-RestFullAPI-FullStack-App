@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types, type ClientSession } from 'mongoose';
 
 import type { AssessmentFeatureFlagConfig } from '../../shared/config/environment.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
@@ -9,6 +9,7 @@ import type {
 } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { assertQuizMutable } from '../quizzes/quiz.domain.js';
 import type { QuizProjection, QuizRepository } from '../quizzes/quiz.repository.js';
 import { toQuestionAuditValue, toTeacherQuestionDto } from './question.dto.js';
@@ -45,6 +46,7 @@ export class QuestionService {
     private readonly scopes: CourseScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
     private readonly features: AssessmentFeatureFlagConfig,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly createOptionId?: OptionIdFactory,
     private readonly now: () => Date = () => new Date(),
   ) {}
@@ -133,6 +135,18 @@ export class QuestionService {
     );
   }
 
+  private invalidateQuiz(quiz: QuizProjection, sourceChangedAt: Date, session: ClientSession) {
+    return this.reportingInvalidationWriter.invalidateCourse(
+      {
+        classroomId: quiz.classroomId,
+        courseId: quiz.courseId,
+        reasons: ['ACTIVITY_CHANGED'],
+        sourceChangedAt,
+      },
+      session,
+    );
+  }
+
   async list(actor: AuthenticatedUser, quizId: string) {
     const { quiz } = await this.requireTeacherQuiz(actor, quizId);
     const items = await this.questions.listActiveByQuiz(quiz._id);
@@ -184,6 +198,7 @@ export class QuestionService {
         toQuestionRevision: revised.questionRevision,
         session,
       });
+      await this.invalidateQuiz(quiz, question.updatedAt, session);
       return {
         question: toTeacherQuestionDto(question),
         questionRevision: revised.questionRevision,
@@ -233,6 +248,7 @@ export class QuestionService {
         toQuestionRevision: revised.questionRevision,
         session,
       });
+      await this.invalidateQuiz(quiz, updated.updatedAt, session);
       return {
         question: toTeacherQuestionDto(updated),
         questionRevision: revised.questionRevision,
@@ -285,6 +301,7 @@ export class QuestionService {
         toQuestionRevision: revised.questionRevision,
         session,
       });
+      await this.invalidateQuiz(quiz, archived.updatedAt, session);
       return {
         question: toTeacherQuestionDto(archived),
         questionRevision: revised.questionRevision,
@@ -342,6 +359,7 @@ export class QuestionService {
         toQuestionRevision: revised.questionRevision,
         session,
       });
+      await this.invalidateQuiz(quiz, revised.updatedAt, session);
       return {
         items: reordered.map(toTeacherQuestionDto),
         questionRevision: revised.questionRevision,
@@ -394,6 +412,7 @@ export class QuestionService {
         toQuestionRevision: revised.questionRevision,
         session,
       });
+      await this.invalidateQuiz(quiz, updated.updatedAt, session);
       return {
         question: toTeacherQuestionDto(updated),
         questionRevision: revised.questionRevision,

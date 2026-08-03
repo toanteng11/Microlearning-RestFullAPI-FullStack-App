@@ -51,4 +51,25 @@ describe('apiRequest', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })));
     await expect(apiRequest('/auth/logout', { method: 'POST' })).resolves.toBeUndefined();
   });
+
+  it('downloads a CSV blob without trying to parse it as JSON', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response('"name"\r\n"Student"\r\n', {
+        status: 200,
+        headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const blob = await apiRequest<Blob>('/teacher/courses/one/progress/export', {
+      accessToken: 'memory-token',
+      responseType: 'blob',
+    });
+    expect(blob.type).toBe('text/csv;charset=utf-8');
+    await expect(blob.text()).resolves.toContain('Student');
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ headers: expect.objectContaining({ Accept: 'text/csv' }) }),
+    );
+  });
 });

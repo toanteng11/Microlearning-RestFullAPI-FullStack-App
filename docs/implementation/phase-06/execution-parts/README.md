@@ -20,11 +20,27 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Thuộc tính | Giá trị |
 | --- | --- |
 | Gate A | `APPROVED` |
-| Implementation | `READY_TO_CODE` |
+| Implementation | `IN_REVIEW` |
 | Part 00 | `DONE` |
-| Part 01 | `READY` |
-| Part 02-17 | `BLOCKED_BY_DEPENDENCY` |
+| Part 01-05 | `DONE` |
+| Part 06 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 07-08 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 09-10 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 11-12 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 13 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 14 | `LOCAL_PASS_REMOTE_PENDING`; Admin UI/E2E/privacy Pass |
+| Part 15 | `LOCAL_PASS_REMOTE_PENDING`; four enabled capabilities Pass, two capabilities `APPROVED_NA` |
+| Part 16 | `LOCAL_PASS`; full quality, Docker, performance, visual và clean clone Pass |
+| Part 17 | `LOCAL_COMPLETE_REMOTE_PENDING`; protected PR/main CI và P07 acceptance pending |
 | Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
+| Foundation implementation | Commit `1afe813`; local Gate B Pass; remote PR/CI pending |
+| Student reporting implementation | Commit `f560233`; `student-reporting-evidence.md`; P06-PR03 remote CI pending |
+| Teacher reporting implementation | Commit `9096d78`; `teacher-reporting-evidence.md`; P06-PR04 remote CI pending |
+| Gradebook implementation | Commit `fe36dda`; `gradebook-evidence.md`; P06-PR05 remote CI pending |
+| Admin Reporting API implementation | Commit `2bbbc2d`; `admin-reporting-api-evidence.md`; P06-PR06 remote CI pending |
+| Admin Reporting Web implementation | Commit `c1f5fa9`; `admin-reporting-web-evidence.md` |
+| Conditional reporting implementation | Commit `f1baf06`; `conditional-reporting-evidence.md` |
+| Quality hardening | `quality-hardening-evidence.md`; local release candidate Pass |
 
 ## 3. Execution Map
 
@@ -140,3 +156,17 @@ Khi có khác biệt, ưu tiên theo thứ tự:
 6. file Execution Part này.
 
 Execution Part chỉ hướng dẫn thứ tự thực hiện, không được tự thay đổi business semantics.
+
+## 10. Foundation Implementation Evidence
+
+- Part 01-06 được triển khai tại commit `1afe813`.
+- `npm run check:ci`: Pass.
+- API unit coverage: `202/202` tests Pass, statements `78.19%`, lines `80.12%`.
+- Mongo replica-set integration coverage: `82/82` tests Pass, statements `78.65%`,
+  lines `81.29%`.
+- P06 focused Mongo foundation: `11/11` tests Pass.
+- Rebuild, reconcile dry-run, reconcile repair và benchmark CLI: Pass.
+- Chi tiết: `gate-b-foundation-evidence.md`.
+
+Part 06 chỉ chuyển `DONE` sau khi P06-PR02 có required CI Pass, review được xử lý và merge vào
+`main`. Trước thời điểm đó, Part 07-17 không được bắt đầu trên nhánh này.

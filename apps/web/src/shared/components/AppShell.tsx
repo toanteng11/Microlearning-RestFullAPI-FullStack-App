@@ -8,7 +8,11 @@ import {
   LogOut,
   School,
   Settings,
+  TrendingUp,
   UserRound,
+  BarChart3,
+  GraduationCap,
+  UsersRound,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 
@@ -60,10 +64,22 @@ export function AppShell() {
               <NavLink to="/student/grades">
                 <Award size={17} /> Điểm
               </NavLink>
+              <NavLink to="/student/progress">
+                <TrendingUp size={17} /> Tiến độ
+              </NavLink>
             </>
           ) : null}
           {user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? (
             <>
+              <NavLink to="/admin/reports/governance">
+                <BarChart3 size={17} /> Báo cáo
+              </NavLink>
+              <NavLink to="/admin/users">
+                <UsersRound size={17} /> Người dùng
+              </NavLink>
+              <NavLink to="/admin/teacher-invitations">
+                <GraduationCap size={17} /> Lời mời
+              </NavLink>
               <NavLink to="/admin/classrooms">
                 <School size={17} /> Classroom
               </NavLink>

@@ -12,15 +12,16 @@ interface ApiErrorEnvelope {
 export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
   accessToken?: string | null;
+  responseType?: 'json' | 'blob';
 }
 
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { body, accessToken, headers, ...requestOptions } = options;
+  const { body, accessToken, headers, responseType = 'json', ...requestOptions } = options;
   const response = await fetch(`${publicConfig.apiBaseUrl}/api/v1${path}`, {
     ...requestOptions,
     credentials: 'include',
     headers: {
-      Accept: 'application/json',
+      Accept: responseType === 'blob' ? 'text/csv' : 'application/json',
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
@@ -29,8 +30,8 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   });
 
   if (response.status === 204) return undefined as T;
-  const payload = (await response.json().catch(() => ({}))) as ApiErrorEnvelope | T;
   if (!response.ok) {
+    const payload = (await response.json().catch(() => ({}))) as ApiErrorEnvelope;
     const envelope = payload as ApiErrorEnvelope;
     throw new ApiError(
       response.status,
@@ -39,5 +40,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
       envelope.error?.details ?? [],
     );
   }
+  if (responseType === 'blob') return (await response.blob()) as T;
+  const payload = (await response.json().catch(() => ({}))) as T;
   return payload as T;
 }

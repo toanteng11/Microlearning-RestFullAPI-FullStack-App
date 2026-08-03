@@ -2,8 +2,9 @@
 
 ## 1. Status
 
-CSV export là `Conditional Should`, mặc định `REPORT_EXPORT_ENABLED=false`. Gate A phải xác
-nhận bật/tắt từng actor report. XLSX, async job và persistent file thuộc Phase 07.
+CSV export là `Conditional Should`, đã được Gate A bật cho implementation và đạt Local Pass tại
+commit `f1baf06`; runtime vẫn mặc định `REPORT_EXPORT_ENABLED=false`. XLSX, async job và persistent
+file là `APPROVED_NA` trong P06 và thuộc Phase 07.
 
 ## 2. Supported P06 Exports
 

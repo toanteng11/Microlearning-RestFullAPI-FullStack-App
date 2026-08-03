@@ -616,7 +616,9 @@ describe('Phase 03 Classroom API integration', () => {
       .set('Authorization', bearer(student.accessToken))
       .expect(200);
 
-    const policyAudits = await AuditLogModel.find({ action: 'ENROLLMENT_POLICY_UPDATED' }).lean();
+    const policyAudits = await AuditLogModel.find({ action: 'ENROLLMENT_POLICY_UPDATED' })
+      .sort({ createdAt: 1, _id: 1 })
+      .lean();
     expect(policyAudits).toHaveLength(2);
     expect(policyAudits[0]).toMatchObject({
       oldValue: { allowClassCodeJoin: true },

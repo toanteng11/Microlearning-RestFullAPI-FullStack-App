@@ -7,8 +7,8 @@
 | Handoff ID | `P06-P07-HANDOFF-V1` |
 | Producer | `P06 - Reporting And Analytics` |
 | Consumer | `P07 - DevOps And Deployment` |
-| Status | `PLANNED` |
-| Effective commit/date | Pending |
+| Status | `READY_FOR_REVIEW` |
+| Effective commit/date | Local code baseline `f1baf06`; evidence date `2026-08-03` |
 
 ## 2. Runtime Contracts To Hand Off
 
@@ -95,3 +95,18 @@ P06 command phải idempotent và JSON-output để P07 automate.
 
 P07 consumer ký nhận sau P06 Gate E với release commit, commands, env, index, dashboard, alert
 and rollback evidence cụ thể.
+
+## 11. Local Handoff Package
+
+| Contract | Evidence path |
+| --- | --- |
+| Runtime env/defaults | `runtime-contract-catalog.md`, `.env.example` |
+| Mongo schema/index/TTL | `data-model-and-indexes.md`, `phase-six-indexes.ts` |
+| Rebuild/reconcile/migration | `read-model-refresh-and-reconciliation.md`, `migration-and-rollback.md` |
+| Performance/health | `quality-hardening-evidence.md` |
+| Conditional flags/export/event | `conditional-reporting-evidence.md` |
+| Cloud Run/Atlas boundary | Sections 3-8 của file này |
+| Rollback | `migration-and-rollback.md`, feature flags default false |
+
+Consumer acceptance chưa được tự suy diễn từ local Pass. Sau release merge, P07 phải ghi reviewer,
+date và decision thật trước khi P06-AC-068 chuyển thành Pass.

@@ -1,29 +1,17 @@
-import {
-  Archive,
-  ArrowLeft,
-  BookOpen,
-  CalendarClock,
-  Clock3,
-  Pencil,
-  Save,
-  Send,
-  UsersRound,
-  X,
-} from 'lucide-react';
+import { Archive, ArrowLeft, BookOpen, CalendarClock, Pencil, Save, Send, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useAuth } from '../../../shared/auth/auth-context';
-import { displayLearningDate, requestErrorMessage } from '../learning-format';
-import type { CourseDashboard, ContentStatus, TeacherCourse } from '../learning.types';
-import { ContentStatusBadge, ProgressStatusBadge } from '../components/LearningStatusBadge';
-import { ProgressBar } from '../components/ProgressBar';
+import { TeacherReportingDashboardPage } from '../../reporting/pages/TeacherReportingDashboardPage';
+import { requestErrorMessage } from '../learning-format';
+import type { ContentStatus, TeacherCourse } from '../learning.types';
+import { ContentStatusBadge } from '../components/LearningStatusBadge';
 
 export function TeacherCourseDashboardPage() {
   const { courseId = '' } = useParams();
   const { request } = useAuth();
   const navigate = useNavigate();
-  const [dashboard, setDashboard] = useState<CourseDashboard | null>(null);
   const [course, setCourse] = useState<TeacherCourse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -33,13 +21,9 @@ export function TeacherCourseDashboardPage() {
 
   useEffect(() => {
     let active = true;
-    void Promise.all([
-      request<{ success: true; data: CourseDashboard }>(`/teacher/courses/${courseId}/dashboard`),
-      request<{ success: true; data: { course: TeacherCourse } }>(`/courses/${courseId}`),
-    ])
-      .then(([dashboardResponse, courseResponse]) => {
+    void request<{ success: true; data: { course: TeacherCourse } }>(`/courses/${courseId}`)
+      .then((courseResponse) => {
         if (active) {
-          setDashboard(dashboardResponse.data);
           setCourse(courseResponse.data.course);
           setError(null);
         }
@@ -134,8 +118,8 @@ export function TeacherCourseDashboardPage() {
     }
   }
 
-  if (error && !dashboard) return <div className="list-state list-state--error">{error}</div>;
-  if (!dashboard || !course)
+  if (error && !course) return <div className="list-state list-state--error">{error}</div>;
+  if (!course)
     return (
       <div className="list-state">
         <div className="spinner" />
@@ -143,13 +127,13 @@ export function TeacherCourseDashboardPage() {
     );
   return (
     <section className="page-section">
-      <Link className="back-link" to={`/teacher/classrooms/${dashboard.course.classroomId}`}>
-        <ArrowLeft size={17} /> {dashboard.course.classroomName}
+      <Link className="back-link" to={`/teacher/classrooms/${course.classroomId}`}>
+        <ArrowLeft size={17} /> Quay lại lớp học
       </Link>
       <header className="page-header page-header--aligned">
         <div>
           <p className="eyebrow">Course Dashboard</p>
-          <h1>{dashboard.course.title}</h1>
+          <h1>{course.title}</h1>
           <p>Tiến độ dựa trên mọi bài học, bài kiểm tra và bài tập bắt buộc.</p>
         </div>
         <div className="course-header-actions">
@@ -247,91 +231,7 @@ export function TeacherCourseDashboardPage() {
           </div>
         </form>
       ) : null}
-      <div className="metric-grid">
-        <div>
-          <span>Tổng hoạt động</span>
-          <strong>{dashboard.summary.totalActivities}</strong>
-        </div>
-        <div>
-          <span>Đã xuất bản</span>
-          <strong>{dashboard.summary.publishedActivities}</strong>
-        </div>
-        <div>
-          <span>Student hoạt động</span>
-          <strong>{dashboard.summary.activeStudents}</strong>
-        </div>
-        <div>
-          <span>Tiến độ trung bình</span>
-          <strong>{dashboard.summary.averageProgressPercentage}%</strong>
-        </div>
-      </div>
-      <div className="dashboard-columns">
-        <section className="dashboard-section">
-          <div className="panel-title">
-            <Clock3 size={20} />
-            <h2>Hoạt động gần đây</h2>
-          </div>
-          {dashboard.activities.length === 0 ? (
-            <p className="muted-text">Chưa có hoạt động được xuất bản.</p>
-          ) : (
-            <div className="activity-list">
-              {dashboard.activities.map((activity) => (
-                <article key={activity.id}>
-                  <div>
-                    <Link to={activity.actionUrl}>
-                      <strong>{activity.title}</strong>
-                    </Link>
-                    <small>
-                      {activity.activityType === 'LESSON'
-                        ? 'Bài học'
-                        : activity.activityType === 'QUIZ'
-                          ? 'Bài kiểm tra'
-                          : 'Bài tập'}
-                    </small>
-                    <small>{displayLearningDate(activity.completionDeadline)}</small>
-                  </div>
-                  <ProgressBar
-                    value={activity.completionPercentage}
-                    label={`Tiến độ ${activity.title}`}
-                  />
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-        <section className="dashboard-section">
-          <div className="panel-title">
-            <UsersRound size={20} />
-            <h2>Xếp hạng tiến độ</h2>
-          </div>
-          {dashboard.students.length === 0 ? (
-            <p className="muted-text">Chưa có Student hoạt động.</p>
-          ) : (
-            <div className="ranking-list">
-              {dashboard.students.map((student, index) => (
-                <article key={student.id}>
-                  <strong className="rank-number">{index + 1}</strong>
-                  <div>
-                    <strong>{student.fullName}</strong>
-                    <small>
-                      {student.completedActivities}/{student.requiredActivities} hoạt động
-                    </small>
-                  </div>
-                  <ProgressBar
-                    value={student.progressPercentage}
-                    label={`Tiến độ ${student.fullName}`}
-                  />
-                  <ProgressStatusBadge status={student.progressStatus} />
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-      <footer className="metric-footnote">
-        Metric: {dashboard.metricVersion} · Descriptor: {dashboard.descriptorVersion} · as of{' '}
-        {displayLearningDate(dashboard.asOf)}
-      </footer>
+      <TeacherReportingDashboardPage courseId={courseId} />
     </section>
   );
 }

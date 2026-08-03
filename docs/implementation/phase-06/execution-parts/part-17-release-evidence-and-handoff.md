@@ -56,3 +56,17 @@ Decision: PASS | FAIL | CONDITIONAL_PASS
 - Phase 07 handoff accepted.
 - README/roadmap/traceability phản ánh release thật.
 - Phase 06 được đánh dấu `COMPLETED`, không dùng tỷ lệ cảm tính.
+
+## Current Execution Status
+
+`LOCAL_COMPLETE_REMOTE_PENDING`.
+
+Đã hoàn thành tại local: test matrix, acceptance result, evidence register, risk review, clean clone,
+exit report draft và P07 handoff package. Chưa được phép đánh dấu `COMPLETED` vì các bước sau cần
+thực hiện trên GitHub/protected branch:
+
+1. push branch `quality/phase-06-release-hardening`;
+2. mở release PR và để toàn bộ required checks Pass;
+3. resolve review rồi merge qua protected `main`;
+4. xác nhận post-merge main CI;
+5. ghi PR/Actions/merge URLs và P07 acceptance.

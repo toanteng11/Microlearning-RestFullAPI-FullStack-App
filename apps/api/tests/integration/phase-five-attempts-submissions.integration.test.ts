@@ -1020,13 +1020,9 @@ describe('Phase 05 Quiz Attempt and Assignment Submission flows', () => {
     expect(progress.body.data).toMatchObject({
       metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
       descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
-      summary: {
-        requiredActivities: 3,
-        completedActivities: 2,
-        requiredLessons: 1,
-        completedLessons: 1,
-        progressPercentage: 66.7,
-      },
+      requiredActivityCount: 3,
+      completedRequiredCount: 2,
+      progressPercentage: 66.7,
     });
 
     const classwork = await request(app)
@@ -1045,14 +1041,16 @@ describe('Phase 05 Quiz Attempt and Assignment Submission flows', () => {
       .set('Authorization', bearer(scope.teacher.token))
       .expect(200);
     expect(dashboard.body.data).toMatchObject({
-      metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
-      descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
-      summary: { requiredActivities: 3, publishedActivities: 3 },
+      summary: { requiredActivityCount: 3, publishedActivityCount: 3 },
+      reporting: {
+        sourceMetricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
+        descriptorVersion: 'P05_ACTIVITY_DESCRIPTOR_V2',
+      },
     });
-    expect(dashboard.body.data.students[0]).toMatchObject({
-      id: scope.student.user._id.toString(),
-      requiredActivities: 3,
-      completedActivities: 2,
+    expect(dashboard.body.data.topStudents[0]).toMatchObject({
+      student: { id: scope.student.user._id.toString() },
+      requiredActivityCount: 3,
+      completedRequiredCount: 2,
       progressPercentage: 66.7,
     });
 

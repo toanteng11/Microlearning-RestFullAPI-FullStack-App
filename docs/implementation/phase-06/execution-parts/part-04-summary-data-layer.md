@@ -50,3 +50,15 @@ apps/api/src/shared/database/phase-six-indexes.ts
 - Duplicate/invariant/revision/claim tests Pass.
 - Explain plan dùng intended named indexes.
 - `P06-AC-009`, `P06-AC-010`, phần repository của `P06-AC-012` Pass.
+
+## Implementation Result
+
+`DONE` tại commit `1afe813`.
+
+- Versioned summary/invalidation models, named indexes và environment-aware index initialization
+  đã được thêm.
+- Summary replace dùng optimistic revision; invalidation dùng reason set-union, newest watermark,
+  claim token và revision CAS.
+- Default ranking dùng compound index, stable six-field order và đặt score `null` cuối.
+- Focused Mongo suite chứng minh unique scope, invariant, CAS, index explain và broad-scope
+  precedence.

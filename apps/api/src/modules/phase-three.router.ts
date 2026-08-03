@@ -47,6 +47,7 @@ import { EnrollmentService } from './enrollments/enrollment.service.js';
 import { AuthSessionRepository } from './sessions/auth-session.repository.js';
 import { UserRepository } from './users/user.repository.js';
 import type { ClassroomContentReader } from './learning-content/classroom-content.reader.js';
+import type { ReportingInvalidationWriter } from './learning-content/reporting-invalidation.writer.js';
 
 function requestIdFrom(response: {
   getHeader(name: string): number | string | string[] | undefined;
@@ -79,7 +80,8 @@ function createIdentityLimiter(windowSeconds: number, max: number) {
 
 export function createPhaseThreeRouter(
   config: AppConfig,
-  classrooms = new ClassroomRepository(),
+  classrooms: ClassroomRepository,
+  reportingInvalidationWriter: ReportingInvalidationWriter,
   contentReader?: ClassroomContentReader,
 ) {
   const router = Router();
@@ -108,6 +110,7 @@ export function createPhaseThreeRouter(
     users,
     audits,
     crypto,
+    reportingInvalidationWriter,
     undefined,
     contentReader,
   );
@@ -128,6 +131,7 @@ export function createPhaseThreeRouter(
     users,
     audits,
     crypto,
+    reportingInvalidationWriter,
   );
   const policyService = new EnrollmentPolicyService(policies, audits);
 

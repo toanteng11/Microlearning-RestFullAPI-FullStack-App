@@ -9,6 +9,7 @@ import type { EnrollmentPolicyValue } from '../enrollment-policy/system-setting.
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
 import type { UserRepository } from '../users/user.repository.js';
 import type { ClassroomContentReader } from '../learning-content/classroom-content.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import { isMongoDuplicateKeyError } from '../../shared/database/mongo-errors.js';
 import { withMongoTransaction } from '../../shared/database/unit-of-work.js';
 import { AppError } from '../../shared/errors/app-error.js';
@@ -80,6 +81,7 @@ export class ClassroomService {
     private readonly users: UserRepository,
     private readonly audits: PhaseThreeAuditWriter,
     private readonly crypto: ClassroomCredentialCrypto,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
     private readonly contentReader?: ClassroomContentReader,
   ) {}
@@ -270,6 +272,14 @@ export class ClassroomService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateClassroom(
+        {
+          classroomId: id,
+          reasons: ['GOVERNANCE_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
+        },
+        session,
+      );
       const [owner, policy] = await Promise.all([
         this.users.findById(actor.id, session),
         this.getPolicy(session),
@@ -315,6 +325,14 @@ export class ClassroomService {
           requestId,
           oldValue: toClassroomStateAuditValue(current),
           newValue: toClassroomStateAuditValue(updated),
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateClassroom(
+        {
+          classroomId: id,
+          reasons: ['GOVERNANCE_CHANGED'],
+          sourceChangedAt: updated.updatedAt,
         },
         session,
       );
@@ -376,6 +394,14 @@ export class ClassroomService {
           oldValue: { status: current.status, updatedAt: current.updatedAt.toISOString() },
           newValue: { status: archived.status, updatedAt: archived.updatedAt.toISOString() },
           metadata: { classroomId: id.toString() },
+        },
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateClassroom(
+        {
+          classroomId: id,
+          reasons: ['GOVERNANCE_CHANGED'],
+          sourceChangedAt: archived.updatedAt,
         },
         session,
       );

@@ -216,7 +216,7 @@ describe('Phase 04 performance baseline and explain plans', () => {
     );
     const rankingP95 = await measure30(() =>
       request(app)
-        .get(`/api/v1/teacher/courses/${course._id}/progress?limit=100`)
+        .get(`/api/v1/teacher/courses/${course._id}/progress?limit=50`)
         .set('Authorization', teacherAuthorization)
         .expect(200),
     );

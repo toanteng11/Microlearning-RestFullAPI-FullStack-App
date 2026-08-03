@@ -10,14 +10,12 @@ import { ProfilePage } from '../features/profile/ProfilePage';
 import { AdminTeacherInvitationDetailPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationDetailPage';
 import { AdminTeacherInvitationsPage } from '../features/teacher-invitations/pages/AdminTeacherInvitationsPage';
 import { TeacherInvitationActivationPage } from '../features/teacher-invitations/pages/TeacherInvitationActivationPage';
-import { AdminHomePage } from '../features/role-home/RoleHomePage';
 import {
   AdminClassroomDetailPage,
   AdminClassroomsPage,
   AdminEnrollmentPolicyPage,
   InviteJoinPage,
   StudentClassroomDetailPage,
-  StudentClassroomsPage,
   TeacherClassroomDetailPage,
   TeacherClassroomsPage,
 } from '../features/classrooms/classroom-route-components';
@@ -54,6 +52,18 @@ import {
   TeacherLessonCreatePage,
   TeacherLessonEditorPage,
 } from '../features/learning/learning-route-components';
+import {
+  StudentProgressPage,
+  StudentProgressTrendPage,
+  StudentReportingDashboardPage,
+  TeacherRankingPage,
+  TeacherGradebookPage,
+  TeacherStudentDetailPage,
+  AdminGovernanceReportPage,
+  AdminLearningOutcomesPage,
+  AdminAnalyticsAdoptionPage,
+  AdminReportingDashboardPage,
+} from '../features/reporting/reporting-route-components';
 import { ProtectedRoute } from '../shared/auth/ProtectedRoute';
 import { RoleRoute } from '../shared/auth/RoleRoute';
 import { AppShell } from '../shared/components/AppShell';
@@ -89,7 +99,23 @@ export const router = createBrowserRouter([
             path: '/student/dashboard',
             element: (
               <RoleRoute roles={['STUDENT']}>
-                <StudentClassroomsPage />
+                <StudentReportingDashboardPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/progress',
+            element: (
+              <RoleRoute permission="learning.view_enrolled">
+                <StudentProgressPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/student/progress/:courseId/trend',
+            element: (
+              <RoleRoute permission="learning.view_enrolled">
+                <StudentProgressTrendPage />
               </RoleRoute>
             ),
           },
@@ -222,6 +248,30 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: '/teacher/courses/:courseId/analytics',
+            element: (
+              <RoleRoute permission="course.progress_view_owned">
+                <TeacherRankingPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/gradebook',
+            element: (
+              <RoleRoute permission="grade.manage_owned">
+                <TeacherGradebookPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/teacher/courses/:courseId/students/:studentId/progress',
+            element: (
+              <RoleRoute permission="course.progress_view_owned">
+                <TeacherStudentDetailPage />
+              </RoleRoute>
+            ),
+          },
+          {
             path: '/teacher/courses/:courseId/lessons/new',
             element: (
               <RoleRoute permission="lesson.manage_owned">
@@ -329,7 +379,31 @@ export const router = createBrowserRouter([
             path: '/admin/dashboard',
             element: (
               <RoleRoute roles={['ADMIN', 'SUPER_ADMIN']}>
-                <AdminHomePage />
+                <AdminReportingDashboardPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/governance',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminGovernanceReportPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/learning-outcomes',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminLearningOutcomesPage />
+              </RoleRoute>
+            ),
+          },
+          {
+            path: '/admin/reports/adoption',
+            element: (
+              <RoleRoute permission="report.view_governance">
+                <AdminAnalyticsAdoptionPage />
               </RoleRoute>
             ),
           },

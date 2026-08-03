@@ -23,6 +23,17 @@ Lock/retry/expansion controls không được hard-code ngoài config:
 `REPORTING_INVALIDATION_RETRY_BASE_SECONDS` và
 `REPORTING_INVALIDATION_RETRY_MAX_SECONDS`.
 
+Conditional runtime controls phải được deploy explicit và mặc định an toàn:
+
+```text
+REPORT_EXPORT_ENABLED=false
+ANALYTICS_EVENTS_ENABLED=false
+ANALYTICS_EVENT_IDENTITY_LIMIT=120
+STUDENT_PROGRESS_TREND_ENABLED=false
+ADMIN_LEARNING_OUTCOMES_ENABLED=false
+WEIGHTED_PROCESS_SCORE_ENABLED=false
+```
+
 `BASIC_GRADEBOOK_ENABLED` phải được remove theo cutover; deployment không được cấu hình đồng
 thời old Gradebook flag và P06 Gradebook.
 
@@ -45,6 +56,11 @@ Course có Lesson/Quiz/Assignment, deadline exception, returned/draft Grade, ung
 và activity lifecycle khác nhau.
 
 Seed phải idempotent, không in password/secret, dùng demo password từ env như P05.
+
+Local hardening ngày `2026-08-03` xác nhận seed tạo `10` users cùng deterministic Phase 3/4/5
+fixtures, sau đó rerun trả toàn bộ record về `reused` và không duplicate. P06 read model được tạo/
+refresh từ authoritative fixtures khi report được truy vấn; không seed một nguồn sự thật reporting
+thứ hai.
 
 ## 4. Benchmark Dataset
 

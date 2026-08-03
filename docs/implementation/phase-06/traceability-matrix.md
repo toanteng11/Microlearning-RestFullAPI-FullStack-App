@@ -16,6 +16,8 @@
 | REP-013/014, BR-106/107 | Definition/freshness | E01/E02 | metadata/read model/UI | UT-015/016, IT-014..020 | 006/011-018 |
 | BR-105, AC-RPT-001 | Reporting scope | E01/E03-07 | permission/scope/projection | IT-026/030/036/046/053 | 022/039/046/051-055 |
 | BR-110 | Analytics event | E07 Conditional | event schema/model/service | UT-019, IT-057..059 | 071 |
+| REP-003/004, snapshot history | Student trend | E07 Conditional | snapshot repository/API/UI | IT-028, Conditional Web | 072 |
+| REP-019/020, privacy threshold | Admin learning outcomes | E07 Conditional | aggregate repository/API/UI | IT-060, Admin Web | 048/073 |
 | P04/P05 runtime compatibility | Atomic route/nullability/Gradebook cutover | E03-05 | compatibility plan + P06 router | OpenAPI uniqueness + regression | 024/028/035/058/062 |
 | BR-107/read-model consistency | Durable source invalidation | E02 | invalidation writer/matrix/reconcile | IT-005..020 | 012-017 |
 | NFR-PERF | Performance | E08 | indexes/batch/benchmark | PERF-001..006 | 018/063 |
@@ -32,6 +34,8 @@
 | `P06_PROCESS_SCORE_V1` | P06 metric policy | API/Web/ranking | UT/API/OpenAPI/E2E |
 | `P06_GRADEBOOK_V1` | P06 Gradebook | Teacher API/Web/export | IT/Web/E2E |
 | `P06_ADMIN_GOVERNANCE_V1` | P06 Admin reporting | Admin API/Web/export | IT/privacy/E2E |
+| `P06_STUDENT_PROGRESS_TREND_V1` | Compatible progress snapshots | Student trend API/Web | Conditional integration/Web |
+| `P06_ANALYTICS_EVENT_V1` | Authenticated best-effort events | Admin adoption aggregate | schema/dedupe/TTL/rate tests |
 
 ## 3. Evidence Traceability
 

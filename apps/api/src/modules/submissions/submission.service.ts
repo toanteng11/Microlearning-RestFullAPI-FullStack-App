@@ -8,6 +8,7 @@ import type { PhaseFiveAuditWriter } from '../audit/phase-five-audit.writer.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 import type { EnrollmentRepository } from '../enrollments/enrollment.repository.js';
 import type { CourseScopeReader } from '../learning-content/course-scope.reader.js';
+import type { ReportingInvalidationWriter } from '../learning-content/reporting-invalidation.writer.js';
 import type { LearningProgressRepository } from '../learning-progress/learning-progress.repository.js';
 import type { DeadlineExceptionRepository } from '../deadline-exceptions/deadline-exception.repository.js';
 import { resolveEffectiveDeadline } from '../deadline-exceptions/effective-deadline.resolver.js';
@@ -67,6 +68,7 @@ export class SubmissionService {
     private readonly scopes: CourseScopeReader,
     private readonly audits: PhaseFiveAuditWriter,
     private readonly features: AssessmentFeatureFlagConfig,
+    private readonly reportingInvalidationWriter: ReportingInvalidationWriter,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -216,6 +218,16 @@ export class SubmissionService {
         },
         session,
       );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: assignment.classroomId,
+          courseId: assignment.courseId,
+          studentId,
+          reasons: ['PROGRESS_CHANGED'],
+          sourceChangedAt: savedAt,
+        },
+        session,
+      );
       return toStudentOwnSubmissionDto(submission);
     });
   }
@@ -293,6 +305,16 @@ export class SubmissionService {
         actor,
         requestId,
         'SUBMISSION_TURNED_IN',
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: updated.classroomId,
+          courseId: updated.courseId,
+          studentId: updated.studentId,
+          reasons: ['PROGRESS_CHANGED', 'ASSESSMENT_CHANGED'],
+          sourceChangedAt: submittedAt,
+        },
         session,
       );
       return updated;
@@ -417,6 +439,16 @@ export class SubmissionService {
         'SUBMISSION_UNSUBMITTED',
         session,
       );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: result.classroomId,
+          courseId: result.courseId,
+          studentId: result.studentId,
+          reasons: ['PROGRESS_CHANGED', 'ASSESSMENT_CHANGED'],
+          sourceChangedAt: now,
+        },
+        session,
+      );
       return result;
     });
     return toStudentOwnSubmissionDto(updated);
@@ -475,6 +507,16 @@ export class SubmissionService {
         actor,
         requestId,
         'SUBMISSION_RESUBMITTED',
+        session,
+      );
+      await this.reportingInvalidationWriter.invalidateStudentCourse(
+        {
+          classroomId: result.classroomId,
+          courseId: result.courseId,
+          studentId: result.studentId,
+          reasons: ['PROGRESS_CHANGED', 'ASSESSMENT_CHANGED'],
+          sourceChangedAt: now,
+        },
         session,
       );
       return result;

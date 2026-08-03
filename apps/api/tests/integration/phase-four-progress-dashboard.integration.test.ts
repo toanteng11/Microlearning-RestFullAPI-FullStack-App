@@ -399,7 +399,9 @@ describe('Phase 04 Student learning and Teacher dashboard on MongoDB replica set
       .expect(200);
     expect(progress.body.data).toMatchObject({
       metricVersion: 'P05_REQUIRED_ACTIVITY_COMPLETION_V1',
-      summary: { requiredLessons: 2, completedLessons: 1, progressPercentage: 50 },
+      requiredActivityCount: 2,
+      completedRequiredCount: 1,
+      progressPercentage: 50,
     });
   });
 
@@ -460,27 +462,37 @@ describe('Phase 04 Student learning and Teacher dashboard on MongoDB replica set
       .expect(200);
     expect(performance.now() - startedAt).toBeLessThan(2_000);
     expect(dashboard.body.data.summary).toMatchObject({
-      totalLessons: 4,
-      publishedLessons: 3,
-      requiredLessons: 2,
-      activeStudents: 2,
+      totalActivityCount: 3,
+      publishedActivityCount: 3,
+      requiredActivityCount: 2,
+      activeStudentCount: 2,
       averageProgressPercentage: 75,
     });
-    expect(JSON.stringify(dashboard.body)).not.toMatch(/grade|quiz|assignment/iu);
+    expect(JSON.stringify(dashboard.body)).not.toMatch(
+      /rawAnswer|submissionBody|privateFeedback/iu,
+    );
     const activities = await request(app)
       .get(`/api/v1/teacher/courses/${data.course._id}/activities`)
       .set('Authorization', bearer(data.teacher.token))
       .expect(200);
     expect(
       activities.body.data.items.find(
-        (item: { id: string }) => item.id === data.futureLesson._id.toString(),
+        (item: { activityId: string }) => item.activityId === data.futureLesson._id.toString(),
       ),
-    ).toMatchObject({ completedStudents: 2, activeStudents: 2, completionPercentage: 100 });
+    ).toMatchObject({
+      completedStudentCount: 2,
+      eligibleStudentCount: 2,
+      completionPercentage: 100,
+    });
     expect(
       activities.body.data.items.find(
-        (item: { id: string }) => item.id === data.overdueLesson._id.toString(),
+        (item: { activityId: string }) => item.activityId === data.overdueLesson._id.toString(),
       ),
-    ).toMatchObject({ completedStudents: 1, activeStudents: 2, completionPercentage: 50 });
+    ).toMatchObject({
+      completedStudentCount: 1,
+      eligibleStudentCount: 2,
+      completionPercentage: 50,
+    });
 
     const filteredStudents = await request(app)
       .get(
@@ -489,17 +501,18 @@ describe('Phase 04 Student learning and Teacher dashboard on MongoDB replica set
       .set('Authorization', bearer(data.teacher.token))
       .expect(200);
     expect(filteredStudents.body.data.items).toHaveLength(1);
-    expect(filteredStudents.body.data.items[0].id).toBe(data.secondStudent.user._id.toString());
+    expect(filteredStudents.body.data.items[0].student.id).toBe(
+      data.secondStudent.user._id.toString(),
+    );
     expect(filteredStudents.body.meta).toMatchObject({ totalItems: 1, page: 1, limit: 1 });
 
     const ranking = await request(app)
       .get(`/api/v1/teacher/courses/${data.course._id}/progress`)
       .set('Authorization', bearer(data.teacher.token))
       .expect(200);
-    expect(ranking.body.data.items.map((item: { id: string }) => item.id)).toEqual([
-      data.firstStudent.user._id.toString(),
-      data.secondStudent.user._id.toString(),
-    ]);
+    expect(
+      ranking.body.data.items.map((item: { student: { id: string } }) => item.student.id),
+    ).toEqual([data.firstStudent.user._id.toString(), data.secondStudent.user._id.toString()]);
     expect(JSON.stringify(ranking.body)).not.toContain(data.removedStudent.user.email);
     await request(app)
       .get(`/api/v1/teacher/courses/${data.course._id}/dashboard`)
