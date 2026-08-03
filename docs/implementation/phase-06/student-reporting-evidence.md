@@ -92,6 +92,6 @@ npm run test:e2e -- --grep "Student reviews dashboard reporting"
 
 | Part | Trạng thái |
 | --- | --- |
-| Part 07 | `IN_REVIEW_STACKED`; implementation/unit/OpenAPI Pass, integration pending |
-| Part 08 | `IN_REVIEW_STACKED`; component Pass, browser E2E/visual pending |
-| P06-PR03 | Chưa sẵn sàng merge cho đến khi P06-PR02 merge, rebase và CI Pass |
+| Part 07 | `LOCAL_PASS_REMOTE_PENDING`; final integration suite `97/97` Pass |
+| Part 08 | `LOCAL_PASS_REMOTE_PENDING`; final browser E2E `34/34` và visual review Pass |
+| P06-PR03 | Local dependency chain complete; remote release workflow pending |

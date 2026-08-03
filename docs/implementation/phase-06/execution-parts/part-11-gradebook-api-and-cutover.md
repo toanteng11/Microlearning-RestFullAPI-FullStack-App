@@ -62,7 +62,7 @@ grades/grade.service.ts
 
 | Field | Result |
 | --- | --- |
-| Status | `IN_REVIEW_STACKED` |
+| Status | `LOCAL_PASS_REMOTE_PENDING` |
 | Branch | `feature/phase-06-gradebook` |
 | Code commit | `fe36dda` |
 | Atomic cutover | Pass; P05 route/service/schema/OpenAPI/flag đã retire |

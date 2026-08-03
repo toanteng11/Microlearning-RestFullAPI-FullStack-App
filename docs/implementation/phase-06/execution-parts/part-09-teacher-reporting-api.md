@@ -58,7 +58,7 @@ apps/api/tests/integration/phase-six-security.integration.test.ts
 
 ## Implementation Result - 2026-07-30
 
-- Status: `IN_REVIEW_STACKED`.
+- Status: `LOCAL_PASS_REMOTE_PENDING`.
 - Code commit: `9096d78`.
 - Sáu operation Teacher reporting đã được triển khai và chỉ còn một runtime owner tại Phase 06.
 - Ownership được resolve trước roster/aggregate; cross-Teacher và Student ngoài active roster trả lỗi có kiểm soát.

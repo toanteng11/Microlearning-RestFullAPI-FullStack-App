@@ -8,10 +8,10 @@
 | Branch | `feature/phase-06-teacher-reporting` |
 | Code commit | `9096d78` |
 | Date | `2026-07-30` |
-| Status | `IN_REVIEW_STACKED` |
+| Status | `LOCAL_PASS_REMOTE_PENDING` |
 | Parent PR | `P06-PR04 - Teacher Reporting` |
 
-`IN_REVIEW_STACKED` có nghĩa local implementation và quality evidence đã Pass nhưng foundation,
+`LOCAL_PASS_REMOTE_PENDING` có nghĩa local implementation và final quality evidence đã Pass nhưng
 Student reporting và Parent PR chưa hoàn tất remote CI/review/merge theo thứ tự dependency.
 
 ## 2. Delivered API
@@ -123,4 +123,3 @@ Part 09-10 chỉ được đổi sang `DONE` khi:
 4. review conversations được xử lý;
 5. PR merge và post-merge `main` CI Pass;
 6. PR URL, CI URL và merge SHA được cập nhật vào evidence register.
-

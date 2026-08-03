@@ -8,10 +8,10 @@
 | Branch | `feature/phase-06-gradebook` |
 | Code commit | `fe36dda` |
 | Date | `2026-07-30` |
-| Status | `IN_REVIEW_STACKED` |
+| Status | `LOCAL_PASS_REMOTE_PENDING` |
 | Parent PR | `P06-PR05 - Gradebook` |
 
-`IN_REVIEW_STACKED` nghĩa là implementation, local quality gates và integrated evidence đã Pass,
+`LOCAL_PASS_REMOTE_PENDING` nghĩa là implementation, local quality gates và integrated evidence đã Pass,
 nhưng các Parent PR dependency và P06-PR05 vẫn cần hoàn tất remote CI, review và merge đúng thứ
 tự trước khi Part 11-12 được đổi thành `DONE`.
 

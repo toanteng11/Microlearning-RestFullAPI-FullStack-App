@@ -23,19 +23,24 @@ Mỗi `Execution Part` là một đơn vị công việc có:
 | Implementation | `IN_REVIEW` |
 | Part 00 | `DONE` |
 | Part 01-05 | `DONE` |
-| Part 06 | `IN_REVIEW` |
-| Part 07-08 | `IN_REVIEW_STACKED`; local unit/component/OpenAPI/integration/E2E Pass, remote CI pending |
-| Part 09-10 | `IN_REVIEW_STACKED`; local CI/integration/OpenAPI/E2E Pass, remote CI pending |
-| Part 11-12 | `IN_REVIEW_STACKED`; local CI/integration/performance/E2E Pass, remote CI pending |
-| Part 13 | `IN_REVIEW_STACKED`; local API/OpenAPI/privacy/integration/performance Pass, remote CI pending |
-| Part 14 | `READY_ON_P06_PR06_STACK`; Part 13 API contract local stable |
-| Part 15-17 | `BLOCKED_BY_P06_PR06_MERGE` |
+| Part 06 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 07-08 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 09-10 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 11-12 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 13 | `LOCAL_PASS_REMOTE_PENDING` |
+| Part 14 | `LOCAL_PASS_REMOTE_PENDING`; Admin UI/E2E/privacy Pass |
+| Part 15 | `LOCAL_PASS_REMOTE_PENDING`; four enabled capabilities Pass, two capabilities `APPROVED_NA` |
+| Part 16 | `LOCAL_PASS`; full quality, Docker, performance, visual và clean clone Pass |
+| Part 17 | `LOCAL_COMPLETE_REMOTE_PENDING`; protected PR/main CI và P07 acceptance pending |
 | Activation evidence | PR `#16`, CI `6/6`, merge `e7437bc`, local `main` synchronized |
 | Foundation implementation | Commit `1afe813`; local Gate B Pass; remote PR/CI pending |
 | Student reporting implementation | Commit `f560233`; `student-reporting-evidence.md`; P06-PR03 remote CI pending |
 | Teacher reporting implementation | Commit `9096d78`; `teacher-reporting-evidence.md`; P06-PR04 remote CI pending |
 | Gradebook implementation | Commit `fe36dda`; `gradebook-evidence.md`; P06-PR05 remote CI pending |
 | Admin Reporting API implementation | Commit `2bbbc2d`; `admin-reporting-api-evidence.md`; P06-PR06 remote CI pending |
+| Admin Reporting Web implementation | Commit `c1f5fa9`; `admin-reporting-web-evidence.md` |
+| Conditional reporting implementation | Commit `f1baf06`; `conditional-reporting-evidence.md` |
+| Quality hardening | `quality-hardening-evidence.md`; local release candidate Pass |
 
 ## 3. Execution Map
 

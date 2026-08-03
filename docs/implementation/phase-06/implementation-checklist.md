@@ -37,11 +37,11 @@ Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạn
 - [x] Student APIs Pass locally; remote PR evidence pending.
 - [x] Teacher dashboard/ranking/detail Pass locally; remote PR evidence pending.
 - [x] Gradebook API/atomic cutover Pass locally; remote P06-PR05 evidence pending.
-- [ ] Admin governance/audit reports Pass.
+- [x] Admin governance/audit reports Pass locally; remote release gate pending.
 - [x] RBAC/ownership/enrollment/IDOR Pass for Student/Teacher reporting scope.
-- [x] Privacy/projection Pass for Student/Teacher/Gradebook scope; Admin threshold pending.
-- [x] Query bounds Pass for Student/Teacher/Gradebook scope; final rate hardening pending.
-- [x] OpenAPI parity Pass for Student/Teacher/Gradebook reporting operations.
+- [x] Privacy/projection/threshold Pass for Student/Teacher/Gradebook/Admin scope.
+- [x] Query bounds and final analytics rate hardening Pass.
+- [x] OpenAPI parity Pass for Student/Teacher/Gradebook/Admin/Conditional reporting operations.
 - [x] Unique Express/OpenAPI operation per moved Student/Teacher/Gradebook path Pass.
 
 ## Gate D - Web And Integration
@@ -49,32 +49,33 @@ Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạn
 - [x] Student Dashboard/Progress Pass locally.
 - [x] Teacher Dashboard/Analytics/Detail Pass locally.
 - [x] Gradebook Web, URL state, mutation invalidation và browser E2E Pass locally.
-- [ ] Admin Dashboard/Reports Pass.
-- [x] Loading/empty/no-data/stale/error states for Student/Teacher/Gradebook; remaining actors pending.
+- [x] Admin Dashboard/Reports Pass locally.
+- [x] Loading/empty/no-data/stale/error states for all reporting actors Pass.
 - [x] Teacher/Gradebook Back/Forward/Back buttons/filter URL Pass.
-- [x] Student/Teacher/Gradebook responsive/visual/accessibility Pass.
-- [ ] 12 P06 E2E Pass.
+- [x] Student/Teacher/Gradebook/Admin responsive/visual/accessibility Pass.
+- [x] P06 E2E and full fresh-stack browser regression Pass (`34/34`).
 
 ## Conditional
 
-- [ ] CSV enabled and safety/evidence Pass, hoặc approved N/A.
-- [ ] Analytics event enabled and privacy/evidence Pass, hoặc approved N/A.
-- [ ] Trend enabled and snapshot/evidence Pass, hoặc approved N/A.
-- [ ] Weighted V2 remains disabled unless separate approval.
+- [x] CSV implemented; safety/evidence Pass; runtime default false.
+- [x] Analytics event implemented; privacy/evidence Pass; runtime default false.
+- [x] Trend and Admin learning outcomes implemented; snapshot/threshold evidence Pass; runtime default false.
+- [x] Weighted V2 remains disabled with `APPROVED_NA`.
+- [x] XLSX/async/private export recorded `APPROVED_NA` for P07.
 
 ## Gate E - Exit
 
-- [ ] `68/68` Must AC Pass.
-- [ ] Conditional result recorded.
-- [ ] P02-P05 regressions Pass.
-- [ ] NFR/explain Pass.
-- [ ] Docker/seed/reconcile Pass.
-- [ ] Clean clone Pass.
+- [ ] `68/68` Must AC Pass (`66/68` local Pass; AC-066/068 require remote evidence).
+- [x] Conditional result recorded.
+- [x] P02-P05 regressions Pass.
+- [x] NFR/explain Pass.
+- [x] Docker/seed/reconcile Pass.
+- [x] Clean clone Pass.
 - [ ] PR CI Pass.
 - [ ] Post-merge main CI Pass.
-- [ ] Critical/High defects `0`.
-- [ ] Evidence register complete.
-- [ ] Exit report approved.
+- [x] Critical/High defects `0` locally.
+- [x] Evidence register complete for local execution; remote URL fields explicitly Pending.
+- [ ] Exit report local draft complete; approval pending.
 - [ ] P07 handoff accepted.
 
 ## Mandatory Commands

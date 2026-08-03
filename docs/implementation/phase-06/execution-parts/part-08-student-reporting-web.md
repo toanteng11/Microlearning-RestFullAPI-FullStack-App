@@ -10,7 +10,7 @@ Tích hợp Student reporting vào React mà không làm mất join-by-code, Cla
 
 ## Implementation Status
 
-`IN_REVIEW_STACKED`
+`LOCAL_PASS_REMOTE_PENDING`
 
 - Dashboard, Progress page, component tests và private cache behavior đã triển khai.
 - Source commit: `f560233`.

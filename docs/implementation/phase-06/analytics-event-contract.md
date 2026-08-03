@@ -2,8 +2,9 @@
 
 ## 1. Status And Purpose
 
-Analytics event là Conditional. Mục đích: hiểu mức sử dụng và vận hành ở dạng aggregate an
-toàn. Event không quyết định Enrollment, completion, Grade, deadline hoặc authorization.
+Analytics event là Conditional, đã đạt Local Pass tại commit `f1baf06` và mặc định
+`ANALYTICS_EVENTS_ENABLED=false`. Mục đích: hiểu mức sử dụng và vận hành ở dạng aggregate an toàn.
+Event không quyết định Enrollment, completion, Grade, deadline hoặc authorization.
 
 ## 2. Event Envelope
 

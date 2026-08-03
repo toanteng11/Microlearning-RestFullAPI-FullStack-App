@@ -23,13 +23,14 @@ version, freshness, khả năng rebuild và reconciliation.
 | Planning status | `MERGED_TO_MAIN` |
 | Technical completeness | `ACCEPTED_AT_GATE_A` |
 | Gate A | `APPROVED` |
-| Implementation status | `READY_TO_CODE` |
+| Implementation status | `LOCAL_RELEASE_CANDIDATE_REMOTE_PENDING` |
 | Exit target | Toàn bộ Must acceptance criteria Pass, không còn Critical/High defect, evidence có thể tái lập |
 | Phase tiếp theo | `P07 - DevOps And Deployment` |
 
-Gate A, local baseline và planning PR remote CI đã Pass. PR `#16` được squash-merge vào
-protected `main` tại `e7437bc`; local `main` đã đồng bộ commit này. Phase 06 hiện
-`READY_TO_CODE`: Part 01 được phép bắt đầu trên branch implementation riêng.
+Gate A, planning baseline và planning PR remote CI đã Pass. Toàn bộ Part 01-16 đã có runtime
+implementation và local quality evidence. Part 17 đã hoàn thành phần evidence tại local; Phase 06
+đang là `LOCAL_RELEASE_CANDIDATE_REMOTE_PENDING` cho đến khi quality branch được mở PR, required CI
+Pass, merge qua protected `main`, post-merge main CI Pass và P07 consumer chấp nhận handoff.
 
 ## 3. Business Outcome
 
@@ -140,6 +141,8 @@ Các item dưới đây chỉ được bật bằng Gate A/change control, có o
 | `student-reporting-experience.md` | Student Dashboard, Progress, Grade và privacy |
 | `teacher-reporting-experience.md` | Teacher dashboard, drill-down và support workflow |
 | `admin-reporting-and-governance.md` | Admin aggregate, audit metadata và privacy |
+| `admin-reporting-api-evidence.md` | Admin reporting API/OpenAPI/privacy evidence |
+| `admin-reporting-web-evidence.md` | Admin Dashboard/Governance Web/E2E evidence |
 | `reporting-access-and-privacy.md` | RBAC, ownership, projection, small group và audit |
 | `data-model-and-indexes.md` | Collection, index, TTL, invariant và migration |
 | `read-model-refresh-and-reconciliation.md` | Invalidation, refresh, stale/partial và repair |
@@ -152,6 +155,7 @@ Các item dưới đây chỉ được bật bằng Gate A/change control, có o
 | `frontend-implementation-plan.md` | React routes, components, request state và accessibility |
 | `export-and-csv-safety.md` | Bounded CSV, projection, injection protection và audit |
 | `analytics-event-contract.md` | Event envelope, catalog, privacy, dedupe và operations |
+| `conditional-reporting-evidence.md` | CSV/event/trend/outcome result và approved N/A record |
 | `source-file-blueprint.md` | File Create/Modify cụ thể |
 | `devops-environment-and-seeding.md` | Env, seed, Docker, CI, observability và runbook |
 | `migration-and-rollback.md` | Index/read-model rollout, compatibility và rollback |
@@ -168,6 +172,7 @@ Các item dưới đây chỉ được bật bằng Gate A/change control, có o
 | `pull-request-execution-guide.md` | Branch/PR scope, test và evidence từng increment |
 | `development-readiness-review.md` | Gate A scorecard và approval record |
 | `evidence-register.md` | Evidence cần thu thập trong implementation |
+| `quality-hardening-evidence.md` | Full quality, Docker, performance, visual và clean-clone evidence |
 | `phase-exit-evidence.md` | Mẫu bằng chứng đóng phase |
 | `phase-07-handoff.md` | Contract/boundary bàn giao cho deployment |
 | `exit-report.md` | Báo cáo đóng Phase 06 |

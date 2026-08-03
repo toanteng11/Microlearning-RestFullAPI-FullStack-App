@@ -159,3 +159,19 @@ Một developer thực hiện tuần tự cần chia nhiều iteration; estimate
 - Conditional export depends stable JSON report/projection.
 - E08 cannot start final evidence before actor slices stable.
 - Phase 07 handoff depends env/migration/observability finalized.
+
+## 12. Execution Status Summary
+
+| Epic | Local status | Evidence |
+| --- | --- | --- |
+| E01 Planning | Done | PR `#16`, merge `e7437bc` |
+| E02 Data And Read Model | Local Pass | `gate-b-foundation-evidence.md` |
+| E03 Student | Local Pass | `student-reporting-evidence.md` |
+| E04 Teacher | Local Pass | `teacher-reporting-evidence.md` |
+| E05 Gradebook | Local Pass | `gradebook-evidence.md` |
+| E06 Admin | Local Pass | Admin API/Web evidence files |
+| E07 Conditional | Local Pass/Approved N/A | `conditional-reporting-evidence.md` |
+| E08 Quality And Exit | Local Complete/Remote Pending | `quality-hardening-evidence.md`, `phase-exit-evidence.md` |
+
+E08-T11 remains Pending until P07 consumer acceptance. Release PR/main CI tasks remain remote gates;
+all other listed implementation tasks have local evidence.

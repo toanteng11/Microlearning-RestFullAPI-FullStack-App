@@ -10,7 +10,7 @@ Cung cấp Student Dashboard và Course progress APIs đúng own scope, privacy 
 
 ## Implementation Status
 
-`IN_REVIEW_STACKED`
+`LOCAL_PASS_REMOTE_PENDING`
 
 - API, RBAC, route cutover, OpenAPI và unit tests đã triển khai.
 - Source commit: `f560233`.
