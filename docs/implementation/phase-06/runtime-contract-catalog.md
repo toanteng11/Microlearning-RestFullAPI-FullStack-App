@@ -321,10 +321,10 @@ METRIC_DEFINITION_ACTIVATED
 
 ## 11. Contract Freeze Checklist
 
-- [ ] Constant names/version accepted.
-- [ ] Permissions/role grants route-tested.
-- [ ] Env examples/schema/tests aligned.
-- [ ] Ports có adapters và không leak model.
-- [ ] DTO projection snapshots approved.
-- [ ] OpenAPI schemas/examples use same enum/version.
-- [ ] Web types align nullability.
+- [x] Constant names/version accepted.
+- [x] Permissions/role grants route-tested.
+- [x] Env examples/schema/tests aligned.
+- [x] Ports có adapters và không leak model.
+- [x] DTO projection snapshots approved.
+- [x] OpenAPI schemas/examples use same enum/version.
+- [x] Web types align nullability.

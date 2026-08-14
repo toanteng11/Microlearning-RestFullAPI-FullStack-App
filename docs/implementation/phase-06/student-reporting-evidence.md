@@ -14,7 +14,7 @@ lại toàn bộ quality gate.
 | Source branch | `feature/phase-06-student-reporting` |
 | Foundation commit | `1afe813` |
 | Student reporting commit | `f560233` |
-| Remote PR/CI | Pending P06-PR02 merge và branch synchronization |
+| Remote PR/CI | Pass trong release PR `#18` và post-merge main CI |
 
 ## 2. API Đã Triển Khai
 
@@ -92,6 +92,6 @@ npm run test:e2e -- --grep "Student reviews dashboard reporting"
 
 | Part | Trạng thái |
 | --- | --- |
-| Part 07 | `LOCAL_PASS_REMOTE_PENDING`; final integration suite `97/97` Pass |
-| Part 08 | `LOCAL_PASS_REMOTE_PENDING`; final browser E2E `34/34` và visual review Pass |
-| P06-PR03 | Local dependency chain complete; remote release workflow pending |
+| Part 07 | `DONE`; final integration suite `97/97` Pass |
+| Part 08 | `DONE`; final browser E2E `34/34` và visual review Pass |
+| P06 release | PR `#18` và post-merge main CI Pass |

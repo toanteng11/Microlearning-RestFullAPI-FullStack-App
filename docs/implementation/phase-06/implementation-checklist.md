@@ -29,15 +29,15 @@ Gate A/local/remote evidence: `gate-a-review-evidence.md`; PR `#16`, Actions run
 - [x] Refresh/rebuild/reconcile Pass.
 - [x] Fault isolation/concurrency Pass.
 
-Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạng thái Gate B là
-`LOCAL_PASS_REMOTE_PENDING`; chỉ đổi thành `PASS` sau P06-PR02 CI/review/merge.
+Gate B evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạng thái Gate B là `PASS`;
+toàn bộ implementation đã được kiểm chứng lại trong release PR `#18` và post-merge main CI.
 
 ## Gate C - API And Security
 
-- [x] Student APIs Pass locally; remote PR evidence pending.
-- [x] Teacher dashboard/ranking/detail Pass locally; remote PR evidence pending.
-- [x] Gradebook API/atomic cutover Pass locally; remote P06-PR05 evidence pending.
-- [x] Admin governance/audit reports Pass locally; remote release gate pending.
+- [x] Student APIs Pass; release PR/main CI evidence recorded.
+- [x] Teacher dashboard/ranking/detail Pass; release PR/main CI evidence recorded.
+- [x] Gradebook API/atomic cutover Pass; release PR/main CI evidence recorded.
+- [x] Admin governance/audit reports Pass; release gate completed.
 - [x] RBAC/ownership/enrollment/IDOR Pass for Student/Teacher reporting scope.
 - [x] Privacy/projection/threshold Pass for Student/Teacher/Gradebook/Admin scope.
 - [x] Query bounds and final analytics rate hardening Pass.
@@ -65,18 +65,18 @@ Gate B local evidence: commit `1afe813`, `gate-b-foundation-evidence.md`. Trạn
 
 ## Gate E - Exit
 
-- [ ] `68/68` Must AC Pass (`66/68` local Pass; AC-066/068 require remote evidence).
+- [x] `68/68` Must AC Pass; AC-066/068 có remote evidence và acceptance thật.
 - [x] Conditional result recorded.
 - [x] P02-P05 regressions Pass.
 - [x] NFR/explain Pass.
 - [x] Docker/seed/reconcile Pass.
 - [x] Clean clone Pass.
-- [ ] PR CI Pass.
-- [ ] Post-merge main CI Pass.
+- [x] PR CI Pass: run `30786303279`, sáu required checks xanh.
+- [x] Post-merge main CI Pass: run `30786783937`.
 - [x] Critical/High defects `0` locally.
-- [x] Evidence register complete for local execution; remote URL fields explicitly Pending.
-- [ ] Exit report local draft complete; approval pending.
-- [ ] P07 handoff accepted.
+- [x] Evidence register complete; remote PR/main CI URLs and merge commit recorded.
+- [x] Exit report finalized and accepted.
+- [x] P07 handoff accepted bởi Project Owner/P07 consumer qua PR `#18` merge.
 
 ## Mandatory Commands
 

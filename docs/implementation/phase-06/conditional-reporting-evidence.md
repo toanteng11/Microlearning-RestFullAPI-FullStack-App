@@ -6,7 +6,7 @@
 | --- | --- |
 | Scope | Part 15 - Conditional Capabilities |
 | Implementation commit | `f1baf06` |
-| Local decision | `PASS_REMOTE_PENDING` |
+| Final decision | `PASS` |
 | Captured date | `2026-08-03` |
 
 ## 2. Capability Result
@@ -40,4 +40,4 @@
 | Replica-set integration total | `97/97` |
 | OpenAPI | `10/10` |
 
-Remote release PR/main CI còn Pending.
+Release PR `#18` và post-merge main CI đã Pass.

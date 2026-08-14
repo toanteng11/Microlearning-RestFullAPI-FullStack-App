@@ -9,7 +9,7 @@
 | Branch | `feature/phase-06-admin-reporting` |
 | Code commit | `2bbbc2d` |
 | Captured date | 2026-08-02 |
-| Local decision | `PASS_REMOTE_PENDING` |
+| Final decision | `PASS` |
 
 ## 2. Delivered Contract
 

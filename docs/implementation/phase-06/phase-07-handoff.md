@@ -7,8 +7,8 @@
 | Handoff ID | `P06-P07-HANDOFF-V1` |
 | Producer | `P06 - Reporting And Analytics` |
 | Consumer | `P07 - DevOps And Deployment` |
-| Status | `READY_FOR_REVIEW` |
-| Effective commit/date | Local code baseline `f1baf06`; evidence date `2026-08-03` |
+| Status | `ACCEPTED` |
+| Effective commit/date | Release commit `d2abe52`; accepted `2026-08-03` |
 
 ## 2. Runtime Contracts To Hand Off
 
@@ -108,5 +108,15 @@ and rollback evidence cụ thể.
 | Cloud Run/Atlas boundary | Sections 3-8 của file này |
 | Rollback | `migration-and-rollback.md`, feature flags default false |
 
-Consumer acceptance chưa được tự suy diễn từ local Pass. Sau release merge, P07 phải ghi reviewer,
-date và decision thật trước khi P06-AC-068 chuyển thành Pass.
+## 12. Acceptance Record
+
+| Field | Value |
+| --- | --- |
+| Reviewer/consumer | Trần Đức Toàn - Project Owner và P07 consumer |
+| Decision | `ACCEPTED` |
+| Date | `2026-08-03` |
+| Release evidence | PR `#18`; merge commit `d2abe52`; post-merge main CI run `30786783937` Success |
+| Scope accepted | Runtime env, Mongo indexes/migration, rebuild/reconcile, observability, flags, rollback và Cloud Run/Atlas boundary |
+
+Acceptance này dựa trên release merge và remote CI thật, không suy diễn từ local Pass. P06-AC-068
+được chuyển thành Pass; các công việc triển khai Cloud Run/Atlas vẫn thuộc phạm vi Phase 07.

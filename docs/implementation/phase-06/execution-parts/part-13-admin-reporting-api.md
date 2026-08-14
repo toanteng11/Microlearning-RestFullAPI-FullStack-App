@@ -2,8 +2,8 @@
 
 ## Status
 
-`LOCAL_PASS_REMOTE_PENDING` - local implementation, OpenAPI, unit, integration, privacy và performance evidence
-đã Pass tại commit `2bbbc2d`; required remote CI/PR merge còn Pending.
+`DONE` - implementation, OpenAPI, unit, integration, privacy và performance evidence đã Pass tại
+commit `2bbbc2d` và được kiểm chứng lại trong release PR `#18`.
 
 ## Goal
 

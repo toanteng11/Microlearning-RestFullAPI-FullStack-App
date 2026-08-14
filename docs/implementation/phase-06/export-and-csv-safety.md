@@ -125,10 +125,10 @@ P06 contract phải giữ report ID, definition version, scope/filter/projection
 
 ## 11. Exit Check
 
-- [ ] Gate A bật Conditional.
-- [ ] Permission/ownership/filters parity.
-- [ ] Formula injection test Pass.
-- [ ] Bounds/memory/timeout test Pass.
-- [ ] Audit Pass.
-- [ ] Không local file/temp artifact còn lại.
-- [ ] UI không render export khi flag/allowedAction false.
+- [x] Gate A bật Conditional.
+- [x] Permission/ownership/filters parity.
+- [x] Formula injection test Pass.
+- [x] Bounds/memory/timeout test Pass.
+- [x] Audit Pass.
+- [x] Không local file/temp artifact còn lại.
+- [x] UI không render export khi flag/allowedAction false.

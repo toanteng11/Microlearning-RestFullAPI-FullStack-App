@@ -49,7 +49,7 @@ apps/web/src/shared/components/AppShell.tsx
 
 ## Implementation Result - 2026-07-30
 
-- Status: `LOCAL_PASS_REMOTE_PENDING`.
+- Status: `DONE`.
 - Code commit: `9096d78`.
 - Course Dashboard giữ nguyên content-management actions và bổ sung reporting summary/top Student.
 - Analytics có các tab Progress, Activities, Assessments và Support; filter/sort/page được lưu trong URL.
