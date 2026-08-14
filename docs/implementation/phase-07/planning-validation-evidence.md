@@ -14,7 +14,7 @@
 
 | Check | Result |
 | --- | --- |
-| Phase 07 file count | `66` Markdown files after this evidence file |
+| Phase 07 file count | `68` Markdown files including Gate A evidence and solo governance |
 | File naming | Pass: English lowercase kebab-case; `README.md` exception |
 | Execution parts | Pass: `18`, contiguous `part-00` through `part-17` |
 | Acceptance IDs | Pass: `72`, contiguous `P07-AC-001..072` |
@@ -27,7 +27,8 @@
 
 ## 3. Repository Regression Validation
 
-Command: `npm run check`.
+Commands: `npm ci`, `npm run check:ci`, `npm run audit:production` after merging `origin/main` at
+`ace51f1` into the planning branch.
 
 | Gate | Result |
 | --- | --- |
@@ -40,6 +41,11 @@ Command: `npm run check`.
 | Web unit tests | `23` files, `126` tests Pass |
 | API production build | Pass |
 | Web production build | Pass |
+| Production dependency audit | Pass; `0` exception |
+| npm install audit | Pass; `0 vulnerabilities` |
+
+Docker Desktop Client/Server `29.3.1` was also reachable during Gate A verification. Cloud/Docker
+integration behavior is not marked implemented by this planning validation; it remains execution evidence.
 
 ## 4. Security Validation
 
