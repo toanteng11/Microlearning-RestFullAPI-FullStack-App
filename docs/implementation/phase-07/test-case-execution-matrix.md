@@ -11,10 +11,10 @@
 
 | Test ID | Result | Evidence |
 | --- | --- | --- |
-| P07-TC-001 | Not Run | Gate A record pending |
-| P07-TC-002 | Not Run | Tool output pending |
+| P07-TC-001 | Pass | `gate-a-decision-sheet.md`, `gate-a-readiness-evidence.md`, PR #21 |
+| P07-TC-002 | Pass | `gate-a-readiness-evidence.md`; Terraform `1.15.8` reverified after main sync |
 | P07-TC-003 | Not Run | Clean-clone report pending |
-| P07-TC-004 | Not Run | Secret baseline pending |
+| P07-TC-004 | Pass | PR #21 and post-merge main Secret scan Pass |
 
 ## 3. Runtime And Routing
 
@@ -126,10 +126,10 @@
 
 ```text
 Total: 70
-Pass: 0
+Pass: 3
 Fail: 0
 Blocked: 0
 Approved N/A: 0
-Not Run: 70
-Current phase status: READY_AFTER_PLANNING_PR_MERGE
+Not Run: 67
+Current phase status: READY_TO_CODE
 ```

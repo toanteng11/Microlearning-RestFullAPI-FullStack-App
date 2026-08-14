@@ -129,9 +129,9 @@
 
 | Nhóm | Kết quả hiện tại |
 | --- | --- |
-| Must | `0/66 Pass`, implementation chưa bắt đầu |
+| Must | `8/66 Pass`; Planning/Gate A `P07-AC-001..008` hoàn thành, implementation Part 01 chưa bắt đầu |
 | Conditional | `6/6 decided`; execution result remains Not Run |
 | Gate A | `APPROVED` on `2026-08-14` |
-| Phase status | `READY_AFTER_PLANNING_PR_MERGE` |
+| Phase status | `READY_TO_CODE` |
 
-Không đổi các số này thành Pass trong planning PR.
+Các criterion còn lại chỉ được chuyển sang Pass khi có evidence thực thi tương ứng.
