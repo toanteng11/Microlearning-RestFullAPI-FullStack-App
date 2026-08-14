@@ -16,7 +16,7 @@ có thể tái lập.
 
 | Thuộc tính | Giá trị |
 | --- | --- |
-| Planning status | `ACCEPTED_AT_GATE_A` |
+| Planning status | `PR_OPEN_CI_PENDING` - [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) |
 | Provider decision | `ACCEPTED` |
 | Implementation status | `READY_AFTER_PLANNING_PR_MERGE` |
 | Gate A | `APPROVED` on `2026-08-14` |

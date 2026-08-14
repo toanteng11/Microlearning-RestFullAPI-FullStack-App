@@ -10,7 +10,7 @@
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P07-EV-001 | planning PR and CI | Pending | PR URL |
+| P07-EV-001 | planning PR and CI | In Progress | [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21); six required checks pending |
 | P07-EV-002 | Gate A signed decision | Pass | `gate-a-decision-sheet.md`, `gate-a-readiness-evidence.md` |
 | P07-EV-003 | tool/version checks | Pass | `gate-a-readiness-evidence.md` |
 | P07-EV-004 | GCP project/billing/budget access | Pass | `gate-a-readiness-evidence.md`; provider UI evidence owner-controlled |

@@ -8,7 +8,7 @@
 | Branch | `docs/phase-07-planning-baseline` |
 | Baseline start commit | `d2abe52`; latest verified remote `main` `ace51f1` |
 | Validation scope | Phase 07 documentation + repository regression |
-| Remote PR/main CI | Pending |
+| Remote PR/main CI | [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) open; six required checks pending |
 
 ## 2. Documentation Validation
 
@@ -59,7 +59,7 @@ integration behavior is not marked implemented by this planning validation; it r
 ```text
 Documentation structure: PASS
 Local repository regression: PASS
-Remote planning PR/main CI: PENDING
+Remote planning PR/main CI: PR_21_OPEN_CHECKS_PENDING
 Gate A manual prerequisites: PASS
 Implementation status: NOT_STARTED
 Decision: READY_TO_OPEN_PLANNING_PR

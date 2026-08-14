@@ -56,5 +56,5 @@ release boundary.
 
 ## Current Status
 
-`READY_FOR_PLANNING_PR` - Gate A approved `2026-08-14`; planning PR merge and post-merge main CI activate
-Part 01.
+`PR_OPEN_CI_PENDING` - Gate A approved `2026-08-14`; [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21)
+must pass six required checks, merge, and receive post-merge main CI before Part 01.
