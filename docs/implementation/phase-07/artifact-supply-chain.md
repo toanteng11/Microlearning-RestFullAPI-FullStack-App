@@ -83,7 +83,7 @@ Một digest chỉ được promote khi:
 - version endpoint khớp digest/commit;
 - không có critical open finding;
 - deployment record đầy đủ;
-- Phase 08 Go/No-Go và Production reviewer approve.
+- Phase 08 Go/No-Go Pass; solo owner hoàn tất manual confirmation theo `solo-project-governance.md`.
 
 ## 8. Retention and cleanup
 

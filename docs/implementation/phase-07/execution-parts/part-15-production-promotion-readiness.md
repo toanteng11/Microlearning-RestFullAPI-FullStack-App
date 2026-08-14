@@ -17,8 +17,8 @@ Production thật trong Phase 07.
 ## Work
 
 1. implement manual `workflow_dispatch` Production workflow;
-2. require protected environment reviewer;
-3. validate input exact digest/release manifest;
+2. require protected `production` environment, protected `main`, no-bypass và solo governance policy;
+3. validate exact confirmation phrase, digest và release manifest inputs;
 4. verify digest has successful Staging record;
 5. reject tag/unknown/non-main/unverified digest;
 6. use separate Production identity/state/config placeholders;
@@ -32,7 +32,7 @@ Production thật trong Phase 07.
 ## Validation
 
 - workflow syntax/policy/unit tests Pass;
-- invalid digest/no approval path denied;
+- invalid digest/missing confirmation/no Go decision path denied;
 - no Production secret/resource needed to validate dry path;
 - actual Production apply not executed.
 
@@ -44,7 +44,7 @@ Production thật trong Phase 07.
 
 - workflow auto-deploys Production from main;
 - Staging credentials/state reused;
-- approval can be bypassed;
+- confirmation, Go/No-Go hoặc protected environment can be bypassed;
 - workflow rebuilds image;
 - Production Go blockers not enforced.
 

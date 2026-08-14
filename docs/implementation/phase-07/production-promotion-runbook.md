@@ -3,7 +3,8 @@
 ## 1. Trạng thái và ranh giới
 
 Phase 07 thiết kế, kiểm tra cấu trúc và bảo vệ workflow này. Actual Production deployment thuộc Phase 08 sau
-System Test, UAT và Go/No-Go. Không được dùng tài liệu này để bỏ qua approval.
+System Test, UAT và Go/No-Go. Dự án cá nhân tuân theo `solo-project-governance.md`; không được mô tả
+self-confirmation là independent approval.
 
 ## 2. Promotion principle
 
@@ -20,7 +21,9 @@ thay code giữa Staging verification với Production promotion.
 - Latest drift plan clean.
 - Current Production revision/digest được ghi.
 - Rollback owner và observation window sẵn sàng.
-- Protected GitHub environment reviewer approve.
+- Protected GitHub environment chỉ cho `main`, no-bypass và manual `workflow_dispatch`.
+- Owner nhập đúng confirmation phrase `PROMOTE_PRODUCTION`; independent reviewer là `APPROVED_NA`
+  cho đến khi dự án có collaborator.
 
 ## 4. Promotion verification
 
@@ -33,7 +36,7 @@ Workflow tự động kiểm tra:
 5. scan/SBOM không hết hạn theo policy;
 6. UAT/Go decision IDs được cung cấp;
 7. Terraform plan chỉ thay expected Production revision/config;
-8. approver không bị bypass.
+8. confirmation phrase, Go/No-Go record và no-bypass policy hợp lệ.
 
 ## 5. Deployment strategy
 
@@ -68,13 +71,13 @@ Chỉ dùng test accounts/dataset được duyệt. Không reset/seed Production
 - data integrity issue;
 - security/secret exposure;
 - monitoring mù;
-- approver yêu cầu abort.
+- owner/Go-No-Go decision yêu cầu abort.
 
 Rollback đưa traffic về prior stable revision/digest, không rebuild.
 
 ## 8. Production deployment record
 
-Ghi đầy đủ release ID, UAT/Go decision, approver, digest, commit, Terraform plan, revision, traffic changes,
+Ghi đầy đủ release ID, UAT/Go decision, decision owner, digest, commit, Terraform plan, revision, traffic changes,
 smoke, observation, incident/rollback và final decision.
 
 ## 9. Forbidden actions

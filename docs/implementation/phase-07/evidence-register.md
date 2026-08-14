@@ -11,11 +11,11 @@
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
 | P07-EV-001 | planning PR and CI | Pending | PR URL |
-| P07-EV-002 | Gate A signed decision | Pending | `gate-a-decision-sheet.md` |
-| P07-EV-003 | tool/version checks | Pending | redacted command output |
-| P07-EV-004 | GCP project/billing/budget access | Pending | protected screenshot/record |
-| P07-EV-005 | Atlas rotation/revoke/network waiver | Pending | redacted record |
-| P07-EV-006 | GitHub environments/protection | Pending | settings evidence |
+| P07-EV-002 | Gate A signed decision | Pass | `gate-a-decision-sheet.md`, `gate-a-readiness-evidence.md` |
+| P07-EV-003 | tool/version checks | Pass | `gate-a-readiness-evidence.md` |
+| P07-EV-004 | GCP project/billing/budget access | Pass | `gate-a-readiness-evidence.md`; provider UI evidence owner-controlled |
+| P07-EV-005 | Atlas rotation/revoke/network waiver | Pass With Expiry | `gate-a-readiness-evidence.md`; expires `2026-09-13` |
+| P07-EV-006 | GitHub environments/protection | Pass | `gate-a-readiness-evidence.md`; live settings verified `2026-08-14` |
 
 ## 3. Build And Infrastructure Evidence
 

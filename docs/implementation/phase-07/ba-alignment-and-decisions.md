@@ -31,6 +31,7 @@
 | P07-GA-010 | Atlas Free chỉ synthetic Staging/demo | Không đủ backup/private endpoint/SLA cho real Production |
 | P07-GA-011 | Relative API URL trên Cloud | Web/API cùng release và origin |
 | P07-GA-012 | Cloud Run `min=0`, bounded `max` | Kiểm soát free-tier/cost; chấp nhận cold start demo |
+| P07-GA-013 | Solo Project Governance | PR/CI/no-bypass và manual Production confirmation thay independent reviewer |
 
 ## 3. Project-Specific Facts
 
@@ -63,6 +64,6 @@
 | P07-OPEN-002 | GCP principal có Owner/Admin bootstrap rồi giảm quyền | DevOps | Yes |
 | P07-OPEN-003 | Atlas credential rotation/revoke completed | Backend/Security | Yes |
 | P07-OPEN-004 | Accept synthetic-only Free Atlas + time-bound network waiver | PO/TL/Security | Yes |
-| P07-OPEN-005 | GitHub Staging/Production environment reviewers | PO/DevOps | Yes |
+| P07-OPEN-005 | GitHub Staging/Production solo protection và no-bypass evidence | PO/DevOps | Yes |
 | P07-OPEN-006 | Production custom domain | Product Owner | No; default `run.app` |
 | P07-OPEN-007 | Production Atlas tier/RPO/RTO | PO/TL/DevOps | Deferred to Phase 08 Go gate |

@@ -131,5 +131,5 @@ Fail: 0
 Blocked: 0
 Approved N/A: 0
 Not Run: 70
-Current phase status: DRAFT_FOR_GATE_A_REVIEW
+Current phase status: READY_AFTER_PLANNING_PR_MERGE
 ```

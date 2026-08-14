@@ -85,7 +85,8 @@ không được tiếp tục smoke nếu mismatch.
 ## 6. Separation Rules
 
 - Không dùng cùng secret version/database user/database name giữa Staging và Production.
-- Production GitHub environment chỉ nhận deploy từ protected source và reviewer.
+- Production GitHub environment chỉ nhận manual deploy từ protected `main`. Solo mode dùng confirmation
+  phrase, exact digest và Go/No-Go record; independent reviewer là `APPROVED_NA`.
 - Staging synthetic accounts không được dùng lại password cho Production.
 - Production config không được copy từ screenshot hoặc shell history.
 - Terraform plan/apply phải chọn environment rõ; thiếu environment thì fail closed.

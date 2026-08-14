@@ -2,13 +2,13 @@
 
 ## Gate A
 
-- [ ] Xác nhận P06 release commit/handoff.
-- [ ] Xác nhận GCP project access, billing và budget owner.
-- [ ] Cài/xác minh `gcloud` và Terraform.
-- [ ] Rotate Atlas credential, revoke credential cũ.
-- [ ] Chốt synthetic-only data và network waiver/expiry.
-- [ ] Tạo/chốt GitHub `staging` và `production` environment protection.
-- [ ] Approve Gate A và đổi trạng thái `READY_TO_CODE`.
+- [x] Xác nhận P06 release commit/handoff.
+- [x] Xác nhận GCP project access, billing và budget owner.
+- [x] Cài/xác minh `gcloud` và Terraform.
+- [x] Rotate Atlas credential, revoke credential cũ.
+- [x] Chốt synthetic-only data và network waiver/expiry `2026-09-13`.
+- [x] Tạo/chốt GitHub `staging` và `production` environment protection.
+- [x] Approve Gate A; trạng thái `READY_TO_CODE` kích hoạt sau planning PR merge và main CI Pass.
 
 ## Runtime And Container
 

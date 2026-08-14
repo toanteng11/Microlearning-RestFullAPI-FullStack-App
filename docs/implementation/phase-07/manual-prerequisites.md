@@ -17,7 +17,8 @@ Không đưa credential thật vào evidence, issue, PR hoặc ảnh chụp.
 | Terraform | version đã pin | `terraform version` | text output |
 | MongoDB Database Tools | version compatible với Atlas | `mongodump --version`, `mongorestore --version` | bắt buộc trước Part 13 |
 
-Hiện tại đã xác nhận Docker/Node/npm có sẵn; `gcloud` và Terraform chưa được cài ở thời điểm lập baseline.
+Gate A ngày `2026-08-14` đã xác nhận Git/Node/npm/Docker, `gcloud` và Terraform hoạt động. MongoDB Database
+Tools chưa chặn Part 01 nhưng vẫn bắt buộc trước Part 13.
 
 ## 3. Google Cloud prerequisites
 
@@ -69,7 +70,10 @@ mongorestore --version
 - Branch protection `main` còn hiệu lực.
 - Required checks hiện tại tiếp tục bắt buộc.
 - Tạo GitHub Environments `staging` và `production`.
-- `production` yêu cầu manual approval; `staging` có thể auto-deploy từ protected `main`.
+- `staging` có thể auto-deploy từ protected `main`.
+- Dự án cá nhân áp dụng `solo-project-governance.md`: Pull Request không yêu cầu independent approval;
+  Production chỉ chạy bằng `workflow_dispatch`, exact digest và confirmation phrase.
+- Khi chưa có collaborator, Production required reviewer là `APPROVED_NA`; không tạo reviewer giả.
 - Environment variables chỉ chứa non-secret identifiers.
 - Không tạo long-lived GCP credential secret; dùng OIDC/WIF.
 - Repository settings cho workflow permission ở mức read mặc định, từng job xin `id-token: write` khi cần.
@@ -120,7 +124,8 @@ Secret evidence chỉ ghi secret resource name và version number, không ghi va
 
 ```text
 Date (UTC):
-Reviewer:
+Decision owner:
+Governance mode: SOLO_PROJECT
 GCP project access: PASS | FAIL
 Billing linked: PASS | FAIL
 Budget configured: PASS | FAIL
@@ -140,5 +145,11 @@ Decision: APPROVED | REJECTED
 - Billing/project quyền không rõ.
 - Atlas chứa dữ liệu thật trong Free/public environment.
 - Người thực hiện định dùng service account JSON key.
-- Production environment không có reviewer protection.
+- Production có auto-deploy, chấp nhận source ngoài protected `main`, cho bypass, hoặc thiếu manual
+  confirmation contract theo `solo-project-governance.md`.
 - Gate A có bất kỳ Must item `FAIL` hoặc `Pending`.
+
+## 10. Gate A Verification Result
+
+Gate A đã `APPROVED` ngày `2026-08-14`. Bằng chứng sanitized nằm tại
+`gate-a-readiness-evidence.md`. Planning PR và post-merge main CI vẫn là activation gate trước Part 01.

@@ -2,8 +2,9 @@
 
 ## 1. Trạng thái hiện tại
 
-Planning baseline đang là `DRAFT_FOR_GATE_A_REVIEW`. Không bắt đầu cloud apply hoặc đưa secret vào hệ thống
-trước khi Gate A `APPROVED`.
+Planning baseline đã `ACCEPTED_AT_GATE_A` ngày `2026-08-14`. Bắt đầu Part 01 chỉ sau khi planning PR merge
+qua protected `main`, post-merge main CI Pass và local `main` đã pull commit mới. Cloud apply vẫn phải đi
+qua execution part, Terraform plan và stop conditions tương ứng.
 
 ## 2. Đọc trước khi code
 

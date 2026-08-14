@@ -130,8 +130,8 @@
 | Nhóm | Kết quả hiện tại |
 | --- | --- |
 | Must | `0/66 Pass`, implementation chưa bắt đầu |
-| Conditional | `0/6 decided`, chờ Gate A |
-| Gate A | `PENDING_MANUAL_CONFIRMATION` |
-| Phase status | `DRAFT_FOR_GATE_A_REVIEW` |
+| Conditional | `6/6 decided`; execution result remains Not Run |
+| Gate A | `APPROVED` on `2026-08-14` |
+| Phase status | `READY_AFTER_PLANNING_PR_MERGE` |
 
 Không đổi các số này thành Pass trong planning PR.

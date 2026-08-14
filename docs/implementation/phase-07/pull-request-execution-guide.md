@@ -49,11 +49,12 @@ Screenshots/artifacts (redacted):
 ## 5. Merge Rules
 
 - all required checks Pass;
-- required approval obtained;
+- Pull Request bắt buộc; independent approval là `APPROVED_NA` theo solo-project governance;
+- owner hoàn tất self-review checklist và xác nhận không còn known unrecorded defect;
 - conversations resolved;
 - branch up to date according to repository rule;
 - merge method follows repository policy;
-- no admin bypass except documented emergency;
+- không dùng admin bypass để vượt quality gate;
 - after merge, verify main CI and downstream CD where expected.
 
 ## 6. Infrastructure PR Special Rules

@@ -57,7 +57,7 @@ tới các bằng chứng có thể tái lập và kiểm tra chéo.
 
 ```text
 Must: 0/66 Pass
-Conditional: 0/6 decided
+Conditional: 6/6 decided at Gate A; execution results Not Run
 Critical defects: Not evaluated
 High defects: Not evaluated
 Decision: NOT_STARTED

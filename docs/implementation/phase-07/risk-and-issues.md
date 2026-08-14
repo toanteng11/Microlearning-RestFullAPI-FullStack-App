@@ -26,6 +26,7 @@ Probability/impact: `Low`, `Medium`, `High`. Critical/High unresolved security/d
 | P07-RSK-016 | Cost bất ngờ từ logs/NAT/instances/artifacts | M | M | min=0/max=2, budgets, retention, review | PO/DevOps | alerts + cost evidence |
 | P07-RSK-017 | Cloud E2E artifacts lộ credentials/PII | M | H | synthetic data, redaction, artifact review | QA/Security | canary scan Pass |
 | P07-RSK-018 | Production bị deploy sớm trước UAT | L | H | manual protected workflow; P08 gate | PO/DevOps | apply blocked in P07 |
+| P07-RSK-019 | Không có independent reviewer trong dự án cá nhân | H | M | PR + 6 CI gates + no-bypass + self-review record + manual Production confirmation | Owner | solo governance evidence Pass |
 
 ## 3. Known Issues At Planning
 
@@ -35,7 +36,7 @@ Probability/impact: `Low`, `Medium`, `High`. Critical/High unresolved security/d
 | P07-ISS-002 | Terraform chưa được cài | Open | Gate A |
 | P07-ISS-003 | Atlas credential rotation chưa có repository evidence | Open | Gate A |
 | P07-ISS-004 | Billing/budget/project IAM chưa có evidence | Open | Gate A |
-| P07-ISS-005 | GitHub environment reviewers chưa có evidence | Open | Gate A |
+| P07-ISS-005 | GitHub environment solo protection/no-bypass chưa có evidence | Open | Gate A |
 | P07-ISS-006 | Atlas Production tier/network/RPO/RTO chưa chốt | Deferred P08 | Production Go only |
 
 ## 4. Risk Review Cadence

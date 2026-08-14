@@ -4,9 +4,9 @@
 
 | Field | Value |
 | --- | --- |
-| Date | `2026-08-03` |
+| Date | `2026-08-14` |
 | Branch | `docs/phase-07-planning-baseline` |
-| Baseline start commit | `d2abe52` |
+| Baseline start commit | `d2abe52`; latest verified remote `main` `ace51f1` |
 | Validation scope | Phase 07 documentation + repository regression |
 | Remote PR/main CI | Pending |
 
@@ -54,16 +54,15 @@ Command: `npm run check`.
 Documentation structure: PASS
 Local repository regression: PASS
 Remote planning PR/main CI: PENDING
-Gate A manual prerequisites: PENDING
+Gate A manual prerequisites: PASS
 Implementation status: NOT_STARTED
-Decision: DRAFT_FOR_GATE_A_REVIEW
+Decision: READY_TO_OPEN_PLANNING_PR
 ```
 
 ## 6. Blocking Actions
 
-1. install/verify Google Cloud CLI and Terraform;
-2. confirm project access, billing, budget and quota;
-3. rotate/revoke Atlas credential and approve network/data policy;
-4. configure GitHub environment protection direction;
-5. review/approve Gate A;
-6. merge planning PR and record remote CI evidence.
+1. commit and push the approved Gate A planning package;
+2. open the planning PR against current `main`;
+3. wait for all six required checks;
+4. merge through protected `main` and record post-merge CI evidence;
+5. pull `main` locally and start Part 01.

@@ -56,4 +56,5 @@ release boundary.
 
 ## Current Status
 
-`NOT_STARTED` - documentation complete, manual Gate A pending.
+`READY_FOR_PLANNING_PR` - Gate A approved `2026-08-14`; planning PR merge and post-merge main CI activate
+Part 01.

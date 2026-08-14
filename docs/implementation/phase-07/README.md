@@ -16,19 +16,19 @@ có thể tái lập.
 
 | Thuộc tính | Giá trị |
 | --- | --- |
-| Planning status | `DRAFT_FOR_GATE_A_REVIEW` |
+| Planning status | `ACCEPTED_AT_GATE_A` |
 | Provider decision | `ACCEPTED` |
-| Implementation status | `NOT_STARTED` |
-| Gate A | `PENDING_MANUAL_CONFIRMATION` |
-| Release input | Phase 06 release commit `d2abe52` |
-| Cloud project | `microlearning-platform-502716` - tồn tại, quyền/billing chưa có evidence trong repository |
-| Atlas | Free `Cluster0` đã tồn tại; credential/network/data policy phải được làm sạch trước Staging |
+| Implementation status | `READY_AFTER_PLANNING_PR_MERGE` |
+| Gate A | `APPROVED` on `2026-08-14` |
+| Release input | Phase 06 release `d2abe52`, security patch `e3c52cf`, evidence closure `ace51f1` |
+| Cloud project | `microlearning-platform-502716`; access, billing, budget, region and required APIs verified |
+| Atlas | Free `Cluster0`; dedicated scoped Staging user/database verified; synthetic-only waiver expires `2026-09-13` |
 | Target Phase 07 | Production-like Staging/demo thật và Production promotion readiness |
 | Actual Production release | Phase 08 sau System Test/UAT/Go-No-Go |
 
-Không được chuyển sang `READY_TO_CODE` chỉ vì tài liệu đầy đủ. Gate A phải xác nhận billing/budget,
-Cloud access, Atlas credential rotation, Staging network waiver, GitHub environments và phạm vi dữ
-liệu synthetic.
+Gate A đã xác nhận billing/budget, Cloud access, Atlas credential rotation, Staging network waiver,
+GitHub environments và phạm vi dữ liệu synthetic. Quyền bắt đầu Part 01 có hiệu lực sau khi planning PR
+merge qua protected `main` và post-merge CI Pass.
 
 ## 3. Kết quả bắt buộc
 
@@ -45,7 +45,8 @@ liệu synthetic.
 - Cloud Logging/Monitoring có log redaction, dashboard, uptime check và alert test.
 - Backup/restore rehearsal dùng synthetic data; rollback Cloud Run về prior stable digest được kiểm
   chứng.
-- Production promotion workflow chỉ chấp nhận digest đã Pass Staging và cần protected approval.
+- Production promotion workflow chỉ chấp nhận digest đã Pass Staging và cần protected manual gate. Với
+  dự án cá nhân, gate tuân theo `solo-project-governance.md`, không giả lập independent reviewer.
 
 ## 4. Ranh giới Phase 07 và Phase 08
 
@@ -95,9 +96,12 @@ Chi tiết thực thi nằm trong thư mục `execution-parts/`.
 | Artifact/config/data | `artifact-supply-chain.md`, `secret-and-configuration-management.md`, `staging-configuration-baseline.md`, `mongodb-atlas-integration.md` |
 | Delivery | `github-actions-cd-design.md`, `staging-deployment-runbook.md`, `production-promotion-runbook.md` |
 | Operations | `smoke-and-e2e-strategy.md`, `observability-and-alerting.md`, `backup-restore-disaster-recovery.md`, `rollback-and-incident-response.md` |
-| Governance | `security-hardening.md`, `cost-budget-and-quota.md`, `risk-and-issues.md` |
+| Governance | `solo-project-governance.md`, `security-hardening.md`, `cost-budget-and-quota.md`, `risk-and-issues.md` |
 | Dev/Test | `source-file-blueprint.md`, `testing-strategy.md`, `test-case-catalog.md`, `test-case-execution-matrix.md`, `developer-start-guide.md` |
 | Exit | `acceptance-criteria.md`, `traceability-matrix.md`, `evidence-register.md`, `phase-exit-evidence.md`, `phase-08-handoff.md`, `exit-report.md` |
+
+Gate A evidence được tổng hợp tại `gate-a-readiness-evidence.md`; file không chứa credential hoặc billing
+instrument.
 
 ## 7. Definition Of Ready
 
@@ -108,7 +112,7 @@ Phase 07 chỉ được đổi sang `READY_TO_CODE` khi:
 3. Người thực hiện đăng nhập được `gcloud`, có Terraform và Docker hoạt động.
 4. Billing account/budget owner và project access được xác nhận.
 5. Staging data chỉ là synthetic; Atlas Free/public-network waiver có owner và expiry.
-6. GitHub `staging`/`production` environment protection direction được chấp nhận.
+6. GitHub `staging`/`production` environment protection direction và solo-project waiver được chấp nhận.
 7. Scope Phase 07/08 và Production non-goal được Product Owner xác nhận.
 
 ## 8. Definition Of Done

@@ -9,10 +9,12 @@
 | Architecture source | `business-analysis/14-solution-architecture/architecture-decision-records.md`, `ADR-010` |
 | Product decision | Google Cloud Run + MongoDB Atlas + GitHub Actions |
 | Explicit exclusion | Không sử dụng Firebase |
-| Implementation status | `NOT_STARTED`; tài liệu này không phải deployment evidence |
+| Implementation status | `GATE_A_APPROVED`; resource implementation chưa bắt đầu |
 | Owners | Product Owner, Technical Lead, DevOps, Backend Lead |
 
-Quyết định provider đã hoàn thành. Account, billing, project ID, service identity, Atlas cluster, registry, secret, workflow CD và remote runtime vẫn phải được tạo và kiểm chứng ở Phase 07.
+Quyết định provider, project, billing, budget, region, toolchain và GitHub environment đã được xác minh tại
+Gate A. Service identity, WIF, registry, secret containers, Terraform state bucket và remote runtime vẫn phải
+được tạo và kiểm chứng trong các execution part của Phase 07.
 
 ## 2. Mục tiêu
 
@@ -83,11 +85,13 @@ Frontend dùng relative API base URL. Không cấu hình browser gọi trực ti
 | Cloud Run region | `asia-southeast1` | `asia-southeast1` trừ khi ADR mới thay đổi |
 | Atlas data | Synthetic/sanitized | Dữ liệu thật chỉ sau backup/capacity/network gate |
 | Secret | Staging secret set | Production secret set, không tái sử dụng |
-| GitHub environment | `staging` | `production` với required approval |
+| GitHub environment | `staging` | `production` với protected manual gate; reviewer `APPROVED_NA` khi solo |
 | URL | Managed Staging `run.app` URL | Managed URL hoặc approved custom domain |
 | Logs/alerts | Short controlled retention | Approved retention, alert owner và escalation route |
 
-Tên project/repository/service thực tế có thể thêm suffix hợp lệ. Không ghi project number, credential, Atlas URI hoặc secret value vào tài liệu/evidence public.
+Tên project/repository/service thực tế có thể thêm suffix hợp lệ. Project number chỉ được ghi khi cần cho
+deterministic resource naming; không ghi credential, billing identifier/instrument, Atlas URI hoặc secret
+value vào tài liệu/evidence public.
 
 ## 7. Production Docker contract
 
@@ -121,9 +125,9 @@ Merge main
   -> deploy digest to Staging
   -> health/version/API/UI/auth smoke
 
-Release approval/tag
+Phase 08 Go/No-Go record
   -> verify Staging evidence
-  -> protected Production approval
+  -> protected manual Production confirmation
   -> deploy the same digest
   -> post-deploy smoke and monitoring
   -> release/deployment record
@@ -249,8 +253,8 @@ Cloud baseline chỉ được xem là implemented khi có:
 
 Các quyết định dưới đây chưa được suy diễn thành đã hoàn thành:
 
-- Google Cloud project ID, billing owner và backup owner.
-- Atlas provider/region/tier chính xác cho Staging và Production.
+- Backup owner và restore custody cho Part 13.
+- Atlas Production tier/network/backup; Staging giữ Free/synthetic theo waiver đến `2026-09-13`.
 - Custom Production domain/DNS ownership hoặc tiếp tục dùng `run.app`.
 - Production RPO/RTO, backup retention và restore cadence.
 - Object storage provider cho image/file/video upload.

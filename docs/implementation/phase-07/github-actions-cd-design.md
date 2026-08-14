@@ -29,7 +29,7 @@ release-staging -> reusable build/publish exact commit
 build output -> reusable deploy Staging exact digest
 deploy success -> cloud smoke/E2E
 smoke success -> Staging release record
-Phase 08 manual approval -> promote same digest Production
+Phase 08 manual Go/No-Go -> promote same digest Production
 ```
 
 Một workflow không được dựa vào artifact từ untrusted PR để deploy.
@@ -80,10 +80,12 @@ release manifest ID/digest và chạy lại toàn bộ validation, không nhận
 Workflow được code/test structure trong Phase 07 nhưng actual apply chỉ Phase 08. Bắt buộc:
 
 - `workflow_dispatch` với input digest/release record ID;
-- protected `production` environment và reviewer;
+- protected `production` environment, protected `main` source và no-bypass policy;
+- solo mode dùng confirmation input chính xác `PROMOTE_PRODUCTION`; required reviewer là
+  `APPROVED_NA` cho đến khi có collaborator;
 - verify digest đã từng Pass Staging;
 - reject tag, unknown digest hoặc commit chưa thuộc main;
-- plan summary trước approval/apply;
+- plan summary trước manual decision/apply;
 - concurrency lock để chỉ một Production deployment;
 - post-deploy smoke và automatic/manual rollback path.
 
@@ -129,6 +131,7 @@ Retention phải đủ cho review đồ án:
 
 ## 11. Required checks direction
 
-PR required checks giữ nguyên CI quality gates. CD Staging là post-merge deployment gate; Phase 08 release
-decision yêu cầu Staging deployment/smoke mới nhất Pass. Không bắt workflow có Cloud secret chạy trên mọi
-untrusted PR.
+PR required checks giữ nguyên CI quality gates. Với solo project, approval count là `0`, nhưng Pull Request,
+branch up-to-date, conversation resolution, linear history, no-bypass và toàn bộ required checks vẫn bắt
+buộc. CD Staging là post-merge deployment gate; Phase 08 release decision yêu cầu Staging
+deployment/smoke mới nhất Pass. Không bắt workflow có Cloud secret chạy trên mọi untrusted PR.
