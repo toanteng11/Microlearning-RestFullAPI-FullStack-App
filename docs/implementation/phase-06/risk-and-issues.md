@@ -43,7 +43,7 @@ P: Probability, I: Impact; `C` = Critical, `H` = High, `M` = Medium, `L` = Low.
 | P06-I06 | P05 Teacher progress `0` khi denominator 0 | Resolved in planning | Coordinated nullable contract correction |
 | P06-I07 | Admin E2E dùng heading cũ và Role locator mơ hồ | Resolved locally | Updated semantic heading assertion and explicit `aria-label`; fresh E2E `34/34` |
 | P06-I08 | Privacy E2E thiếu `await` | Resolved locally | Matcher awaited; focused Admin E2E `2/2` and full E2E `34/34` |
-| P06-I09 | Release PR/main CI/P07 acceptance chưa có | Open external gate | Push quality branch, protected PR, post-merge CI and consumer acceptance |
+| P06-I09 | Release PR/main CI/P07 acceptance chưa có | Resolved | PR `#18`, merge `d2abe52`, post-merge CI Success và P07 acceptance `2026-08-03` |
 
 Không item nào được im lặng mặc định thành scope implementation.
 
@@ -74,6 +74,6 @@ correctness. “Sẽ sửa sau” không có owner/date không hợp lệ.
 | High | 0 | Local Pass |
 | Medium/Low | 0 blocking | No release blocker identified |
 
-Residual external gap P06-I09 chặn status `COMPLETED` nhưng không phải runtime defect. Dependency
-audit exceptions cho `react-router` và `react-router-dom` được quản lý theo time-bound policy; không
-được mở rộng hoặc bỏ qua khi hết hạn.
+P06-I09 đã đóng; không còn external gate chặn status `COMPLETED`. Dependency audit exceptions cho
+`react-router` và `react-router-dom` được quản lý theo time-bound policy; không được mở rộng hoặc bỏ
+qua khi hết hạn.

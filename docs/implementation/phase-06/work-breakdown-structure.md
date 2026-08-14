@@ -165,13 +165,13 @@ Một developer thực hiện tuần tự cần chia nhiều iteration; estimate
 | Epic | Local status | Evidence |
 | --- | --- | --- |
 | E01 Planning | Done | PR `#16`, merge `e7437bc` |
-| E02 Data And Read Model | Local Pass | `gate-b-foundation-evidence.md` |
-| E03 Student | Local Pass | `student-reporting-evidence.md` |
-| E04 Teacher | Local Pass | `teacher-reporting-evidence.md` |
-| E05 Gradebook | Local Pass | `gradebook-evidence.md` |
-| E06 Admin | Local Pass | Admin API/Web evidence files |
-| E07 Conditional | Local Pass/Approved N/A | `conditional-reporting-evidence.md` |
-| E08 Quality And Exit | Local Complete/Remote Pending | `quality-hardening-evidence.md`, `phase-exit-evidence.md` |
+| E02 Data And Read Model | Done | `gate-b-foundation-evidence.md` |
+| E03 Student | Done | `student-reporting-evidence.md` |
+| E04 Teacher | Done | `teacher-reporting-evidence.md` |
+| E05 Gradebook | Done | `gradebook-evidence.md` |
+| E06 Admin | Done | Admin API/Web evidence files |
+| E07 Conditional | Done/Approved N/A | `conditional-reporting-evidence.md` |
+| E08 Quality And Exit | Done | `quality-hardening-evidence.md`, `phase-exit-evidence.md`; PR/main CI Pass |
 
-E08-T11 remains Pending until P07 consumer acceptance. Release PR/main CI tasks remain remote gates;
-all other listed implementation tasks have local evidence.
+E08-T11 và toàn bộ release gates đã hoàn thành qua PR `#18`, merge commit `d2abe52`, main CI run
+`30786783937` và P07 consumer acceptance ngày `2026-08-03`.

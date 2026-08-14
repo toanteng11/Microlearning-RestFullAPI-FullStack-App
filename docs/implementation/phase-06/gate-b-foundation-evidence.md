@@ -8,7 +8,7 @@
 | Branch | `feature/phase-06-reporting-foundation` |
 | Implementation commit | `1afe813` |
 | Local decision | `PASS` |
-| Remote decision | `PENDING_PR_CI_REVIEW_MERGE` |
+| Remote decision | `PASS`; included and revalidated in PR `#18`/main CI |
 | Captured at | `2026-07-29`, local development environment |
 
 Gate B chưa được công bố là hoàn thành trên `main` cho đến khi P06-PR02 vượt required checks,

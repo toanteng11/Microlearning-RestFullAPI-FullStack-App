@@ -74,10 +74,10 @@ Chỉ thực hiện khi `P06-GA-C04=Approved`.
 
 | Gate A item | Runtime result |
 | --- | --- |
-| `P06-GA-C01` bounded CSV | `LOCAL_PASS_REMOTE_PENDING` |
-| `P06-GA-C02` analytics event foundation | `LOCAL_PASS_REMOTE_PENDING` |
-| `P06-GA-C03` Student trend | `LOCAL_PASS_REMOTE_PENDING` |
-| `P06-GA-C04` Admin learning outcomes | `LOCAL_PASS_REMOTE_PENDING` |
+| `P06-GA-C01` bounded CSV | `PASS` |
+| `P06-GA-C02` analytics event foundation | `PASS` |
+| `P06-GA-C03` Student trend | `PASS` |
+| `P06-GA-C04` Admin learning outcomes | `PASS` |
 | `P06-GA-C05` weighted process score V2 | `APPROVED_NA`; flag false, không có V2 runtime |
 | `P06-GA-C06` XLSX/async/private export | `APPROVED_NA`; deferred P07 |
 

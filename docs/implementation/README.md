@@ -207,7 +207,7 @@ docs/implementation/
 | `phase-03/` | Classroom Management     | Classroom, enrollment, class code/link, roster và enrollment policy | Completed; `45/45` Pass; PR #6 merged |
 | `phase-04/` | Learning Content         | Course/module/lesson/deadline/completion/To-do và dashboard v1      | Completed; `66/66` Must Pass; PR #10 merged |
 | `phase-05/` | Assessments and Grading  | Quiz/assignment/submission/grade/feedback                           | Completed; `74/74` Must Pass; PR #14 merged |
-| `phase-06/` | Reporting and Analytics  | Dashboard/progress/process score/Gradebook/ranking/report           | Local release candidate; remote PR/main CI/P07 acceptance pending |
+| `phase-06/` | Reporting and Analytics  | Dashboard/progress/process score/Gradebook/ranking/report           | Completed; `68/68` Must Pass, PR/main CI xanh, P07 handoff accepted |
 | `phase-07/` | DevOps and Deployment    | Cloud Run, Atlas, GitHub Actions, registry, monitoring, rollback    | Provider accepted; Planned      |
 | `phase-08/` | Testing and Release      | System/E2E/UAT/hardening/MVP release                                | Planned                         |
 

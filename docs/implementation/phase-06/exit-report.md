@@ -2,8 +2,8 @@
 
 ## 1. Current Status
 
-`LOCAL_PASS_REMOTE_PENDING`. Runtime implementation và local quality gate đã hoàn thành; Phase 06
-chưa được đánh dấu `COMPLETED` vì release PR, protected-main CI và P07 acceptance chưa có.
+`COMPLETED`. Runtime implementation, release PR, protected-main merge, post-merge main CI và P07
+handoff acceptance đều đã hoàn thành với bằng chứng có thể truy xuất.
 
 ## 2. Release Summary
 
@@ -11,11 +11,11 @@ chưa được đánh dấu `COMPLETED` vì release PR, protected-main CI và P0
 | --- | --- |
 | Planning status | `MERGED_TO_MAIN` tại `e7437bc` |
 | Gate A | Approved |
-| Implementation | Part 01-16 Local Pass; Part 17 Local Complete |
+| Implementation | Part 01-17 Complete |
 | Code baseline | Conditional reporting commit `f1baf06` |
 | Release branch | `quality/phase-06-release-hardening` |
-| Release PR/merge commit | Pending |
-| Exit decision | `LOCAL_PASS_REMOTE_PENDING` |
+| Release PR/merge commit | [PR `#18`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/18); `d2abe52` |
+| Exit decision | `PASS` |
 
 ## 3. Completed Scope
 
@@ -30,8 +30,8 @@ chưa được đánh dấu `COMPLETED` vì release PR, protected-main CI và P0
 ## 4. Acceptance Result
 
 ```text
-Must local Pass: 66/68
-Remote pending Must: P06-AC-066, P06-AC-068
+Must Pass: 68/68
+Remote pending Must: 0
 Conditional criteria: 5 Pass, 1 Approved N/A
 Conditional capabilities: 4 enabled Pass, 2 Approved N/A
 Critical defects: 0
@@ -51,7 +51,7 @@ High defects: 0
 | Docker/seed/Swagger smoke | Pass |
 | Clean clone | `npm ci` + `npm run check:ci` Pass |
 | Production dependency audit | Pass with managed time-bound exceptions |
-| Remote Secret Scan/required checks | Pending release PR |
+| Remote Secret Scan/required checks | Pass trên PR `#18` và post-merge main CI |
 
 ## 6. Deferred And Approved N/A
 
@@ -61,21 +61,22 @@ High defects: 0
 
 ## 7. Risks And Debt
 
-Critical/High open defect tại local bằng `0`. React Router advisories được quản lý bằng time-bound
-production-audit exceptions và phải tiếp tục được rà theo policy. Remote evidence gap không được
-coi là code defect nhưng chặn Phase completion.
+Critical/High open defect bằng `0`. React Router advisories được quản lý bằng time-bound
+production-audit exceptions và phải tiếp tục được rà theo policy. Không còn remote evidence gap
+chặn Phase completion.
 
 ## 8. Handoff
 
-`P06-P07-HANDOFF-V1` ở trạng thái `READY_FOR_REVIEW`. P07 nhận env, index, migration/rebuild/
-reconcile, observability, feature flag, rollback và Cloud Run/Atlas boundaries. Acceptance vẫn Pending.
+`P06-P07-HANDOFF-V1` ở trạng thái `ACCEPTED`. P07 nhận env, index, migration/rebuild/reconcile,
+observability, feature flag, rollback và Cloud Run/Atlas boundaries. Project Owner/P07 consumer đã
+chấp nhận gói bàn giao ngày `2026-08-03` thông qua việc review và merge PR `#18`.
 
-## 9. Remaining Remote Actions
+## 9. Remote Completion Record
 
-1. Push `quality/phase-06-release-hardening`.
-2. Mở release PR và để required checks, dependency audit, Secret Scan Pass.
-3. Resolve review và merge qua protected `main`.
-4. Xác nhận post-merge main CI.
-5. Ghi PR/Actions/merge URLs rồi nhận P07 acceptance.
+1. Branch `quality/phase-06-release-hardening` đã được push.
+2. Release PR `#18`, required checks, dependency audit và Secret Scan đều Pass.
+3. PR đã được review và merge qua protected `main` tại `d2abe52`.
+4. Post-merge main CI run `30786783937` đã Pass.
+5. PR/Actions/merge URLs và P07 acceptance đã được ghi trong `phase-exit-evidence.md`.
 
-Chỉ sau năm bước này mới đổi decision thành `PASS` và Phase 06 thành `COMPLETED`.
+Năm bước trên đã hoàn thành; decision là `PASS` và Phase 06 là `COMPLETED`.

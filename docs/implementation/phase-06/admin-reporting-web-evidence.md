@@ -6,7 +6,7 @@
 | --- | --- |
 | Scope | Part 14 - Admin Reporting Web |
 | Implementation commit | `c1f5fa9` |
-| Local decision | `PASS_REMOTE_PENDING` |
+| Final decision | `PASS` |
 | Captured date | `2026-08-03` |
 
 ## 2. Implemented Behavior

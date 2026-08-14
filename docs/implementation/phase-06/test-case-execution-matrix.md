@@ -2,8 +2,8 @@
 
 ## 1. Status
 
-`LOCAL_QUALITY_PASS_REMOTE_PENDING`. Part 01-16 có local code/test evidence; Part 17 local evidence
-đã hoàn thành. Release PR, remote required CI, review, protected-main merge và P07 acceptance đang chờ.
+`PASS`. Part 01-17 có code/test/release evidence hoàn chỉnh. PR `#18`, sáu required checks,
+protected-main merge, post-merge main CI và P07 acceptance đều đã hoàn thành.
 
 ## 2. Execution Rules
 
@@ -67,7 +67,7 @@
 | P02-P05 regression | Pass local | API `230/230`, Web `126/126`, integration `97/97`, E2E `34/34` |
 | Docker replica-set smoke | Pass | Integrated Mongo/API/Web stack và deterministic seed |
 | Clean clone | Pass | Fresh clone `npm ci` + `npm run check:ci`; `quality-hardening-evidence.md` |
-| Secret/dependency scan | Local dependency Pass/Remote secret Pending | Production audit Pass; required Secret Scan awaits release PR |
+| Secret/dependency scan | Pass | Production audit và Secret Scan Pass trên PR lẫn post-merge main CI |
 
 ## 8. Final Summary
 
@@ -79,5 +79,5 @@ Browser E2E: fresh Docker stack 34/34 Pass
 Performance: 6/6 local evidence present
 OpenAPI/regression/operations: 10/10 OpenAPI; all actor and Conditional operations local Pass
 Clean clone: npm ci + check:ci Pass
-Decision: LOCAL_QUALITY_PASS_REMOTE_PENDING
+Decision: PASS
 ```

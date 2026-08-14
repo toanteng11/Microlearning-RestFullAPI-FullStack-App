@@ -7,17 +7,17 @@
 | Planning merge | PR `#16`; commit `e7437bc`; CI `6/6` Pass |
 | Local code baseline | `f1baf06` |
 | Release branch | `quality/phase-06-release-hardening` |
-| Implementation/release PR | Pending |
-| Release merge commit | Pending |
-| Post-merge main CI | Pending |
+| Implementation/release PR | [PR `#18`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/18) |
+| Release merge commit | `d2abe5222acff47b85c40cbb9b82c4bf3ee3efff` |
+| Post-merge main CI | [Run `30786783937`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786783937); Success |
 | Local evidence date | `2026-08-03` |
-| Decision | `LOCAL_PASS_REMOTE_PENDING` |
+| Decision | `PASS` |
 
 ## 2. Scope Result
 
 ```text
-Must local Pass: 66/68
-Must remote pending: 2
+Must Pass: 68/68
+Must remote pending: 0
 Conditional enabled capabilities: 4
 Conditional enabled Pass: 4
 Conditional approved N/A capabilities: 2
@@ -62,14 +62,14 @@ Detailed path: `quality-hardening-evidence.md`.
 | Evidence | Status |
 | --- | --- |
 | Planning PR/main CI | Pass; recorded in planning evidence |
-| Release PR URL | Pending |
-| Release required checks | Pending |
-| Remote Secret Scan | Pending |
-| Release merge commit | Pending |
-| Post-merge main Actions URL | Pending |
-| P07 acceptance | Pending |
+| Release PR URL | [PR `#18`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/18) |
+| Release required checks | [PR run `30786303279`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786303279); `6/6` Pass |
+| Remote Secret Scan | Pass trên PR và post-merge main CI |
+| Release merge commit | `d2abe5222acff47b85c40cbb9b82c4bf3ee3efff` |
+| Post-merge main Actions URL | [Run `30786783937`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/30786783937); `6/6` Pass |
+| P07 acceptance | Accepted bởi Trần Đức Toàn, Project Owner/P07 consumer, `2026-08-03` |
 
-Không tạo URL hoặc commit giả. Các field này chỉ được cập nhật sau hành động thật trên GitHub.
+Các URL, commit và trạng thái trên được đối chiếu từ GitHub sau khi PR `#18` merge.
 
 ## 7. Risks, Debt And Waivers
 
@@ -82,13 +82,13 @@ Không tạo URL hoặc commit giả. Các field này chỉ được cập nhậ
 
 | Role | Decision | Date | Note |
 | --- | --- | --- | --- |
-| Product Owner | Pending | - | Remote release review required |
-| Technical Lead | Local Ready | `2026-08-03` | Quality/evidence package complete |
-| QA | Local Pass | `2026-08-03` | Automated and visual gates Pass |
-| Security | Local Pass | `2026-08-03` | RBAC/IDOR/privacy/bounds Pass |
-| DevOps/P07 consumer | Ready For Review | - | Acceptance pending |
+| Product Owner | Accepted | `2026-08-03` | Reviewed and merged PR `#18` |
+| Technical Lead | Pass | `2026-08-03` | Quality/evidence package complete |
+| QA | Pass | `2026-08-03` | Automated and visual gates Pass |
+| Security | Pass | `2026-08-03` | RBAC/IDOR/privacy/bounds and remote Secret Scan Pass |
+| DevOps/P07 consumer | Accepted | `2026-08-03` | Handoff accepted for Phase 07 planning and execution |
 
 ## 9. Final Rule
 
-Đổi Decision thành `PASS` chỉ khi P06-AC-066 và P06-AC-068 Pass: release PR/main CI xanh, remote
-Secret Scan Pass, release commit/URLs được ghi và P07 handoff được chấp nhận.
+P06-AC-066 và P06-AC-068 đã Pass: release PR/main CI xanh, remote Secret Scan Pass, release
+commit/URLs được ghi và P07 handoff được chấp nhận. Phase 06 chính thức `COMPLETED`.

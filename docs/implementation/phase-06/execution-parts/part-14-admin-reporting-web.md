@@ -53,7 +53,7 @@ apps/web/src/shared/components/AppShell.tsx
 
 | Field | Result |
 | --- | --- |
-| Local status | `LOCAL_PASS_REMOTE_PENDING` |
+| Final status | `DONE` |
 | Implementation commit | `c1f5fa9` |
 | Admin Dashboard/Reports | Pass |
 | Management workflow regression | Pass |
