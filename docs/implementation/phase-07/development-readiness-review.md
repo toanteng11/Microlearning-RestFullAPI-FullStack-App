@@ -37,15 +37,16 @@
 ```text
 Documentation readiness: PASS
 Gate A: APPROVED
-Implementation readiness: READY_AFTER_PLANNING_PR_MERGE
+Implementation readiness: READY_TO_CODE
 Cloud apply readiness: CONTROLLED_BY_PART_AND_TERRAFORM_PLAN
 Production readiness: OUT_OF_SCOPE_UNTIL_PHASE_08
-Overall: READY_TO_OPEN_PLANNING_PR
+Overall: READY_TO_CODE
 ```
 
-## 5. Conditions To Mark READY_TO_CODE
+## 5. READY_TO_CODE Conditions
 
-Tất cả row Manual Readiness phải Pass, Gate A record có reviewer/date và không còn blocking TBD. Sau đó:
+Tất cả row Manual Readiness đã Pass, Gate A record có reviewer/date và không còn blocking TBD. Các bước
+kích hoạt đã hoàn thành:
 
 1. cập nhật README/status;
 2. cập nhật `gate-a-decision-sheet.md`;
@@ -68,5 +69,7 @@ six required checks, no-bypass và evidence vẫn bắt buộc.
 
 ## 7. Current Decision
 
-Không còn Gate A blocker đã biết. Mở planning PR, chờ sáu required checks Pass, merge qua protected
-`main`, xác minh post-merge main CI rồi bắt đầu Part 01. Production apply vẫn không được cấp quyền.
+`READY_TO_CODE`. [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21)
+đã merge thành `f5c58c3`; sáu required checks và
+[post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/31818169576)
+đều Pass. Part 01 được phép bắt đầu. Production apply vẫn không được cấp quyền.

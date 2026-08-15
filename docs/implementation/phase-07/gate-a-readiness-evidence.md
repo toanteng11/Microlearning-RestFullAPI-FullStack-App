@@ -105,8 +105,8 @@ verifies those resources. They must be added as non-secret environment variables
 
 ```text
 Gate A: APPROVED
-Planning PR: READY_TO_OPEN
-Implementation: GRANTED_AFTER_PLANNING_PR_MERGE_AND_MAIN_CI_PASS
+Planning PR: MERGED_PASS
+Implementation: GRANTED_READY_TO_CODE
 Cloud resource apply: CONTROLLED_BY_EXECUTION_PART_AND_TERRAFORM_PLAN
 Production apply: NOT_GRANTED_UNTIL_PHASE_08_GO_NO_GO
 ```

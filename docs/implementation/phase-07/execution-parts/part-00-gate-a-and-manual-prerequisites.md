@@ -56,5 +56,8 @@ release boundary.
 
 ## Current Status
 
-`PR_OPEN_CI_PENDING` - Gate A approved `2026-08-14`; [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21)
-must pass six required checks, merge, and receive post-merge main CI before Part 01.
+`COMPLETED` - Gate A approved `2026-08-14`;
+[PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) merged as `f5c58c3`;
+six required checks and
+[post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/31818169576)
+Pass. Local `main` was synchronized and Terraform `1.15.8` was reverified. Part 01 is authorized.

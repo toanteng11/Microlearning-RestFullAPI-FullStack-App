@@ -16,9 +16,9 @@ có thể tái lập.
 
 | Thuộc tính | Giá trị |
 | --- | --- |
-| Planning status | `PR_OPEN_CI_PENDING` - [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) |
+| Planning status | `MERGED_TO_MAIN` - [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21), merge commit `f5c58c3` |
 | Provider decision | `ACCEPTED` |
-| Implementation status | `READY_AFTER_PLANNING_PR_MERGE` |
+| Implementation status | `READY_TO_CODE` - Part 01 authorized |
 | Gate A | `APPROVED` on `2026-08-14` |
 | Release input | Phase 06 release `d2abe52`, security patch `e3c52cf`, evidence closure `ace51f1` |
 | Cloud project | `microlearning-platform-502716`; access, billing, budget, region and required APIs verified |
@@ -27,8 +27,9 @@ có thể tái lập.
 | Actual Production release | Phase 08 sau System Test/UAT/Go-No-Go |
 
 Gate A đã xác nhận billing/budget, Cloud access, Atlas credential rotation, Staging network waiver,
-GitHub environments và phạm vi dữ liệu synthetic. Quyền bắt đầu Part 01 có hiệu lực sau khi planning PR
-merge qua protected `main` và post-merge CI Pass.
+GitHub environments và phạm vi dữ liệu synthetic. Planning PR đã merge qua protected `main`; sáu required
+checks và [post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/31818169576)
+đều Pass. Quyền bắt đầu Part 01 đã có hiệu lực.
 
 ## 3. Kết quả bắt buộc
 

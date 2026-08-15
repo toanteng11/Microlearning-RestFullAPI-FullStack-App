@@ -8,11 +8,11 @@ Probability/impact: `Low`, `Medium`, `High`. Critical/High unresolved security/d
 
 | ID | Risk | P | I | Mitigation | Owner | Exit condition |
 | --- | --- | --- | --- | --- | --- | --- |
-| P07-RSK-001 | GCP billing/access chưa xác minh | M | H | Gate A manual evidence | PO/DevOps | project/billing/budget Pass |
-| P07-RSK-002 | Atlas credential từng chia sẻ | H | H | rotate, revoke, negative test, scan | Backend/Security | old credential fail |
+| P07-RSK-001 | GCP billing/access có thể thay đổi hoặc bị thu hồi | M | H | kiểm tra trước apply và lưu sanitized evidence | PO/DevOps | project/billing/budget Pass |
+| P07-RSK-002 | Atlas credential cũ có thể bị tái sử dụng hoặc lộ lại | H | H | rotate, revoke, negative test, scan | Backend/Security | old credential fail |
 | P07-RSK-003 | Atlas Free/public network không Production-grade | H | H | synthetic-only waiver; P08 paid/network gate | PO/TL | waiver + Production block |
 | P07-RSK-004 | Cross-cloud GCP Singapore to Atlas Hong Kong latency/egress | M | M | measure p95, bounded pool, reconsider region/tier | DevOps | measured acceptable baseline |
-| P07-RSK-005 | `gcloud`/Terraform chưa có local | H | M | install/pin/verify at Part 00 | DevOps | tool checks Pass |
+| P07-RSK-005 | Phiên bản `gcloud`/Terraform local có thể drift | M | M | pin và verify trước plan/apply | DevOps | tool checks Pass |
 | P07-RSK-006 | Same-origin static fallback che API 404 | M | H | strict route ordering/tests | Backend | route tests Pass |
 | P07-RSK-007 | Cloud secure cookie/proxy regression | M | H | trust proxy/cookie/CORS cloud E2E | Backend/QA | auth E2E Pass |
 | P07-RSK-008 | Cloud Run autoscaling vượt Atlas connection budget | M | H | max=2, pool=10, monitor/tune | Backend/DevOps | pool test Pass |
@@ -32,11 +32,11 @@ Probability/impact: `Low`, `Medium`, `High`. Critical/High unresolved security/d
 
 | ID | Issue | Status | Blocking |
 | --- | --- | --- | --- |
-| P07-ISS-001 | `gcloud` chưa được cài | Open | Gate A |
-| P07-ISS-002 | Terraform chưa được cài | Open | Gate A |
-| P07-ISS-003 | Atlas credential rotation chưa có repository evidence | Open | Gate A |
-| P07-ISS-004 | Billing/budget/project IAM chưa có evidence | Open | Gate A |
-| P07-ISS-005 | GitHub environment solo protection/no-bypass chưa có evidence | Open | Gate A |
+| P07-ISS-001 | `gcloud` chưa được cài | Closed `2026-08-14` | `gcloud 579.0.0`, project/region verified |
+| P07-ISS-002 | Terraform chưa được cài | Closed `2026-08-14` | Terraform `1.15.8` verified after main sync |
+| P07-ISS-003 | Atlas credential rotation chưa có repository evidence | Closed `2026-08-14` | Sanitized Gate A evidence; scoped Staging identity |
+| P07-ISS-004 | Billing/budget/project IAM chưa có evidence | Closed `2026-08-14` | Gate A GCP/budget evidence Pass |
+| P07-ISS-005 | GitHub environment solo protection/no-bypass chưa có evidence | Closed `2026-08-14` | Gate A environment/protection evidence Pass |
 | P07-ISS-006 | Atlas Production tier/network/RPO/RTO chưa chốt | Deferred P08 | Production Go only |
 
 ## 4. Risk Review Cadence

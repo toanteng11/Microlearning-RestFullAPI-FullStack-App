@@ -6,9 +6,9 @@
 | --- | --- |
 | Date | `2026-08-14` |
 | Branch | `docs/phase-07-planning-baseline` |
-| Baseline start commit | `d2abe52`; latest verified remote `main` `ace51f1` |
+| Baseline start commit | `d2abe52`; planning closure on remote `main` `f5c58c3` |
 | Validation scope | Phase 07 documentation + repository regression |
-| Remote PR/main CI | [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) open; six required checks pending |
+| Remote PR/main CI | [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21) merged as `f5c58c3`; six required checks and [main CI run 31818169576](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/31818169576) Pass |
 
 ## 2. Documentation Validation
 
@@ -59,16 +59,18 @@ integration behavior is not marked implemented by this planning validation; it r
 ```text
 Documentation structure: PASS
 Local repository regression: PASS
-Remote planning PR/main CI: PR_21_OPEN_CHECKS_PENDING
+Remote planning PR/main CI: PASS
 Gate A manual prerequisites: PASS
 Implementation status: NOT_STARTED
-Decision: READY_TO_OPEN_PLANNING_PR
+Decision: READY_TO_CODE
 ```
 
-## 6. Blocking Actions
+## 6. Planning Closure
 
-1. commit and push the approved Gate A planning package;
-2. open the planning PR against current `main`;
-3. wait for all six required checks;
-4. merge through protected `main` and record post-merge CI evidence;
-5. pull `main` locally and start Part 01.
+1. planning package đã commit và push;
+2. PR #21 đã merge qua protected `main`;
+3. sáu required checks và post-merge main CI đã Pass;
+4. local `main` đã fast-forward tới `f5c58c3`;
+5. Terraform `1.15.8` đã được xác minh lại trên Windows.
+
+Không còn planning blocker. Công việc tiếp theo là Part 01 - Single-Origin Application Runtime.

@@ -67,7 +67,7 @@ manual Production confirmation và evidence vẫn là Must.
 ```text
 Decision: APPROVED
 Blocking items: NONE_FOR_PLANNING_MERGE
-Implementation permission: GRANTED_AFTER_PLANNING_PR_MERGE
+Implementation permission: GRANTED_READY_TO_CODE
 Production permission: NOT_GRANTED_UNTIL_PHASE_08_GO_NO_GO
 Waiver expiry: 2026-09-13
 ```
