@@ -84,7 +84,7 @@ async function verifyBrowserRuntime() {
 
     for (const path of ['/', '/student/todo']) {
       const response = await page.goto(`http://127.0.0.1:${hostPort}${path}`, {
-        waitUntil: 'networkidle',
+        waitUntil: 'domcontentloaded',
       });
       assert(response?.status() === 200, `Browser navigation ${path} did not return 200`);
       const root = page.locator('#root');
