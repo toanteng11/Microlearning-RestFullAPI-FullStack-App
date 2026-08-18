@@ -18,7 +18,7 @@ có thể tái lập.
 | --- | --- |
 | Planning status | `MERGED_TO_MAIN` - [PR #21](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/21), merge commit `f5c58c3` |
 | Provider decision | `ACCEPTED` |
-| Implementation status | `READY_TO_CODE` - Part 01 authorized |
+| Implementation status | `IN_PROGRESS` - Part 00 `DONE`; Part 01-17 `LOCAL_PASS_REMOTE_PENDING` |
 | Gate A | `APPROVED` on `2026-08-14` |
 | Release input | Phase 06 release `d2abe52`, security patch `e3c52cf`, evidence closure `ace51f1` |
 | Cloud project | `microlearning-platform-502716`; access, billing, budget, region and required APIs verified |
@@ -30,6 +30,35 @@ Gate A đã xác nhận billing/budget, Cloud access, Atlas credential rotation,
 GitHub environments và phạm vi dữ liệu synthetic. Planning PR đã merge qua protected `main`; sáu required
 checks và [post-merge main CI](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/31818169576)
 đều Pass. Quyền bắt đầu Part 01 đã có hiệu lực.
+
+Part 01-02 đã được triển khai trên branch `feature/phase-07-runtime-container`. Quality suite, production
+runtime smoke, non-root/content inspection, vulnerability scan và image-bound CycloneDX SBOM đều Pass ở
+local. Hai part chưa được ghi `DONE` cho đến khi P07-PR01 chạy CI từ clean checkout, merge qua protected
+`main` và post-merge main CI Pass.
+
+Part 03-05 đã có Terraform bootstrap/environment roots, provider lockfiles, private Artifact Registry
+contract, plan/release policy gates, dedicated IAM/WIF source và positive/negative identity workflows. Cả ba
+đang ở `LOCAL_PASS_REMOTE_PENDING`: Terraform init/validate, Trivy IaC scan và policy unit tests Pass; còn
+bootstrap/apply/WIF/registry evidence bắt buộc phải thực hiện trên Cloud.
+
+Part 06-08 đã có Secret Manager containers và secret-level IAM, exact-version runtime mapping, secure
+secret-version runbook, Atlas TLS/pool/index/transaction diagnostic, Cloud Run service, private seed Job,
+hai bước first-deploy workflow và HTTPS smoke verifier. Các contract local đã Pass; actual Secret versions,
+Atlas diagnostic có kết nối thật và first Staging apply vẫn Pending nên chưa được đánh dấu `DONE`.
+
+Part 09-11 đã có source workflow build/publish, digest lineage, Staging CD, deployment record, Cloud security
+verifier và bốn role Playwright suite. Local contract/quality/container checks đã Pass; GitHub Actions chain,
+Artifact Registry digest, Cloud Run revision và Cloud E2E evidence vẫn Pending nên chưa được đánh dấu `DONE`.
+
+Part 12-14 đã có observability Terraform, log redaction contract, Atlas synthetic logical backup/restore
+tooling, exact-digest rollback contract và manual Staging rollback workflow. Các contract/local checks đã
+Pass; Cloud Monitoring apply/notification, Atlas backup/restore rehearsal và prior-revision rollback thật
+vẫn Pending.
+
+Part 15-17 đã có production promotion plan-only workflow, hardening/clean-clone workflow, immutable-digest
+promotion contract, exit contract và Phase 08 handoff contract. Các kiểm tra source/local đã Pass; production
+apply vẫn bị chặn đúng thiết kế, còn GitHub workflow runs, Staging/Cloud evidence, `66/66` acceptance và
+handoff acceptance phải được thực hiện từ remote trước khi Phase 07 được đánh dấu `COMPLETED`.
 
 ## 3. Kết quả bắt buộc
 
@@ -99,7 +128,7 @@ Chi tiết thực thi nằm trong thư mục `execution-parts/`.
 | Operations | `smoke-and-e2e-strategy.md`, `observability-and-alerting.md`, `backup-restore-disaster-recovery.md`, `rollback-and-incident-response.md` |
 | Governance | `solo-project-governance.md`, `security-hardening.md`, `cost-budget-and-quota.md`, `risk-and-issues.md` |
 | Dev/Test | `source-file-blueprint.md`, `testing-strategy.md`, `test-case-catalog.md`, `test-case-execution-matrix.md`, `developer-start-guide.md` |
-| Exit | `acceptance-criteria.md`, `traceability-matrix.md`, `evidence-register.md`, `phase-exit-evidence.md`, `phase-08-handoff.md`, `exit-report.md` |
+| Exit | `acceptance-criteria.md`, `traceability-matrix.md`, `evidence-register.md`, `phase-exit-evidence.md`, `phase-07-part-15-17-evidence.md`, `phase-08-handoff.md`, `exit-report.md` |
 
 Gate A evidence được tổng hợp tại `gate-a-readiness-evidence.md`; file không chứa credential hoặc billing
 instrument.

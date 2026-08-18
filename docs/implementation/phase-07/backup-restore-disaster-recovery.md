@@ -24,9 +24,42 @@ Các số Production không được tự suy diễn từ Staging rehearsal.
 - Backup job không in URI/password.
 - Bucket bật uniform access, public access prevention và lifecycle xóa object sau `14` ngày baseline.
 
-Rehearsal chạy từ workstation đã duyệt với MongoDB Database Tools. Human operator lấy secret qua kênh bảo
-mật, không paste vào command/evidence; không tạo service-account key. Automation thành separate hardened
-ops image/job chỉ được bổ sung qua Change Request.
+Source tooling hiện tại là `apps/api/src/scripts/atlas-recovery.ts`, chạy bằng `npm run atlas:backup` và
+`npm run atlas:restore`. Tooling dùng EJSON JSONL theo collection, checksum SHA-256, index metadata và
+manifest không chứa connection string. Guard bắt buộc: `APP_ENV=staging`, `RECOVERY_DATA_SCOPE=synthetic`,
+SRV URI và database restore có prefix `microlearning_restore_`.
+
+Human operator lấy secret qua Secret Manager/secure input, không paste vào command/evidence; không tạo
+service-account key. Automation thành separate hardened ops image/job chỉ được bổ sung qua Change Request.
+
+### 3.1 Local/operator command contract
+
+Các giá trị dưới đây chỉ là placeholder, không thay bằng credential trong repository:
+
+```powershell
+$env:APP_ENV = 'staging'
+$env:RECOVERY_DATA_SCOPE = 'synthetic'
+$env:MONGODB_URI = '<SRV URI from Secret Manager, never commit>'
+$env:BACKUP_ID = 'staging-synthetic-20260817'
+$env:BACKUP_OUTPUT_DIR = 'artifacts/phase-07/backup/staging-synthetic-20260817'
+npm run atlas:backup --workspace @microlearning/api
+```
+
+Restore phải dùng user/database cô lập và không được trỏ vào active database:
+
+```powershell
+$env:APP_ENV = 'staging'
+$env:RECOVERY_DATA_SCOPE = 'synthetic'
+$env:RESTORE_MONGODB_URI = '<temporary isolated restore SRV URI>'
+$env:SOURCE_DATABASE = 'microlearning_staging'
+$env:BACKUP_MANIFEST = 'artifacts/phase-07/backup/staging-synthetic-20260817/manifest.json'
+$env:RESTORE_DATABASE = 'microlearning_restore_20260817'
+npm run atlas:restore --workspace @microlearning/api
+```
+
+Sau khi review report, operator phải drop database restore, revoke temporary users và upload manifest vào
+private GCS bucket với public access prevention/uniform access/lifecycle. Tool không tự thực hiện các bước
+cloud này để tránh tạo credential hoặc xóa nhầm resource ngoài phạm vi.
 
 Tạo credential tạm thời riêng cho rehearsal: source user chỉ đọc Staging database, restore user chỉ ghi vào
 isolated restore database. Dùng password prompt/secure input thay vì full URI có credential trong command

@@ -1,5 +1,11 @@
 # Part 04 - Artifact Registry And Supply Chain
 
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING` - private/immutable repository contract, cleanup dry-run, digest validator,
+release manifest schema/generator/tests và retention runbook đã có. Registry apply, first publish và
+digest-bound Cloud evidence chưa thực hiện.
+
 ## Goal
 
 Thiết lập private registry và chain truy vết image digest, commit, scan, SBOM và release manifest.

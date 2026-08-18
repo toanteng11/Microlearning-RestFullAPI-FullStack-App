@@ -1,5 +1,11 @@
 # Part 07 - MongoDB Atlas Staging
 
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING` on `2026-08-17`. TLS/SRV/database/pool contract, guarded seed/index command,
+read-only diagnostic và opt-in transaction cleanup đã implement. Connected Atlas report, connection budget và
+negative old-credential evidence phải được chạy trên Cloud trước `DONE`.
+
 ## Goal
 
 Chuẩn bị Atlas synthetic Staging với credential mới, TLS, least privilege, bounded pool và verified data

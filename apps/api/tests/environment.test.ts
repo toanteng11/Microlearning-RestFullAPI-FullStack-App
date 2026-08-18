@@ -294,20 +294,56 @@ describe('loadEnvironment', () => {
   it('enforces HTTPS, secure cookies and non-placeholder secrets in production', () => {
     const productionEnvironment = {
       ...validEnvironment,
+      NODE_ENV: 'production',
       APP_ENV: 'production',
-      MONGODB_URI: 'mongodb+srv://cluster.example.test/microlearning',
+      COMMIT_SHA: 'a'.repeat(40),
+      IMAGE_DIGEST: `sha256:${'b'.repeat(64)}`,
+      MONGODB_URI:
+        'mongodb+srv://microlearning-production-app:synthetic-password@cluster.example.test/microlearning_production',
       PUBLIC_WEB_URL: 'https://microlearning.example.test',
       ALLOWED_ORIGINS: 'https://microlearning.example.test',
       ACCESS_TOKEN_SECRET: 'r4nd0m-production-access-token-secret-material',
       AUTH_IDENTITY_PEPPER: 'different-r4nd0m-production-pepper-material',
       CLASSROOM_CODE_PEPPER: 'third-r4nd0m-production-code-pepper-material',
       REFRESH_COOKIE_SECURE: 'true',
+      TRUST_PROXY_HOPS: '1',
+      MONGODB_MAX_POOL_SIZE: '10',
+      MONGODB_MIN_POOL_SIZE: '0',
+      MONGODB_SERVER_SELECTION_TIMEOUT_MS: '10000',
+      MONGODB_CONNECT_TIMEOUT_MS: '10000',
+      MONGODB_SOCKET_TIMEOUT_MS: '30000',
     };
 
     expect(loadEnvironment(productionEnvironment).refreshCookieSecure).toBe(true);
     expect(() =>
       loadEnvironment({ ...productionEnvironment, REFRESH_COOKIE_SECURE: 'false' }),
     ).toThrow('REFRESH_COOKIE_SECURE must be true');
+    expect(() => loadEnvironment({ ...productionEnvironment, NODE_ENV: 'development' })).toThrow(
+      'NODE_ENV must be production',
+    );
+    expect(() => loadEnvironment({ ...productionEnvironment, IMAGE_DIGEST: 'latest' })).toThrow(
+      'IMAGE_DIGEST must use sha256',
+    );
+    expect(() => loadEnvironment({ ...productionEnvironment, TRUST_PROXY_HOPS: '0' })).toThrow(
+      'TRUST_PROXY_HOPS must be 1',
+    );
+    expect(() =>
+      loadEnvironment({
+        ...productionEnvironment,
+        MONGODB_URI:
+          'mongodb://microlearning-production-app:synthetic-password@cluster.example.test/microlearning_production',
+      }),
+    ).toThrow('must use mongodb+srv://');
+    expect(() =>
+      loadEnvironment({
+        ...productionEnvironment,
+        MONGODB_URI:
+          'mongodb+srv://microlearning-production-app:synthetic-password@cluster.example.test/admin',
+      }),
+    ).toThrow('must select database microlearning_production');
+    expect(() =>
+      loadEnvironment({ ...productionEnvironment, MONGODB_MAX_POOL_SIZE: '11' }),
+    ).toThrow('MONGODB_MAX_POOL_SIZE=10');
     expect(() =>
       loadEnvironment({
         ...productionEnvironment,

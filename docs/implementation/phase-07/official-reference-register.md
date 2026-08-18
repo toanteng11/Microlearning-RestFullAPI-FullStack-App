@@ -5,7 +5,7 @@
 Danh sách nguồn chính thức dùng để kiểm chứng quyết định Phase 07. Khi implementation bắt đầu, người thực
 hiện phải kiểm tra lại tài liệu hiện hành nếu UI, feature status hoặc giới hạn dịch vụ thay đổi.
 
-Last reviewed: `2026-08-03`.
+Last reviewed: `2026-08-17`.
 
 ## 2. Google Cloud
 
@@ -20,6 +20,7 @@ Last reviewed: `2026-08-03`.
 | Secret Manager integration | <https://docs.cloud.google.com/run/docs/configuring/services/secrets> | secret version mount/env |
 | Workload Identity Federation | <https://docs.cloud.google.com/iam/docs/workload-identity-federation> | keyless GitHub auth |
 | Google Cloud CLI installation | <https://cloud.google.com/sdk/docs/install-sdk> | Part 00 workstation setup |
+| Execute Cloud Run Jobs | <https://docs.cloud.google.com/run/docs/execute/jobs> | wait for idempotent synthetic seed |
 
 ## 3. Terraform
 
@@ -34,6 +35,8 @@ Last reviewed: `2026-08-03`.
 | --- | --- | --- |
 | Deployment environments | <https://docs.github.com/en/actions/concepts/workflows-and-actions/deployment-environments> | Staging/Production protection |
 | OIDC với Google Cloud | <https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-google-cloud-platform> | workflow token exchange |
+| `workflow_run` event | <https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows> | trusted chain, branch/event/conclusion và depth limit |
+| Workflow artifacts | <https://docs.github.com/en/actions/tutorials/store-and-share-data> | exact run artifact transfer và retention |
 
 ## 5. MongoDB Atlas
 

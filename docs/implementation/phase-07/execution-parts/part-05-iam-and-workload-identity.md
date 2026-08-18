@@ -1,5 +1,11 @@
 # Part 05 - IAM And Workload Identity Federation
 
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING` - dedicated identities, bounded role/actAs contract, exact WIF claim conditions,
+positive/negative workflows, no-key verifier và revocation runbook đã có. Cloud apply và workflow runs vẫn
+Pending.
+
 ## Goal
 
 Cho GitHub Actions authenticate/deploy bằng OIDC token ngắn hạn và least-privilege identities.

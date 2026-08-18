@@ -38,6 +38,29 @@ nóng không kiểm soát.
 
 Không rebuild image cũ và không chỉ đổi mutable tag.
 
+### 4.1 Implemented manual workflow
+
+`.github/workflows/rollback-staging.yml` là workflow `workflow_dispatch` only. Operator phải nhập
+`ROLLBACK_STAGING`, incident ID, service URL, failed/prior revision và hai image reference dạng exact
+`@sha256:`. Workflow dùng WIF, kiểm tra image của cả hai revision bằng `gcloud`, chuyển 100% traffic về
+prior revision, rồi gọi `scripts/verify-rollback-recovery.mjs` để kiểm tra `/health`, `/ready` và version
+digest. Incident record được tạo bằng `create-rollback-record.mjs` và validate trước khi upload artifact.
+
+Ví dụ giá trị là placeholder, không dùng tag hoặc credential:
+
+```text
+confirmation=ROLLBACK_STAGING
+incident_id=p07-incident-20260817
+failed_revision=<failed-cloud-run-revision>
+failed_image_ref=<artifact-registry-image@sha256:64-lowercase-hex>
+restored_revision=<prior-stable-cloud-run-revision>
+restored_image_ref=<prior-artifact-registry-image@sha256:64-lowercase-hex>
+```
+
+Traffic rollback bằng CLI là emergency operation và tạo khả năng Terraform drift. Sau rehearsal phải
+chạy `terraform plan`/`apply` qua pipeline bình thường, lưu drift report, sau đó mới đưa release tiếp theo
+qua `Build And Publish` và `Deploy Staging`.
+
 ## 5. Data compatibility rule
 
 - Migration phải expand/contract và backward compatible.

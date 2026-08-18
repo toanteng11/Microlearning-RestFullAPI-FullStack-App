@@ -22,12 +22,14 @@ import type { AppConfig } from './shared/config/environment.js';
 import { createErrorHandler } from './shared/middleware/error-handler.js';
 import { notFoundHandler } from './shared/middleware/not-found.js';
 import { requestIdMiddleware } from './shared/middleware/request-id.js';
+import { registerStaticWeb } from './shared/runtime/static-web.js';
 
 interface AppOptions {
   config: AppConfig;
   logger: Logger;
   runtimeInfo: RuntimeInfo;
   dependencies: SystemDependencies;
+  webDistPath?: string;
 }
 
 export function createApp(options: AppOptions) {
@@ -35,6 +37,7 @@ export function createApp(options: AppOptions) {
   const openApiDocument = createOpenApiDocument(options.runtimeInfo);
 
   app.disable('x-powered-by');
+  app.set('trust proxy', options.config.trustProxyHops);
   app.use(requestIdMiddleware);
   app.use(
     pinoHttp({
@@ -43,7 +46,33 @@ export function createApp(options: AppOptions) {
       customProps: (_request, response) => ({ requestId: response.getHeader('x-request-id') }),
     }),
   );
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          baseUri: ["'self'"],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'", 'data:'],
+          frameAncestors: ["'none'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          objectSrc: ["'none'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+        },
+      },
+      hsts: false,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    }),
+  );
+  const hsts = helmet.hsts();
+  app.use((request, response, next) => {
+    if (request.secure && ['staging', 'production'].includes(options.config.appEnvironment)) {
+      hsts(request, response, next);
+      return;
+    }
+    next();
+  });
   app.use(
     cors({
       origin(origin, callback) {
@@ -60,6 +89,7 @@ export function createApp(options: AppOptions) {
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/health', (_request, response) => {
+    response.setHeader('Cache-Control', 'no-store');
     response.json({
       success: true,
       data: {
@@ -71,8 +101,9 @@ export function createApp(options: AppOptions) {
   });
 
   app.get('/ready', async (_request, response) => {
-    const mongodb = await options.dependencies.getDatabaseStatus();
-    const isReady = mongodb === 'UP';
+    response.setHeader('Cache-Control', 'no-store');
+    const mongodb = await options.dependencies.getDatabaseStatus().catch(() => 'DOWN' as const);
+    const isReady = mongodb === 'UP' && (options.dependencies.isApplicationReady?.() ?? true);
 
     response.status(isReady ? 200 : 503).json({
       success: isReady,
@@ -84,8 +115,14 @@ export function createApp(options: AppOptions) {
     });
   });
 
-  app.get('/api/v1/openapi.json', (_request, response) => response.json(openApiDocument));
-  app.get('/api-docs/openapi.json', (_request, response) => response.json(openApiDocument));
+  app.get('/api/v1/openapi.json', (_request, response) => {
+    response.setHeader('Cache-Control', 'no-cache');
+    response.json(openApiDocument);
+  });
+  app.get('/api-docs/openapi.json', (_request, response) => {
+    response.setHeader('Cache-Control', 'no-cache');
+    response.json(openApiDocument);
+  });
   app.use(
     '/api-docs',
     swaggerUi.serve,
@@ -132,6 +169,9 @@ export function createApp(options: AppOptions) {
   );
   app.use('/api/v1', createPhaseSixRouter(options.config, classrooms, phaseSixFoundation));
 
+  app.use('/api/v1', notFoundHandler);
+  app.use('/api-docs', notFoundHandler);
+  if (options.webDistPath) registerStaticWeb(app, options.webDistPath);
   app.use(notFoundHandler);
   app.use(createErrorHandler(options.logger, options.config.appEnvironment === 'development'));
 

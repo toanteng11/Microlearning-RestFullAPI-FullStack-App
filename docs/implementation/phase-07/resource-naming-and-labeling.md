@@ -18,7 +18,7 @@
 | Cloud E2E service account | `ml-e2e-staging` | Separate Production identity if approved |
 | GitHub deploy service account | `ml-github-staging` | `ml-github-production` |
 | Atlas database | `microlearning_staging` | `microlearning_production` |
-| Atlas app user | `microlearning_staging_app` | `microlearning_production_app` |
+| Atlas app user | `ml-staging-app` | `ml-production-app` |
 | Secret prefix | `ml-staging-` | `ml-production-` |
 | Monitoring prefix | `microlearning-staging-` | `microlearning-production-` |
 | Terraform state prefix | `phase-07/staging` | `phase-07/production` |

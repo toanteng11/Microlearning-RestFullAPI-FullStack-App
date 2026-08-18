@@ -1,5 +1,11 @@
 # Part 06 - Secret And Runtime Configuration
 
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING` on `2026-08-17`. Secret containers/IAM, exact-version mapping, secure input
+script, runtime coverage verifier và rotation runbook đã implement/validate. Actual container apply và initial
+version records còn Pending.
+
 ## Goal
 
 Đưa secret/config vào Cloud Run bằng Secret Manager exact versions và Production fail-fast schema.

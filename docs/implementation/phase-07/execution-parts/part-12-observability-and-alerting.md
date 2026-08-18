@@ -51,3 +51,20 @@ secret/PII.
 ## Definition Of Done
 
 - AC-053..056 Pass.
+
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã triển khai:
+
+- module Terraform `infrastructure/terraform/modules/monitoring` với log-based metrics cho HTTP 5xx,
+  readiness và authentication failure;
+- dashboard Cloud Monitoring, uptime check `/health`, alert policies cho uptime/5xx/readiness/memory;
+- notification channel email tùy chọn, owner/severity/runbook labels và `auto_close`;
+- log redaction hiện hữu được giữ làm contract bắt buộc cho authorization/cookie/token/password;
+- `observability:contract:test` kiểm tra resource bắt buộc, input module và secret-redaction boundary.
+
+Kiểm chứng local: `npm run terraform:validate`, `npm run observability:contract:test` và API typecheck Pass.
+Chưa chạy `terraform apply`, notification test, fake-secret canary trên Cloud Logging hoặc kiểm tra chi phí
+thật; các evidence đó vẫn Pending cho tới khi có URL/run artifact remote.

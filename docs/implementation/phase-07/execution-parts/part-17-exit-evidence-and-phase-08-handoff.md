@@ -70,4 +70,9 @@ Decision: PASS | FAIL | CONDITIONAL_PASS
 
 ## Current Status
 
-`NOT_STARTED`.
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã có `exit-contract.mjs`, `handoff-contract.mjs`, validator và test contract. Exit contract bắt buộc
+`66/66`, Critical/High bằng `0`, exact commit/digest/revision/HTTPS evidence, Phase 08 `NO_GO` và handoff
+accepted. Đây là readiness gate, không phải bằng chứng thực thi; các URL PR/main/Staging/Cloud, test matrix,
+evidence register và sign-off thực tế vẫn phải được bổ sung sau khi chạy remote.

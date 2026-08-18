@@ -12,40 +12,54 @@
 
 ## Runtime And Container
 
-- [ ] Implement relative same-origin API base.
-- [ ] Serve React/API/Swagger với route precedence đúng.
-- [ ] Hoàn thiện Production env validation/version metadata.
-- [ ] Xác minh health/readiness và graceful shutdown.
-- [ ] Tạo Production multi-stage non-root image.
-- [ ] Bổ sung `.dockerignore`, image content checks.
-- [ ] Container smoke, scan và SBOM Pass.
+- [x] Implement relative same-origin API base.
+- [x] Serve React/API/Swagger với route precedence đúng.
+- [x] Hoàn thiện Production env validation/version metadata.
+- [x] Xác minh health/readiness và graceful shutdown ở local.
+- [x] Tạo Production multi-stage non-root image.
+- [x] Bổ sung `.dockerignore`, image content checks.
+- [x] Container smoke, scan và image-bound SBOM Pass ở local.
+- [ ] P07-PR01 clean-checkout container CI Pass.
+- [ ] P07-PR01 merge và post-merge main CI Pass để đóng Part 01-02.
 
 ## Terraform And Cloud Security
 
 - [ ] Bootstrap remote state private/versioned.
-- [ ] Tạo module/API/Artifact Registry/Cloud Run/monitoring.
-- [ ] Tạo runtime/deploy service accounts.
-- [ ] Cấu hình WIF trust conditions.
+- [x] Tạo module/API/Artifact Registry và validation contracts cho Cloud Run/monitoring ở local.
+- [x] Tạo Terraform source cho runtime/seed/E2E/deploy service accounts.
+- [x] Cấu hình exact WIF trust conditions và positive/negative workflows ở local.
 - [ ] Chứng minh unauthorized branch/repository bị deny.
-- [ ] Tạo Secret Manager containers/IAM.
+- [x] Tạo Terraform source cho Secret Manager containers và secret-level IAM; actual apply Pending.
+- [x] Thêm secure stdin-only secret version script và rotation runbook.
 - [ ] Add secret versions qua secure manual flow.
-- [ ] Terraform fmt/validate/security/plan Pass.
-- [ ] State/plan không chứa secret.
+- [x] Terraform fmt/init/validate/policy tests và Trivy IaC Pass ở local.
+- [ ] Remote Terraform plan/review evidence còn Pending.
+- [x] Local canary/no-secret policy Pass.
+- [ ] Remote state/plan no-secret evidence còn Pending.
 
 ## Atlas And First Deploy
 
-- [ ] Tạo Staging database/user/network rule.
-- [ ] Cấu hình pool/timeouts/TLS.
-- [ ] Seed synthetic data có guard.
-- [ ] Verify indexes/transactions/invariants.
+- [x] Tạo và xác minh Staging database/user/network rule theo Gate A waiver.
+- [x] Khóa source contract pool `0/10`, bounded timeouts, TLS/SRV và database Staging.
+- [x] Tạo private seed command có environment guard, exact secret reference và index preparation.
+- [x] Tạo index/transaction/invariant diagnostic tự dọn dữ liệu; actual Atlas run Pending.
+- [x] Implement Cloud Run service/seed Job Terraform và two-step first-deploy workflow.
 - [ ] Terraform apply first Staging revision.
 - [ ] Xác minh HTTPS/probes/scale/service identity.
 - [ ] Ghi deployment record.
 
 ## CD And Cloud Tests
 
-- [ ] Build/publish workflow chỉ nhận successful main commit.
-- [ ] Image deploy bằng exact digest.
+- [x] Implement Build/publish workflow chỉ nhận successful protected main CI run hoặc validated recovery run.
+- [x] Implement release lineage và deploy input chỉ chấp nhận exact registry digest.
+- [x] Implement Staging Terraform plan/apply/seed/smoke/drift workflow với concurrency lock.
+- [x] Implement candidate/stable deployment record gắn commit, digest, revision và workflow provenance.
+- [x] Implement four-role Cloud Playwright suite và HTTPS/security verifier.
+- [x] Implement negative auth/RBAC/ownership/concurrency checks ở Cloud suite.
+- [x] Implement artifact credential-redaction gate trước upload.
+- [x] Implement prior-revision rollback path cho post-apply failure.
+- [ ] Build/publish workflow Pass thật từ protected `main`.
+- [ ] Image deploy bằng exact digest trên Staging.
 - [ ] Staging auto-deploy workflow Pass.
 - [ ] Version/digest check Pass.
 - [ ] Student/Teacher/Admin/Super Admin cloud E2E Pass.
@@ -55,24 +69,24 @@
 
 ## Operations
 
-- [ ] Structured logs và redaction Pass.
-- [ ] Dashboard/uptime/alerts tạo bằng IaC.
+- [x] Structured logs và redaction contract/local test Pass; Cloud canary Pending.
+- [x] Dashboard/uptime/alerts source tạo bằng IaC; Cloud apply/notification Pending.
 - [ ] Test notification đến đúng owner.
-- [ ] Synthetic backup/checksum Pass.
-- [ ] Isolated restore/invariants Pass.
-- [ ] Prior-digest rollback rehearsal Pass.
+- [x] Synthetic backup/checksum tooling và staging-only guards đã có; Atlas run Pending.
+- [x] Isolated restore/invariants tooling và checksum verification đã có; Atlas run Pending.
+- [x] Prior-digest rollback workflow/incident contract đã có; Cloud rehearsal Pending.
 - [ ] Post-rollback drift check clean.
 - [ ] Budget/quota/cost evidence đầy đủ.
 
 ## Production Readiness And Exit
 
-- [ ] Protected Production promotion workflow reject invalid digest.
-- [ ] Production Atlas/network/backup gaps block P08 Go đúng.
-- [ ] Security/IAM/public-resource review Pass.
-- [ ] Clean-clone full verification Pass.
+- [x] Protected Production promotion workflow reject invalid digest ở local contract test; remote dry-run Pending.
+- [x] Production Atlas/network/backup gaps block P08 Go đúng trong handoff/exit contract.
+- [x] Security/IAM/public-resource review contract Pass; live Cloud review Pending.
+- [x] Clean-clone hardening workflow và local contract đã sẵn sàng; remote run Pending.
 - [ ] `66/66` Must AC Pass.
 - [ ] Conditional criteria Pass hoặc `APPROVED_NA`.
-- [ ] P07 release PR và post-merge main CI Pass.
+- [ ] P07 release PR và post-merge main CI Pass cho branch implementation.
 - [ ] Latest Staging CD/smoke Pass.
 - [ ] Evidence register không placeholder/secret.
 - [ ] Exit report và P08 handoff accepted.

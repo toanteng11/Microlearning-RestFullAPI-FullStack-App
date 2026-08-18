@@ -2,9 +2,13 @@
 
 ## 1. Status
 
-`NOT_STARTED`
+`DRAFT - LOCAL CONTRACT READY / REMOTE EVIDENCE PENDING`
 
 Tài liệu này là template bắt buộc cho Part 17. Không đánh dấu `COMPLETED` trong planning PR.
+
+Các file `validate-phase-07-exit.mjs` và `test-exit-contract.mjs` đã khóa format exit. Không điền giá trị
+`Pending`, placeholder hoặc URL giả vào bản final; chỉ chuyển sang `PASS` sau khi remote/Cloud evidence thật
+đã đủ và Phase 08 handoff được accepted.
 
 ## 2. Release Identity
 

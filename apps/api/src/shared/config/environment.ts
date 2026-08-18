@@ -74,10 +74,36 @@ const phaseSixExplicitProductionFields = [
   'WEIGHTED_PROCESS_SCORE_ENABLED',
 ] as const;
 
+const phaseSevenExplicitProductionFields = [
+  'NODE_ENV',
+  'APP_VERSION',
+  'COMMIT_SHA',
+  'IMAGE_DIGEST',
+  'BUILD_TIME',
+  'PORT',
+  'MONGODB_URI',
+  'PUBLIC_WEB_URL',
+  'ALLOWED_ORIGINS',
+  'ACCESS_TOKEN_SECRET',
+  'AUTH_IDENTITY_PEPPER',
+  'CLASSROOM_CODE_PEPPER',
+  'LOG_LEVEL',
+  'TRUST_PROXY_HOPS',
+  'MONGODB_MAX_POOL_SIZE',
+  'MONGODB_MIN_POOL_SIZE',
+  'MONGODB_SERVER_SELECTION_TIMEOUT_MS',
+  'MONGODB_CONNECT_TIMEOUT_MS',
+  'MONGODB_SOCKET_TIMEOUT_MS',
+] as const;
+
+const localImageDigest = `sha256:${'0'.repeat(64)}`;
+
 const environmentSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   APP_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
   APP_VERSION: z.string().trim().min(1).default('0.1.0'),
   COMMIT_SHA: z.string().trim().min(1).default('local'),
+  IMAGE_DIGEST: z.string().trim().min(1).default(localImageDigest),
   BUILD_TIME: z.string().trim().min(1).default('local'),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
   MONGODB_URI: z
@@ -187,6 +213,17 @@ const environmentSchema = z.object({
   LOGIN_COOLDOWN_SECONDS: z.coerce.number().int().min(60).max(86_400).default(900),
   BOOTSTRAP_ADMIN_ENABLED: booleanString,
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(10).default(0),
+  MONGODB_MAX_POOL_SIZE: z.coerce.number().int().min(1).max(100).default(10),
+  MONGODB_MIN_POOL_SIZE: z.coerce.number().int().min(0).max(100).default(0),
+  MONGODB_SERVER_SELECTION_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(1_000)
+    .max(60_000)
+    .default(10_000),
+  MONGODB_CONNECT_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(60_000).default(10_000),
+  MONGODB_SOCKET_TIMEOUT_MS: z.coerce.number().int().min(5_000).max(300_000).default(30_000),
 });
 
 type AppEnvironment = z.infer<typeof environmentSchema>['APP_ENV'];
@@ -283,9 +320,11 @@ export interface ReportingConfig {
 }
 
 export interface AppConfig {
+  nodeEnvironment: 'development' | 'test' | 'production';
   appEnvironment: AppEnvironment;
   appVersion: string;
   commitSha: string;
+  imageDigest: string;
   buildTime: string;
   port: number;
   mongodbUri: string;
@@ -315,6 +354,14 @@ export interface AppConfig {
   rateLimits: RateLimitConfig;
   bootstrapAdminEnabled: boolean;
   logLevel: LogLevel;
+  trustProxyHops: number;
+  mongodbPool: {
+    maxSize: number;
+    minSize: number;
+    serverSelectionTimeoutMs: number;
+    connectTimeoutMs: number;
+    socketTimeoutMs: number;
+  };
 }
 
 function configurationError(message: string): never {
@@ -353,7 +400,36 @@ function normalizeOrigin(value: string, field: string): string {
 }
 
 function validateMongoRuntime(uri: string, appEnvironment: AppEnvironment): void {
-  if (!['development', 'test'].includes(appEnvironment) || uri.startsWith('mongodb+srv://')) return;
+  if (['staging', 'production'].includes(appEnvironment)) {
+    if (!uri.startsWith('mongodb+srv://')) {
+      configurationError('MONGODB_URI must use mongodb+srv:// in staging and production');
+    }
+
+    let parsed: URL;
+    try {
+      parsed = new URL(uri);
+    } catch {
+      return configurationError('MONGODB_URI must be a valid MongoDB connection string');
+    }
+
+    const expectedDatabase =
+      appEnvironment === 'staging' ? 'microlearning_staging' : 'microlearning_production';
+    if (decodeURIComponent(parsed.pathname.replace(/^\//u, '')) !== expectedDatabase) {
+      configurationError(`MONGODB_URI must select database ${expectedDatabase}`);
+    }
+    if (!parsed.username || !parsed.password) {
+      configurationError('MONGODB_URI must include a dedicated application credential');
+    }
+    if (
+      ['false', '0'].includes(parsed.searchParams.get('tls')?.toLowerCase() ?? '') ||
+      ['false', '0'].includes(parsed.searchParams.get('ssl')?.toLowerCase() ?? '')
+    ) {
+      configurationError('MONGODB_URI must not disable TLS');
+    }
+    return;
+  }
+
+  if (uri.startsWith('mongodb+srv://')) return;
 
   let replicaSet: string | null;
 
@@ -413,6 +489,7 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
       ...phaseFourExplicitProductionFields,
       ...phaseFiveExplicitProductionFields,
       ...phaseSixExplicitProductionFields,
+      ...phaseSevenExplicitProductionFields,
     ].filter((field) => !input[field]?.trim());
     if (missingFields.length > 0) {
       configurationError(
@@ -449,6 +526,18 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   }
 
   if (['staging', 'production'].includes(parsed.data.APP_ENV)) {
+    if (parsed.data.NODE_ENV !== 'production') {
+      configurationError('NODE_ENV must be production in staging and production');
+    }
+    if (!/^[a-f0-9]{40}$/u.test(parsed.data.COMMIT_SHA)) {
+      configurationError('COMMIT_SHA must be a full 40-character Git SHA');
+    }
+    if (!/^sha256:[a-f0-9]{64}$/u.test(parsed.data.IMAGE_DIGEST)) {
+      configurationError('IMAGE_DIGEST must use sha256:<64-hex>');
+    }
+    if (Number.isNaN(Date.parse(parsed.data.BUILD_TIME)) || !parsed.data.BUILD_TIME.endsWith('Z')) {
+      configurationError('BUILD_TIME must be an ISO-8601 UTC timestamp');
+    }
     if (!parsed.data.REFRESH_COOKIE_SECURE) {
       configurationError('REFRESH_COOKIE_SECURE must be true in staging and production');
     }
@@ -466,6 +555,27 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
       isUnsafeSecret(parsed.data.CLASSROOM_CODE_PEPPER)
     ) {
       configurationError('Production-like environments must not use placeholder secrets');
+    }
+    if (!allowedOrigins.includes(publicWebUrl)) {
+      configurationError('ALLOWED_ORIGINS must include PUBLIC_WEB_URL in staging and production');
+    }
+    if (parsed.data.TRUST_PROXY_HOPS !== 1) {
+      configurationError('TRUST_PROXY_HOPS must be 1 in staging and production');
+    }
+    if (['debug', 'trace'].includes(parsed.data.LOG_LEVEL)) {
+      configurationError('LOG_LEVEL must not be debug or trace in staging and production');
+    }
+  }
+
+  if (parsed.data.MONGODB_MIN_POOL_SIZE > parsed.data.MONGODB_MAX_POOL_SIZE) {
+    configurationError('MONGODB_MIN_POOL_SIZE must not exceed MONGODB_MAX_POOL_SIZE');
+  }
+
+  if (['staging', 'production'].includes(parsed.data.APP_ENV)) {
+    if (parsed.data.MONGODB_MAX_POOL_SIZE !== 10 || parsed.data.MONGODB_MIN_POOL_SIZE !== 0) {
+      configurationError(
+        'Production-like MongoDB pool must use MONGODB_MAX_POOL_SIZE=10 and MONGODB_MIN_POOL_SIZE=0',
+      );
     }
   }
 
@@ -585,9 +695,11 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
   }
 
   return Object.freeze({
+    nodeEnvironment: parsed.data.NODE_ENV,
     appEnvironment: parsed.data.APP_ENV,
     appVersion: parsed.data.APP_VERSION,
     commitSha: parsed.data.COMMIT_SHA,
+    imageDigest: parsed.data.IMAGE_DIGEST,
     buildTime: parsed.data.BUILD_TIME,
     port: parsed.data.PORT,
     mongodbUri: parsed.data.MONGODB_URI,
@@ -617,5 +729,13 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
     rateLimits,
     bootstrapAdminEnabled: parsed.data.BOOTSTRAP_ADMIN_ENABLED,
     logLevel: parsed.data.LOG_LEVEL,
+    trustProxyHops: parsed.data.TRUST_PROXY_HOPS,
+    mongodbPool: Object.freeze({
+      maxSize: parsed.data.MONGODB_MAX_POOL_SIZE,
+      minSize: parsed.data.MONGODB_MIN_POOL_SIZE,
+      serverSelectionTimeoutMs: parsed.data.MONGODB_SERVER_SELECTION_TIMEOUT_MS,
+      connectTimeoutMs: parsed.data.MONGODB_CONNECT_TIMEOUT_MS,
+      socketTimeoutMs: parsed.data.MONGODB_SOCKET_TIMEOUT_MS,
+    }),
   });
 }

@@ -39,7 +39,8 @@ repo:toanteng11/Microlearning-RestFullAPI-FullStack-App:environment:production
 ```
 
 Terraform mapping tối thiểu gồm `google.subject=assertion.sub`, `attribute.repository`, `attribute.ref` và
-`attribute.job_workflow_ref`; không dùng actor username làm trust anchor. Condition phải kiểm tra exact
+`attribute.workflow_ref`; không dùng actor username làm trust anchor. `workflow_ref` được dùng vì Phase 07
+workflows là workflow thường; `job_workflow_ref` chỉ dành cho reusable workflow. Condition phải kiểm tra exact
 repository, expected subject, protected source ref và expected workflow file. Deployer/E2E identities có
 workflow-ref conditions riêng; case khác chữ/tên repository sai phải bị deny.
 
@@ -74,7 +75,7 @@ dùng để deploy hoặc gọi Production resource.
 
 ### E2E identity
 
-Chỉ nhận quyền access `ml-stg-seed-demo-password` và các read-only deployment metadata thật sự cần. Workflow
+Chỉ nhận quyền access `ml-staging-seed-demo-password` và các read-only deployment metadata thật sự cần. Workflow
 mask password ngay sau retrieval. E2E identity không được access Mongo URI/app signing peppers, chạy
 Terraform apply hoặc quản trị Cloud Run.
 

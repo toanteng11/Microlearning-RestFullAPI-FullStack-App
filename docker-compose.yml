@@ -42,7 +42,8 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
     environment:
-      APP_ENV: development
+      NODE_ENV: ${NODE_ENV:-development}
+      APP_ENV: ${APP_ENV:-development}
       APP_VERSION: ${APP_VERSION:-0.1.0}
       COMMIT_SHA: ${COMMIT_SHA:-local-compose}
       BUILD_TIME: ${BUILD_TIME:-local}

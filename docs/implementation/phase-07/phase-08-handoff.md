@@ -5,6 +5,14 @@
 Bàn giao một Staging release candidate đã triển khai, có thể quan sát và phục hồi để Phase 08 thực hiện
 System Testing, UAT, Go/No-Go và Production release.
 
+## 1.1 Current Status
+
+`DRAFT - HANDOFF CONTRACT READY / ACCEPTANCE PENDING`.
+
+`validate-phase-08-handoff.mjs` yêu cầu Phase 07 exit `PASS`, staging digest bất biến, System Test/UAT,
+Production Terraform/Atlas readiness, rollback reference và quyết định `NO_GO` trước khi Phase 08 được
+phép tiếp tục.
+
 ## 2. Required Handoff Package
 
 - exact release commit/image digest/Cloud Run revision;

@@ -1,5 +1,10 @@
 # Part 03 - Terraform Foundation And State
 
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING` - layout, lockfiles, fmt/init/validate, Trivy IaC scan, plan policy tests và
+runbook đã Pass/có ở local. Remote bucket bootstrap/migration/state canary chưa thực hiện.
+
 ## Goal
 
 Tạo Terraform roots/modules và remote state an toàn để resource Cloud có thể tái lập, review và rollback.

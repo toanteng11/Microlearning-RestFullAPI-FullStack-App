@@ -1,5 +1,11 @@
 # Part 08 - Staging Infrastructure And First Deploy
 
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING` on `2026-08-17`. Cloud Run service/private seed Job, exact digest/secret versions,
+probes, scale/concurrency, intentional public IAM policy, two-step first-deploy workflow và HTTPS smoke verifier
+đã implement/validate. Terraform apply, service URL, revision và observation evidence còn Pending.
+
 ## Goal
 
 Provision Cloud Run Staging bằng Terraform và deploy exact image digest lần đầu với HTTPS/probes/scale/IAM

@@ -1,5 +1,10 @@
 # Part 09 - Build And Publish CD
 
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING` ngày `2026-08-17`. Source workflow, release-lineage contract, unit test và local
+quality gates đã Pass; workflow publish thật trên protected `main`, registry digest và run URL vẫn Pending.
+
 ## Goal
 
 Tự động build/test/scan/push một Production image từ successful protected main commit và xuất exact digest
@@ -54,3 +59,27 @@ manifest.
 
 - AC-035..037 Pass;
 - release manifest is consumable by Part 10.
+
+## Implemented Source
+
+- `.github/workflows/build-publish.yml` chỉ nhận successful `Continuous Integration` run của `main` hoặc
+  manual recovery có confirmation, successful source run ID và full commit SHA;
+- `scripts/resolve-trusted-workflow-run.mjs` xác minh workflow name, event, repository, branch, conclusion,
+  run ID/URL và full SHA trước khi checkout exact commit;
+- image dùng immutable `commit-<full-sha>` tag để publish một lần, sau đó toàn bộ scan/SBOM/deploy dùng
+  `repository@sha256:<digest>`;
+- `scripts/generate-release-manifest.mjs`, `scripts/validate-release-lineage.mjs` và
+  `scripts/lib/cd-contract.mjs` khóa provenance từ source CI tới build run;
+- artifact `phase-07-release-candidate` lưu manifest, Trivy reports, CycloneDX SBOM và checksums trong 30
+  ngày; rerun chỉ reuse digest đã tồn tại, không rebuild rồi ghi đè tag.
+
+## Local Verification
+
+- `npm run release:contract:test`: Pass;
+- `npm run lint`: Pass;
+- `npm run format:check`: Pass;
+- `npm run typecheck`: Pass;
+- `npm run terraform:check`: Pass.
+
+Part chỉ chuyển `DONE` sau khi source merge vào `main`, post-merge CI Pass và `Build And Publish` tạo artifact
+thật từ exact successful main run.

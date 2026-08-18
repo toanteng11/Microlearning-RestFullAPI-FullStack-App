@@ -25,17 +25,17 @@ Mọi biến mới phải cập nhật đồng thời schema, example, Terraform
 Mỗi environment có secret riêng, ví dụ:
 
 ```text
-ml-stg-mongodb-uri
-ml-stg-access-token-secret
-ml-stg-auth-identity-pepper
-ml-stg-classroom-code-pepper
-ml-stg-seed-demo-password
+ml-staging-mongodb-uri
+ml-staging-access-token-secret
+ml-staging-auth-identity-pepper
+ml-staging-classroom-code-pepper
+ml-staging-seed-demo-password
 ```
 
 Cloud Run tham chiếu version cụ thể, không dùng alias `latest` cho Production-like deployment. Deployment
 record ghi version number nhưng không ghi value.
 
-`ml-stg-seed-demo-password` chỉ cấp cho dedicated seed Job identity và gắn vào private Job; public
+`ml-staging-seed-demo-password` chỉ cấp cho dedicated seed Job identity và gắn vào private Job; public
 application runtime identity không được quyền đọc hoặc mount secret này. Dedicated E2E identity được đọc
 đúng secret này để đăng nhập synthetic accounts, phải mask ngay và không được đọc Mongo URI/signing peppers.
 

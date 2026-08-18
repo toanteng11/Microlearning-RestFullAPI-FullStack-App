@@ -1,3 +1,7 @@
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import SwaggerParser from '@apidevtools/swagger-parser';
 import pino from 'pino';
 import request from 'supertest';
@@ -21,6 +25,14 @@ function buildTestApp(databaseStatus: 'UP' | 'DOWN' | 'CONNECTING' = 'UP') {
     runtimeInfo: testRuntimeInfo,
     dependencies: { getDatabaseStatus: async () => databaseStatus },
   });
+}
+
+function createSyntheticWebBuild(): string {
+  const root = mkdtempSync(join(tmpdir(), 'microlearning-web-'));
+  mkdirSync(join(root, 'assets'));
+  writeFileSync(join(root, 'index.html'), '<!doctype html><title>Microlearning</title>');
+  writeFileSync(join(root, 'assets', 'app-fingerprint.js'), 'console.log("app")');
+  return root;
 }
 
 describe('system API', () => {
@@ -50,6 +62,50 @@ describe('system API', () => {
     const response = await request(buildTestApp()).get('/api/v1/system/version').expect(200);
 
     expect(response.body.data).toEqual(testRuntimeInfo);
+  });
+
+  it('keeps readiness down until the runtime accepts traffic', async () => {
+    const app = createApp({
+      config: testConfig,
+      logger: pino({ level: 'silent' }),
+      runtimeInfo: testRuntimeInfo,
+      dependencies: { getDatabaseStatus: async () => 'UP', isApplicationReady: () => false },
+    });
+
+    await request(app).get('/health').expect(200);
+    await request(app).get('/ready').expect(503);
+  });
+
+  it('serves React deep links without masking API, docs or missing assets', async () => {
+    const webDistPath = createSyntheticWebBuild();
+    const app = createApp({
+      config: testConfig,
+      logger: pino({ level: 'silent' }),
+      runtimeInfo: testRuntimeInfo,
+      dependencies: { getDatabaseStatus: async () => 'UP' },
+      webDistPath,
+    });
+
+    try {
+      const root = await request(app).get('/').set('Accept', 'text/html').expect(200);
+      const deepLink = await request(app)
+        .get('/teacher/courses/course-1/gradebook')
+        .set('Accept', 'text/html')
+        .expect(200);
+      const asset = await request(app).get('/assets/app-fingerprint.js').expect(200);
+      const missingAsset = await request(app).get('/assets/missing.js').expect(404);
+      const unknownApi = await request(app).get('/api/v1/unknown').expect(404);
+      const unknownPost = await request(app).post('/unknown').expect(404);
+
+      expect(root.headers['cache-control']).toContain('no-cache');
+      expect(deepLink.text).toContain('Microlearning');
+      expect(asset.headers['cache-control']).toContain('immutable');
+      expect(missingAsset.headers['content-type']).toContain('application/json');
+      expect(unknownApi.headers['content-type']).toContain('application/json');
+      expect(unknownPost.headers['content-type']).toContain('application/json');
+    } finally {
+      rmSync(webDistPath, { force: true, recursive: true });
+    }
   });
 
   it('returns the standard error envelope for unknown routes', async () => {

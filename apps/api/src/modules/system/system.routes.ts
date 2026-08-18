@@ -6,6 +6,7 @@ export function createSystemRouter(runtimeInfo: RuntimeInfo, dependencies: Syste
   const router = Router();
 
   router.get('/system/version', (_request, response) => {
+    response.setHeader('Cache-Control', 'no-store');
     response.json({
       success: true,
       data: {
@@ -13,6 +14,7 @@ export function createSystemRouter(runtimeInfo: RuntimeInfo, dependencies: Syste
         version: runtimeInfo.version,
         environment: runtimeInfo.environment,
         commitSha: runtimeInfo.commitSha,
+        imageDigest: runtimeInfo.imageDigest,
         buildTime: runtimeInfo.buildTime,
       },
     });

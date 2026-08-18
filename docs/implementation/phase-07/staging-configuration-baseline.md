@@ -28,7 +28,7 @@ giữ `VITE_API_BASE_URL=http://localhost:4000`.
 
 | Variable | Staging value/source | Classification |
 | --- | --- | --- |
-| `MONGODB_URI` | `ml-stg-mongodb-uri` exact version | Secret |
+| `MONGODB_URI` | `ml-staging-mongodb-uri` exact version | Secret |
 | `MONGODB_MAX_POOL_SIZE` | `10` | Non-secret |
 | `MONGODB_MIN_POOL_SIZE` | `0` | Non-secret |
 | `MONGODB_SERVER_SELECTION_TIMEOUT_MS` | `10000` | Non-secret |
@@ -39,7 +39,7 @@ giữ `VITE_API_BASE_URL=http://localhost:4000`.
 
 | Variable | Staging value/source |
 | --- | --- |
-| `ACCESS_TOKEN_SECRET` | `ml-stg-access-token-secret` exact version |
+| `ACCESS_TOKEN_SECRET` | `ml-staging-access-token-secret` exact version |
 | `ACCESS_TOKEN_ISSUER` | `microlearning-api` |
 | `ACCESS_TOKEN_AUDIENCE` | `microlearning-web` |
 | `ACCESS_TOKEN_TTL_SECONDS` | `900` |
@@ -47,14 +47,14 @@ giữ `VITE_API_BASE_URL=http://localhost:4000`.
 | `REFRESH_REUSE_GRACE_SECONDS` | `5` |
 | `REFRESH_COOKIE_NAME` | `ml_refresh` |
 | `REFRESH_COOKIE_SECURE` | `true` |
-| `AUTH_IDENTITY_PEPPER` | `ml-stg-auth-identity-pepper` exact version |
+| `AUTH_IDENTITY_PEPPER` | `ml-staging-auth-identity-pepper` exact version |
 | `TEACHER_INVITATION_TTL_DAYS` | `7` |
 
 ## 5. Classroom And Enrollment
 
 | Variable | Staging value/source |
 | --- | --- |
-| `CLASSROOM_CODE_PEPPER` | `ml-stg-classroom-code-pepper` exact version |
+| `CLASSROOM_CODE_PEPPER` | `ml-staging-classroom-code-pepper` exact version |
 | `CLASSROOM_CODE_LENGTH` | `8` |
 | `CLASSROOM_INVITE_TOKEN_BYTES` | `32` |
 | `CLASSROOM_INVITE_DEFAULT_TTL_DAYS` | `30` |
@@ -160,7 +160,26 @@ demo Cloud.
 Seed Job nhận toàn bộ runtime variables mà compiled seed command cần nhưng không mở HTTP port. Production
 không provision/run seed Job theo baseline.
 
-## 11. Change Control
+## 11. GitHub Actions Repository Variables
+
+| Variable | Staging value/source |
+| --- | --- |
+| `GCP_PROJECT_ID` | `microlearning-platform-502716` |
+| `CLOUD_RUN_SERVICE` | `microlearning-staging` |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING` | Terraform deploy WIF output |
+| `GCP_DEPLOY_SERVICE_ACCOUNT_STAGING` | `ml-github-staging@microlearning-platform-502716.iam.gserviceaccount.com` |
+| `GCP_E2E_WORKLOAD_IDENTITY_PROVIDER_STAGING` | Terraform E2E WIF output |
+| `GCP_E2E_SERVICE_ACCOUNT_STAGING` | `ml-e2e-staging@microlearning-platform-502716.iam.gserviceaccount.com` |
+| `GCP_SECRET_VERSION_MONGODB_URI_STAGING` | exact enabled numeric version |
+| `GCP_SECRET_VERSION_ACCESS_TOKEN_STAGING` | exact enabled numeric version |
+| `GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_STAGING` | exact enabled numeric version |
+| `GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_STAGING` | exact enabled numeric version |
+| `GCP_SECRET_VERSION_SEED_DEMO_PASSWORD_STAGING` | exact enabled numeric version |
+
+Đây là non-secret identifiers/version numbers. Secret payload không nằm trong GitHub Actions variables hoặc
+secrets; runtime/seed nhận payload trực tiếp từ Secret Manager bằng service identity.
+
+## 12. Change Control
 
 - Terraform `variables.tf` validates type/range and `terraform.tfvars.example` mirrors this file.
 - Runtime schema remains authoritative; CI compares expected explicit Production-like fields with Terraform
