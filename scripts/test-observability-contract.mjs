@@ -28,6 +28,22 @@ for (const releaseField of [
 ]) {
   assert.ok(terraform.includes(releaseField), `Missing active release metadata: ${releaseField}`);
 }
+for (const monitoringContract of [
+  'metric.labels.response_code_class=\\"5xx\\"',
+  'denominator_aggregations',
+  'condition_matched_log',
+  'notification_rate_limit',
+  'ALIGN_PERCENTILE_95',
+]) {
+  assert.ok(
+    terraform.includes(monitoringContract),
+    `Missing supported Monitoring contract: ${monitoringContract}`,
+  );
+}
+assert.ok(
+  !terraform.includes('REGION_ASIA_PACIFIC'),
+  'Uptime checks must use supported default regions when no explicit region set is required',
+);
 for (const term of ['service_name', 'service_host', 'notification_email', 'provision']) {
   assert.ok(variables.includes(`variable "${term}"`), `Missing monitoring input: ${term}`);
 }
