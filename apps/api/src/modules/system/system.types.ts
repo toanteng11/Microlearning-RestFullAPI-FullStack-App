@@ -5,9 +5,11 @@ export interface RuntimeInfo {
   version: string;
   environment: string;
   commitSha: string;
+  imageDigest: string;
   buildTime: string;
 }
 
 export interface SystemDependencies {
   getDatabaseStatus: () => Promise<DatabaseStatus>;
+  isApplicationReady?: () => boolean;
 }

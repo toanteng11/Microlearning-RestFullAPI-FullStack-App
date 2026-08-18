@@ -52,3 +52,12 @@ Production thật trong Phase 07.
 
 - AC-044 Pass;
 - promotion workflow ready for Phase 08, actual apply remains blocked.
+
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã có `promote-production.yml`, `promotion-contract.mjs`, stable deployment record validation và test
+contract. Workflow dùng protected `production` environment, exact Staging digest, UAT/Go-No-Go inputs và
+dừng ở Terraform `plan`; chưa có Production apply trong Phase 07. Cần chạy workflow bằng stable record thật
+trên GitHub để đóng evidence `P07-EV-039`.

@@ -52,7 +52,9 @@ export default defineConfig({
         'src/modules/phase-six.foundation.ts',
         'src/modules/reporting/adapters/**',
         'src/modules/reporting/reporting-refresh.service.ts',
-        'src/scripts/reporting-*.ts',
+        // Operational CLI entry points require protected credentials or external services. Their
+        // pure contracts are covered separately; connected behavior is an explicit cloud gate.
+        'src/scripts/**',
         'src/shared/database/index-compatibility.ts',
         'src/shared/database/phase-five-migration.ts',
         'src/shared/database/phase-six-indexes.ts',

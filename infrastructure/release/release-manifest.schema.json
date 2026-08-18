@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://microlearning.local/schemas/release-manifest.schema.json",
+  "title": "Microlearning Release Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "evidenceScope",
+    "image",
+    "localImageId",
+    "localContentDigest",
+    "immutableImageRef",
+    "registryDigest",
+    "sizeBytes",
+    "runtimeUser",
+    "appVersion",
+    "commitSha",
+    "buildTime",
+    "source",
+    "generatedAt",
+    "evidence",
+    "provenance",
+    "promotionEligible",
+    "promotionBlockReason"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "evidenceScope": { "enum": ["LOCAL_ONLY", "REGISTRY_DIGEST"] },
+    "image": { "type": "string", "minLength": 1 },
+    "localImageId": { "type": "string", "minLength": 1 },
+    "localContentDigest": { "type": ["string", "null"] },
+    "immutableImageRef": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9-]+-docker\\.pkg\\.dev/[a-z0-9-]+/[a-z0-9-]+/[a-z0-9-]+@sha256:[a-f0-9]{64}$"
+    },
+    "registryDigest": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9-]+-docker\\.pkg\\.dev/[a-z0-9-]+/[a-z0-9-]+/[a-z0-9-]+@sha256:[a-f0-9]{64}$"
+    },
+    "sizeBytes": { "type": "integer", "minimum": 1 },
+    "runtimeUser": { "type": "string", "minLength": 1 },
+    "appVersion": { "type": "string", "minLength": 1 },
+    "commitSha": { "type": "string", "pattern": "^[a-f0-9]{7,40}$" },
+    "buildTime": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scanReport",
+        "scanReportSha256",
+        "sbom",
+        "sbomSha256",
+        "bundleName",
+        "retentionDays"
+      ],
+      "properties": {
+        "scanReport": { "type": ["string", "null"] },
+        "scanReportSha256": { "type": ["string", "null"] },
+        "sbom": { "type": ["string", "null"] },
+        "sbomSha256": { "type": ["string", "null"] },
+        "bundleName": { "type": ["string", "null"] },
+        "retentionDays": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "trustedRef",
+        "sourceWorkflow",
+        "sourceRunId",
+        "sourceRunUrl",
+        "buildWorkflow",
+        "buildRunId",
+        "buildRunUrl"
+      ],
+      "properties": {
+        "repository": { "type": ["string", "null"] },
+        "trustedRef": { "type": ["string", "null"] },
+        "sourceWorkflow": { "type": ["string", "null"] },
+        "sourceRunId": { "type": ["string", "null"] },
+        "sourceRunUrl": { "type": ["string", "null"] },
+        "buildWorkflow": { "type": ["string", "null"] },
+        "buildRunId": { "type": ["string", "null"] },
+        "buildRunUrl": { "type": ["string", "null"] }
+      }
+    },
+    "promotionEligible": { "type": "boolean" },
+    "promotionBlockReason": { "type": ["string", "null"] }
+  }
+}

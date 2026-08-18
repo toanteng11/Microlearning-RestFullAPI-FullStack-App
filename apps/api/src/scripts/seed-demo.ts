@@ -6,6 +6,7 @@ import { PhaseFiveDemoSeedService } from '../modules/bootstrap/phase-five-demo-s
 import { PhaseThreeDemoSeedService } from '../modules/bootstrap/phase-three-demo-seed.service.js';
 import { UserRepository } from '../modules/users/user.repository.js';
 import { loadEnvironment } from '../shared/config/environment.js';
+import { createApplicationIndexes } from '../shared/database/application-indexes.js';
 import { connectToMongoDB, disconnectFromMongoDB } from '../shared/database/mongodb.js';
 import { createLogger } from '../shared/logging/logger.js';
 import { parseSeedArguments } from './cli-arguments.js';
@@ -23,15 +24,25 @@ function loadLocalEnvironmentFile() {
 async function main() {
   assertNoPasswordArgument(process.argv.slice(2));
   const arguments_ = parseSeedArguments(process.argv.slice(2));
-  const password = await readSecurePassword({
-    passwordStdin: arguments_.passwordStdin || !process.stdin.isTTY,
-  });
+  const mountedPassword = process.env.SEED_DEMO_PASSWORD;
+  if (mountedPassword && process.env.APP_ENV !== 'staging') {
+    throw new Error(
+      'SEED_DEMO_PASSWORD environment injection is allowed only for the Staging seed job',
+    );
+  }
+  const password =
+    mountedPassword ??
+    (await readSecurePassword({
+      passwordStdin: arguments_.passwordStdin || !process.stdin.isTTY,
+    }));
+  delete process.env.SEED_DEMO_PASSWORD;
   loadLocalEnvironmentFile();
   const config = loadEnvironment(process.env);
   const logger = createLogger(config.logLevel);
   await connectToMongoDB(config.mongodbUri, logger);
 
   try {
+    if (config.appEnvironment === 'staging') await createApplicationIndexes();
     const users = await new DemoSeedService(config.appEnvironment, new UserRepository()).execute(
       password,
     );

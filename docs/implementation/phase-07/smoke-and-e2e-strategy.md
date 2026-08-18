@@ -34,40 +34,30 @@ trỏ Cloud Run service URL trong same-origin suite.
 
 ## 4. Critical browser journeys
 
+Chiến lược có hai lớp: full mutation journey tiếp tục chạy trong required CI bằng disposable local test
+database; Cloud Staging suite dùng representative read-only journey trên idempotent synthetic fixture để có
+thể rerun an toàn. Cloud mutation chỉ được bật khi record có unique run ID và guarded cleanup được chứng
+minh.
+
 ### Student
 
-1. login;
-2. xem Dashboard/To Do;
-3. join course bằng code hoặc link;
-4. mở lesson;
-5. làm assessment/submit;
-6. xem status/progress/report được phép;
-7. logout.
+1. Cloud: login, Dashboard/To Do, progress/report, concurrent tabs và logout;
+2. CI mutation: join bằng code/link, lesson, assessment save/submit và result.
 
 ### Teacher
 
-1. login;
-2. mở/tạo course test theo fixture policy;
-3. xem thành viên;
-4. tạo/chỉnh lesson deadline và deadline exception;
-5. xem submission/chấm điểm;
-6. mở gradebook/ranking/report;
-7. logout.
+1. Cloud: login, owned course progress, gradebook/ranking/report, foreign ownership denial và logout;
+2. CI mutation: tạo nội dung/assessment, deadline exception, submission review/chấm/regrade.
 
 ### Admin
 
-1. login;
-2. lọc danh sách Student/Teacher/Admin;
-3. tạo teacher invitation và kiểm tra link contract;
-4. quản trị trạng thái user theo quyền;
-5. xem audit/report được phép.
+1. Cloud: login, tách danh sách Student/Teacher/Admin, governance/audit report và logout;
+2. CI mutation: teacher invitation và user state/role governance.
 
 ### Super Admin
 
-1. login;
-2. truy cập governance chức năng riêng;
-3. kiểm tra boundary với Admin;
-4. xem report/system status được phép.
+1. Cloud: login, admin governance, role boundary và system/report access;
+2. CI mutation: protected Admin role/state transition invariants.
 
 ## 5. Negative journeys
 

@@ -14,3 +14,10 @@ coverage
 *.log
 business-analysis
 docs
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+playwright-report
+test-results
+**/*.tsbuildinfo

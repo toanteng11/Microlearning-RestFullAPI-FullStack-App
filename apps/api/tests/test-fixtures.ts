@@ -2,9 +2,11 @@ import type { AppConfig } from '../src/shared/config/environment.js';
 import type { RuntimeInfo } from '../src/modules/system/system.types.js';
 
 export const testConfig: AppConfig = {
+  nodeEnvironment: 'test',
   appEnvironment: 'test',
   appVersion: '0.1.0',
   commitSha: 'test-sha',
+  imageDigest: `sha256:${'0'.repeat(64)}`,
   buildTime: '2026-07-12T10:00:00.000Z',
   port: 4000,
   mongodbUri: 'mongodb://localhost:27017/microlearning-test?replicaSet=rs0',
@@ -108,6 +110,14 @@ export const testConfig: AppConfig = {
   },
   bootstrapAdminEnabled: false,
   logLevel: 'silent',
+  trustProxyHops: 0,
+  mongodbPool: {
+    maxSize: 10,
+    minSize: 0,
+    serverSelectionTimeoutMs: 10_000,
+    connectTimeoutMs: 10_000,
+    socketTimeoutMs: 45_000,
+  },
 };
 
 export const testRuntimeInfo: RuntimeInfo = {
@@ -115,5 +125,6 @@ export const testRuntimeInfo: RuntimeInfo = {
   version: testConfig.appVersion,
   environment: testConfig.appEnvironment,
   commitSha: testConfig.commitSha,
+  imageDigest: testConfig.imageDigest,
   buildTime: testConfig.buildTime,
 };

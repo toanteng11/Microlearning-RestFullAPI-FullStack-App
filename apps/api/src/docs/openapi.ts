@@ -1464,12 +1464,20 @@ export function createOpenApiDocument(runtimeInfo: RuntimeInfo): OpenAPIV3.Docum
             success: { type: 'boolean', enum: [true] },
             data: {
               type: 'object',
-              required: ['appName', 'version', 'environment', 'commitSha', 'buildTime'],
+              required: [
+                'appName',
+                'version',
+                'environment',
+                'commitSha',
+                'imageDigest',
+                'buildTime',
+              ],
               properties: {
                 appName: { type: 'string', example: 'Microlearning Classroom LMS API' },
                 version: { type: 'string', example: '0.2.0' },
                 environment: { type: 'string', example: 'staging' },
-                commitSha: { type: 'string', example: 'abc123' },
+                commitSha: { type: 'string', example: 'a'.repeat(40) },
+                imageDigest: { type: 'string', example: `sha256:${'b'.repeat(64)}` },
                 buildTime: { type: 'string', example: '2026-07-17T10:00:00.000Z' },
               },
             },

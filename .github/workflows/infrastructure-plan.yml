@@ -1,0 +1,175 @@
+name: Infrastructure Plan
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_cloud_plan:
+        description: Authenticate and create a read-only Staging Terraform plan
+        required: true
+        default: false
+        type: boolean
+      image_ref:
+        description: Exact Artifact Registry image digest used by the Staging contract
+        required: false
+        type: string
+      app_version:
+        description: Semantic application version from the release manifest
+        required: false
+        type: string
+      build_time:
+        description: ISO-8601 UTC build time from the release manifest
+        required: false
+        type: string
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infrastructure-plan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform-quality:
+    name: Terraform quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.0
+        with:
+          terraform_version: 1.15.8
+          terraform_wrapper: false
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate Terraform and supply-chain contracts
+        run: npm run terraform:check
+
+      - name: Upload Terraform quality evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-terraform-quality
+          path: artifacts/phase-07/terraform
+          if-no-files-found: warn
+          retention-days: 14
+
+  staging-plan:
+    name: Staging Terraform plan
+    if: github.event_name == 'workflow_dispatch' && inputs.run_cloud_plan
+    needs: terraform-quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ALLOW_PUBLIC_CLOUD_RUN_INVOKER: 'true'
+      EXPECTED_TERRAFORM_ENV: staging
+      TF_IN_AUTOMATION: 'true'
+
+    steps:
+      - name: Validate required inputs and repository variables
+        shell: bash
+        env:
+          IMAGE_REF: ${{ inputs.image_ref }}
+          APP_VERSION: ${{ inputs.app_version }}
+          BUILD_TIME: ${{ inputs.build_time }}
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          WIF_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          DEPLOYER_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+          MONGODB_URI_VERSION: ${{ vars.GCP_SECRET_VERSION_MONGODB_URI_STAGING }}
+          ACCESS_TOKEN_VERSION: ${{ vars.GCP_SECRET_VERSION_ACCESS_TOKEN_STAGING }}
+          AUTH_PEPPER_VERSION: ${{ vars.GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_STAGING }}
+          CLASSROOM_PEPPER_VERSION: ${{ vars.GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_STAGING }}
+          SEED_PASSWORD_VERSION: ${{ vars.GCP_SECRET_VERSION_SEED_DEMO_PASSWORD_STAGING }}
+        run: |
+          test -n "$IMAGE_REF"
+          test -n "$APP_VERSION"
+          test -n "$BUILD_TIME"
+          test -n "$GCP_PROJECT_ID"
+          test -n "$WIF_PROVIDER"
+          test -n "$DEPLOYER_ACCOUNT"
+          test -n "$MONGODB_URI_VERSION"
+          test -n "$ACCESS_TOKEN_VERSION"
+          test -n "$AUTH_PEPPER_VERSION"
+          test -n "$CLASSROOM_PEPPER_VERSION"
+          test -n "$SEED_PASSWORD_VERSION"
+
+      - name: Checkout trusted source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate immutable image input
+        run: node scripts/validate-image-reference.mjs "${{ inputs.image_ref }}"
+
+      - name: Authenticate to Google Cloud using WIF
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.0
+        with:
+          terraform_version: 1.15.8
+          terraform_wrapper: false
+
+      - name: Initialize Staging remote state
+        working-directory: infrastructure/terraform/environments/staging
+        run: terraform init -input=false
+
+      - name: Create reviewed Staging plan
+        working-directory: infrastructure/terraform/environments/staging
+        env:
+          TF_VAR_app_version: ${{ inputs.app_version }}
+          TF_VAR_commit_sha: ${{ github.sha }}
+          TF_VAR_build_time: ${{ inputs.build_time }}
+          TF_VAR_mongodb_uri_secret_version: ${{ vars.GCP_SECRET_VERSION_MONGODB_URI_STAGING }}
+          TF_VAR_access_token_secret_version: ${{ vars.GCP_SECRET_VERSION_ACCESS_TOKEN_STAGING }}
+          TF_VAR_auth_identity_pepper_secret_version: ${{ vars.GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_STAGING }}
+          TF_VAR_classroom_code_pepper_secret_version: ${{ vars.GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_STAGING }}
+          TF_VAR_seed_demo_password_secret_version: ${{ vars.GCP_SECRET_VERSION_SEED_DEMO_PASSWORD_STAGING }}
+        run: terraform plan -input=false -out=tfplan -var="image_ref=${{ inputs.image_ref }}"
+
+      - name: Export and enforce plan policy
+        shell: bash
+        run: |
+          mkdir -p artifacts/phase-07/terraform
+          terraform -chdir=infrastructure/terraform/environments/staging show -json tfplan > artifacts/phase-07/terraform/staging-plan.json
+          TF_SECRET_CANARY="PHASE_07_STATE_CANARY_DO_NOT_STORE" node scripts/check-terraform-plan.mjs artifacts/phase-07/terraform/staging-plan.json artifacts/phase-07/terraform/staging-plan-policy.json
+          rm artifacts/phase-07/terraform/staging-plan.json
+
+      - name: Upload redacted plan policy evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-staging-plan-policy
+          path: artifacts/phase-07/terraform/staging-plan-policy.json
+          if-no-files-found: error
+          retention-days: 14

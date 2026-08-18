@@ -11,9 +11,9 @@ Mở rộng CI hiện hữu thành chuỗi CD có kiểm soát, build một lầ
 | --- | --- | --- | --- |
 | `ci.yml` | PR, push main | none | quality, audit, Mongo integration, OpenAPI, browser E2E, secret scan |
 | `infrastructure-plan.yml` | PR/path filter, manual | none/Staging read-only | fmt, validate, security scan, plan summary |
-| `release-staging.yml` | successful main CI | `staging` through called deploy job | trusted orchestration from commit to stable Staging |
-| `build-publish.yml` | reusable `workflow_call` | none | build, test image, scan, SBOM, push, digest record |
-| `deploy-staging.yml` | reusable call/manual recovery | `staging` | Terraform apply digest, smoke, evidence, rollback on failure |
+| `build-publish.yml` | successful main CI `workflow_run`, manual recovery | `staging` | build, test image, scan, SBOM, push, digest record |
+| `deploy-staging.yml` | successful build `workflow_run`, manual recovery | `staging` | Terraform apply digest, seed, smoke, evidence, rollback on failure |
+| `cloud-e2e.yml` | successful deploy `workflow_run`, manual recovery | `staging` | HTTPS/security/four-role verification và stable record |
 | `promote-production.yml` | manual only | `production` | Phase 08: promote verified digest after approval |
 | `drift-check.yml` | schedule/manual | read-only | Terraform plan và drift alert |
 
@@ -24,11 +24,10 @@ Tên workflow/job phải ổn định vì branch protection và evidence tham ch
 ```text
 PR -> CI + Terraform validation
 merge main -> main CI
-main CI success -> release-staging orchestrator
-release-staging -> reusable build/publish exact commit
-build output -> reusable deploy Staging exact digest
-deploy success -> cloud smoke/E2E
-smoke success -> Staging release record
+main CI success -> Build And Publish exact commit/digest
+build success -> Deploy Staging exact digest
+deploy success -> Cloud Smoke And E2E
+cloud suite success -> stable Staging release record
 Phase 08 manual Go/No-Go -> promote same digest Production
 ```
 
@@ -51,13 +50,12 @@ Một workflow không được dựa vào artifact từ untrusted PR để deplo
 13. upload release manifest artifact;
 14. expose digest qua trusted workflow output.
 
-Nếu dùng `workflow_run`, trigger phải giới hạn workflow CI đã chốt, event `completed`, branch `main` và chỉ
-tiếp tục khi `conclusion == success`. Checkout/build dùng `workflow_run.head_sha`; job phải xác minh commit
-thuộc protected `main` trước khi xin `id-token: write` hoặc push artifact.
+Mỗi `workflow_run` trigger giới hạn exact upstream workflow, event `completed`, branch `main`, cùng repository
+và chỉ tiếp tục khi `conclusion == success`. Checkout dùng validated full `head_sha`; artifact được tải theo
+exact upstream run ID rồi đối chiếu provenance. Chuỗi dừng ở ba tầng sau CI: Build -> Deploy -> Cloud E2E.
 
-`release-staging.yml` là workflow duy nhất dùng `workflow_run`; build/deploy logic nằm trong reusable
-workflows để digest truyền bằng trusted job output trong cùng orchestration. Manual recovery vẫn phải nhận
-release manifest ID/digest và chạy lại toàn bộ validation, không nhận tùy ý một tag.
+Manual recovery phải nhận successful upstream run ID, confirmation phrase và chạy lại toàn bộ validation;
+không nhận tùy ý một tag, artifact path hoặc commit chưa được CI chứng minh.
 
 ## 5. Staging deployment job contract
 
@@ -69,11 +67,11 @@ release manifest ID/digest và chạy lại toàn bộ validation, không nhận
 6. apply;
 7. lấy Cloud Run URL/revision từ outputs;
 8. wait readiness;
-9. chạy smoke và actor E2E;
-10. xác minh version endpoint;
-11. test monitoring signal tối thiểu;
-12. ghi deployment record;
-13. nếu post-deploy gate fail, thực thi rollback runbook và fail workflow.
+9. chạy private idempotent synthetic seed Job bằng exact digest;
+10. chạy readiness/version smoke;
+11. ghi candidate deployment record;
+12. Cloud E2E workflow chạy security/four-role gates và ghi stable record;
+13. nếu post-apply gate fail và có prior revision, thực thi rollback runbook và fail workflow.
 
 ## 6. Production workflow guard
 

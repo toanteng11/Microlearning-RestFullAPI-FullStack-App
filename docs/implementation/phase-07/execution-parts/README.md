@@ -28,6 +28,21 @@ acceptance/evidence/risk tương ứng và được merge qua parent PR trong WB
 | 16 | P07-PR07 | security/cost/quality hardening |
 | 17 | P07-PR08 | evidence, exit và Phase 08 handoff |
 
+Current execution: Part 00 `DONE`; Part 01-17 `LOCAL_PASS_REMOTE_PENDING`.
+
+Parts 09-11 có source workflow, lineage contracts, Cloud verifier và four-role E2E đã Pass local ngày
+`2026-08-17`. Chúng chưa phải `DONE` cho tới khi merge qua protected `main` và có exact GitHub/GCP/Atlas
+workflow evidence.
+
+Parts 12-14 đã có source Terraform/app scripts/contracts/workflow và local contract validation Pass ngày
+`2026-08-17`. Chúng chưa phải `DONE` cho tới khi có Cloud Monitoring notification/redaction evidence,
+Atlas synthetic backup/isolated restore report và Cloud Run prior-digest rollback record.
+
+Parts 15-17 đã có source workflow/contracts/local tests ngày `2026-08-17`. Promotion chỉ chạy `PLAN_ONLY`,
+hardening chạy từ clean checkout và exit/handoff contract chặn placeholder hoặc thiếu evidence. Chúng vẫn
+ở `LOCAL_PASS_REMOTE_PENDING` cho tới khi có remote workflow evidence, `66/66` Must Pass và handoff được
+review/accepted.
+
 ## 3. Status Vocabulary
 
 - `NOT_STARTED`: chưa thực hiện.

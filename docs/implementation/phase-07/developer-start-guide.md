@@ -6,6 +6,10 @@ Planning baseline đã `ACCEPTED_AT_GATE_A` ngày `2026-08-14`. Bắt đầu Par
 qua protected `main`, post-merge main CI Pass và local `main` đã pull commit mới. Cloud apply vẫn phải đi
 qua execution part, Terraform plan và stop conditions tương ứng.
 
+Điều kiện trên đã hoàn thành. Part 01-11 hiện ở `LOCAL_PASS_REMOTE_PENDING` trên branch
+`feature/phase-07-runtime-container`. Source đã được chuẩn bị theo dependency để review nhưng chưa được Cloud
+apply hoặc đánh dấu `DONE`; các parent PR, post-merge main CI và Cloud evidence vẫn phải hoàn tất theo WBS.
+
 ## 2. Đọc trước khi code
 
 Theo thứ tự:
@@ -102,3 +106,42 @@ During implementation, update evidence continuously. Do not wait until Part 17 t
 - Cloud revision/URL;
 - screenshots/reports with redaction;
 - decision/owner/date.
+
+## 10. Part 03-05 owner bootstrap sequence
+
+Sau khi P07-PR01 đã merge:
+
+1. tạo branch `infra/phase-07-cloud-foundation` từ `main` mới nhất;
+2. đưa riêng scope P07-PR02 vào branch và mở PR;
+3. xác minh `Terraform quality` Pass từ clean GitHub runner;
+4. owner review bootstrap plan, tạo/migrate state bucket theo runbook;
+5. chạy Staging plan; xác nhận repository hiện hữu được `import`, không create/replace;
+6. owner apply foundation đã duyệt; không chạy Production root;
+7. thêm GitHub repository variables không nhạy cảm:
+
+```text
+GCP_PROJECT_ID=microlearning-platform-502716
+GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING=<Terraform workload_identity_provider output>
+GCP_DEPLOY_SERVICE_ACCOUNT_STAGING=ml-github-staging@microlearning-platform-502716.iam.gserviceaccount.com
+```
+
+8. chạy `Identity Diagnostic` và `Identity Negative Test` từ branch selector `main`;
+9. lưu workflow URLs/sanitized artifacts và tiếp tục Part 06.
+
+Không tạo GitHub secret chứa service-account JSON. Không chạy cloud-plan job trước khi WIF foundation đã
+được owner apply.
+
+## 11. Part 09-11 activation sequence
+
+Sau khi Part 08 có known-good Staging revision:
+
+1. lấy Terraform outputs cho deploy WIF và dedicated E2E WIF;
+2. tạo/cập nhật repository variables theo `phase-07-part-09-11-evidence.md`;
+3. xác minh năm Secret Manager version variables là số version exact đang `ENABLED`;
+4. merge source qua protected `main` và chờ `Continuous Integration` Pass;
+5. theo dõi chuỗi `Build And Publish` -> `Deploy Staging` -> `Cloud Smoke And E2E`;
+6. tải artifacts, kiểm tra redaction report trước khi chia sẻ evidence;
+7. ghi run URLs, exact commit, digest, revision vào `evidence-register.md`;
+8. nếu auto trigger bị gián đoạn, chỉ dùng manual recovery với exact successful upstream run ID;
+9. nếu deploy fail sau apply, xác minh workflow fail và traffic đã quay về prior revision; không rerun mù;
+10. chỉ đổi Part 09-11 thành `DONE` sau khi stable deployment record và post-merge evidence Pass.

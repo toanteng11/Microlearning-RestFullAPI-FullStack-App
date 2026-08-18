@@ -1,0 +1,228 @@
+name: Build And Publish
+
+on:
+  workflow_run:
+    workflows: [Continuous Integration]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type PUBLISH_MAIN to authorize recovery publishing
+        required: true
+        type: string
+      source_ci_run_id:
+        description: Successful Continuous Integration run ID for a protected main push
+        required: true
+        type: string
+      commit_sha:
+        description: Exact 40-character main commit from the source CI run
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: phase-07-build-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Trusted image build and publish
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    environment: staging
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      IMAGE_REPOSITORY: asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app
+
+    steps:
+      - name: Checkout trusted workflow source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Resolve and validate source CI run
+        id: trust
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_CONFIRMATION: ${{ inputs.confirmation }}
+          MANUAL_SOURCE_RUN_ID: ${{ inputs.source_ci_run_id }}
+          EXPECTED_RELEASE_COMMIT: ${{ inputs.commit_sha }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            test "$MANUAL_CONFIRMATION" = "PUBLISH_MAIN"
+            [[ "$MANUAL_SOURCE_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+            [[ "$EXPECTED_RELEASE_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+            source_record="$RUNNER_TEMP/source-ci-run.json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$MANUAL_SOURCE_RUN_ID" > "$source_record"
+          else
+            source_record="$GITHUB_EVENT_PATH"
+            unset EXPECTED_RELEASE_COMMIT
+          fi
+          node scripts/resolve-trusted-workflow-run.mjs \
+            "$source_record" \
+            "Continuous Integration" \
+            "$GITHUB_REPOSITORY" \
+            "push" \
+            "$RUNNER_TEMP/trusted-ci-run.json"
+
+      - name: Checkout exact CI-tested commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ steps.trust.outputs.commit_sha }}
+          persist-credentials: false
+
+      - name: Verify exact checkout
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ steps.trust.outputs.commit_sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium for image verification
+        run: npx playwright install --with-deps chromium
+
+      - name: Authenticate to Google Cloud using WIF
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Configure Artifact Registry authentication
+        run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+
+      - name: Resolve immutable tag and safe rerun mode
+        id: registry
+        shell: bash
+        env:
+          COMMIT_SHA: ${{ steps.trust.outputs.commit_sha }}
+        run: |
+          local_image="microlearning-platform:release-$COMMIT_SHA"
+          image_tag="$IMAGE_REPOSITORY:commit-$COMMIT_SHA"
+          echo "local_image=$local_image" >> "$GITHUB_OUTPUT"
+          echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
+          if digest="$(gcloud artifacts docker images describe "$image_tag" --format='value(image_summary.digest)' 2>/dev/null)" && [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            exact_ref="$IMAGE_REPOSITORY@$digest"
+            docker pull "$exact_ref"
+            docker tag "$exact_ref" "$local_image"
+            echo "publish_mode=REUSE_EXISTING_DIGEST" >> "$GITHUB_OUTPUT"
+            echo "exact_ref=$exact_ref" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish_mode=PUBLISH_NEW_DIGEST" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Production image once
+        if: steps.registry.outputs.publish_mode == 'PUBLISH_NEW_DIGEST'
+        run: npm run container:build -- "${{ steps.registry.outputs.local_image }}"
+
+      - name: Verify image routes, content, non-root and shutdown
+        run: npm run container:verify -- "${{ steps.registry.outputs.local_image }}"
+
+      - name: Scan candidate before publishing
+        run: >-
+          npm run container:scan --
+          "${{ steps.registry.outputs.local_image }}"
+          artifacts/phase-07/scan/microlearning-production-trivy.pre-push.json
+
+      - name: Push immutable commit tag once
+        if: steps.registry.outputs.publish_mode == 'PUBLISH_NEW_DIGEST'
+        shell: bash
+        run: |
+          docker tag "${{ steps.registry.outputs.local_image }}" "${{ steps.registry.outputs.image_tag }}"
+          docker push "${{ steps.registry.outputs.image_tag }}"
+
+      - name: Resolve exact registry digest
+        id: digest
+        shell: bash
+        run: |
+          digest="$(gcloud artifacts docker images describe "${{ steps.registry.outputs.image_tag }}" --format='value(image_summary.digest)')"
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          exact_ref="$IMAGE_REPOSITORY@$digest"
+          echo "exact_ref=$exact_ref" >> "$GITHUB_OUTPUT"
+          node scripts/validate-image-reference.mjs "$exact_ref"
+
+      - name: Scan and generate SBOM from exact digest
+        shell: bash
+        run: |
+          docker pull "${{ steps.digest.outputs.exact_ref }}"
+          npm run container:scan -- \
+            "${{ steps.digest.outputs.exact_ref }}" \
+            artifacts/phase-07/scan/microlearning-production-trivy.json
+          npm run sbom:production -- \
+            "${{ steps.digest.outputs.exact_ref }}" \
+            artifacts/phase-07/sbom/microlearning-production.cdx.json
+
+      - name: Generate and validate release manifest
+        env:
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_TRUSTED_REF: refs/heads/main
+          RELEASE_SOURCE_WORKFLOW: Continuous Integration
+          RELEASE_SOURCE_CI_RUN_ID: ${{ steps.trust.outputs.source_run_id }}
+          RELEASE_SOURCE_CI_RUN_URL: ${{ steps.trust.outputs.source_run_url }}
+          RELEASE_BUILD_WORKFLOW: Build And Publish
+          RELEASE_BUILD_RUN_ID: ${{ github.run_id }}
+          RELEASE_BUILD_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          npm run release-manifest:local -- \
+            "${{ steps.registry.outputs.local_image }}" \
+            artifacts/phase-07/release/release-manifest.json \
+            "${{ steps.digest.outputs.exact_ref }}"
+          npm run release-manifest:validate -- \
+            artifacts/phase-07/release/release-manifest.json \
+            --verify-files
+
+      - name: Generate release evidence checksums
+        shell: bash
+        run: |
+          find artifacts/phase-07 -type f ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum > artifacts/phase-07/release/checksums.sha256
+
+      - name: Upload immutable release candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-release-candidate
+          path: artifacts/phase-07
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish build summary
+        shell: bash
+        run: |
+          {
+            echo "## Phase 07 release candidate"
+            echo "- Commit: \`${{ steps.trust.outputs.commit_sha }}\`"
+            echo "- Image: \`${{ steps.digest.outputs.exact_ref }}\`"
+            echo "- Mode: \`${{ steps.registry.outputs.publish_mode }}\`"
+            echo "- Source CI: ${{ steps.trust.outputs.source_run_url }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stop image verification services
+        if: always()
+        run: docker compose -p microlearning-local down --volumes --remove-orphans

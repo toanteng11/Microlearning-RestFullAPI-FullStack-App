@@ -129,9 +129,12 @@
 
 | Nhóm | Kết quả hiện tại |
 | --- | --- |
-| Must | `8/66 Pass`; Planning/Gate A `P07-AC-001..008` hoàn thành, implementation Part 01 chưa bắt đầu |
+| Must | `8/66 Pass`; `P07-AC-001..008` hoàn thành; AC-009..016 local validation Pass nhưng exact-commit PR/main evidence còn Pending |
 | Conditional | `6/6 decided`; execution result remains Not Run |
 | Gate A | `APPROVED` on `2026-08-14` |
-| Phase status | `READY_TO_CODE` |
+| Phase status | `IN_PROGRESS`; Part 01-17 `LOCAL_PASS_REMOTE_PENDING` |
+
+Part 15-17 source contracts/workflows đã được kiểm tra local. Đây không làm thay đổi kết quả official của
+Must/Conditional criteria: chỉ remote GitHub/Cloud evidence thật mới được chuyển từng criterion sang `Pass`.
 
 Các criterion còn lại chỉ được chuyển sang Pass khi có evidence thực thi tương ứng.

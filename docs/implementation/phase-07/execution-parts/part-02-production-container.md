@@ -51,3 +51,17 @@ Tạo một Production image non-root, nhỏ, traceable và có thể chạy Rea
 
 - AC-014..016 Pass trên P07-PR01 CI;
 - P07-PR01 merged và post-merge main CI Pass.
+
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING` on `feature/phase-07-runtime-container`.
+
+- multi-stage image được pin Node Alpine digest, chạy user `node`, dùng exec-form command và không chứa
+  `.env`, TypeScript source, source map, test hoặc coverage artifact;
+- local image smoke Pass cho root, protected deep link, API, Swagger, OpenAPI, health/readiness, version
+  và graceful shutdown;
+- Trivy Critical/High gate Pass; CycloneDX SBOM được sinh trực tiếp từ image và gắn image ID;
+- job CI `Production container` đã được thêm mà không đổi tên sáu required checks hiện hữu;
+- clean-checkout CI image, exact final commit, P07-PR01 và post-merge main CI còn Pending.
+
+Evidence tạm thời: `../runtime-container-evidence.md`. Local image không đủ điều kiện promotion.

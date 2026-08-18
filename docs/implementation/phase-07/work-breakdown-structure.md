@@ -19,6 +19,18 @@ required checks hiện hữu.
 | P07-PR07 | 15-16 | Production promotion guard, security/cost hardening | operations stable | P08 workflow ready, no High gap |
 | P07-PR08 | 17 | evidence, clean clone, exit/handoff | all prior merged | `66/66`, main/CD green, P08 accepted |
 
+## 2.1 Current Execution Status
+
+| PR | Status | Note |
+| --- | --- | --- |
+| P07-PR00 | `DONE` | PR #21 và post-merge main CI Pass |
+| P07-PR01 | `LOCAL_PASS_REMOTE_PENDING` | Part 01-02 implemented; clean-checkout PR CI/merge/main CI Pending |
+| P07-PR02 | `LOCAL_PASS_REMOTE_PENDING` | Part 03-06 source/validation complete; Cloud apply, PR và identity evidence Pending |
+| P07-PR03 | `LOCAL_PASS_REMOTE_PENDING` | Part 07-08 contracts, Terraform resources và first-deploy workflow ready; Atlas/Cloud execution Pending |
+| P07-PR04 | `LOCAL_PASS_REMOTE_PENDING` | Part 09-10 source workflow và lineage/deployment contracts Pass local; main-to-Staging run Pending |
+| P07-PR05 | `LOCAL_PASS_REMOTE_PENDING` | Part 11 Cloud verifier, four-role Playwright và stable-promotion gate Pass local; Cloud run Pending |
+| P07-PR06..08 | `NOT_STARTED` | Chưa được kích hoạt theo dependency chain |
+
 ## 3. Estimated Work Units
 
 | Workstream | Primary | Review | Relative size |

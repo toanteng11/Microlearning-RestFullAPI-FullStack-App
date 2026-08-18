@@ -1,0 +1,214 @@
+name: Cloud Smoke And E2E
+
+on:
+  workflow_run:
+    workflows: [Deploy Staging]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type VERIFY_STAGING to authorize a recovery cloud test
+        required: true
+        type: string
+      source_deployment_run_id:
+        description: Successful Deploy Staging run containing the candidate record
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: phase-07-staging-cloud-e2e
+  cancel-in-progress: false
+
+jobs:
+  cloud-e2e:
+    name: Four-role Staging verification
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'workflow_run' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: staging
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+
+    steps:
+      - name: Checkout trusted workflow source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Resolve and validate source deployment run
+        id: trust
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_CONFIRMATION: ${{ inputs.confirmation }}
+          MANUAL_SOURCE_RUN_ID: ${{ inputs.source_deployment_run_id }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            test "$MANUAL_CONFIRMATION" = "VERIFY_STAGING"
+            [[ "$MANUAL_SOURCE_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+            source_record="$RUNNER_TEMP/source-deployment-run.json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$MANUAL_SOURCE_RUN_ID" > "$source_record"
+          else
+            source_record="$GITHUB_EVENT_PATH"
+          fi
+          node scripts/resolve-trusted-workflow-run.mjs \
+            "$source_record" \
+            "Deploy Staging" \
+            "$GITHUB_REPOSITORY" \
+            "workflow_run,workflow_dispatch" \
+            "$RUNNER_TEMP/trusted-deployment-run.json"
+
+      - name: Download exact deployment artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/staging-deployment"
+          gh run download "${{ steps.trust.outputs.source_run_id }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name phase-07-staging-deployment \
+            --dir "$RUNNER_TEMP/staging-deployment"
+          test -f "$RUNNER_TEMP/staging-deployment/staging/deployment-record.json"
+
+      - name: Validate candidate deployment lineage
+        id: deployment
+        run: >-
+          node scripts/validate-deployment-record.mjs
+          "$RUNNER_TEMP/staging-deployment/staging/deployment-record.json"
+          "$RUNNER_TEMP/trusted-deployment-run.json"
+          "$GITHUB_REPOSITORY"
+
+      - name: Checkout exact deployed commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ steps.deployment.outputs.commit_sha }}
+          persist-credentials: false
+
+      - name: Restore deployment evidence and install dependencies
+        shell: bash
+        run: |
+          mkdir -p artifacts/phase-07
+          cp -R "$RUNNER_TEMP/staging-deployment/." artifacts/phase-07/
+          npm ci
+          test "$(git rev-parse HEAD)" = "${{ steps.deployment.outputs.commit_sha }}"
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Authenticate using dedicated Cloud E2E identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_E2E_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_E2E_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Retrieve only the synthetic test password
+        shell: bash
+        env:
+          PASSWORD_VERSION: ${{ vars.GCP_SECRET_VERSION_SEED_DEMO_PASSWORD_STAGING }}
+        run: |
+          [[ "$PASSWORD_VERSION" =~ ^[1-9][0-9]*$ ]]
+          demo_password="$(gcloud secrets versions access "$PASSWORD_VERSION" --secret ml-staging-seed-demo-password)"
+          test -n "$demo_password"
+          echo "::add-mask::$demo_password"
+          delimiter="E2E_$(openssl rand -hex 16)"
+          {
+            echo "E2E_DEMO_PASSWORD<<$delimiter"
+            printf '%s\n' "$demo_password"
+            echo "$delimiter"
+            echo "E2E_SECRET_CANARY<<$delimiter"
+            printf '%s\n' "$demo_password"
+            echo "$delimiter"
+          } >> "$GITHUB_ENV"
+
+      - name: Verify HTTPS routing and security controls
+        run: >-
+          npm run cloud:security:verify --
+          "${{ steps.deployment.outputs.service_url }}"
+          "${{ steps.deployment.outputs.app_version }}"
+          "${{ steps.deployment.outputs.commit_sha }}"
+          "${{ steps.deployment.outputs.image_ref }}"
+          "${{ steps.deployment.outputs.revision }}"
+          artifacts/phase-07/cloud-e2e/cloud-security-report.json
+
+      - name: Run four-role browser and authorization journeys
+        env:
+          E2E_CLOUD_MODE: 'true'
+          E2E_WEB_URL: ${{ steps.deployment.outputs.service_url }}
+          E2E_API_URL: ${{ steps.deployment.outputs.service_url }}
+          E2E_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          E2E_EXPECTED_COMMIT: ${{ steps.deployment.outputs.commit_sha }}
+          E2E_EXPECTED_IMAGE: ${{ steps.deployment.outputs.image_ref }}
+          E2E_EXPECTED_REVISION: ${{ steps.deployment.outputs.revision }}
+        run: npm run test:e2e:cloud
+
+      - name: Record exact four-role result
+        shell: bash
+        run: |
+          mkdir -p artifacts/phase-07/cloud-e2e
+          jq -n \
+            --arg completed_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg commit "${{ steps.deployment.outputs.commit_sha }}" \
+            --arg image "${{ steps.deployment.outputs.image_ref }}" \
+            --arg revision "${{ steps.deployment.outputs.revision }}" \
+            --arg run_id "${{ github.run_id }}-${{ github.run_attempt }}" \
+            '{schemaVersion:1,completedAt:$completed_at,runId:$run_id,commitSha:$commit,imageRef:$image,revision:$revision,roles:["STUDENT","TEACHER","ADMIN","SUPER_ADMIN"],negativeChecks:["UNAUTHENTICATED","RBAC","OWNERSHIP","CONCURRENT_SESSION"],dataMode:"READ_ONLY_SYNTHETIC",cleanup:"NOT_REQUIRED",status:"PASS"}' \
+            > artifacts/phase-07/cloud-e2e/cloud-role-report.json
+
+      - name: Mark exact deployment stable
+        run: >-
+          npm run deployment-record:promote --
+          artifacts/phase-07/staging/deployment-record.json
+          artifacts/phase-07/cloud-e2e/cloud-security-report.json
+          artifacts/phase-07/cloud-e2e/cloud-role-report.json
+          artifacts/phase-07/cloud-e2e/stable-deployment-record.json
+
+      - name: Scan cloud test artifacts for credential leakage
+        id: redaction
+        if: always()
+        run: >-
+          npm run e2e:artifacts:scan --
+          artifacts/phase-07
+          artifacts/phase-07/cloud-e2e/artifact-redaction-report.json
+
+      - name: Upload Cloud E2E evidence
+        if: always() && steps.redaction.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-cloud-e2e
+          path: artifacts/phase-07
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish stable summary
+        if: success()
+        shell: bash
+        run: |
+          {
+            echo "## Phase 07 Staging stable"
+            echo "- Revision: \`${{ steps.deployment.outputs.revision }}\`"
+            echo "- Image: \`${{ steps.deployment.outputs.image_ref }}\`"
+            echo "- Student, Teacher, Admin, Super Admin: \`PASS\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -8,7 +8,7 @@ import { EnrollmentModel } from '../../modules/enrollments/enrollment.model.js';
 import type { AppConfig } from '../config/environment.js';
 import { initializeModelIndexes } from './index-compatibility.js';
 
-const PHASE_THREE_MODELS: Model<unknown>[] = [
+export const PHASE_THREE_MODELS: readonly Model<unknown>[] = [
   ClassroomModel as unknown as Model<unknown>,
   EnrollmentModel as unknown as Model<unknown>,
   ClassCodeModel as unknown as Model<unknown>,

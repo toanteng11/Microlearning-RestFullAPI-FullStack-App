@@ -52,3 +52,12 @@
 
 - AC-060..063 Pass;
 - P07-PR07 merged/main CI/Staging chain Pass.
+
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã có `phase-07-hardening.yml` chạy từ clean checkout, hardening contract kiểm tra non-root image,
+workflow pinning, secret/key hygiene, production `provision=false` và no-apply boundary. Local full check,
+Terraform check, audit và contract test là điều kiện bắt buộc của workflow. Cần chạy workflow trên remote,
+đối chiếu Cloud/Atlas/IAM/budget/drift và lưu artifact thật trước khi đóng AC-061..063.

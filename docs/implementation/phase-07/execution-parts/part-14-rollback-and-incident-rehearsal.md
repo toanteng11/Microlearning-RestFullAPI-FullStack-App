@@ -51,3 +51,21 @@ Chứng minh Staging có thể trở về prior stable digest và phục hồi c
 
 - AC-059 Pass;
 - P07-PR06 merged/main CI/Staging operational checks Pass.
+
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã triển khai:
+
+- `scripts/lib/recovery-contract.mjs` và `operations:contract:test` để reject Production record,
+  mutable tag, cùng revision hoặc cùng digest;
+- `scripts/verify-rollback-recovery.mjs` để kiểm tra HTTPS, `/health`, `/ready` và exact image digest;
+- `scripts/create-rollback-record.mjs`/`validate-rollback-record.mjs` cho incident record có measured
+  detection/decision/recovery time;
+- `.github/workflows/rollback-staging.yml` là manual-only workflow, yêu cầu confirmation,
+  `failed_revision`, `restored_revision`, hai immutable digest, WIF và traffic 100% về prior revision.
+
+Workflow có chủ ý ghi rõ `REQUIRED_AFTER_TRAFFIC_ROLLBACK` cho Terraform drift: traffic rollback là
+emergency operation, sau rehearsal phải chạy plan/apply qua pipeline bình thường để reconcile. Chưa chạy
+workflow trên Cloud Run và chưa có prior revision thật nên AC-059 vẫn Pending.

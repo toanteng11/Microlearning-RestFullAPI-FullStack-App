@@ -1,0 +1,177 @@
+name: Staging Rollback Rehearsal
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type ROLLBACK_STAGING to authorize the exact-digest rollback
+        required: true
+        type: string
+      incident_id:
+        description: Lowercase incident ID, for example p07-incident-20260817
+        required: true
+        type: string
+      service_name:
+        description: Cloud Run Staging service name
+        required: true
+        type: string
+      service_url:
+        description: HTTPS origin of the Staging service
+        required: true
+        type: string
+      failed_revision:
+        description: Revision that failed the controlled signal
+        required: true
+        type: string
+      failed_image_ref:
+        description: Exact digest deployed by the failed revision
+        required: true
+        type: string
+      restored_revision:
+        description: Prior stable Cloud Run revision to receive 100 percent traffic
+        required: true
+        type: string
+      restored_image_ref:
+        description: Exact digest deployed by the prior stable revision
+        required: true
+        type: string
+      reason:
+        description: Short sanitized rollback reason; never include secrets or PII
+        required: true
+        type: string
+      recovery_seconds:
+        description: Measured seconds from rollback command to verified recovery
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase-07-staging-rollback
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: Restore prior exact digest
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_REGION: asia-southeast1
+      SERVICE_NAME: ${{ inputs.service_name }}
+      SERVICE_URL: ${{ inputs.service_url }}
+      FAILED_REVISION: ${{ inputs.failed_revision }}
+      FAILED_IMAGE_REF: ${{ inputs.failed_image_ref }}
+      RESTORED_REVISION: ${{ inputs.restored_revision }}
+      RESTORED_IMAGE_REF: ${{ inputs.restored_image_ref }}
+      INCIDENT_ID: ${{ inputs.incident_id }}
+
+    steps:
+      - name: Checkout trusted workflow source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Authenticate to Google Cloud using WIF
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Validate confirmation and exact immutable inputs
+        shell: bash
+        run: |
+          test "${{ inputs.confirmation }}" = "ROLLBACK_STAGING"
+          [[ "$INCIDENT_ID" =~ ^p07-incident-[a-z0-9-]+$ ]]
+          [[ "$FAILED_REVISION" != "$RESTORED_REVISION" ]]
+          node scripts/validate-image-reference.mjs "$FAILED_IMAGE_REF"
+          node scripts/validate-image-reference.mjs "$RESTORED_IMAGE_REF"
+          test "$FAILED_IMAGE_REF" != "$RESTORED_IMAGE_REF"
+
+          failed_actual="$(gcloud run revisions describe "$FAILED_REVISION" --project "$GCP_PROJECT_ID" --region "$GCP_REGION" --format='value(spec.containers[0].image)')"
+          restored_actual="$(gcloud run revisions describe "$RESTORED_REVISION" --project "$GCP_PROJECT_ID" --region "$GCP_REGION" --format='value(spec.containers[0].image)')"
+          test "$failed_actual" = "$FAILED_IMAGE_REF"
+          test "$restored_actual" = "$RESTORED_IMAGE_REF"
+
+      - name: Move 100 percent traffic to prior stable revision
+        run: >-
+          gcloud run services update-traffic "$SERVICE_NAME"
+          --project "$GCP_PROJECT_ID"
+          --region "$GCP_REGION"
+          --to-revisions "$RESTORED_REVISION=100"
+          --quiet
+
+      - name: Verify health readiness and exact restored digest
+        run: >-
+          npm run rollback:verify --
+          "$SERVICE_URL"
+          "$RESTORED_IMAGE_REF"
+          artifacts/phase-07/rollback/recovery-report.json
+
+      - name: Capture sanitized traffic evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/phase-07/rollback
+          gcloud run services describe "$SERVICE_NAME" \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --format='json(status.traffic,status.url,status.latestReadyRevisionName)' \
+            > artifacts/phase-07/rollback/traffic-report.json
+
+      - name: Create and validate incident record
+        if: success()
+        env:
+          ROLLBACK_INCIDENT_ID: ${{ inputs.incident_id }}
+          ROLLBACK_RECOVERY_SECONDS: ${{ inputs.recovery_seconds }}
+          ROLLBACK_RECOVERY_REPORT: artifacts/phase-07/rollback/recovery-report.json
+          ROLLBACK_TRAFFIC_REPORT: artifacts/phase-07/rollback/traffic-report.json
+        run: |
+          node scripts/create-rollback-record.mjs \
+            "$SERVICE_NAME" \
+            "$SERVICE_URL" \
+            "$FAILED_REVISION" \
+            "$FAILED_IMAGE_REF" \
+            "$RESTORED_REVISION" \
+            "$RESTORED_IMAGE_REF" \
+            "${{ inputs.reason }}" \
+            artifacts/phase-07/rollback/rollback-record.json
+          npm run rollback-record:validate -- \
+            artifacts/phase-07/rollback/rollback-record.json \
+            "$GITHUB_REPOSITORY"
+
+      - name: Upload rollback evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-staging-rollback-${{ inputs.incident_id }}
+          path: artifacts/phase-07/rollback
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publish rollback handoff summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Phase 07 Staging rollback rehearsal"
+            echo "- Incident: \`${INCIDENT_ID}\`"
+            echo "- Restored revision: \`${RESTORED_REVISION}\`"
+            echo "- Restored image: \`${RESTORED_IMAGE_REF}\`"
+            echo "- Terraform drift reconciliation: \`REQUIRED_AFTER_TRAFFIC_ROLLBACK\`"
+          } >> "$GITHUB_STEP_SUMMARY"

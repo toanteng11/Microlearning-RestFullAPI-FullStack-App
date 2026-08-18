@@ -1,0 +1,56 @@
+name: Identity Negative Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unauthorized-workflow:
+    name: Reject unauthorized workflow
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Validate required repository variables
+        shell: bash
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          WIF_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          DEPLOYER_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+        run: |
+          test -n "$GCP_PROJECT_ID"
+          test -n "$WIF_PROVIDER"
+          test -n "$DEPLOYER_ACCOUNT"
+
+      - name: Attempt authentication from an untrusted workflow path
+        id: denied-auth
+        continue-on-error: true
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: Assert token exchange was denied
+        shell: bash
+        env:
+          AUTH_OUTCOME: ${{ steps.denied-auth.outcome }}
+        run: |
+          test "$AUTH_OUTCOME" = "failure"
+          printf '%s\n' '{"schemaVersion":1,"test":"unauthorized-workflow","expected":"DENY","actual":"DENY","status":"PASS"}' > identity-negative.json
+
+      - name: Upload negative authorization evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-07-identity-negative-test
+          path: identity-negative.json
+          if-no-files-found: error
+          retention-days: 14

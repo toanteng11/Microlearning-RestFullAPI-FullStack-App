@@ -45,14 +45,24 @@ export async function getDatabaseStatus(): Promise<DatabaseStatus> {
 export async function connectToMongoDB(
   uri: string,
   logger: Logger,
-  options: { autoIndex?: boolean } = {},
+  options: {
+    autoIndex?: boolean;
+    maxPoolSize?: number;
+    minPoolSize?: number;
+    serverSelectionTimeoutMS?: number;
+    connectTimeoutMS?: number;
+    socketTimeoutMS?: number;
+  } = {},
 ): Promise<void> {
   mongoose.set('strictQuery', true);
 
   await mongoose.connect(uri, {
     autoIndex: options.autoIndex ?? true,
-    serverSelectionTimeoutMS: 10_000,
-    connectTimeoutMS: 10_000,
+    maxPoolSize: options.maxPoolSize ?? 10,
+    minPoolSize: options.minPoolSize ?? 0,
+    serverSelectionTimeoutMS: options.serverSelectionTimeoutMS ?? 10_000,
+    connectTimeoutMS: options.connectTimeoutMS ?? 10_000,
+    socketTimeoutMS: options.socketTimeoutMS ?? 30_000,
   });
 
   try {

@@ -16,6 +16,7 @@ export interface VersionData {
   version: string;
   environment: string;
   commitSha: string;
+  imageDigest: string;
   buildTime: string;
 }
 

@@ -53,3 +53,16 @@ Test report, route matrix, version response sample đã redaction.
 - AC-009..013 local/CI Pass;
 - routing/runtime contracts implemented;
 - no Phase 01-06 regression.
+
+## Current Status
+
+`LOCAL_PASS_REMOTE_PENDING` on `feature/phase-07-runtime-container`.
+
+- same-origin Web/API/Swagger runtime, route precedence, cache policy và security headers đã implement;
+- Production config fail-fast, bounded MongoDB pool/timeouts, health/readiness/version và graceful
+  shutdown `8s` đã implement;
+- API `237/237`, Web `126/126`, lint, format, typecheck, coverage build và production dependency audit
+  Pass ở local;
+- exact commit CI, P07-PR01 merge và post-merge main CI còn Pending.
+
+Evidence tạm thời: `../runtime-container-evidence.md`. Không đổi part sang `DONE` trước remote gates.

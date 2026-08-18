@@ -36,16 +36,20 @@ Nếu input image là tag hoặc digest thiếu, dừng.
 2. authenticate GCP bằng OIDC/WIF;
 3. `terraform init` với Staging backend;
 4. `terraform validate`;
-5. `terraform plan` với image digest/secret versions;
-6. kiểm tra plan không có destructive/unexpected cross-environment change;
-7. `terraform apply` exact saved plan;
-8. capture service URL, revision, service account và deployed digest;
-9. poll `/ready` trong startup budget;
-10. so sánh actual service URL với deterministic `PUBLIC_WEB_URL`/`ALLOWED_ORIGINS`;
-11. chạy post-deploy smoke/E2E;
-12. kiểm tra `/api/v1/system/version` khớp manifest;
-13. kiểm tra log/error/uptime signal;
-14. publish deployment record và mark Staging stable.
+5. first deploy tạo saved plan với `provision_service=false`, review policy rồi apply private seed Job;
+6. chạy seed Job để tạo indexes và synthetic data trước khi public service startup;
+7. tạo saved plan thứ hai với exact image digest/secret versions và `provision_service=true`;
+8. kiểm tra plan không có destructive/unexpected cross-environment/public IAM change;
+9. `terraform apply` exact saved service plan;
+10. capture service URL, revision, service account và deployed digest;
+11. poll `/ready` trong startup budget;
+12. so sánh actual service URL với deterministic `PUBLIC_WEB_URL`/`ALLOWED_ORIGINS`;
+13. chạy post-deploy smoke/E2E và kiểm tra version/digest;
+14. chạy observation window, post-apply drift plan và publish redacted deployment record.
+
+Workflow first deploy là `.github/workflows/first-deploy-staging.yml`. Chỉ dispatch từ `main`, nhập exact
+image digest, app version, UTC build time và confirmation chính xác `DEPLOY_STAGING`. Năm GitHub variables
+`GCP_SECRET_VERSION_*_STAGING` chỉ chứa numeric version IDs, không chứa secret values.
 
 ## 5. First-deploy additional checks
 

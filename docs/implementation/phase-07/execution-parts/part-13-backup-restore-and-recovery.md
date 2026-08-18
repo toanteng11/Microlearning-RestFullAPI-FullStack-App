@@ -55,3 +55,19 @@ backup gap.
 
 - AC-057..058 Pass;
 - Production backup gap explicit in P08 handoff.
+
+## Implementation Status
+
+`LOCAL_PASS_REMOTE_PENDING`.
+
+Đã triển khai `apps/api/src/scripts/atlas-recovery.ts` với hai lệnh:
+
+- `npm run atlas:backup`: export EJSON JSONL theo collection, sort theo `_id`, lưu checksum SHA-256,
+  index metadata và manifest không chứa URI/password;
+- `npm run atlas:restore`: kiểm tra checksum trước khi insert, chỉ restore vào database có prefix
+  `microlearning_restore_`, tạo lại index và sinh restore report có count/timing/invariant boundary.
+
+Guard bắt buộc là `APP_ENV=staging`, `RECOVERY_DATA_SCOPE=synthetic`, SRV connection string và database
+restore khác source. Công cụ không tự upload GCS và không tự revoke Atlas user; operator phải thực hiện
+securely theo runbook sau khi local contract Pass. Chưa chạy backup/restore thật trên Atlas nên AC-057..058
+chưa được đánh dấu Pass.
