@@ -47,4 +47,30 @@ describe('shutdownRuntime', () => {
     expect(closeIdleSpy).toHaveBeenCalledOnce();
     expect(closeAllSpy).toHaveBeenCalledOnce();
   });
+
+  it('force-closes lingering connections before the hard shutdown deadline', async () => {
+    const server = createServer();
+    let finishClose: ((error?: Error) => void) | undefined;
+    vi.spyOn(server, 'close').mockImplementation((callback) => {
+      finishClose = callback as (error?: Error) => void;
+      return server;
+    });
+    vi.spyOn(server, 'closeIdleConnections').mockImplementation(() => undefined);
+    const closeAllSpy = vi.spyOn(server, 'closeAllConnections').mockImplementation(() => {
+      finishClose?.();
+    });
+
+    await expect(
+      shutdownRuntime({
+        server,
+        disconnect: async () => undefined,
+        markNotReady: () => undefined,
+        logger: pino({ level: 'silent' }),
+        signal: 'SIGTERM',
+        timeoutMs: 40,
+      }),
+    ).resolves.toBeUndefined();
+
+    expect(closeAllSpy).toHaveBeenCalledOnce();
+  });
 });
