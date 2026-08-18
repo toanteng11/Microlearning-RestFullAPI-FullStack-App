@@ -23,9 +23,10 @@ for (const match of environmentSource.matchAll(explicitArrayPattern)) {
   for (const field of match[1].matchAll(/'([A-Z][A-Z0-9_]*)'/gu)) explicitFields.add(field[1]);
 }
 
-const missingMappings = [...explicitFields].filter(
-  (field) => !new RegExp(`\\b${field}\\s*=`, 'u').test(stagingSource),
-);
+const platformManagedFields = new Set(['PORT']);
+const missingMappings = [...explicitFields]
+  .filter((field) => !platformManagedFields.has(field))
+  .filter((field) => !new RegExp(`\\b${field}\\s*=`, 'u').test(stagingSource));
 if (missingMappings.length > 0) {
   throw new Error(
     `Terraform Staging is missing explicit runtime fields: ${missingMappings.join(', ')}`,
@@ -45,6 +46,15 @@ if (missingSecrets.length > 0) {
 }
 if (stagingSource.match(/version\s*=\s*"latest"/u)) {
   throw new Error('Cloud Run secret references must not use latest.');
+}
+const seedJobModule = stagingSource.match(/module\s+"cloud_run_seed_job"\s*\{([\s\S]*?)\n\}/u)?.[1];
+if (!seedJobModule) {
+  throw new Error('Terraform Staging is missing the cloud_run_seed_job module.');
+}
+if (/\bPORT\s*=/u.test(seedJobModule)) {
+  throw new Error(
+    'Cloud Run Jobs reserve PORT and must not receive it as an environment variable.',
+  );
 }
 if (secretModuleSource.includes('google_secret_manager_secret_version')) {
   throw new Error('Terraform must not manage Secret Manager payload versions.');
