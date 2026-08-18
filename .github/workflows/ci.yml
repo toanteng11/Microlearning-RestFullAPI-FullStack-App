@@ -140,6 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      NODE_ENV: test
       APP_ENV: test
       APP_VERSION: 0.2.0
       COMMIT_SHA: ${{ github.sha }}
