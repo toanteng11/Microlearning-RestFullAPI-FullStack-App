@@ -315,6 +315,10 @@ describe('loadEnvironment', () => {
     };
 
     expect(loadEnvironment(productionEnvironment).refreshCookieSecure).toBe(true);
+    expect(
+      loadEnvironment({ ...productionEnvironment, QUESTION_MEDIA_ALLOWED_HOSTS: '' })
+        .assessmentFeatures.questionMediaAllowedHosts,
+    ).toEqual([]);
     expect(() =>
       loadEnvironment({ ...productionEnvironment, REFRESH_COOKIE_SECURE: 'false' }),
     ).toThrow('REFRESH_COOKIE_SECURE must be true');

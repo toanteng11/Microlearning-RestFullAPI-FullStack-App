@@ -166,7 +166,7 @@ resource "google_monitoring_dashboard" "operations" {
                   filter = "${local.cloud_run_resource_filter} AND metric.type=\"run.googleapis.com/container/memory/utilizations\""
                   aggregation = {
                     alignmentPeriod    = "300s"
-                    perSeriesAligner   = "ALIGN_MEAN"
+                    perSeriesAligner   = "ALIGN_PERCENTILE_95"
                     crossSeriesReducer = "REDUCE_MEAN"
                   }
                 }
@@ -211,10 +211,6 @@ resource "google_monitoring_uptime_check_config" "health" {
   display_name = "${var.resource_prefix}health"
   timeout      = "10s"
   period       = "300s"
-  selected_regions = [
-    "REGION_ASIA_PACIFIC",
-  ]
-
   http_check {
     path         = "/health"
     port         = 443
@@ -281,24 +277,31 @@ resource "google_monitoring_alert_policy" "http_5xx" {
   enabled      = true
 
   documentation {
-    content   = "More than five HTTP 5xx responses were recorded in five minutes. Triage logs and consider exact-digest rollback. Runbook: phase-07/rollback-and-incident-response.md"
+    content   = "HTTP 5xx responses exceeded five percent for five minutes. Triage logs and consider exact-digest rollback. Runbook: phase-07/rollback-and-incident-response.md"
     mime_type = "text/markdown"
   }
 
   notification_channels = local.notification_channels
 
   conditions {
-    display_name = "${var.resource_prefix}http 5xx threshold"
+    display_name = "${var.resource_prefix}http 5xx ratio"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.http_5xx[0].name}\" resource.type=\"cloud_run_revision\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = 5
-      duration        = "300s"
+      filter             = "${local.cloud_run_resource_filter} AND metric.type=\"run.googleapis.com/request_count\" AND metric.labels.response_code_class=\"5xx\""
+      denominator_filter = "${local.cloud_run_resource_filter} AND metric.type=\"run.googleapis.com/request_count\""
+      comparison         = "COMPARISON_GT"
+      threshold_value    = 0.05
+      duration           = "300s"
 
       aggregations {
         alignment_period     = "300s"
-        per_series_aligner   = "ALIGN_SUM"
+        per_series_aligner   = "ALIGN_RATE"
+        cross_series_reducer = "REDUCE_SUM"
+      }
+
+      denominator_aggregations {
+        alignment_period     = "300s"
+        per_series_aligner   = "ALIGN_RATE"
         cross_series_reducer = "REDUCE_SUM"
       }
     }
@@ -324,31 +327,30 @@ resource "google_monitoring_alert_policy" "readiness" {
   enabled      = true
 
   documentation {
-    content   = "Readiness failures persisted for five minutes. Check Atlas TLS, secret versions and Cloud Run revision. Runbook: phase-07/observability-and-alerting.md"
+    content   = "A readiness request returned HTTP 5xx. Check Atlas TLS, secret versions and the active Cloud Run revision. Runbook: phase-07/observability-and-alerting.md"
     mime_type = "text/markdown"
   }
 
   notification_channels = local.notification_channels
 
   conditions {
-    display_name = "${var.resource_prefix}readiness threshold"
+    display_name = "${var.resource_prefix}readiness log match"
 
-    condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.readiness_failures[0].name}\" resource.type=\"cloud_run_revision\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = 0
-      duration        = "300s"
-
-      aggregations {
-        alignment_period     = "300s"
-        per_series_aligner   = "ALIGN_SUM"
-        cross_series_reducer = "REDUCE_SUM"
-      }
+    condition_matched_log {
+      filter = <<-EOT
+        ${local.cloud_run_resource_filter}
+        AND jsonPayload.http.route = "/ready"
+        AND jsonPayload.http.status >= 500
+      EOT
     }
   }
 
   alert_strategy {
     auto_close = "1800s"
+
+    notification_rate_limit {
+      period = "300s"
+    }
   }
 
   user_labels = {
@@ -384,7 +386,7 @@ resource "google_monitoring_alert_policy" "memory" {
 
       aggregations {
         alignment_period     = "300s"
-        per_series_aligner   = "ALIGN_MEAN"
+        per_series_aligner   = "ALIGN_PERCENTILE_95"
         cross_series_reducer = "REDUCE_MEAN"
       }
     }

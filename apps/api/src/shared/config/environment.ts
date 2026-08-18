@@ -96,6 +96,8 @@ const phaseSevenExplicitProductionFields = [
   'MONGODB_SOCKET_TIMEOUT_MS',
 ] as const;
 
+const explicitlyEmptyProductionFields = new Set(['QUESTION_MEDIA_ALLOWED_HOSTS']);
+
 const localImageDigest = `sha256:${'0'.repeat(64)}`;
 
 const environmentSchema = z.object({
@@ -490,7 +492,10 @@ export function loadEnvironment(input: NodeJS.ProcessEnv): AppConfig {
       ...phaseFiveExplicitProductionFields,
       ...phaseSixExplicitProductionFields,
       ...phaseSevenExplicitProductionFields,
-    ].filter((field) => !input[field]?.trim());
+    ].filter((field) => {
+      const value = input[field];
+      return value === undefined || (!explicitlyEmptyProductionFields.has(field) && !value.trim());
+    });
     if (missingFields.length > 0) {
       configurationError(
         `Production-like environments must explicitly configure ${missingFields.join(', ')}`,
