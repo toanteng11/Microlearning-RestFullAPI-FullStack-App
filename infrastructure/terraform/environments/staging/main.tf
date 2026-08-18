@@ -269,9 +269,7 @@ module "cloud_run_seed_job" {
   job_name              = local.seed_job_name
   image_ref             = var.image_ref
   service_account_email = module.iam.service_account_emails[local.seed_account_id]
-  environment_variables = merge(local.runtime_environment_variables, {
-    PORT = "8080"
-  })
+  environment_variables = local.runtime_environment_variables
   secret_environment_variables = merge(local.runtime_secret_environment_variables, {
     SEED_DEMO_PASSWORD = {
       secret_id = "ml-staging-seed-demo-password"
