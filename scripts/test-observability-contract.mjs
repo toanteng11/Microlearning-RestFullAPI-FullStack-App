@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const terraform = readFileSync('infrastructure/terraform/modules/monitoring/main.tf', 'utf8');
 const variables = readFileSync('infrastructure/terraform/modules/monitoring/variables.tf', 'utf8');
+const staging = readFileSync('infrastructure/terraform/environments/staging/main.tf', 'utf8');
 const logger = readFileSync('apps/api/src/shared/logging/logger.ts', 'utf8');
 
 for (const resource of [
@@ -30,6 +31,10 @@ for (const releaseField of [
 for (const term of ['service_name', 'service_host', 'notification_email', 'provision']) {
   assert.ok(variables.includes(`variable "${term}"`), `Missing monitoring input: ${term}`);
 }
+assert.ok(
+  staging.includes('image_digest       = local.image_digest'),
+  'Staging Monitoring must receive the parsed immutable image digest',
+);
 for (const term of [
   'redact:',
   'req.headers.authorization',

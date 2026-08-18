@@ -332,6 +332,6 @@ module "monitoring_contract" {
   service_host       = replace(local.canonical_url, "https://", "")
   app_version        = var.app_version
   commit_sha         = var.commit_sha
-  image_digest       = replace(var.image_ref, ".*@", "")
+  image_digest       = local.image_digest
   notification_email = var.monitoring_notification_email
 }
