@@ -29,6 +29,7 @@ describe('shutdownRuntime', () => {
   it('fails within the configured shutdown budget', async () => {
     const server = createServer();
     const closeSpy = vi.spyOn(server, 'close').mockImplementation(() => server);
+    const closeIdleSpy = vi.spyOn(server, 'closeIdleConnections');
     const closeAllSpy = vi.spyOn(server, 'closeAllConnections');
 
     await expect(
@@ -43,6 +44,7 @@ describe('shutdownRuntime', () => {
     ).rejects.toThrow('Graceful shutdown timed out');
 
     expect(closeSpy).toHaveBeenCalledOnce();
+    expect(closeIdleSpy).toHaveBeenCalledOnce();
     expect(closeAllSpy).toHaveBeenCalledOnce();
   });
 });
