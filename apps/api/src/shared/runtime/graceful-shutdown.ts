@@ -5,6 +5,8 @@ import type { Logger } from 'pino';
 function closeServer(server: Server): Promise<void> {
   return new Promise((resolve, reject) => {
     server.close((error) => (error ? reject(error) : resolve()));
+    // Stop idle keep-alive sockets from delaying termination after traffic has drained.
+    server.closeIdleConnections();
   });
 }
 

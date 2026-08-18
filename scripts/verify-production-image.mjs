@@ -89,10 +89,13 @@ async function verifyBrowserRuntime() {
       assert(response?.status() === 200, `Browser navigation ${path} did not return 200`);
       const root = page.locator('#root');
       await root.waitFor({ state: 'visible' });
-      assert(
-        (await root.innerText()).trim().length > 0,
-        `Browser navigation ${path} rendered blank`,
-      );
+      const renderDeadline = Date.now() + 10_000;
+      let renderedContent = '';
+      while (!renderedContent && Date.now() < renderDeadline) {
+        renderedContent = (await root.innerText()).trim();
+        if (!renderedContent) await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      assert(renderedContent.length > 0, `Browser navigation ${path} rendered blank`);
     }
 
     assert(pageErrors.length === 0, `Browser runtime errors:\n${pageErrors.join('\n')}`);
@@ -126,8 +129,8 @@ try {
   environment.set('BUILD_TIME', inspection.Config.Labels['org.opencontainers.image.created']);
   environment.set('PORT', '8080');
   environment.set('MONGODB_URI', 'mongodb://mongodb:27017/microlearning-p07?replicaSet=rs0');
-  environment.set('PUBLIC_WEB_URL', 'https://microlearning-smoke.example.test');
-  environment.set('ALLOWED_ORIGINS', 'https://microlearning-smoke.example.test');
+  environment.set('PUBLIC_WEB_URL', `http://127.0.0.1:${hostPort}`);
+  environment.set('ALLOWED_ORIGINS', `http://127.0.0.1:${hostPort}`);
   environment.set('ACCESS_TOKEN_SECRET', '1'.repeat(64));
   environment.set('AUTH_IDENTITY_PEPPER', '2'.repeat(64));
   environment.set('CLASSROOM_CODE_PEPPER', '3'.repeat(64));
