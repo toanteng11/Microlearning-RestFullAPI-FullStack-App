@@ -53,7 +53,7 @@ for (const resource of plan.resource_changes ?? []) {
     resource.type === 'google_cloud_run_v2_service_iam_member' &&
     after?.role === 'roles/run.invoker' &&
     after?.member === 'allUsers' &&
-    after?.name === 'microlearning-staging';
+    after?.name?.endsWith('microlearning-staging');
 
   if (actions.includes('delete')) {
     addViolation('DESTRUCTIVE_CHANGE', address, `Plan actions are ${actions.join(',')}.`);
