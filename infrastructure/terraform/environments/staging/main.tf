@@ -8,7 +8,7 @@ locals {
   repository_path     = "${var.region}-docker.pkg.dev/${var.project_id}/microlearning/microlearning-app"
   service_name        = "microlearning-staging"
   seed_job_name       = "microlearning-staging-seed"
-  canonical_url       = "https://${local.service_name}-${var.project_number}.${var.region}.run.app"
+  canonical_url       = "https://${local.service_name}-bu73wlfj5a-as.a.run.app"
   image_digest        = split("@", var.image_ref)[1]
 
   runtime_environment_variables = {
