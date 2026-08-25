@@ -10,8 +10,16 @@ const digestRef =
   'asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:' +
   'a'.repeat(64);
 
-function resource(type, actions, after = {}, address = `test.${type}`) {
-  return { address, mode: 'managed', type, change: { actions, after } };
+function resource(type, actions, after = {}, address = `test.${type}`, before = null) {
+  return { address, mode: 'managed', type, change: { actions, before, after } };
+}
+
+function stagingHealthUptimeCheck(host) {
+  return {
+    display_name: 'microlearning-staging-health',
+    http_check: [{ path: '/health', port: 443, use_ssl: true, validate_ssl: true }],
+    monitored_resource: [{ type: 'uptime_url', labels: { host } }],
+  };
 }
 
 function execute(name, resources, expectedStatus, options = {}) {
@@ -44,6 +52,32 @@ try {
   );
   execute('destroy', [resource('google_cloud_run_v2_service', ['delete'], {})], 1);
   execute('replace', [resource('google_service_account', ['delete', 'create'], {})], 1);
+  execute(
+    'approved-staging-health-uptime-host-replacement',
+    [
+      resource(
+        'google_monitoring_uptime_check_config',
+        ['delete', 'create'],
+        stagingHealthUptimeCheck('microlearning-staging-bu73wlfj5a-as.a.run.app'),
+        'module.monitoring_contract.google_monitoring_uptime_check_config.health[0]',
+        stagingHealthUptimeCheck('microlearning-staging-759791798260.asia-southeast1.run.app'),
+      ),
+    ],
+    0,
+  );
+  execute(
+    'unapproved-staging-health-uptime-host-replacement',
+    [
+      resource(
+        'google_monitoring_uptime_check_config',
+        ['delete', 'create'],
+        stagingHealthUptimeCheck('microlearning-staging-bu73wlfj5a-as.a.run.app'),
+        'module.monitoring_contract.google_monitoring_uptime_check_config.health[0]',
+        stagingHealthUptimeCheck('unexpected-host.example.com'),
+      ),
+    ],
+    1,
+  );
   execute(
     'public-iam',
     [resource('google_project_iam_member', ['create'], { member: 'allUsers' })],
