@@ -5,3 +5,4 @@ coverage-integration
 business-analysis
 docs
 package-lock.json
+infrastructure/terraform/environments/staging/plan.json

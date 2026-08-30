@@ -40,6 +40,7 @@ test-results/
 *.tfstate
 *.tfstate.*
 *.tfplan
+infrastructure/terraform/environments/staging/plan.json
 *.tfvars
 !*.tfvars.example
 crash.log
