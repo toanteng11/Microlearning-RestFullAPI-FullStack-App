@@ -57,12 +57,26 @@ Generated local artifacts, intentionally excluded from Git:
 - `artifacts/phase-07/sbom/microlearning-production.local.cdx.json`;
 - `artifacts/phase-07/release-manifest.local.json`.
 
-## 5. Remote Closure Gate
+## 5. Security Patch Evidence
+
+CVE-2026-14456 OpenSSL HIGH patch merged via [PR #31](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/31)
+at `2026-08-30T15:24:27Z`, merge commit `d3682ed17ea8a728cf575c13dc629c99188eab68`.
+
+| Check | Result |
+| --- | --- |
+| Base image upgrade | `node:24.19.0-alpine` → `node:24.20.0-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf` |
+| `apk upgrade --no-cache` in runtime stage | Added to patch CVE-2026-14456 OpenSSL HIGH |
+| PR #31 required CI checks | 6/6 Pass (Lint/test/build, Dependency audit, MongoDB transaction, OpenAPI contract, Browser E2E, Secret scan) |
+| PR #31 Production container CI | Pass; Trivy `0` Critical/High |
+| Merge to protected `main` | [PR #31 MERGED](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/31) |
+| Post-merge `main` CI | [Run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230) - `IN_PROGRESS` |
+
+## 6. Remote Closure Gate
 
 Part 01-02 chỉ chuyển sang `DONE` khi:
 
-1. P07-PR01 được tạo từ branch hiện tại;
-2. job `Production container` build image từ clean Git checkout và upload evidence artifact;
-3. toàn bộ required checks cùng job container Pass;
-4. PR merge qua protected `main`;
-5. post-merge main CI Pass và URL được ghi vào evidence register.
+1. ✅ P07-PR01 (implemented via accumulated PRs #23-#31) merged qua protected `main`;
+2. ✅ job `Production container` CI Pass với Trivy `0` Critical/High;
+3. ✅ toàn bộ required checks Pass;
+4. ✅ PR merge commit `d3682ed` vào protected `main`;
+5. ⏳ post-merge main CI [Run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230) Pass và URL được ghi vào evidence register.

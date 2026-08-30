@@ -19,8 +19,8 @@
 - [x] Tạo Production multi-stage non-root image.
 - [x] Bổ sung `.dockerignore`, image content checks.
 - [x] Container smoke, scan và image-bound SBOM Pass ở local.
-- [ ] P07-PR01 clean-checkout container CI Pass.
-- [ ] P07-PR01 merge và post-merge main CI Pass để đóng Part 01-02.
+- [x] P07-PR01 clean-checkout container CI Pass. Evidence: PR #31 all 6 required checks + Production container Pass; CI run https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319024565
+- [x] P07-PR01 merge và post-merge main CI Pass để đóng Part 01-02. Merge commit `d3682ed` vào protected `main`; post-merge CI https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230
 
 ## Terraform And Cloud Security
 
