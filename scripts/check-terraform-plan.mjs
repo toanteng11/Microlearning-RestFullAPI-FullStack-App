@@ -11,6 +11,10 @@ const secretCanary = process.env.TF_SECRET_CANARY;
 const immutableImagePattern =
   /^[a-z0-9-]+-docker\.pkg\.dev\/[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+@sha256:[a-f0-9]{64}$/;
 const publicMembers = new Set(['allUsers', 'allAuthenticatedUsers']);
+const stagingHealthUptimeAddress =
+  'module.monitoring_contract.google_monitoring_uptime_check_config.health[0]';
+const legacyStagingCanonicalHost = 'microlearning-staging-759791798260.asia-southeast1.run.app';
+const currentStagingCanonicalHost = 'microlearning-staging-bu73wlfj5a-as.a.run.app';
 
 if (!existsSync(planPath)) throw new Error(`Terraform plan JSON not found: ${planPath}`);
 
@@ -20,6 +24,41 @@ const violations = [];
 
 function addViolation(code, address, detail) {
   violations.push({ code, address, detail });
+}
+
+function firstBlock(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function isStagingHealthUptimeCheck(config, expectedHost) {
+  const httpCheck = firstBlock(config?.http_check);
+  const monitoredResource = firstBlock(config?.monitored_resource);
+
+  return (
+    config?.display_name === 'microlearning-staging-health' &&
+    httpCheck?.path === '/health' &&
+    httpCheck?.port === 443 &&
+    httpCheck?.use_ssl === true &&
+    httpCheck?.validate_ssl === true &&
+    monitoredResource?.type === 'uptime_url' &&
+    monitoredResource?.labels?.host === expectedHost
+  );
+}
+
+function isApprovedStagingHealthUptimeReplacement(resource, actions) {
+  const before = resource.change?.before;
+  const after = resource.change?.after;
+
+  return (
+    expectedEnvironment === 'staging' &&
+    resource.type === 'google_monitoring_uptime_check_config' &&
+    resource.address === stagingHealthUptimeAddress &&
+    actions.length === 2 &&
+    actions[0] === 'delete' &&
+    actions[1] === 'create' &&
+    isStagingHealthUptimeCheck(before, legacyStagingCanonicalHost) &&
+    isStagingHealthUptimeCheck(after, currentStagingCanonicalHost)
+  );
 }
 
 function visit(value, callback, path = []) {
@@ -47,6 +86,10 @@ for (const resource of plan.resource_changes ?? []) {
   const address = resource.address ?? resource.type ?? 'unknown';
   const actions = resource.change?.actions ?? [];
   const after = resource.change?.after;
+  const approvedStagingHealthUptimeReplacement = isApprovedStagingHealthUptimeReplacement(
+    resource,
+    actions,
+  );
   const approvedPublicInvoker =
     allowPublicCloudRunInvoker &&
     expectedEnvironment === 'staging' &&
@@ -55,7 +98,7 @@ for (const resource of plan.resource_changes ?? []) {
     after?.member === 'allUsers' &&
     after?.name?.endsWith('microlearning-staging');
 
-  if (actions.includes('delete')) {
+  if (actions.includes('delete') && !approvedStagingHealthUptimeReplacement) {
     addViolation('DESTRUCTIVE_CHANGE', address, `Plan actions are ${actions.join(',')}.`);
   }
   if (resource.type === 'google_service_account_key') {
