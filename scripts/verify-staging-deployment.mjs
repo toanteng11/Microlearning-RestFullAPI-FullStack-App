@@ -71,16 +71,33 @@ async function main() {
   await request('/health', 'application/json');
   record('liveness', 'PASS', '/health returned 200');
 
-  const versionResponse = await request('/api/v1/system/version', 'application/json');
-  const versionBody = await versionResponse.json();
-  const actual = versionBody?.data;
-  if (
-    actual?.version !== expectedVersion ||
-    actual?.commitSha !== expectedCommit ||
-    actual?.imageDigest !== expectedDigest ||
-    actual?.environment !== 'staging'
-  ) {
-    throw new Error('Version endpoint does not match the approved release identity.');
+  let versionMatched = false;
+  let versionError = 'not attempted';
+  for (let attempt = 1; attempt <= 12; attempt += 1) {
+    try {
+      const versionResponse = await request('/api/v1/system/version', 'application/json');
+      const versionBody = await versionResponse.json();
+      const actual = versionBody?.data;
+      if (
+        actual?.version === expectedVersion &&
+        actual?.commitSha === expectedCommit &&
+        actual?.imageDigest === expectedDigest &&
+        actual?.environment === 'staging'
+      ) {
+        versionMatched = true;
+        break;
+      }
+      versionError = `Mismatched identity on attempt ${attempt}. Expected ${expectedCommit}, got ${actual?.commitSha}`;
+    } catch (error) {
+      versionError = error.message;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+
+  if (!versionMatched) {
+    throw new Error(
+      `Version endpoint does not match the approved release identity: ${versionError}`,
+    );
   }
   record('release-identity', 'PASS', 'version, commit, digest and environment match');
 
