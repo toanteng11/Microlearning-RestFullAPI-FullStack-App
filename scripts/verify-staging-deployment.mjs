@@ -95,7 +95,9 @@ async function main() {
   }
 
   if (!versionMatched) {
-    throw new Error(`Version endpoint does not match the approved release identity: ${versionError}`);
+    throw new Error(
+      `Version endpoint does not match the approved release identity: ${versionError}`,
+    );
   }
   record('release-identity', 'PASS', 'version, commit, digest and environment match');
 
