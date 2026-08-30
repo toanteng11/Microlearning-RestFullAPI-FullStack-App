@@ -224,6 +224,10 @@ resource "google_monitoring_uptime_check_config" "health" {
       host = var.service_host
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "google_monitoring_alert_policy" "uptime" {
@@ -232,6 +236,10 @@ resource "google_monitoring_alert_policy" "uptime" {
   display_name = "${var.resource_prefix}uptime failure"
   combiner     = "OR"
   enabled      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   documentation {
     content   = "Health uptime failed repeatedly. Check the active Cloud Run revision, readiness and Atlas dependency. Runbook: phase-07/observability-and-alerting.md"

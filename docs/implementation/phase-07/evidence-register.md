@@ -21,9 +21,9 @@
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P07-EV-007 | local Production image smoke | Local Pass / Remote Pending | `runtime-container-evidence.md`; generated `artifacts/phase-07/smoke/production-image-smoke.json` is gitignored |
-| P07-EV-008 | image non-root/content check | Local Pass / Remote Pending | `runtime-container-evidence.md`; CI artifact required for final Pass |
-| P07-EV-009 | image scan/SBOM | Local Pass / Remote Pending | `runtime-container-evidence.md`; generated Trivy/CycloneDX artifacts are gitignored; P07-PR01 artifact Pending |
+| P07-EV-007 | local Production image smoke | **Pass** | `runtime-container-evidence.md`; CI artifact `phase-07-production-container-evidence` uploaded by [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); commit `d3682ed` |
+| P07-EV-008 | image non-root/content check | **Pass** | `runtime-container-evidence.md`; `Production container` job Pass 1m50s in [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); non-root + shutdown verified |
+| P07-EV-009 | image scan/SBOM | **Pass** | CI artifact `phase-07-production-container-evidence` (Trivy + CycloneDX SBOM) uploaded by [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); `0` Critical/High findings |
 | P07-EV-010 | Terraform fmt/validate/security | Local Pass / Remote Pending | `terraform-identity-supply-chain-evidence.md`; fmt/init/validate/policy/Trivy Pass |
 | P07-EV-011 | Terraform Staging plan/apply | Source Ready / Cloud Pending | plan workflow/policy implemented; Cloud plan/apply not run |
 | P07-EV-012 | remote state protection/no-secret | Local Contract Pass / Cloud Pending | bootstrap config, canary policy tests and recovery runbook |
@@ -65,9 +65,9 @@
 | --- | --- | --- | --- |
 | P07-EV-034 | clean-clone release verification | Pending | report/commit |
 | P07-EV-035 | acceptance `66/66` | Pending | `acceptance-criteria.md` |
-| P07-EV-036 | release PR required checks | Pending | PR URL |
-| P07-EV-037 | post-merge main CI | Pending | Actions URL |
-| P07-EV-038 | latest Staging CD/smoke | Pending | Actions URL |
+| P07-EV-036 | release PR required checks | **Pass** | [PR #31](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/31) - 6/6 required checks Pass; squash merged `d3682ed` at `2026-08-30T15:24:27Z` |
+| P07-EV-037 | post-merge main CI | **Pass** | [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); commit `d3682ed`; **7/7 jobs Pass** (status: `completed`, conclusion: `success`) |
+| P07-EV-038 | latest Staging CD/smoke | **In Progress** | [Build And Publish #33319705845](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319705845) triggered via `workflow_run`; Deploy Staging will follow after publish |
 | P07-EV-039 | Production workflow guard validation | Pending | test/run |
 | P07-EV-040 | Phase 08 handoff acceptance | Pending | `phase-08-handoff.md` |
 | P07-EV-041 | Production promotion contract | Local Pass / Remote Pending | `promotion-contract.mjs`, `promote-production.yml` |
