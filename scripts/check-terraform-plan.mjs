@@ -54,8 +54,8 @@ function isApprovedStagingHealthUptimeReplacement(resource, actions) {
     resource.type === 'google_monitoring_uptime_check_config' &&
     resource.address === stagingHealthUptimeAddress &&
     actions.length === 2 &&
-    actions[0] === 'delete' &&
-    actions[1] === 'create' &&
+    actions.includes('delete') &&
+    actions.includes('create') &&
     isStagingHealthUptimeCheck(before, legacyStagingCanonicalHost) &&
     isStagingHealthUptimeCheck(after, currentStagingCanonicalHost)
   );
