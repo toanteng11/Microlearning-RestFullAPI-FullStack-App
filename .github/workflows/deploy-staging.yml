@@ -236,6 +236,12 @@ jobs:
           "${{ steps.release.outputs.image_ref }}"
           artifacts/phase-07/staging/deployment-smoke.json
 
+      - name: Refresh Terraform state to sync computed outputs
+        working-directory: infrastructure/terraform/environments/staging
+        run: >-
+          terraform apply -input=false -auto-approve -refresh-only
+          -var="image_ref=${{ steps.release.outputs.image_ref }}"
+
       - name: Verify post-apply drift is empty
         working-directory: infrastructure/terraform/environments/staging
         run: >-
