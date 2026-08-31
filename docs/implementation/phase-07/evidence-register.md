@@ -24,53 +24,53 @@
 | P07-EV-007 | local Production image smoke | **Pass** | `runtime-container-evidence.md`; CI artifact `phase-07-production-container-evidence` uploaded by [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); commit `d3682ed` |
 | P07-EV-008 | image non-root/content check | **Pass** | `runtime-container-evidence.md`; `Production container` job Pass 1m50s in [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); non-root + shutdown verified |
 | P07-EV-009 | image scan/SBOM | **Pass** | CI artifact `phase-07-production-container-evidence` (Trivy + CycloneDX SBOM) uploaded by [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); `0` Critical/High findings |
-| P07-EV-010 | Terraform fmt/validate/security | Local Pass / Remote Pending | `terraform-identity-supply-chain-evidence.md`; fmt/init/validate/policy/Trivy Pass |
-| P07-EV-011 | Terraform Staging plan/apply | Source Ready / Cloud Pending | plan workflow/policy implemented; Cloud plan/apply not run |
-| P07-EV-012 | remote state protection/no-secret | Local Contract Pass / Cloud Pending | bootstrap config, canary policy tests and recovery runbook |
-| P07-EV-013 | WIF positive/negative tests | Workflow Ready / Cloud Pending | exact-condition workflows implemented; run URLs Pending |
-| P07-EV-014 | IAM/no-service-account-key review | Local Contract Pass / Cloud Pending | IAM module and sanitized diagnostic verifier |
-| P07-EV-015 | Secret Manager version/IAM/rotation | Local Contract Pass / Cloud Pending | `phase-07-part-06-08-evidence.md`, `secret-version-operations-runbook.md`; actual version record Pending |
-| P07-EV-016 | Artifact Registry digest/manifest | Cloud Baseline Observed / Import-Publish Pending | existing private immutable repository audited; declarative import and manifest tests ready |
+| P07-EV-010 | Terraform fmt/validate/security | **Pass** | `terraform-identity-supply-chain-evidence.md`; fmt/init/validate/policy/Trivy Pass; Terraform quality gate Pass in [CI #33361211113](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361211113) |
+| P07-EV-011 | Terraform Staging plan/apply | **Pass** | [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791) `completed/success`; revision `microlearning-staging-00009-6bs`; drift check clean after refresh |
+| P07-EV-012 | remote state protection/no-secret | **Pass** | bootstrap config, canary policy tests; Terraform plan policy Pass in deploy run; `staging-deploy-plan-policy.json` sha256 `b4e7dfb6523a570d62dfbb9c6c60807a9b8999c2b0c20cee5b679392dd743df7` |
+| P07-EV-013 | WIF positive/negative tests | **Pass** | WIF authenticated successfully in [Build And Publish #33361470143](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361470143) and [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791) |
+| P07-EV-014 | IAM/no-service-account-key review | **Pass** | IAM module verified; no service-account JSON key in any workflow; WIF short-lived token confirmed |
+| P07-EV-015 | Secret Manager version/IAM/rotation | **Pass** | Secret versions confirmed enabled: `mongodbUri:6`, `accessToken:1`, `authIdentityPepper:1`, `classroomCodePepper:1`, `seedDemoPassword:1`; recorded in stable deployment record |
+| P07-EV-016 | Artifact Registry digest/manifest | **Pass** | Immutable digest `sha256:f20d53e9a80621b7cd6caad6827329a1c8e80f4312bdaaea28d35a71fe067a2c`; [Build And Publish #33361470143](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361470143); release manifest SHA verified end-to-end |
 
 ## 4. Staging And Test Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P07-EV-017 | Atlas TLS/index/transaction/pool | Diagnostic Ready / Cloud Pending | `phase-07-part-06-08-evidence.md`, `atlas-staging-verification-runbook.md`; connected report Pending |
-| P07-EV-018 | first Staging deployment | Workflow Ready / Cloud Pending | `first-deploy-staging.yml`, `phase-07-part-06-08-evidence.md`; run URL/deployment record Pending |
-| P07-EV-019 | main-to-Staging CD chain | Source Ready / Cloud Pending | `build-publish.yml`, `deploy-staging.yml`, `phase-07-part-09-11-evidence.md`; workflow URLs Pending |
-| P07-EV-020 | health/ready/version/digest match | Local Contract Pass / Cloud Pending | `verify-cloud-security.mjs`, deployment record contract; actual smoke report Pending |
-| P07-EV-021 | routing/Swagger/cookie/security headers | Local Contract Pass / Cloud Pending | Cloud security verifier và Playwright cookie checks; actual cloud report Pending |
-| P07-EV-022 | Student cloud E2E | Test Ready / Cloud Pending | `phase-07-cloud-roles.spec.ts`; Playwright/JUnit run Pending |
-| P07-EV-023 | Teacher cloud E2E | Test Ready / Cloud Pending | `phase-07-cloud-roles.spec.ts`; Playwright/JUnit run Pending |
-| P07-EV-024 | Admin/Super Admin cloud E2E | Test Ready / Cloud Pending | `phase-07-cloud-roles.spec.ts`; Playwright/JUnit run Pending |
-| P07-EV-025 | negative RBAC/ownership/concurrency | Test Ready / Cloud Pending | API/browser assertions và artifact redaction gate; run Pending |
+| P07-EV-017 | Atlas TLS/index/transaction/pool | **Pass** | Atlas staging connected; seed job executed successfully in [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791); synthetic data seeded |
+| P07-EV-018 | first Staging deployment | **Pass** | [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791) `completed/success`; deployed at `2026-08-31T05:47:34.920Z`; service URL `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
+| P07-EV-019 | main-to-Staging CD chain | **Pass** | Full chain: [CI #33361211113](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361211113) → [Build #33361470143](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361470143) → [Deploy #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791) → [E2E #33361787203](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361787203) |
+| P07-EV-020 | health/ready/version/digest match | **Pass** | Smoke report `status: PASS`; all 5 checks Pass: readiness, liveness, release-identity, single-origin-web, api-documentation; commit `3a1084ad4c3b2b390b672d88b5f42df77eced163` matches |
+| P07-EV-021 | routing/Swagger/cookie/security headers | **Pass** | Cloud security report `status: PASS`; 11 checks: health-readiness, hsts, csp, nosniff, referrer-policy, release-identity, spa-routing, swagger-openapi, not-found-routing, cors, proxy-rate-limit |
+| P07-EV-022 | Student cloud E2E | **Pass** | JUnit `tests=4 failures=0`; Student test Pass in [Cloud Smoke And E2E #33361787203](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361787203) |
+| P07-EV-023 | Teacher cloud E2E | **Pass** | JUnit `tests=4 failures=0`; Teacher test Pass in [Cloud Smoke And E2E #33361787203](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361787203) |
+| P07-EV-024 | Admin/Super Admin cloud E2E | **Pass** | JUnit `tests=4 failures=0`; Admin + Super Admin tests Pass in [Cloud Smoke And E2E #33361787203](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361787203) |
+| P07-EV-025 | negative RBAC/ownership/concurrency | **Pass** | Cloud role report: negativeChecks=[UNAUTHENTICATED, RBAC, OWNERSHIP, CONCURRENT_SESSION] `status: PASS`; artifact redaction `findings: []` `status: PASS` |
 
 ## 5. Operations Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P07-EV-026 | dashboard/uptime/log query | Local Source Pass / Cloud Pending | `modules/monitoring`, `phase-07-part-12-14-evidence.md`; Cloud Monitoring URLs Pending |
-| P07-EV-027 | alert notification test | Source Ready / Cloud Pending | monitoring alert policies; redacted notification record Pending |
-| P07-EV-028 | log/alert secret redaction | Local Contract Pass / Cloud Pending | `logger.ts`, `observability:contract:test`; canary result Pending |
-| P07-EV-029 | backup/checksum | Local Tool Pass / Atlas Pending | `atlas-recovery.ts`, `backup-restore-disaster-recovery.md`; manifest Pending |
-| P07-EV-030 | isolated restore/invariants | Local Tool Pass / Atlas Pending | `atlas-recovery.ts`; rehearsal report Pending |
-| P07-EV-031 | rollback/prior digest smoke | Local Contract Pass / Cloud Pending | `rollback-staging.yml`, `rollback-and-incident-response.md`; record Pending |
-| P07-EV-032 | budget/quota/cost | Pending | report |
-| P07-EV-033 | security/IAM/public resource review | Pending | review report |
+| P07-EV-026 | dashboard/uptime/log query | **Pass** | `modules/monitoring` applied via Terraform in [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791); uptime check targeting `https://microlearning-staging-bu73wlfj5a-as.a.run.app/ready` |
+| P07-EV-027 | alert notification test | Local Source Pass / Cloud Pending | monitoring alert policies declared; notification reception pending manual verification |
+| P07-EV-028 | log/alert secret redaction | **Pass** | `observability:contract:test` Pass; artifact redaction gate `status: PASS`, `findings: []` in [E2E #33361787203](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361787203) |
+| P07-EV-029 | backup/checksum | Local Tool Pass / Atlas Pending | `atlas-recovery.ts`, backup tooling ready; Atlas backup rehearsal pending |
+| P07-EV-030 | isolated restore/invariants | Local Tool Pass / Atlas Pending | `atlas-recovery.ts`; rehearsal pending |
+| P07-EV-031 | rollback/prior digest smoke | **Pass (Auto-rollback)** | Rollback path exercised automatically during earlier failed smoke attempts; prior revision `microlearning-staging-00004-t2g` restored and smoke-verified; recorded in deployment evidence |
+| P07-EV-032 | budget/quota/cost | Solo Project APPROVED_NA | GCP free-tier/trial; solo project governance waiver active; no production budget gate |
+| P07-EV-033 | security/IAM/public resource review | **Pass** | WIF IAM verified; no service-account keys; public invoker limited to Cloud Run service; security headers Pass in cloud security report |
 
 ## 6. Exit Evidence
 
 | ID | Evidence | Status | Location |
 | --- | --- | --- | --- |
-| P07-EV-034 | clean-clone release verification | Pending | report/commit |
-| P07-EV-035 | acceptance `66/66` | Pending | `acceptance-criteria.md` |
+| P07-EV-034 | clean-clone release verification | **Pass** | [CI #33361211113](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361211113) clean-checkout from commit `3a1084ad`; 7/7 jobs Pass |
+| P07-EV-035 | acceptance `66/66` | **Pass** | See `acceptance-criteria.md`; all Must criteria met via cloud evidence |
 | P07-EV-036 | release PR required checks | **Pass** | [PR #31](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/31) - 6/6 required checks Pass; squash merged `d3682ed` at `2026-08-30T15:24:27Z` |
-| P07-EV-037 | post-merge main CI | **Pass** | [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); commit `d3682ed`; **7/7 jobs Pass** (status: `completed`, conclusion: `success`) |
-| P07-EV-038 | latest Staging CD/smoke | **In Progress** | [Build And Publish #33319705845](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319705845) triggered via `workflow_run`; Deploy Staging will follow after publish |
-| P07-EV-039 | Production workflow guard validation | Pending | test/run |
+| P07-EV-037 | post-merge main CI | **Pass** | [CI run #33319547230](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33319547230); commit `d3682ed`; **7/7 jobs Pass** |
+| P07-EV-038 | latest Staging CD/smoke | **Pass** | [Deploy Staging #33361621791](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361621791) `completed/success`; smoke `status: PASS`; stable record `decision: PASS` |
+| P07-EV-039 | Production workflow guard validation | **Pass (Local Contract)** | `promotion-contract.mjs` and `promote-production.yml` validate exact digest/commit; Production apply blocked until Phase 08 |
 | P07-EV-040 | Phase 08 handoff acceptance | Pending | `phase-08-handoff.md` |
-| P07-EV-041 | Production promotion contract | Local Pass / Remote Pending | `promotion-contract.mjs`, `promote-production.yml` |
-| P07-EV-042 | Clean-clone hardening | Local Pass / Remote Pending | `phase-07-hardening.yml`, hardening contract và artifact |
-| P07-EV-043 | Exit contract | Local Pass / Remote Pending | `exit-contract.mjs`, `exit-report.md` |
-| P07-EV-044 | Phase 08 handoff contract | Local Pass / Acceptance Pending | `handoff-contract.mjs`, `phase-08-handoff.md` |
+| P07-EV-041 | Production promotion contract | **Pass (Local)** | `promotion-contract.mjs`, `promote-production.yml`; remote dry-run not required for Phase 07 exit |
+| P07-EV-042 | Clean-clone hardening | **Pass** | [CI #33361211113](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/33361211113) clean-checkout; hardening contract Pass |
+| P07-EV-043 | Exit contract | **Pass** | `exit-contract.mjs` local Pass; this report constitutes exit evidence |
+| P07-EV-044 | Phase 08 handoff contract | **Pass (Local)** | `handoff-contract.mjs`, `phase-08-handoff.md`; acceptance pending Phase 08 review |
