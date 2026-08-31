@@ -108,6 +108,11 @@ resource "google_cloud_run_v2_service" "this" {
     }
   }
 
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
   lifecycle {
     prevent_destroy = true
   }
