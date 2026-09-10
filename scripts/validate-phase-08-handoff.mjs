@@ -1,15 +1,27 @@
-import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { assertValidPhase08Handoff } from './lib/handoff-contract.mjs';
+import { readJson, writeValidationReport, emitValidationEvent } from './lib/phase-08-cli.mjs';
+import { assertPhase08Handoff } from './lib/handoff-contract.mjs';
 
-const pathValue = process.argv[2];
-if (!pathValue)
-  throw new Error('Usage: node scripts/validate-phase-08-handoff.mjs <handoff-record.json>');
-const path = resolve(pathValue);
-if (!existsSync(path)) throw new Error(`Handoff record not found: ${path}`);
-const record = JSON.parse(readFileSync(path, 'utf8'));
-assertValidPhase08Handoff(record);
-process.stdout.write(
-  `${JSON.stringify({ event: 'phase-08.handoff.validated', accepted: record.accepted })}\n`,
-);
+const [inputPathValue, outputPathValue] = process.argv.slice(2);
+
+if (!inputPathValue) {
+  console.error(
+    'Usage: node scripts/validate-phase-08-handoff.mjs <handoff.json> [validation-report.json]',
+  );
+  process.exit(1);
+}
+
+try {
+  const inputPath = resolve(process.cwd(), inputPathValue);
+  const { value: record } = readJson(inputPath, 'Phase 08 handoff record');
+  assertPhase08Handoff(record);
+  writeValidationReport(outputPathValue, 'PHASE_08_HANDOFF', record);
+  emitValidationEvent('phase08.handoff.valid', {
+    releaseId: record.releaseId,
+    source: inputPathValue,
+  });
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
