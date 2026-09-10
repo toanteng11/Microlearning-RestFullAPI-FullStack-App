@@ -7,11 +7,12 @@ System Testing, UAT, Go/No-Go và Production release.
 
 ## 1.1 Current Status
 
-`DRAFT - HANDOFF CONTRACT READY / ACCEPTANCE PENDING`.
+`PHASE 07 EXIT PASS REPORTED / PHASE 08 ACCEPTANCE PENDING`.
 
-`validate-phase-08-handoff.mjs` yêu cầu Phase 07 exit `PASS`, staging digest bất biến, System Test/UAT,
-Production Terraform/Atlas readiness, rollback reference và quyết định `NO_GO` trước khi Phase 08 được
-phép tiếp tục.
+Handoff G0 chỉ được yêu cầu Phase 07 exit `PASS`, exact Staging identity/stable record, rollback reference,
+residual risks và quyết định Production `NO_GO`. System Test/UAT, Production plan/Atlas readiness và G5
+decision là outputs của Phase 08 nên không được dùng làm điều kiện đầu vào G0. Validator hiện tại phải được
+sửa ở Phase 08 Part 01 trước khi handoff được accept.
 
 ## 2. Required Handoff Package
 
@@ -49,26 +50,26 @@ Phase 08 Production Go phải là `NO_GO` nếu:
 - defect severity/triage process;
 - sign-off template.
 
-## 5. Production Promotion Inputs
+## 5. G0 Handoff Record
 
 ```text
 release_id:
 verified_staging_digest:
 staging_deployment_record:
-system_test_result:
-uat_signoff:
-go_no_go_decision:
-production_terraform_plan:
-production_atlas_readiness:
 rollback_revision/digest:
-approvers:
+phase_07_exit_decision:
+production_decision: NO_GO
+residual_risks:
+accepted_by / accepted_at_utc:
 ```
+
+System Test result, UAT sign-off, Production plan/Atlas readiness and Go/No-Go are added later to the Phase 08 G5 release pack, not to the G0 handoff contract.
 
 ## 6. Residual Constraints Expected
 
 - Cloud Run `run.app` URL nếu custom domain Conditional không bật.
 - Staging scale-to-zero và cold start được chấp nhận.
-- Atlas Free Staging chỉ synthetic; không chuyển nguyên cluster thành Production.
+- Atlas Free Staging chỉ synthetic. Academic Production demo may share the physical cluster only with a separate database/user and an explicit profile decision; organization Production requires stronger isolation.
 - Production workflow tồn tại nhưng chưa apply trong Phase 07.
 - Feature Preview không trở thành hard dependency.
 
@@ -76,7 +77,5 @@ approvers:
 
 | Role | Decision | Date UTC | Evidence/notes |
 | --- | --- | --- | --- |
-| Phase 07 Technical Lead | Pending | Pending | Pending |
-| QA/UAT Owner | Pending | Pending | Pending |
-| DevOps/Release Owner | Pending | Pending | Pending |
-| Product Owner | Pending | Pending | Pending |
+| Phase 07 Technical Lead | Phase 07 report says `PASS`; verify raw evidence at G0 | Pending | Phase 07 exit report/artifacts |
+| Phase 08 acceptance (solo owner acting as TL/PO) | Pending | Pending | `P08-EV-001` |
