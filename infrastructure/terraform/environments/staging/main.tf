@@ -230,6 +230,7 @@ module "e2e_workload_identity" {
   github_ref                    = "refs/heads/main"
   allowed_workflow_refs = [
     "${var.github_repository}/.github/workflows/cloud-e2e.yml@refs/heads/main",
+    "${var.github_repository}/.github/workflows/phase-08-system-test.yml@refs/heads/main",
   ]
 }
 

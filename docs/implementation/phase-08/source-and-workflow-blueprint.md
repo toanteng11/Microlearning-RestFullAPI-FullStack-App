@@ -58,6 +58,7 @@ Terraform checks: `fmt`, `init -backend=false`, `validate`, plan with approved v
 
 - Trigger `workflow_dispatch` với release ID, full commit SHA, immutable digest, Staging revision/URL và exact source workflow run IDs.
 - Verify caller inputs against stable deployment record.
+- WIF provider `staging-cloud-tests` chỉ admit exact `workflow_ref` của `cloud-e2e.yml` và `phase-08-system-test.yml` trên `refs/heads/main`; không dùng actor hoặc wildcard làm trust anchor.
 - Run dedicated System Test, P0/negative API coverage, dependency/IaC checks and redaction scan.
 - Upload raw + summary artifacts with bounded retention.
 
