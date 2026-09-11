@@ -23,14 +23,17 @@ G8 PASS = G6 ACTUAL + P08-AC-001..014 PASS + complete evidence + no blocker
 
 ## 3. System Test và UAT automation
 
-| File dự kiến | Trách nhiệm |
+| File | Trách nhiệm |
 | --- | --- |
 | `playwright.phase-08.config.ts` | Chạy exact Staging URL, project theo persona/viewport, trace khi retry, không ghi credential |
 | `tests/e2e/phase-08-system.spec.ts` | Health/version/CORS/SPA/auth/RBAC và P0 cross-domain journeys |
 | `tests/e2e/phase-08-uat.spec.ts` | Hỗ trợ scenario 001-032; automation là evidence hỗ trợ, không tự tạo business sign-off |
 | `tests/e2e/phase-08-accessibility.spec.ts` | Axe trên trang P0, keyboard/focus/status-not-color checks |
 | `scripts/run-phase-08-performance.mjs` | Bounded synthetic requests, warm-up, p50/p95/error rate, dataset/run metadata |
-| `scripts/generate-phase-08-test-summary.mjs` | Tổng hợp raw reports thành System Test/UAT summary theo contract |
+| `scripts/lib/phase-08-system-test.mjs` | Chuẩn hóa case ID, counts, identity, scan result và fail-closed summary |
+| `scripts/generate-phase-08-system-test-summary.mjs` | Tổng hợp Playwright JSON thành System Test summary theo contract |
+| `scripts/verify-phase-08-staging-identity.mjs` | Đối chiếu provider/runtime/source deployment URL, revision, commit và immutable digest |
+| `scripts/create-phase-08-scan-summary.mjs` | Tổng hợp dependency/IaC/redaction checks, checksum và retention metadata |
 
 Không thêm dependency mới nếu Node/Playwright hiện tại đáp ứng. Nếu thêm package, phải audit, lockfile và license review.
 
@@ -53,10 +56,12 @@ Terraform checks: `fmt`, `init -backend=false`, `validate`, plan with approved v
 
 ### `phase-08-system-test.yml`
 
-- Trigger `workflow_dispatch` với release ID, full commit SHA, immutable digest và Staging URL.
+- Trigger `workflow_dispatch` với release ID, full commit SHA, immutable digest, Staging revision/URL và exact source workflow run IDs.
 - Verify caller inputs against stable deployment record.
-- Run System Test, accessibility, performance sample and redaction scan.
+- Run dedicated System Test, P0/negative API coverage, dependency/IaC checks and redaction scan.
 - Upload raw + summary artifacts with bounded retention.
+
+Accessibility, responsive and performance evidence are added by Part 05; they are intentionally not claimed by Part 03.
 
 ### `promote-production.yml`
 

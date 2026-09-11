@@ -1,8 +1,8 @@
 # Part 01 - Handoff and Release Identity
 
-**Implementation status:** `LOCAL_PASS_REMOTE_PENDING`.
+**Implementation status:** `DONE`.
 
-The corrected G0 validator now requires the Phase 07 Pass decision, full commit SHA, matching registry/deployed image digests, Staging revision/HTTPS URL, rollback baseline, residual risks and Production `NO_GO`. It no longer requires System Test, UAT, G5 or Production outputs. Actual handoff acceptance remains pending.
+The corrected G0 validator requires the Phase 07 Pass decision, full commit SHA, matching registry/deployed image digests, Staging revision/HTTPS URL, rollback baseline, residual risks and Production `NO_GO`. The actual handoff and runtime identity for `P08-RC-20260910-92cdc07` have been validated; G0 is `PASS`.
 
 ## Outcome
 
@@ -31,3 +31,12 @@ One immutable candidate is accepted from Phase 07 without requiring future Phase
 ## Evidence and exit
 
 `P08-EV-001` is accepted handoff; `P08-EV-002` is identity/lineage proof. G0 Pass locks the candidate. Runtime behavior changes after this point require a new candidate.
+
+## Actual completion evidence
+
+- Live revision: `microlearning-staging-00013-6ns`, 100% traffic.
+- Live URL: `https://microlearning-staging-bu73wlfj5a-as.a.run.app`.
+- Immutable image: `asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:5cabccd99633e331160fbcae0df64cbfcb058090718d0ba6b9fe650aeefde981`.
+- CI/Build/Deploy/Cloud E2E runs share the exact commit and report `success`.
+- The stale source revision `00012-qw2` is explicitly reconciled to provider/runtime revision `00013-6ns`; commit, URL and digest match.
+- Evidence: `identity/handoff.json`, `identity/release-identity.json`, `identity/provider-observation.json`, `identity/staging-identity-reconciliation.json` under the release artifact root.

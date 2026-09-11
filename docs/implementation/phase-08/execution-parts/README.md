@@ -6,10 +6,10 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 
 | Part | Parent PR | Outcome | Gate | Status |
 | --- | --- | --- | --- | --- |
-| 00 | P08-PR00 | Baseline, release profile và solo governance được chốt | G0 | `LOCAL_PASS_REMOTE_PENDING` |
-| 01 | P08-PR01 | Handoff/identity contract không còn vòng lặp | G0 | `LOCAL_PASS_REMOTE_PENDING` |
-| 02 | P08-PR01 | Evidence contracts và artifact workspace sẵn sàng | G1 | `LOCAL_PASS_REMOTE_PENDING` |
-| 03 | P08-PR02 | System Test automation và release summary | G2 | `NOT_STARTED` |
+| 00 | P08-PR00 | Baseline, release profile và solo governance được chốt | G0 | `DONE` |
+| 01 | P08-PR01 | Handoff/identity contract không còn vòng lặp | G0 | `DONE` |
+| 02 | P08-PR01 | Evidence contracts và artifact workspace sẵn sàng | G1 | `DONE` |
+| 03 | P08-PR02 | System Test automation và release summary | G2 | `LOCAL_PASS_REMOTE_PENDING` |
 | 04 | P08-PR02 | Security/privacy/API/data regression | G2 | `NOT_STARTED` |
 | 05 | P08-PR02 | Performance/accessibility/responsive verification | G2 | `NOT_STARTED` |
 | 06 | P08-PR03 | UAT personas, data và environment ready | G1/G3 | `NOT_STARTED` |
@@ -24,6 +24,8 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 ## Status vocabulary
 
 `NOT_STARTED`, `IN_PROGRESS`, `LOCAL_PASS_REMOTE_PENDING`, `BLOCKED`, `DONE`.
+
+Nhánh triển khai Phase 08 dùng mẫu `phase-08-part-<nn>-<scope>`; không thêm tiền tố `codex/`. Part 03 được triển khai trên `phase-08-part-03-system-test`.
 
 ## Global stop conditions
 

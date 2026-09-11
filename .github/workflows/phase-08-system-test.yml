@@ -1,0 +1,346 @@
+name: Phase 08 System Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type RUN_PHASE_08_SYSTEM_TEST
+        required: true
+        type: string
+      release_id:
+        description: Release ID (P08-RC-YYYYMMDD-shortsha)
+        required: true
+        type: string
+      candidate_commit:
+        description: Full deployed Git SHA
+        required: true
+        type: string
+      candidate_image:
+        description: Immutable Artifact Registry image reference
+        required: true
+        type: string
+      staging_revision:
+        description: Live Cloud Run revision name
+        required: true
+        type: string
+      staging_url:
+        description: Canonical HTTPS Staging origin
+        required: true
+        type: string
+      source_ci_run_id:
+        description: Successful Continuous Integration run ID
+        required: true
+        type: string
+      source_build_run_id:
+        description: Successful Build And Publish run ID
+        required: true
+        type: string
+      source_deployment_run_id:
+        description: Successful Deploy Staging run ID
+        required: true
+        type: string
+      source_cloud_e2e_run_id:
+        description: Successful Cloud Smoke And E2E run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: phase-08-system-test-${{ inputs.release_id }}
+  cancel-in-progress: false
+
+jobs:
+  system-test:
+    name: Locked candidate System Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: staging
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+
+    steps:
+      - name: Checkout trusted test harness
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Validate locked release inputs
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          CANDIDATE_COMMIT: ${{ inputs.candidate_commit }}
+          CANDIDATE_IMAGE: ${{ inputs.candidate_image }}
+          STAGING_REVISION: ${{ inputs.staging_revision }}
+          STAGING_URL: ${{ inputs.staging_url }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = "RUN_PHASE_08_SYSTEM_TEST"
+          [[ "$RELEASE_ID" =~ ^P08-RC-[0-9]{8}-[a-f0-9]{7,12}$ ]]
+          [[ "$CANDIDATE_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$CANDIDATE_IMAGE" =~ ^[^[:space:]@]+(@sha256:)[a-f0-9]{64}$ ]]
+          [[ "$STAGING_REVISION" =~ ^microlearning-staging-[a-z0-9-]+$ ]]
+          [[ "$STAGING_URL" =~ ^https://[^/[:space:]]+$ ]]
+          short_sha="${RELEASE_ID##*-}"
+          test "$short_sha" = "${CANDIDATE_COMMIT:0:${#short_sha}}"
+          artifact_root="artifacts/phase-08/$RELEASE_ID"
+          mkdir -p "$artifact_root/identity/source" "$artifact_root/system-test" "$artifact_root/security-performance"
+          {
+            echo "PHASE08_ARTIFACT_ROOT=$artifact_root"
+            echo "PHASE08_ACTOR=${{ github.actor }} / GitHub Actions"
+            echo "PHASE08_WORKFLOW_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } >> "$GITHUB_ENV"
+          jq -n \
+            --arg release_id "$RELEASE_ID" \
+            --arg commit "$CANDIDATE_COMMIT" \
+            --arg image "$CANDIDATE_IMAGE" \
+            --arg revision "$STAGING_REVISION" \
+            --arg url "$STAGING_URL" \
+            '{schemaVersion:1,phase:"08",releaseIdentity:{schemaVersion:1,phase:"08",releaseId:$release_id,commitSha:$commit,imageDigest:$image,stagingRevision:$revision,stagingUrl:$url,productionRevision:"NOT_RUN",productionUrl:"NOT_RUN"}}' \
+            > "$artifact_root/identity/release-identity.json"
+          npm run phase-08:identity:validate -- \
+            "$artifact_root/identity/release-identity.json" \
+            --report "$artifact_root/identity/release-identity-validation.json"
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify exact successful workflow lineage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_COMMIT: ${{ inputs.candidate_commit }}
+          CI_RUN: ${{ inputs.source_ci_run_id }}
+          BUILD_RUN: ${{ inputs.source_build_run_id }}
+          DEPLOY_RUN: ${{ inputs.source_deployment_run_id }}
+          CLOUD_E2E_RUN: ${{ inputs.source_cloud_e2e_run_id }}
+        run: |
+          set -euo pipefail
+          verify_run() {
+            local run_id="$1"
+            local expected_name="$2"
+            [[ "$run_id" =~ ^[1-9][0-9]*$ ]]
+            local path="$RUNNER_TEMP/run-$run_id.json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id" > "$path"
+            jq -e --arg sha "$CANDIDATE_COMMIT" --arg name "$expected_name" \
+              '.conclusion == "success" and .head_sha == $sha and .name == $name' "$path" >/dev/null
+          }
+          verify_run "$CI_RUN" "Continuous Integration"
+          verify_run "$BUILD_RUN" "Build And Publish"
+          verify_run "$DEPLOY_RUN" "Deploy Staging"
+          verify_run "$CLOUD_E2E_RUN" "Cloud Smoke And E2E"
+          jq -n \
+            --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg commit "$CANDIDATE_COMMIT" \
+            --arg ci "${{ github.server_url }}/${{ github.repository }}/actions/runs/$CI_RUN" \
+            --arg build "${{ github.server_url }}/${{ github.repository }}/actions/runs/$BUILD_RUN" \
+            --arg deploy "${{ github.server_url }}/${{ github.repository }}/actions/runs/$DEPLOY_RUN" \
+            --arg cloud "${{ github.server_url }}/${{ github.repository }}/actions/runs/$CLOUD_E2E_RUN" \
+            '{schemaVersion:1,phase:"08",recordedAtUtc:$recorded_at,commitSha:$commit,status:"PASS",runs:{ci:$ci,build:$build,deploy:$deploy,cloudE2E:$cloud}}' \
+            > "$PHASE08_ARTIFACT_ROOT/identity/workflow-lineage.json"
+
+      - name: Download exact source artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh run download "${{ inputs.source_build_run_id }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name phase-07-release-candidate \
+            --dir "$PHASE08_ARTIFACT_ROOT/identity/source/build"
+          gh run download "${{ inputs.source_cloud_e2e_run_id }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name phase-07-cloud-e2e \
+            --dir "$PHASE08_ARTIFACT_ROOT/identity/source/cloud-e2e"
+          manifest="$PHASE08_ARTIFACT_ROOT/identity/source/build/release/release-manifest.json"
+          stable="$PHASE08_ARTIFACT_ROOT/identity/source/cloud-e2e/cloud-e2e/stable-deployment-record.json"
+          test -f "$manifest" && test -f "$stable"
+          jq -e \
+            --arg commit "${{ inputs.candidate_commit }}" \
+            --arg image "${{ inputs.candidate_image }}" \
+            '.commitSha == $commit and .immutableImageRef == $image and .registryDigest == $image' \
+            "$manifest" >/dev/null
+          jq -e \
+            --arg commit "${{ inputs.candidate_commit }}" \
+            --arg image "${{ inputs.candidate_image }}" \
+            '.status == "STABLE" and .stable == true and .commitSha == $commit and .imageRef == $image' \
+            "$stable" >/dev/null
+
+      - name: Authenticate dedicated Staging verifier
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_E2E_WORKLOAD_IDENTITY_PROVIDER_STAGING }}
+          service_account: ${{ vars.GCP_E2E_SERVICE_ACCOUNT_STAGING }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Reconcile live Cloud Run identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          raw="$RUNNER_TEMP/cloud-run-service.json"
+          stable="$PHASE08_ARTIFACT_ROOT/identity/source/cloud-e2e/cloud-e2e/stable-deployment-record.json"
+          gcloud run services describe microlearning-staging \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --format=json > "$raw"
+          jq \
+            --arg artifact_revision "$(jq -r '.revision' "$stable")" \
+            --arg artifact_image "$(jq -r '.imageRef' "$stable")" \
+            --arg artifact_commit "$(jq -r '.commitSha' "$stable")" \
+            '{
+              serviceUrl:.status.url,
+              latestReadyRevision:.status.latestReadyRevisionName,
+              trafficRevision:([.status.traffic[]? | select((.percent // 0) == 100) | .revisionName][0] // .status.latestReadyRevisionName),
+              imageDigest:.spec.template.spec.containers[0].image,
+              commitSha:([.spec.template.spec.containers[0].env[]? | select(.name == "COMMIT_SHA") | .value][0]),
+              sourceArtifactRevision:$artifact_revision,
+              sourceArtifactImage:$artifact_image,
+              sourceArtifactCommit:$artifact_commit
+            }' "$raw" > "$PHASE08_ARTIFACT_ROOT/identity/provider-observation.json"
+          npm run phase-08:staging:verify -- \
+            "$PHASE08_ARTIFACT_ROOT/identity/release-identity.json" \
+            "$PHASE08_ARTIFACT_ROOT/identity/provider-observation.json" \
+            "$PHASE08_ARTIFACT_ROOT/identity/staging-identity-reconciliation.json"
+
+      - name: Retrieve only the synthetic test password
+        shell: bash
+        env:
+          PASSWORD_VERSION: ${{ vars.GCP_SECRET_VERSION_SEED_DEMO_PASSWORD_STAGING }}
+        run: |
+          set -euo pipefail
+          [[ "$PASSWORD_VERSION" =~ ^[1-9][0-9]*$ ]]
+          demo_password="$(gcloud secrets versions access "$PASSWORD_VERSION" --secret ml-staging-seed-demo-password)"
+          test -n "$demo_password"
+          echo "::add-mask::$demo_password"
+          delimiter="P08_$(openssl rand -hex 16)"
+          {
+            echo "E2E_DEMO_PASSWORD<<$delimiter"
+            printf '%s\n' "$demo_password"
+            echo "$delimiter"
+            echo "E2E_SECRET_CANARY<<$delimiter"
+            printf '%s\n' "$demo_password"
+            echo "$delimiter"
+          } >> "$GITHUB_ENV"
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Phase 08 P0 System Test
+        id: playwright
+        continue-on-error: true
+        env:
+          E2E_PHASE08_MODE: 'true'
+          E2E_WEB_URL: ${{ inputs.staging_url }}
+          E2E_API_URL: ${{ inputs.staging_url }}
+          E2E_PHASE08_RELEASE_ID: ${{ inputs.release_id }}
+          E2E_EXPECTED_COMMIT: ${{ inputs.candidate_commit }}
+          E2E_EXPECTED_IMAGE: ${{ inputs.candidate_image }}
+          E2E_EXPECTED_REVISION: ${{ inputs.staging_revision }}
+        run: npm run test:e2e:phase-08
+
+      - name: Audit production dependencies
+        id: dependency
+        continue-on-error: true
+        run: npm run audit:production
+
+      - name: Check Terraform formatting
+        id: terraform_format
+        continue-on-error: true
+        run: npm run terraform:fmt:check
+
+      - name: Scan Terraform configuration
+        id: terraform_security
+        continue-on-error: true
+        run: >-
+          npm run terraform:security --
+          "$PHASE08_ARTIFACT_ROOT/security-performance/terraform-trivy.json"
+
+      - name: Scan evidence for credential leakage
+        id: redaction
+        continue-on-error: true
+        run: >-
+          npm run e2e:artifacts:scan --
+          "$PHASE08_ARTIFACT_ROOT"
+          "$PHASE08_ARTIFACT_ROOT/security-performance/artifact-redaction-report.json"
+
+      - name: Create scan and System Test summaries
+        id: summary
+        continue-on-error: true
+        shell: bash
+        env:
+          PHASE08_DEPENDENCY_STATUS: ${{ steps.dependency.outcome == 'success' && 'PASS' || 'FAIL' }}
+          PHASE08_TERRAFORM_FORMAT_STATUS: ${{ steps.terraform_format.outcome == 'success' && 'PASS' || 'FAIL' }}
+          PHASE08_TERRAFORM_SECURITY_STATUS: ${{ steps.terraform_security.outcome == 'success' && 'PASS' || 'FAIL' }}
+          PHASE08_REDACTION_STATUS: ${{ steps.redaction.outcome == 'success' && 'PASS' || 'FAIL' }}
+        run: |
+          npm run phase-08:scan-summary:create -- \
+            "$PHASE08_ARTIFACT_ROOT/identity/release-identity.json" \
+            "$PHASE08_ARTIFACT_ROOT" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/scan-summary.json"
+          npm run phase-08:system-test:summary -- \
+            "$PHASE08_ARTIFACT_ROOT/identity/release-identity.json" \
+            "$PHASE08_ARTIFACT_ROOT/system-test/playwright-results.json" \
+            "$PHASE08_ARTIFACT_ROOT/identity/staging-identity-reconciliation.json" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/scan-summary.json" \
+            "$PHASE08_ARTIFACT_ROOT/system-test/system-test-summary.json"
+          npm run phase-08:system-test:validate -- \
+            "$PHASE08_ARTIFACT_ROOT/system-test/system-test-summary.json" \
+            "$PHASE08_ARTIFACT_ROOT/system-test/system-test-summary-validation.json"
+
+      - name: Final evidence redaction scan
+        id: final_redaction
+        if: always()
+        run: >-
+          npm run e2e:artifacts:scan --
+          "$PHASE08_ARTIFACT_ROOT"
+          "$PHASE08_ARTIFACT_ROOT/security-performance/final-redaction-report.json"
+
+      - name: Upload Phase 08 System Test evidence
+        if: always() && steps.final_redaction.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-08-system-test-${{ inputs.release_id }}
+          path: ${{ env.PHASE08_ARTIFACT_ROOT }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish System Test summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Phase 08 System Test"
+            echo "- Release: \`${{ inputs.release_id }}\`"
+            echo "- Commit: \`${{ inputs.candidate_commit }}\`"
+            echo "- Revision: \`${{ inputs.staging_revision }}\`"
+            echo "- Playwright: \`${{ steps.playwright.outcome }}\`"
+            echo "- Dependency/IaC/redaction: \`${{ steps.dependency.outcome }}/${{ steps.terraform_security.outcome }}/${{ steps.final_redaction.outcome }}\`"
+            echo "- Contract summary: \`${{ steps.summary.outcome }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce G2 result
+        if: always()
+        shell: bash
+        run: |
+          test "${{ steps.playwright.outcome }}" = "success"
+          test "${{ steps.dependency.outcome }}" = "success"
+          test "${{ steps.terraform_format.outcome }}" = "success"
+          test "${{ steps.terraform_security.outcome }}" = "success"
+          test "${{ steps.redaction.outcome }}" = "success"
+          test "${{ steps.final_redaction.outcome }}" = "success"
+          test "${{ steps.summary.outcome }}" = "success"

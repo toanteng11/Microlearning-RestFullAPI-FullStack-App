@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-02 LOCAL PASS`. Bộ tài liệu đã được đối chiếu với BA và Phase 01-07; corrected contracts/workspace đã Pass local tests, nhưng G0/G1 actual, System Test, UAT, Production deployment và sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-02 DONE / PART 03 LOCAL_PASS_REMOTE_PENDING`. G0/G1 đã được xác nhận bằng release candidate thực tế; System Test Part 03 đã Pass 6/6 Must scenarios trên Staging. Workflow và artifact retention trên GitHub vẫn phải chạy xanh trước khi Part 03 chuyển `DONE`; UAT, Production deployment và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -33,11 +33,11 @@ Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase 
 
 ## Gate model G0-G8
 
-| Gate | Quyết định | Điều kiện chính | Trạng thái ban đầu |
+| Gate | Quyết định | Điều kiện chính | Trạng thái hiện tại |
 |---|---|---|---|
-| G0 | Accept P07 handoff | Handoff record hợp lệ, identity và P07 exit được đối chiếu | `PENDING` |
-| G1 | Ready for System Test/UAT | Staging, personas, synthetic data, catalog và evidence workspace sẵn sàng; không phụ thuộc Production apply | `PENDING` |
-| G2 | System Test exit | Test technical/integration/security/NFR đã chạy trên exact candidate | `PENDING` |
+| G0 | Accept P07 handoff | Handoff record hợp lệ, identity và P07 exit được đối chiếu | `PASS` |
+| G1 | Ready for System Test/UAT | Staging, personas, synthetic data, catalog và evidence workspace sẵn sàng; không phụ thuộc Production apply | `PASS` |
+| G2 | System Test exit | Test technical/integration/security/NFR đã chạy trên exact candidate | `LOCAL_PASS_REMOTE_PENDING` |
 | G3 | UAT exit | Must scenarios có kết quả và Product Owner decision | `PENDING` |
 | G4 | Release readiness/closure | Critical/High đóng; Medium/Low có disposition; Production plan, separation và recovery ready | `PENDING` |
 | G5 | Go/Conditional Go/No-Go | `PRE_RELEASE` AC-001..010 Pass; PO accountable; role recommendations recorded | `PENDING` |
@@ -75,12 +75,12 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 
 ## Blocking findings cần theo dõi
 
-1. Handoff P07 vẫn cần acceptance thực tế (`G0`).
-2. Production Terraform root đang `provision = false`; production workflow là plan-only (`G4/G5`).
-3. Mâu thuẫn `APPLY`/Production `ACTUAL` đã được sửa và Pass local contract tests; protected workflow/G5 evidence vẫn pending.
-4. Vòng lặp G0 từng yêu cầu System Test/UAT/G5 đã được loại bỏ; actual handoff record vẫn pending.
+1. G0/G1 đã Pass cho `P08-RC-20260910-92cdc07`; nếu runtime behavior hoặc deployment identity đổi thì phải tạo candidate mới và chạy lại từ G0.
+2. Source deployment record còn ghi revision `microlearning-staging-00012-qw2`; provider/runtime actual là `microlearning-staging-00013-6ns`. Reconciliation đã Pass vì URL, commit và image digest khớp, nhưng workflow Part 03 phải lưu record mới làm nguồn chuẩn.
+3. Production Terraform root đang `provision = false`; production workflow là plan-only (`G4/G5`).
+4. Mâu thuẫn `APPLY`/Production `ACTUAL` và vòng lặp G0/G5/G8 đã được sửa; protected workflow/G5 evidence vẫn pending.
 5. Atlas/recovery decision phải theo selected profile; real data luôn là blocker với academic profile.
-6. UAT personas/data, defect closure, Production deployment và hypercare records đều `PENDING` cho đến khi execution tạo raw evidence.
+6. UAT execution/sign-off, defect closure, Production deployment và hypercare records đều `PENDING` cho đến khi execution tạo raw evidence.
 
 ## Executable Phase 08 controls
 
@@ -99,6 +99,25 @@ npm run phase-08:uat:validate -- <uat-summary.json> [report.json]
 npm run phase-08:decision:validate -- <go-no-go.json> [report.json]
 npm run phase-08:exit:validate -- <exit-record.json> [report.json]
 npm run phase-08:readiness:validate -- <readiness-pack.json> [report.json]
+npm run phase-08:system-test:tooling:test
+npm run test:e2e:phase-08
+npm run phase-08:staging:verify -- <identity.json> <provider.json> <identity-report.json>
+npm run phase-08:system-test:summary -- <identity.json> <playwright.json> <identity-report.json> <scan.json> <output.json>
+npm run phase-08:scan-summary:create -- <identity.json> <release-artifact-root> <output.json>
 ```
 
 Final `PASS`/`GO` records cannot contain placeholders and require actual evidence. Reports redact secret keys, MongoDB URIs, bearer credentials and private keys. The validator permits `APPLY` only in an actual protected Production/exit record with G5 decision provenance; the deployment workflow itself remains `PLAN_ONLY` until Part 09-10.
+
+## Candidate G0/G1 đã xác nhận
+
+| Thuộc tính | Actual |
+|---|---|
+| Release ID | `P08-RC-20260910-92cdc07` |
+| Commit | `92cdc07051eace7062957c89b412bcbda920b254` |
+| Staging URL | `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
+| Ready revision | `microlearning-staging-00013-6ns` (100% traffic) |
+| Image digest | `sha256:5cabccd99633e331160fbcae0df64cbfcb058090718d0ba6b9fe650aeefde981` |
+| Source workflows | CI `34498334816`; Build `34498666885`; Deploy `34498961381`; Cloud E2E `34499272941` - cùng commit, `success` |
+| Runtime checks | `/health`, `/ready`, `/api/v1/system/version` Pass và identity khớp |
+
+Raw local evidence nằm trong `artifacts/phase-08/P08-RC-20260910-92cdc07/`. Thư mục này được ignore có chủ đích để không commit raw artifacts/secret-adjacent output; workflow `phase-08-system-test.yml` chịu trách nhiệm upload artifact với retention 90 ngày.

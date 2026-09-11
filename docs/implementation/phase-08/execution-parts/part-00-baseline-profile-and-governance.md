@@ -1,8 +1,8 @@
 # Part 00 - Baseline, Profile and Governance
 
-**Implementation status:** `LOCAL_PASS_REMOTE_PENDING`.
+**Implementation status:** `DONE`.
 
-Release profile/solo-governance validator, positive/negative tests and release-scoped workspace input contract are implemented. Actual G0 profile confirmation remains pending until the exact committed candidate is reviewed and its record is validated on the PR/main workflow.
+Release profile `ACADEMIC_DEMO_RELEASE`, `soloProject=true`, synthetic-only scope, role assignments and release-scoped workspace contract are implemented and validated for `P08-RC-20260910-92cdc07`. No independent-review claim is made.
 
 ## Outcome
 
@@ -34,3 +34,10 @@ Profile, owner, scope/non-goals, role model and stop conditions are approved for
 ## Stop
 
 Real data/SLA is requested while academic controls remain selected, or release authority is represented inaccurately.
+
+## Actual completion evidence
+
+- Profile and handoff validators: `PASS`.
+- Candidate: `92cdc07051eace7062957c89b412bcbda920b254`.
+- Readiness record: `artifacts/phase-08/P08-RC-20260910-92cdc07/identity/g0-g1-readiness.json`.
+- Evidence IDs: `P08-EV-001`, `P08-EV-003`.
