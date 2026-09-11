@@ -21,6 +21,7 @@ Tất cả entries ban đầu là `OPEN/PENDING`; owner phải cập nhật bằ
 | P08-ISS-004 | Academic demo support/alert destination and response expectation unconfirmed | M/H | PO/DevOps | owner + bounded support statement at G7 | `OPEN` |
 | P08-ISS-005 | Planning documents contained stale 2026-09-06 NO_GO execution records | M/M | BA/TL | history separated; UAT/exit/defect templates reset | `CLOSED - documentation review` |
 | P08-ISS-006 | Initial Part 03 run `34603456738` was rejected because Staging E2E WIF did not admit the new workflow_ref | H/H | DevOps/TL | add exact main workflow_ref, apply reviewed Terraform, rerun on a newly locked candidate | `FIX IMPLEMENTED - APPLY/RETEST PENDING` |
+| P08-ISS-007 | Part 03 run `34608581343` authenticated through WIF but could not read live Cloud Run metadata (`run.services.get`) | M/H | DevOps/TL | grant `roles/run.viewer` only on `microlearning-staging`, rerun the same locked candidate, retain failed run as evidence | `FIX IMPLEMENTED - APPLY/RETEST PENDING` |
 
 ## Escalation
 

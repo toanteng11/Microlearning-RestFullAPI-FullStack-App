@@ -261,6 +261,18 @@ module "cloud_run_service" {
   depends_on = [module.secret_contract]
 }
 
+resource "google_cloud_run_v2_service_iam_member" "e2e_viewer" {
+  count = var.provision_service ? 1 : 0
+
+  project  = var.project_id
+  location = var.region
+  name     = local.service_name
+  role     = "roles/run.viewer"
+  member   = "serviceAccount:${module.iam.service_account_emails[local.e2e_account_id]}"
+
+  depends_on = [module.cloud_run_service]
+}
+
 module "cloud_run_seed_job" {
   source = "../../modules/cloud-run-seed-job"
 

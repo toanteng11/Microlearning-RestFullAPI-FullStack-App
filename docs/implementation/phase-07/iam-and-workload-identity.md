@@ -11,7 +11,7 @@ Federation. Không tạo hoặc lưu service-account JSON key.
 | --- | --- | --- |
 | `ml-runtime-staging` | Cloud Run runtime đọc secret/log/kết nối Atlas | deploy, quản trị IAM, push image |
 | `ml-seed-staging` | Private seed Job đọc Staging app/seed secrets và ghi synthetic data | public invocation, deploy, Production access |
-| `ml-e2e-staging` | Cloud E2E đọc duy nhất synthetic test password | Mongo URI, deploy, IAM, Production access |
+| `ml-e2e-staging` | Cloud E2E đọc synthetic test password và metadata chỉ đọc của đúng Cloud Run Staging service | Mongo URI, deploy, mutate Cloud Run/IAM, Production access |
 | `ml-github-staging` | Terraform/apply và deploy Staging | đọc secret payload, quản trị billing |
 | `ml-pr-plan-sa` nếu cần | PR plan/read-only | apply, deploy, mutate IAM |
 | `ml-runtime-production` | Production runtime tương lai | dùng cho Staging |
@@ -75,9 +75,10 @@ dùng để deploy hoặc gọi Production resource.
 
 ### E2E identity
 
-Chỉ nhận quyền access `ml-staging-seed-demo-password` và các read-only deployment metadata thật sự cần. Workflow
-mask password ngay sau retrieval. E2E identity không được access Mongo URI/app signing peppers, chạy
-Terraform apply hoặc quản trị Cloud Run.
+Chỉ nhận quyền access `ml-staging-seed-demo-password` và `roles/run.viewer` trên đúng service
+`microlearning-staging` để đối chiếu URL, revision, commit và image digest. Workflow mask password ngay sau
+retrieval. E2E identity không được access Mongo URI/app signing peppers, mutate Cloud Run, chạy Terraform
+apply hoặc truy cập Production.
 
 ## 5. GitHub workflow permissions
 
