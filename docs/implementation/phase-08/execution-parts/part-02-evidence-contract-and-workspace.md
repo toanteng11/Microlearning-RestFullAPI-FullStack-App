@@ -1,8 +1,8 @@
 # Part 02 - Evidence Contract and Workspace
 
-**Implementation status:** `LOCAL_PASS_REMOTE_PENDING`.
+**Implementation status:** `DONE`.
 
-`PRE_RELEASE` and `FINAL` validation, solo-governance checks, protected post-G5 `APPLY` boundary, redaction and non-overwriting evidence-workspace initialization are implemented and covered locally. Remote required-check evidence and an actual release workspace remain pending.
+`PRE_RELEASE` and `FINAL` validation, solo-governance checks, protected post-G5 `APPLY` boundary, redaction and non-overwriting evidence-workspace initialization are implemented, covered by required checks and instantiated for the locked candidate.
 
 ## Outcome
 
@@ -31,3 +31,11 @@ Pre-release and final acceptance can be validated independently, with fail-close
 ## Evidence and exit
 
 Contract test output and evidence workspace manifest are attached to `P08-EV-003`. Part exits when all validators agree on the same release identity and status vocabulary.
+
+## Actual completion evidence
+
+- `npm run phase-08:contract:test`: `PASS` (32 cases).
+- Handoff, profile, identity and readiness validators: `PASS`.
+- Release workspace: `artifacts/phase-08/P08-RC-20260910-92cdc07/`.
+- Redaction scan: zero findings; raw workspace is release-scoped and excluded from source control.
+- Evidence ID: `P08-EV-003`.

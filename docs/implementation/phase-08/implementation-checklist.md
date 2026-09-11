@@ -2,24 +2,24 @@
 
 ## G0 — Handoff
 
-- [ ] Chọn release profile và ghi `soloProject=true`, role assignments, scope/non-goals.
-- [ ] Đối chiếu P07 `../phase-07/exit-report.md`, `../phase-07/phase-08-handoff.md`, `../phase-07/phase-exit-evidence.md` với raw artifacts.
-- [ ] Ghi release ID, commit, image digest, revision, URL, workflow run; mismatch là `BLOCKED`.
-- [ ] Handoff record hợp lệ bằng `node scripts/validate-phase-08-handoff.mjs <record.json>`.
-- [ ] P07 residual risks, Atlas waiver và production `NO_GO` được carried forward.
+- [x] Chọn release profile và ghi `soloProject=true`, role assignments, scope/non-goals.
+- [x] Đối chiếu P07 `../phase-07/exit-report.md`, `../phase-07/phase-08-handoff.md`, `../phase-07/phase-exit-evidence.md` với raw artifacts.
+- [x] Ghi release ID, commit, image digest, revision, URL, workflow run; mismatch là `BLOCKED`.
+- [x] Handoff record hợp lệ bằng `node scripts/validate-phase-08-handoff.mjs <record.json>`.
+- [x] P07 residual risks, Atlas waiver và production `NO_GO` được carried forward.
 
 ## G1 — System Test/UAT Readiness
 
-- [ ] UAT HTTPS URL, roles, synthetic data, cleanup và evidence store ready.
-- [ ] Catalog 001-032, expected results, persona sessions và defect process ready.
-- [x] `PRE_RELEASE`/`FINAL` contracts và corrected handoff validator đã Pass local tests; remote required check vẫn pending.
-- [ ] Candidate identity trả về từ Staging khớp G0.
+- [x] UAT HTTPS URL, roles, synthetic data, cleanup và evidence store ready.
+- [x] Catalog 001-032, expected results, persona sessions và defect process ready.
+- [x] `PRE_RELEASE`/`FINAL` contracts và corrected handoff validator đã Pass required main checks.
+- [x] Candidate identity trả về từ Staging khớp G0.
 
 ## G2–G4 — Test and closure
 
-- [ ] `npm ci`; `npm run check:ci`; `npm run test:openapi`; cloud E2E/security nếu environment cho phép.
-- [ ] Catalog rows có actor, exact identity, expected/actual, evidence, UTC status.
-- [ ] Defect severity, retest, CR/waiver and residual risk updated.
+- [x] Candidate source workflows xác nhận locked install, CI, OpenAPI và Cloud E2E đều `success` trên exact commit.
+- [x] Part 03 System Test rows có actor/tool, exact identity, expected/actual, evidence và UTC status.
+- [x] Part 03 summary xác nhận Critical/High = 0, retry/flaky = 0; UAT defect closure vẫn thuộc Part 07.
 - [ ] BA latency targets, axe/keyboard/focus và desktop/mobile P0 states được kiểm tra với methodology.
 - [ ] `npm run operations:contract:test`, `observability:contract:test`, `promotion:contract:test`, `hardening:contract:test`, `exit:contract:test`, `handoff:contract:test` pass.
 
@@ -42,6 +42,6 @@
 
 ## Evidence hygiene
 
-- [ ] Không commit secret, token, password, full URI, private key hoặc real PII.
-- [ ] Artifact paths có release ID; raw evidence immutable/retained theo policy.
+- [x] Part 00-03 không commit secret, token, password, full URI, private key hoặc real PII; redaction scan có zero findings.
+- [x] Artifact paths Part 00-03 có release ID; workflow Part 03 cấu hình retention 90 ngày.
 - [ ] Mọi `PENDING`, `BLOCKED`, `APPROVED_NA` còn lại đều có disposition; không “Pass by default”.
