@@ -1,4 +1,5 @@
 :root {
+  --text-muted: #5a6971;
   font-family:
     Inter,
     ui-sans-serif,
@@ -2204,7 +2205,7 @@ button svg,
 }
 
 .reporting-grade-list small {
-  color: #66767f;
+  color: var(--text-muted);
 }
 
 .reporting-grade-list > .row-link {
@@ -3005,7 +3006,7 @@ button svg,
   align-items: center;
   gap: 5px;
   margin: 5px 0 0;
-  color: #66767f;
+  color: var(--text-muted);
   font-size: 0.82rem;
 }
 
