@@ -165,6 +165,7 @@ function createSystemTest(identity = BASE_IDENTITY) {
 }
 
 function createUat(identity = BASE_IDENTITY) {
+  const testedAtUtc = RECORDED_AT;
   return {
     schemaVersion: 1,
     phase: '08',
@@ -174,7 +175,44 @@ function createUat(identity = BASE_IDENTITY) {
     summary: { ...PASS_COUNTS },
     criticalDefects: 0,
     highDefects: 0,
-    evidenceIds: ['P08-EV-020', 'P08-EV-025'],
+    uatRunId: 'P08-G3-UAT-20260910-01',
+    startedAtUtc: testedAtUtc,
+    endedAtUtc: testedAtUtc,
+    dataMode: 'SYNTHETIC',
+    executionModel: 'SOLO_ROLE_SIMULATION',
+    personas: [
+      'GUEST',
+      'STUDENT_A',
+      'STUDENT_B',
+      'TEACHER_A',
+      'TEACHER_B',
+      'ADMIN',
+      'SUPER_ADMIN',
+      'QA_DEVOPS',
+    ].map((id) => ({
+      id,
+      role: id,
+      sessionIsolation: 'SEPARATE_CONTEXT',
+      synthetic: true,
+      loginVerified: true,
+    })),
+    defects: [],
+    scenarios: Array.from({ length: 32 }, (_, index) => {
+      const id = `P08-UT-${String(index + 1).padStart(3, '0')}`;
+      return {
+        id,
+        priority: id === 'P08-UT-027' ? 'CONDITIONAL' : 'MUST',
+        persona: 'QA_DEVOPS',
+        expected: `Expected ${id}`,
+        actual: `Observed ${id}`,
+        evidence: `uat/playwright-results.json#${id}`,
+        testedAtUtc,
+        status: 'PASS',
+      };
+    }),
+    governance: { soloProject: true, independentReview: false, actor: ACTOR },
+    recommendations: { qa: 'GO', business: 'GO', technical: 'GO' },
+    evidenceIds: ['P08-EV-020', 'P08-EV-025', 'P08-EV-026'],
   };
 }
 

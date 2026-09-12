@@ -43,6 +43,43 @@ on:
         description: Successful Cloud Smoke And E2E run ID
         required: true
         type: string
+      run_uat:
+        description: Run the explicit Phase 08 UAT and G3 contract
+        required: false
+        default: false
+        type: boolean
+      uat_confirmation:
+        description: When run_uat is true, type ACCEPT_PHASE_08_UAT
+        required: false
+        type: string
+      uat_run_id:
+        description: UAT decision ID (P08-G3-UAT-YYYYMMDD-NN)
+        required: false
+        type: string
+      operations_evidence_status:
+        description: Reviewed Part 08 operations evidence status
+        required: false
+        default: PENDING
+        type: choice
+        options:
+          - PENDING
+          - PASS
+      operations_evidence:
+        description: Candidate-bound operations evidence reference
+        required: false
+        type: string
+      recovery_evidence_status:
+        description: Reviewed Part 08 recovery evidence status
+        required: false
+        default: PENDING
+        type: choice
+        options:
+          - PENDING
+          - PASS
+      recovery_evidence:
+        description: Candidate-bound backup, restore and rollback evidence reference
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -90,6 +127,13 @@ jobs:
           CANDIDATE_IMAGE: ${{ inputs.candidate_image }}
           STAGING_REVISION: ${{ inputs.staging_revision }}
           STAGING_URL: ${{ inputs.staging_url }}
+          RUN_UAT: ${{ inputs.run_uat }}
+          UAT_CONFIRMATION: ${{ inputs.uat_confirmation }}
+          UAT_RUN_ID: ${{ inputs.uat_run_id }}
+          OPERATIONS_EVIDENCE_STATUS: ${{ inputs.operations_evidence_status }}
+          OPERATIONS_EVIDENCE: ${{ inputs.operations_evidence }}
+          RECOVERY_EVIDENCE_STATUS: ${{ inputs.recovery_evidence_status }}
+          RECOVERY_EVIDENCE: ${{ inputs.recovery_evidence }}
         run: |
           set -euo pipefail
           test "$CONFIRMATION" = "RUN_PHASE_08_SYSTEM_TEST"
@@ -100,8 +144,16 @@ jobs:
           [[ "$STAGING_URL" =~ ^https://[^/[:space:]]+$ ]]
           short_sha="${RELEASE_ID##*-}"
           test "$short_sha" = "${CANDIDATE_COMMIT:0:${#short_sha}}"
+          if [ "$RUN_UAT" = "true" ]; then
+            test "$UAT_CONFIRMATION" = "ACCEPT_PHASE_08_UAT"
+            [[ "$UAT_RUN_ID" =~ ^P08-G3-UAT-[0-9]{8}-[0-9]{2}$ ]]
+            test "$OPERATIONS_EVIDENCE_STATUS" = "PASS"
+            test -n "$OPERATIONS_EVIDENCE"
+            test "$RECOVERY_EVIDENCE_STATUS" = "PASS"
+            test -n "$RECOVERY_EVIDENCE"
+          fi
           artifact_root="artifacts/phase-08/$RELEASE_ID"
-          mkdir -p "$artifact_root/identity/source" "$artifact_root/system-test" "$artifact_root/security-performance"
+          mkdir -p "$artifact_root/identity/source" "$artifact_root/system-test" "$artifact_root/security-performance" "$artifact_root/uat"
           {
             echo "PHASE08_ARTIFACT_ROOT=$artifact_root"
             echo "PHASE08_ACTOR=${{ github.actor }} / GitHub Actions"
@@ -271,6 +323,24 @@ jobs:
           E2E_EXPECTED_REVISION: ${{ inputs.staging_revision }}
         run: npm run test:e2e:phase-08:quality
 
+      - name: Run Phase 08 role-based UAT
+        if: inputs.run_uat
+        id: uat_playwright
+        continue-on-error: true
+        env:
+          E2E_PHASE08_UAT_MODE: 'true'
+          E2E_WEB_URL: ${{ inputs.staging_url }}
+          E2E_API_URL: ${{ inputs.staging_url }}
+          E2E_PHASE08_RELEASE_ID: ${{ inputs.release_id }}
+          E2E_EXPECTED_COMMIT: ${{ inputs.candidate_commit }}
+          E2E_EXPECTED_IMAGE: ${{ inputs.candidate_image }}
+          E2E_EXPECTED_REVISION: ${{ inputs.staging_revision }}
+          PHASE08_OPERATIONS_EVIDENCE_STATUS: ${{ inputs.operations_evidence_status }}
+          PHASE08_OPERATIONS_EVIDENCE: ${{ inputs.operations_evidence }}
+          PHASE08_RECOVERY_EVIDENCE_STATUS: ${{ inputs.recovery_evidence_status }}
+          PHASE08_RECOVERY_EVIDENCE: ${{ inputs.recovery_evidence }}
+        run: npm run test:e2e:phase-08:uat
+
       - name: Audit production dependencies
         id: dependency
         continue-on-error: true
@@ -327,6 +397,23 @@ jobs:
             "$PHASE08_ARTIFACT_ROOT/security-performance/quality-summary.json" \
             "$PHASE08_ARTIFACT_ROOT/security-performance/quality-summary-validation.json"
 
+      - name: Create and validate UAT summary
+        if: inputs.run_uat
+        id: uat_summary
+        continue-on-error: true
+        env:
+          PHASE08_UAT_CONFIRMATION: ${{ inputs.uat_confirmation }}
+          PHASE08_UAT_RUN_ID: ${{ inputs.uat_run_id }}
+        run: |
+          npm run phase-08:uat:summary -- \
+            "$PHASE08_ARTIFACT_ROOT/identity/release-identity.json" \
+            "$PHASE08_ARTIFACT_ROOT/uat/uat-observations.json" \
+            "$PHASE08_ARTIFACT_ROOT/uat/uat-summary.json" \
+            "$PHASE08_ARTIFACT_ROOT/uat/uat-readiness.json"
+          npm run phase-08:uat:validate -- \
+            "$PHASE08_ARTIFACT_ROOT/uat/uat-summary.json" \
+            "$PHASE08_ARTIFACT_ROOT/uat/uat-summary-validation.json"
+
       - name: Final evidence redaction scan
         id: final_redaction
         if: always()
@@ -357,6 +444,8 @@ jobs:
             echo "- Revision: \`${{ inputs.staging_revision }}\`"
             echo "- Playwright: \`${{ steps.playwright.outcome }}\`"
             echo "- Part 04-05 quality: \`${{ steps.quality_playwright.outcome }}\`"
+            echo "- UAT requested: \`${{ inputs.run_uat }}\`"
+            echo "- UAT Playwright/contract: \`${{ steps.uat_playwright.outcome }}/${{ steps.uat_summary.outcome }}\`"
             echo "- Dependency/IaC/redaction: \`${{ steps.dependency.outcome }}/${{ steps.terraform_security.outcome }}/${{ steps.final_redaction.outcome }}\`"
             echo "- Contract summary: \`${{ steps.summary.outcome }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -373,3 +462,7 @@ jobs:
           test "${{ steps.redaction.outcome }}" = "success"
           test "${{ steps.final_redaction.outcome }}" = "success"
           test "${{ steps.summary.outcome }}" = "success"
+          if [ "${{ inputs.run_uat }}" = "true" ]; then
+            test "${{ steps.uat_playwright.outcome }}" = "success"
+            test "${{ steps.uat_summary.outcome }}" = "success"
+          fi

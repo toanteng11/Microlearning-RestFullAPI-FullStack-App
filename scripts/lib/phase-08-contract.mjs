@@ -14,6 +14,19 @@ export const PHASE08_ACCEPTANCE_STAGES = Object.freeze(['PRE_RELEASE', 'FINAL'])
 export const PHASE08_CRITERIA = Object.freeze(
   Array.from({ length: 14 }, (_, index) => `P08-AC-${String(index + 1).padStart(3, '0')}`),
 );
+export const PHASE08_UAT_SCENARIOS = Object.freeze(
+  Array.from({ length: 32 }, (_, index) => `P08-UT-${String(index + 1).padStart(3, '0')}`),
+);
+const PHASE08_UAT_PERSONAS = Object.freeze([
+  'GUEST',
+  'STUDENT_A',
+  'STUDENT_B',
+  'TEACHER_A',
+  'TEACHER_B',
+  'ADMIN',
+  'SUPER_ADMIN',
+  'QA_DEVOPS',
+]);
 export const PHASE08_PRE_RELEASE_CRITERIA = Object.freeze(PHASE08_CRITERIA.slice(0, 10));
 export const PHASE08_EVIDENCE = Object.freeze([
   'P08-EV-001',
@@ -529,6 +542,126 @@ export function validatePhase08Uat(input) {
     errors.push('status is invalid.');
   }
   if (input.status === 'PASS') {
+    addRequiredString(input, 'uatRunId', errors, { actual: true });
+    addUtcTimestamp(input, 'startedAtUtc', errors, { actual: true });
+    addUtcTimestamp(input, 'endedAtUtc', errors, { actual: true });
+    if (input.dataMode !== 'SYNTHETIC') errors.push('UAT PASS requires dataMode SYNTHETIC.');
+    if (input.executionModel !== 'SOLO_ROLE_SIMULATION') {
+      errors.push('UAT PASS requires executionModel SOLO_ROLE_SIMULATION.');
+    }
+    validateGovernance(input.governance, errors, { recommendations: true });
+    if (!isObject(input.recommendations)) {
+      errors.push('recommendations must be an object.');
+    } else {
+      for (const role of ['qa', 'business', 'technical']) {
+        if (input.recommendations[role] !== 'GO') {
+          errors.push(`recommendations.${role} must be GO for UAT PASS.`);
+        }
+      }
+    }
+    if (
+      !Array.isArray(input.scenarios) ||
+      input.scenarios.length !== PHASE08_UAT_SCENARIOS.length
+    ) {
+      errors.push(`UAT PASS requires exactly ${PHASE08_UAT_SCENARIOS.length} scenarios.`);
+    } else {
+      const ids = new Set();
+      input.scenarios.forEach((scenario, index) => {
+        const field = `scenarios[${index}]`;
+        if (!isObject(scenario)) {
+          errors.push(`${field} must be an object.`);
+          return;
+        }
+        addRequiredString(scenario, 'id', errors, { path: `${field}.id` });
+        if (!PHASE08_UAT_SCENARIOS.includes(scenario.id)) {
+          errors.push(`${field}.id is not a Phase 08 UAT scenario.`);
+        }
+        if (ids.has(scenario.id)) errors.push(`${field}.id must be unique.`);
+        ids.add(scenario.id);
+        const expectedPriority = scenario.id === 'P08-UT-027' ? 'CONDITIONAL' : 'MUST';
+        if (scenario.priority !== expectedPriority) {
+          errors.push(`${field}.priority must be ${expectedPriority}.`);
+        }
+        addRequiredString(scenario, 'persona', errors, { actual: true, path: `${field}.persona` });
+        addRequiredString(scenario, 'expected', errors, {
+          actual: true,
+          path: `${field}.expected`,
+        });
+        addRequiredString(scenario, 'actual', errors, { actual: true, path: `${field}.actual` });
+        addRequiredString(scenario, 'evidence', errors, {
+          actual: true,
+          path: `${field}.evidence`,
+        });
+        addUtcTimestamp(scenario, 'testedAtUtc', errors, {
+          actual: true,
+          path: `${field}.testedAtUtc`,
+        });
+        if (scenario.priority === 'MUST' && scenario.status !== 'PASS') {
+          errors.push(`${field} is Must and must PASS.`);
+        }
+        if (
+          scenario.priority === 'CONDITIONAL' &&
+          !['PASS', 'APPROVED_NA'].includes(scenario.status)
+        ) {
+          errors.push(`${field} conditional status must be PASS or APPROVED_NA.`);
+        }
+        if (scenario.status === 'APPROVED_NA') {
+          addRequiredString(scenario, 'decisionId', errors, {
+            actual: true,
+            path: `${field}.decisionId`,
+          });
+        }
+      });
+      if (PHASE08_UAT_SCENARIOS.some((id) => !ids.has(id))) {
+        errors.push('UAT PASS must contain every P08-UT-001..032 scenario exactly once.');
+      }
+    }
+    if (!Array.isArray(input.personas) || input.personas.length !== PHASE08_UAT_PERSONAS.length) {
+      errors.push(`UAT PASS requires exactly ${PHASE08_UAT_PERSONAS.length} personas.`);
+    } else {
+      const personaIds = new Set();
+      input.personas.forEach((persona, index) => {
+        const field = `personas[${index}]`;
+        if (!isObject(persona)) {
+          errors.push(`${field} must be an object.`);
+          return;
+        }
+        if (!PHASE08_UAT_PERSONAS.includes(persona.id)) {
+          errors.push(`${field}.id is not a required Phase 08 persona.`);
+        }
+        if (personaIds.has(persona.id)) errors.push(`${field}.id must be unique.`);
+        personaIds.add(persona.id);
+        addRequiredString(persona, 'role', errors, { actual: true, path: `${field}.role` });
+        if (persona.sessionIsolation !== 'SEPARATE_CONTEXT') {
+          errors.push(`${field}.sessionIsolation must be SEPARATE_CONTEXT.`);
+        }
+        if (persona.synthetic !== true) errors.push(`${field}.synthetic must be true.`);
+        if (persona.loginVerified !== true) errors.push(`${field}.loginVerified must be true.`);
+      });
+      if (PHASE08_UAT_PERSONAS.some((id) => !personaIds.has(id))) {
+        errors.push('UAT PASS must contain every required persona exactly once.');
+      }
+    }
+    if (!Array.isArray(input.defects)) {
+      errors.push(
+        'UAT PASS requires a defect register array, including an empty array when clean.',
+      );
+    } else {
+      const openCritical = input.defects.filter(
+        (defect) => defect?.severity === 'CRITICAL' && ['OPEN', 'FIXED'].includes(defect?.status),
+      ).length;
+      const openHigh = input.defects.filter(
+        (defect) => defect?.severity === 'HIGH' && ['OPEN', 'FIXED'].includes(defect?.status),
+      ).length;
+      if (openCritical !== input.criticalDefects || openHigh !== input.highDefects) {
+        errors.push('UAT defect counts must match the row-level defect register.');
+      }
+    }
+    for (const evidenceId of ['P08-EV-020', 'P08-EV-025', 'P08-EV-026']) {
+      if (!input.evidenceIds?.includes(evidenceId)) {
+        errors.push(`UAT PASS requires evidence ${evidenceId}.`);
+      }
+    }
     if (input.summary?.mustPassed !== input.summary?.mustTotal) {
       errors.push('UAT PASS requires all Must scenarios to pass.');
     }
