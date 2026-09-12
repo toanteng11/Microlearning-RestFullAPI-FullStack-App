@@ -310,10 +310,12 @@ jobs:
       - name: Final evidence redaction scan
         id: final_redaction
         if: always()
-        run: >-
-          npm run e2e:artifacts:scan --
-          "$PHASE08_ARTIFACT_ROOT"
-          "$PHASE08_ARTIFACT_ROOT/security-performance/final-redaction-report.json"
+        shell: bash
+        run: |
+          canary="${E2E_SECRET_CANARY:-PHASE_08_NO_SECRET_RETRIEVED_CANARY}"
+          E2E_SECRET_CANARY="$canary" npm run e2e:artifacts:scan -- \
+            "$PHASE08_ARTIFACT_ROOT" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/final-redaction-report.json"
 
       - name: Upload Phase 08 System Test evidence
         if: always() && steps.final_redaction.outcome == 'success'
