@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   buildPhase08IdentityReport,
   buildPhase08SystemTestSummary,
   summarizePlaywrightReport,
 } from './lib/phase-08-system-test.mjs';
+
+const workflow = readFileSync('.github/workflows/phase-08-system-test.yml', 'utf8');
+const terraformSetup = 'hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e';
+
+assert.match(workflow, new RegExp(terraformSetup));
+assert.match(workflow, /terraform_version:\s*1\.15\.8/u);
+assert.ok(
+  workflow.indexOf(terraformSetup) < workflow.indexOf('name: Check Terraform formatting'),
+  'Terraform must be installed before the Phase 08 formatting gate runs.',
+);
 
 const identity = {
   schemaVersion: 1,
@@ -129,5 +140,5 @@ assert.throws(
 );
 
 process.stdout.write(
-  `${JSON.stringify({ event: 'phase-08.system_test_tooling.tests_passed', cases: 6 })}\n`,
+  `${JSON.stringify({ event: 'phase-08.system_test_tooling.tests_passed', cases: 9 })}\n`,
 );
