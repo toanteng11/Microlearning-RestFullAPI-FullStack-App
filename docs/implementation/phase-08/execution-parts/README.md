@@ -9,7 +9,7 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 | 00 | P08-PR00 | Baseline, release profile và solo governance được chốt | G0 | `DONE` |
 | 01 | P08-PR01 | Handoff/identity contract không còn vòng lặp | G0 | `DONE` |
 | 02 | P08-PR01 | Evidence contracts và artifact workspace sẵn sàng | G1 | `DONE` |
-| 03 | P08-PR02 | System Test automation và release summary | G2 | `LOCAL_PASS_REMOTE_PENDING` |
+| 03 | P08-PR02 | System Test automation và release summary | G2 | `DONE` |
 | 04 | P08-PR02 | Security/privacy/API/data regression | G2 | `NOT_STARTED` |
 | 05 | P08-PR02 | Performance/accessibility/responsive verification | G2 | `NOT_STARTED` |
 | 06 | P08-PR03 | UAT personas, data và environment ready | G1/G3 | `NOT_STARTED` |

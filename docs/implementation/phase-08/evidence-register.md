@@ -12,9 +12,9 @@ Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, act
 | P08-EV-006 | Atlas backup/restore/RPO/RTO decision | DevOps | profile decision, backup proof + isolated restore; PITR actual or approved N/A | `PENDING` |
 | P08-EV-007 | Production separation | DevOps/Security | state/SA/secret/DB identity | `PENDING` |
 | P08-EV-008 | Observability readiness | DevOps | dashboard/uptime/alert route | `PENDING` |
-| P08-EV-010 | System Test summary | QA | catalog counts and raw reports | `LOCAL_PASS_REMOTE_PENDING` |
-| P08-EV-015 | API/data/security regression | QA/Security | negative checks, redaction, integrity | `LOCAL_PASS_REMOTE_PENDING` |
-| P08-EV-016 | Artifact/IaC/dependency scans | Security | findings, checksum, expiry | `LOCAL_PASS_REMOTE_PENDING` |
+| P08-EV-010 | System Test summary | QA | catalog counts and raw reports | `PASS` |
+| P08-EV-015 | API/data/security regression | QA/Security | negative checks, redaction, integrity | `PASS` |
+| P08-EV-016 | Artifact/IaC/dependency scans | Security | findings, checksum, expiry | `PASS` |
 | P08-EV-020 | UAT execution matrix | BA/QA | all rows, actors, actual/evidence | `PENDING` |
 | P08-EV-025 | UAT sign-off | PO | decision ID, scope, date UTC | `PENDING` |
 | P08-EV-026 | Defect/waiver closure | QA/TL | severity, retest, CR/waiver | `PENDING` |
@@ -39,10 +39,11 @@ Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, act
 
 ## Actual evidence snapshot - Part 00-03
 
-- Release ID: `P08-RC-20260910-92cdc07`.
-- Release root: `artifacts/phase-08/P08-RC-20260910-92cdc07/`.
-- G0/G1 evidence: `identity/handoff.json`, `identity/release-identity.json`, `identity/provider-observation.json`, `identity/g0-g1-readiness.json` and `identity/staging-identity-reconciliation.json`.
-- System Test: `system-test/playwright-results.json`, `system-test/junit.xml`, `system-test/playwright-report/` and `system-test/system-test-summary.json`.
+- Release ID: `P08-RC-20260912-299c45a`.
+- Release root: `artifacts/phase-08/P08-RC-20260912-299c45a/` inside the uploaded GitHub artifact.
+- G0/G1 and lineage evidence: `identity/release-identity.json`, `identity/provider-observation.json`, `identity/workflow-lineage.json` and `identity/staging-identity-reconciliation.json`; P07 handoff acceptance remains `P08-EV-001`.
+- System Test: `system-test/playwright-results.json`, `system-test/junit.xml`, `system-test/html-report/` and `system-test/system-test-summary.json`.
 - Security/IaC/dependency: `security-performance/scan-summary.json`, `security-performance/terraform-trivy.json` and `security-performance/final-redaction-report.json`.
-- Source workflow URLs use run IDs `34498334816`, `34498666885`, `34498961381` and `34499272941`; each is `success` for the exact candidate commit.
-- The GitHub artifact URL for `P08-EV-010/015/016` remains pending until `phase-08-system-test.yml` completes on this branch/merged source.
+- Source workflow URLs use CI `34671825515`, Build `34671963167`, Deploy `34672098531` and Cloud E2E `34672249300`; each is `success` for exact commit `299c45ac2ddcdb4bb4f2d7f1c733baf5fb9c008a`.
+- `P08-EV-010/015/016` are retained by System Test run `34672788211` in artifact `phase-08-system-test-P08-RC-20260912-299c45a` (ID `10290549499`, digest `sha256:9a2ec4d046ae953ca4473f4de4a764a774acc7530a608f039a13437350608528`).
+- Artifact expiry is `2026-12-11T04:21:29Z`; final redaction report is `PASS` with zero findings.
