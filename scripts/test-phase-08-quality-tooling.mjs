@@ -47,7 +47,7 @@ const observations = {
   performanceMeasurements: [
     ['simple-read', '/health', 800],
     ['list-report', '/api/v1/students/me/progress/courses', 1_000],
-    ['mutation', '/api/v1/analytics/events', 1_200],
+    ['mutation', '/api/v1/lessons/:lessonId/complete', 1_200],
     ['dashboard', '/api/v1/students/me/dashboard', 1_500],
     ['frontend-load', '/login', 3_000],
   ].map(([category, endpoint, threshold]) => ({
