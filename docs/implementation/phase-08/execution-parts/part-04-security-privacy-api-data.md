@@ -27,11 +27,11 @@ Credential exposure, cross-scope read/write, unsafe production error, incorrect 
 
 ## Implementation status
 
-`LOCAL_PASS_REMOTE_PENDING` on branch `phase-08-part-04-05-quality-verification`.
+`DONE` on exact candidate `P08-RC-20260912-8dc74d8`.
 
 - `tests/e2e/phase-08-quality.spec.ts` verifies blocked Student/Teacher identities, Student/Admin and Teacher/Admin RBAC, two-Student/two-Teacher ownership isolation, NoSQL operator rejection, pagination bounds, response redaction and idempotent analytics retry.
 - `scripts/lib/phase-08-quality.mjs` requires every security/data check ID and rejects missing, duplicate or failed evidence.
 - Existing dependency, Terraform, artifact-redaction, lineage and cloud identity checks remain enforced in `.github/workflows/phase-08-system-test.yml` before G2 can Pass.
 - Raw and summarized evidence is written below `security-performance/` and is rescanned before upload.
 
-Part 04 becomes `DONE` only after the updated workflow succeeds on the exact post-merge candidate and the 90-day artifact is recorded in `P08-EV-015/016`.
+Remote workflow `34702722300` passed all 11 required security/data checks, dependency audit, Terraform format/security and redaction controls. The 90-day artifact `phase-08-system-test-P08-RC-20260912-8dc74d8` (ID `10301290616`) records `P08-EV-015/016`; final redaction scanned 35 files with zero findings.

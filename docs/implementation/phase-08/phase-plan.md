@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|
 | M0 | P07 handoff review and identity lock | Technical Lead | P07 exit/handoff | `P08-EV-001..002` | `PASS` |
 | M1 | System Test/UAT readiness freeze | QA + BA | M0, Staging/personas/data | `P08-EV-003` | `PASS` |
-| M2 | System Test and regression | QA | M1, stable Staging | `P08-EV-005/010/015/016` | `LOCAL_PASS_REMOTE_PENDING` |
+| M2 | System Test and regression | QA | M1, stable Staging | `P08-EV-005/010/015/016` | `DONE - G2 PASS` |
 | M3 | UAT execution and retest | BA + QA + PO | M2, participants/data | `P08-EV-020..025` | `PENDING` |
 | M4 | Defect closure and Production readiness | QA + TL + DevOps | M3; Production work may run in parallel after M0 | `P08-EV-004/006/007/008/026` | `PENDING` |
 | M5 | Pre-release acceptance and Go/No-Go | Product Owner | M4, AC-001..010 Pass | `P08-EV-030` | `PENDING` |

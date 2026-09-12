@@ -20,9 +20,9 @@
 - [x] Candidate source workflows xác nhận locked install, CI, OpenAPI và Cloud E2E đều `success` trên exact commit.
 - [x] Part 03 System Test rows có actor/tool, exact identity, expected/actual, evidence và UTC status.
 - [x] Part 03 summary xác nhận Critical/High = 0, retry/flaky = 0; UAT defect closure vẫn thuộc Part 07.
-- [x] Remote System Test run `34672788211` Pass và artifact `10290549499` lưu `P08-EV-010/015/016` trong 90 ngày.
-- [ ] BA latency targets, axe/keyboard/focus và desktop/mobile P0 states được kiểm tra với methodology. Automation Part 04-05 đã local Pass; chờ exact-candidate workflow/artifact để đánh dấu hoàn tất.
-- [x] `npm run operations:contract:test`, `observability:contract:test`, `promotion:contract:test`, `hardening:contract:test`, `exit:contract:test`, `handoff:contract:test` pass trong CI `34671825515`.
+- [x] Remote System Test run `34702722300` Pass và artifact `10301290616` lưu `P08-EV-010/015/016` trong 90 ngày.
+- [x] BA latency targets, axe/keyboard/focus và desktop/mobile P0 states được kiểm tra với methodology; performance 5/5 và accessibility/responsive 5/5 Pass trên exact candidate.
+- [x] `npm run operations:contract:test`, `observability:contract:test`, `promotion:contract:test`, `hardening:contract:test`, `exit:contract:test`, `handoff:contract:test` pass trong CI `34701986045`.
 
 ## G4-G5 — Production Readiness and Decision
 
@@ -43,6 +43,6 @@
 
 ## Evidence hygiene
 
-- [x] Part 00-03 không commit secret, token, password, full URI, private key hoặc real PII; redaction scan có zero findings.
-- [x] Artifact paths Part 00-03 có release ID; workflow Part 03 cấu hình retention 90 ngày.
+- [x] Part 00-05 không commit secret, token, password, full URI, private key hoặc real PII; final redaction scan 35 file có zero findings.
+- [x] Artifact paths Part 00-05 có release ID; workflow G2 cấu hình retention 90 ngày.
 - [ ] Mọi `PENDING`, `BLOCKED`, `APPROVED_NA` còn lại đều có disposition; không “Pass by default”.

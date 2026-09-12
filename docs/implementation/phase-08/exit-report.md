@@ -4,7 +4,7 @@
 
 - Phase: `08 - Final System Acceptance and Production Release`
 - Planning status: `READY_TO_IMPLEMENT`
-- Execution status: `IN_PROGRESS - G0/G1 PASS; Part 03 DONE; Part 04-05 LOCAL_PASS_REMOTE_PENDING`
+- Execution status: `IN_PROGRESS - G0/G1/G2 PASS; Part 00-05 DONE`
 - Final decision: `PENDING`
 - Production deployment: `PENDING`
 
@@ -15,12 +15,12 @@ This file is a closure template. Historical NO_GO results remain in their releas
 | Field | Actual value |
 | --- | --- |
 | Release profile | `ACADEMIC_DEMO_RELEASE` |
-| Release ID | `P08-RC-20260910-92cdc07` |
-| Full commit SHA | `92cdc07051eace7062957c89b412bcbda920b254` |
-| Immutable image reference | `asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:5cabccd99633e331160fbcae0df64cbfcb058090718d0ba6b9fe650aeefde981` |
-| Staging revision/URL | `microlearning-staging-00013-6ns` / `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
+| Release ID | `P08-RC-20260912-8dc74d8` |
+| Full commit SHA | `8dc74d8b169c480c22be47fd58b4b530505f9e7c` |
+| Immutable image reference | `asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2` |
+| Staging revision/URL | `microlearning-staging-00024-vzw` / `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
 | Production revision/URL | `PENDING` |
-| Deployment workflow/run | Staging run `34498961381`; Cloud E2E run `34499272941` |
+| Deployment workflow/run | CI `34701986045`; Build `34702140794`; Staging `34702271579`; Cloud E2E `34702418131`; G2 `34702722300` |
 
 ## Gate summary
 
@@ -28,7 +28,7 @@ This file is a closure template. Historical NO_GO results remain in their releas
 | --- | --- | --- | --- |
 | G0 | Handoff/identity accepted | `PASS` | `P08-EV-001/002` |
 | G1 | System Test/UAT ready | `PASS` | `P08-EV-003` |
-| G2 | System Test Pass | `PENDING - Part 04-05 remote evidence required` | `P08-EV-005/010/015/016` |
+| G2 | System Test Pass | `PASS - 6/6 Must; security/data 11/11; UI 5/5; performance 5/5` | `P08-EV-005/010/015/016` |
 | G3 | UAT Pass | `PENDING` | `P08-EV-020/025` |
 | G4 | Defects + Production readiness Pass | `PENDING` | `P08-EV-004/006..008/026` |
 | G5 | PRE_RELEASE acceptance and GO | `PENDING` | `P08-EV-030` |
