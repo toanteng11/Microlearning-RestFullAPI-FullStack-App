@@ -15,6 +15,7 @@ const artifactRoot = process.env.PHASE08_ARTIFACT_ROOT ?? 'artifacts/phase-08/lo
 const courseId = '650000000000000000000001';
 const foreignCourseId = '507f1f77bcf86cd799439099';
 const studentAGradeId = '660000000000000000000061';
+const completedLessonId = '650000000000000000000021';
 
 type SecurityCheck = { id: string; status: 'PASS' | 'FAIL'; actual: string };
 type PerformanceMeasurement = {
@@ -273,30 +274,24 @@ test.describe('Phase 08 Part 04-05 quality verification', () => {
       `status=${invalidPage.status()}`,
     );
 
-    const event = {
-      eventId: `00000000-0000-4000-8000-${expectedCommit.slice(0, 12)}`,
-      eventName: 'lesson_started',
-      schemaVersion: '1',
-      occurredAt: new Date().toISOString(),
-      context: { courseId },
-      properties: { surface: 'phase-08-quality' },
-    };
-    const first = await request.post(`${apiUrl}/api/v1/analytics/events`, {
-      data: event,
+    const first = await request.post(`${apiUrl}/api/v1/lessons/${completedLessonId}/complete`, {
       headers: { Authorization: `Bearer ${studentToken}` },
     });
-    const retry = await request.post(`${apiUrl}/api/v1/analytics/events`, {
-      data: event,
+    const retry = await request.post(`${apiUrl}/api/v1/lessons/${completedLessonId}/complete`, {
       headers: { Authorization: `Bearer ${studentToken}` },
     });
     const firstBody = await first.json();
     const retryBody = await retry.json();
     recordSecurity(
       'DATA-IDEMPOTENT-RETRY',
-      [200, 202].includes(first.status()) &&
+      first.status() === 200 &&
         retry.status() === 200 &&
-        retryBody?.data?.duplicate === true,
-      `first=${first.status()}/${String(firstBody?.data?.duplicate)}, retry=${retry.status()}/${String(retryBody?.data?.duplicate)}`,
+        firstBody?.data?.newlyCompleted === false &&
+        retryBody?.data?.newlyCompleted === false &&
+        firstBody?.data?.progress?.status === 'COMPLETED' &&
+        retryBody?.data?.progress?.status === 'COMPLETED' &&
+        firstBody?.data?.progress?.completedAt === retryBody?.data?.progress?.completedAt,
+      `first=${first.status()}/${String(firstBody?.data?.newlyCompleted)}, retry=${retry.status()}/${String(retryBody?.data?.newlyCompleted)}, stableCompletedAt=${String(firstBody?.data?.progress?.completedAt === retryBody?.data?.progress?.completedAt)}`,
     );
   });
 
@@ -315,20 +310,10 @@ test.describe('Phase 08 Part 04-05 quality verification', () => {
     await sampleRequest('dashboard', '/api/v1/students/me/dashboard', () =>
       request.get(`${apiUrl}/api/v1/students/me/dashboard`, { headers: authHeaders }),
     );
-    const event = {
-      eventId: `00000000-0000-4000-9000-${expectedCommit.slice(0, 12)}`,
-      eventName: 'lesson_started',
-      schemaVersion: '1',
-      occurredAt: new Date().toISOString(),
-      context: { courseId },
-      properties: { surface: 'phase-08-performance' },
-    };
-    await sampleRequest(
-      'mutation',
-      '/api/v1/analytics/events',
-      () =>
-        request.post(`${apiUrl}/api/v1/analytics/events`, { data: event, headers: authHeaders }),
-      [200, 202],
+    await sampleRequest('mutation', `/api/v1/lessons/${completedLessonId}/complete`, () =>
+      request.post(`${apiUrl}/api/v1/lessons/${completedLessonId}/complete`, {
+        headers: authHeaders,
+      }),
     );
 
     await page.goto('/login', { waitUntil: 'networkidle' });
