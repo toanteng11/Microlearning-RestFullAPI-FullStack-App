@@ -30,28 +30,29 @@ Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, act
 
 ## Integrity checks
 
-- [x] Part 00-03 entries point to raw release-scoped artifacts; GitHub URL is added after the Part 03 workflow run.
-- [x] Part 03 counts match Playwright JSON, JUnit and generated System Test summary (`6/6 PASS`).
-- [x] Part 00-03 redaction scan reports no secret, token, password, full URI or real PII.
+- [x] Part 00-05 entries point to raw release-scoped artifacts and the successful G2 workflow URL.
+- [x] Part 03-05 counts match Playwright JSON/JUnit and validated summaries (`6/6`, `11/11`, `5/5`, `5/5` Pass).
+- [x] Part 00-05 final redaction scan reports no secret, token, password, full URI or real PII across 35 files.
 - [ ] Identity is identical across handoff, tests, promotion and exit.
-- [x] Part 00-03 artifact path is release-scoped: `artifacts/phase-08/<release-id>/...`.
+- [x] Part 00-05 artifact path is release-scoped: `artifacts/phase-08/<release-id>/...`.
 - [ ] PRE_RELEASE evidence stops at G5; FINAL evidence includes G6-G8 actual results.
 
-## Actual evidence snapshot - Part 00-03
+## Actual evidence snapshot - Part 00-05
 
-- Release ID: `P08-RC-20260912-299c45a`.
-- Release root: `artifacts/phase-08/P08-RC-20260912-299c45a/` inside the uploaded GitHub artifact.
+- Release ID: `P08-RC-20260912-8dc74d8`.
+- Release root: `artifacts/phase-08/P08-RC-20260912-8dc74d8/` inside the uploaded GitHub artifact.
 - G0/G1 and lineage evidence: `identity/release-identity.json`, `identity/provider-observation.json`, `identity/workflow-lineage.json` and `identity/staging-identity-reconciliation.json`; P07 handoff acceptance remains `P08-EV-001`.
 - System Test: `system-test/playwright-results.json`, `system-test/junit.xml`, `system-test/html-report/` and `system-test/system-test-summary.json`.
 - Security/IaC/dependency: `security-performance/scan-summary.json`, `security-performance/terraform-trivy.json` and `security-performance/final-redaction-report.json`.
-- Source workflow URLs use CI `34671825515`, Build `34671963167`, Deploy `34672098531` and Cloud E2E `34672249300`; each is `success` for exact commit `299c45ac2ddcdb4bb4f2d7f1c733baf5fb9c008a`.
-- `P08-EV-010/015/016` are retained by System Test run `34672788211` in artifact `phase-08-system-test-P08-RC-20260912-299c45a` (ID `10290549499`, digest `sha256:9a2ec4d046ae953ca4473f4de4a764a774acc7530a608f039a13437350608528`).
-- Artifact expiry is `2026-12-11T04:21:29Z`; final redaction report is `PASS` with zero findings.
+- Source workflow URLs use CI `34701986045`, Build `34702140794`, Deploy `34702271579` and Cloud E2E `34702418131`; each is `success` for exact commit `8dc74d8b169c480c22be47fd58b4b530505f9e7c`.
+- `P08-EV-010/015/016` are retained by [System Test run `34702722300`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/34702722300) in artifact `phase-08-system-test-P08-RC-20260912-8dc74d8` (ID `10301290616`, digest `sha256:207c1526bcb92fadf3a0d739312a27756a19e92fe915e0bea02f72fa355d0851`).
+- Artifact expiry is `2026-12-11T15:36:07Z`; final redaction report is `PASS` after scanning 35 files with zero findings.
 
-## Part 04-05 implementation snapshot
+## Part 04-05 actual result
 
-- Status: `LOCAL_PASS_REMOTE_PENDING`; this records implemented controls, not release Pass evidence.
+- Status: `DONE`; G2 is `PASS` for the exact release identity.
 - Runner: `tests/e2e/phase-08-quality.spec.ts` through the existing exact-candidate `phase-08-system-test.yml` workflow.
 - Raw outputs: `security-performance/quality-observations.json`, Playwright JSON/JUnit/HTML, retry traces and failure media.
 - Derived outputs: `security-performance/quality-summary.json` and `quality-summary-validation.json`; p95 is recalculated from raw samples by contract code.
-- Required remote closure: workflow URL/run ID, artifact ID/digest/expiry and exact post-merge release identity. Until recorded, Part 04-05 remain `LOCAL_PASS_REMOTE_PENDING`.
+- Security/data: 11/11 Pass. Performance: 5/5 categories below threshold with zero errors. Accessibility/responsive: 5/5 screens Pass with zero serious/critical violations and no horizontal overflow.
+- Release identity: revision `microlearning-staging-00024-vzw`, immutable image `sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2`, runtime/provider/source records all match.

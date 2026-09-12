@@ -9,7 +9,7 @@
 | Gate design | `PASS` | G5 PRE_RELEASE and G8 FINAL remove circular acceptance |
 | Solo governance | `PASS` | One actor/multiple roles is permitted without false independent approval |
 | Work decomposition | `PASS` | Part 00-13 and P08-PR00..06 have dependencies, tests, evidence and exit rules |
-| Current implementation | `PART 00-03 DONE; PART 04-05 LOCAL PASS` | G0/G1 and Part 03 remote evidence are actual Pass; Part 04-05 tooling is implemented and locally validated, with exact-candidate workflow evidence pending; Part 06-13 remain pending |
+| Current implementation | `PART 00-05 DONE; G2 PASS` | G0/G1/G2 and Part 03-05 remote evidence are actual Pass on one exact candidate; Part 06-13 remain pending |
 
 **Overall:** documentation is `READY_TO_IMPLEMENT`; Phase 08 execution is not complete.
 
@@ -37,15 +37,14 @@
 
 ## Remaining code/config work
 
-1. Merge Part 04-05 tooling and wait for CI/Build/Deploy/Cloud E2E to identify the exact new candidate.
-2. Run the updated `phase-08-system-test.yml` with that candidate and retain its combined System Test/quality artifact for `P08-EV-010/015/016`.
-3. Mark Part 04-05 `DONE` only when security/data, p95, accessibility, keyboard, responsive and final-redaction results all Pass; any changed runtime identity requires a new candidate and G0/G1 revalidation.
-4. Execute role-based UAT and close defects.
-5. Complete Production Terraform/Atlas/recovery readiness for the selected profile.
-6. Add protected Production APPLY after G5, then deploy/smoke/observe/handover/exit.
+1. Prepare Part 06 UAT personas, deterministic data, environment checks and evidence workspace against candidate `P08-RC-20260912-8dc74d8`.
+2. Execute role-based UAT Part 07 and close or disposition defects without changing the locked candidate.
+3. If a fix changes runtime identity, create a new candidate and rerun affected G0-G2 evidence before UAT sign-off.
+4. Complete Production Terraform/Atlas/recovery readiness for the selected profile.
+5. Add protected Production APPLY after G5, then deploy/smoke/observe/handover/exit.
 
 These are implementation tasks, not missing planning. They must remain `PENDING` until actual evidence exists.
 
 ## Start authorization
 
-Part 00-03 are `DONE`; Part 04-05 are `LOCAL_PASS_REMOTE_PENDING`. The next safe action is PR review, required checks and one updated System Test workflow run for the exact post-merge candidate. Production remains `PLAN_ONLY` until P08-PR05 and an exact G5 GO.
+Part 00-05 are `DONE` and G2 is `PASS` through workflow `34702722300`. The next safe action is Part 06-07 UAT readiness/execution on the same locked candidate, followed by G3 evidence and defect closure. Production remains `PLAN_ONLY` until P08-PR05 and an exact G5 GO.
