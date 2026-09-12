@@ -8,6 +8,7 @@ import {
 } from './lib/phase-08-system-test.mjs';
 
 const workflow = readFileSync('.github/workflows/phase-08-system-test.yml', 'utf8');
+const deploymentWorkflow = readFileSync('.github/workflows/deploy-staging.yml', 'utf8');
 const terraformSetup = 'hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e';
 
 assert.match(workflow, new RegExp(terraformSetup));
@@ -15,6 +16,17 @@ assert.match(workflow, /terraform_version:\s*1\.15\.8/u);
 assert.ok(
   workflow.indexOf(terraformSetup) < workflow.indexOf('name: Check Terraform formatting'),
   'Terraform must be installed before the Phase 08 formatting gate runs.',
+);
+assert.match(workflow, /E2E_SECRET_CANARY:-PHASE_08_NO_SECRET_RETRIEVED_CANARY/u);
+assert.match(deploymentWorkflow, /\.status\.latestReadyRevisionName/u);
+assert.match(deploymentWorkflow, /\.status\.traffic\[\]\?/u);
+assert.match(
+  deploymentWorkflow,
+  /test "\$live_image" = "\$\{\{ steps\.release\.outputs\.image_ref \}\}"/u,
+);
+assert.match(
+  deploymentWorkflow,
+  /test "\$live_commit" = "\$\{\{ steps\.release\.outputs\.commit_sha \}\}"/u,
 );
 
 const identity = {
@@ -140,5 +152,5 @@ assert.throws(
 );
 
 process.stdout.write(
-  `${JSON.stringify({ event: 'phase-08.system_test_tooling.tests_passed', cases: 9 })}\n`,
+  `${JSON.stringify({ event: 'phase-08.system_test_tooling.tests_passed', cases: 14 })}\n`,
 );

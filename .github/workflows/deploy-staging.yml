@@ -209,11 +209,26 @@ jobs:
         working-directory: infrastructure/terraform/environments/staging
         shell: bash
         run: |
+          set -euo pipefail
           service_url="$(terraform output -raw cloud_run_service_uri)"
           canonical_url="$(terraform output -raw canonical_service_uri)"
-          revision="$(terraform output -raw cloud_run_latest_ready_revision)"
           seed_job="$(terraform output -raw seed_job_name)"
+          service_json="$RUNNER_TEMP/deployed-cloud-run-service.json"
+          gcloud run services describe "${{ vars.CLOUD_RUN_SERVICE }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region asia-southeast1 \
+            --format=json > "$service_json"
+          live_url="$(jq -r '.status.url' "$service_json")"
+          revision="$(jq -r '.status.latestReadyRevisionName' "$service_json")"
+          traffic_revision="$(jq -r '[.status.traffic[]? | select((.percent // 0) == 100) | .revisionName][0] // empty' "$service_json")"
+          live_image="$(jq -r '.spec.template.spec.containers[0].image' "$service_json")"
+          live_commit="$(jq -r '[.spec.template.spec.containers[0].env[]? | select(.name == "COMMIT_SHA") | .value][0] // empty' "$service_json")"
           test "$service_url" = "$canonical_url"
+          test "$live_url" = "$canonical_url"
+          test -n "$revision"
+          test "$traffic_revision" = "$revision"
+          test "$live_image" = "${{ steps.release.outputs.image_ref }}"
+          test "$live_commit" = "${{ steps.release.outputs.commit_sha }}"
           echo "service_url=$service_url" >> "$GITHUB_OUTPUT"
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
           echo "seed_job=$seed_job" >> "$GITHUB_OUTPUT"
