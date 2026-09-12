@@ -258,6 +258,19 @@ jobs:
           E2E_EXPECTED_REVISION: ${{ inputs.staging_revision }}
         run: npm run test:e2e:phase-08
 
+      - name: Run Phase 08 Part 04-05 quality verification
+        id: quality_playwright
+        continue-on-error: true
+        env:
+          E2E_PHASE08_QUALITY_MODE: 'true'
+          E2E_WEB_URL: ${{ inputs.staging_url }}
+          E2E_API_URL: ${{ inputs.staging_url }}
+          E2E_PHASE08_RELEASE_ID: ${{ inputs.release_id }}
+          E2E_EXPECTED_COMMIT: ${{ inputs.candidate_commit }}
+          E2E_EXPECTED_IMAGE: ${{ inputs.candidate_image }}
+          E2E_EXPECTED_REVISION: ${{ inputs.staging_revision }}
+        run: npm run test:e2e:phase-08:quality
+
       - name: Audit production dependencies
         id: dependency
         continue-on-error: true
@@ -306,6 +319,13 @@ jobs:
           npm run phase-08:system-test:validate -- \
             "$PHASE08_ARTIFACT_ROOT/system-test/system-test-summary.json" \
             "$PHASE08_ARTIFACT_ROOT/system-test/system-test-summary-validation.json"
+          npm run phase-08:quality:summary -- \
+            "$PHASE08_ARTIFACT_ROOT/identity/release-identity.json" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/quality-observations.json" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/quality-summary.json"
+          npm run phase-08:quality:validate -- \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/quality-summary.json" \
+            "$PHASE08_ARTIFACT_ROOT/security-performance/quality-summary-validation.json"
 
       - name: Final evidence redaction scan
         id: final_redaction
@@ -336,6 +356,7 @@ jobs:
             echo "- Commit: \`${{ inputs.candidate_commit }}\`"
             echo "- Revision: \`${{ inputs.staging_revision }}\`"
             echo "- Playwright: \`${{ steps.playwright.outcome }}\`"
+            echo "- Part 04-05 quality: \`${{ steps.quality_playwright.outcome }}\`"
             echo "- Dependency/IaC/redaction: \`${{ steps.dependency.outcome }}/${{ steps.terraform_security.outcome }}/${{ steps.final_redaction.outcome }}\`"
             echo "- Contract summary: \`${{ steps.summary.outcome }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -345,6 +366,7 @@ jobs:
         shell: bash
         run: |
           test "${{ steps.playwright.outcome }}" = "success"
+          test "${{ steps.quality_playwright.outcome }}" = "success"
           test "${{ steps.dependency.outcome }}" = "success"
           test "${{ steps.terraform_format.outcome }}" = "success"
           test "${{ steps.terraform_security.outcome }}" = "success"

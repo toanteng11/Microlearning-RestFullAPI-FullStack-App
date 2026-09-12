@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-03 DONE / G2 PASS`. G0/G1 đã được xác nhận; release candidate hiện hành `P08-RC-20260912-299c45a` đã hoàn tất System Test Part 03 với 6/6 Must scenarios Pass trên Staging. GitHub workflow `34672788211` đã lưu evidence 90 ngày; UAT, các kiểm tra NFR còn lại, Production deployment và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-03 DONE / PART 04-05 LOCAL_PASS_REMOTE_PENDING`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-299c45a` đã hoàn tất System Test Part 03 với 6/6 Must scenarios Pass trên Staging và workflow `34672788211` đã lưu evidence 90 ngày. Quality automation Part 04-05 đã local Pass nhưng phải chạy lại trên exact post-merge candidate trước khi đóng G2; UAT, Production deployment và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -37,7 +37,7 @@ Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase 
 |---|---|---|---|
 | G0 | Accept P07 handoff | Handoff record hợp lệ, identity và P07 exit được đối chiếu | `PASS` |
 | G1 | Ready for System Test/UAT | Staging, personas, synthetic data, catalog và evidence workspace sẵn sàng; không phụ thuộc Production apply | `PASS` |
-| G2 | System Test exit | Test technical/integration/security/NFR đã chạy trên exact candidate | `PASS` |
+| G2 | System Test exit | Test technical/integration/security/NFR đã chạy trên exact candidate | `PENDING - Part 03 PASS; Part 04-05 remote evidence required` |
 | G3 | UAT exit | Must scenarios có kết quả và Product Owner decision | `PENDING` |
 | G4 | Release readiness/closure | Critical/High đóng; Medium/Low có disposition; Production plan, separation và recovery ready | `PENDING` |
 | G5 | Go/Conditional Go/No-Go | `PRE_RELEASE` AC-001..010 Pass; PO accountable; role recommendations recorded | `PENDING` |

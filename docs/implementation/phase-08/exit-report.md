@@ -4,7 +4,7 @@
 
 - Phase: `08 - Final System Acceptance and Production Release`
 - Planning status: `READY_TO_IMPLEMENT`
-- Execution status: `IN_PROGRESS - G0/G1 PASS; G2 LOCAL_PASS_REMOTE_PENDING`
+- Execution status: `IN_PROGRESS - G0/G1 PASS; Part 03 DONE; Part 04-05 LOCAL_PASS_REMOTE_PENDING`
 - Final decision: `PENDING`
 - Production deployment: `PENDING`
 
@@ -28,7 +28,7 @@ This file is a closure template. Historical NO_GO results remain in their releas
 | --- | --- | --- | --- |
 | G0 | Handoff/identity accepted | `PASS` | `P08-EV-001/002` |
 | G1 | System Test/UAT ready | `PASS` | `P08-EV-003` |
-| G2 | System Test Pass | `LOCAL_PASS_REMOTE_PENDING` | `P08-EV-005/010/015/016` |
+| G2 | System Test Pass | `PENDING - Part 04-05 remote evidence required` | `P08-EV-005/010/015/016` |
 | G3 | UAT Pass | `PENDING` | `P08-EV-020/025` |
 | G4 | Defects + Production readiness Pass | `PENDING` | `P08-EV-004/006..008/026` |
 | G5 | PRE_RELEASE acceptance and GO | `PENDING` | `P08-EV-030` |
