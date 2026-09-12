@@ -36,6 +36,7 @@ type UiCheck = {
 const securityChecks: SecurityCheck[] = [];
 const performanceMeasurements: PerformanceMeasurement[] = [];
 const uiChecks: UiCheck[] = [];
+const accessTokensByEmail = new Map<string, string>();
 
 function recordSecurity(id: string, passed: boolean, actual: string) {
   securityChecks.push({ id, status: passed ? 'PASS' : 'FAIL', actual });
@@ -63,6 +64,9 @@ async function canReachInteractiveControlByKeyboard(page: Page) {
 }
 
 async function apiLogin(request: APIRequestContext, email: string) {
+  const cachedToken = accessTokensByEmail.get(email);
+  if (cachedToken) return cachedToken;
+
   const response = await request.post(`${apiUrl}/api/v1/auth/login`, {
     data: { email, password: demoPassword },
     headers: { Origin: webUrl, 'x-phase-08-release-id': releaseId },
@@ -70,7 +74,9 @@ async function apiLogin(request: APIRequestContext, email: string) {
   expect(response.status(), `Synthetic login failed for ${email}`).toBe(200);
   const body = await response.json();
   expect(body?.data?.user?.email).toBe(email);
-  return body.data.accessToken as string;
+  const accessToken = body.data.accessToken as string;
+  accessTokensByEmail.set(email, accessToken);
+  return accessToken;
 }
 
 async function uiLogin(page: Page, email: string, expectedPath: RegExp) {
@@ -108,6 +114,7 @@ async function inspectSurface(
     viewport: { width: number; height: number };
     email?: string;
     expectedPath?: RegExp;
+    navigationWaitUntil?: 'domcontentloaded' | 'networkidle';
     setup?: (page: Page) => Promise<void>;
     states?: (page: Page) => Promise<void>;
   },
@@ -117,7 +124,7 @@ async function inspectSurface(
   try {
     if (input.email) await uiLogin(page, input.email, input.expectedPath!);
     if (input.setup) await input.setup(page);
-    await page.goto(input.path, { waitUntil: 'networkidle' });
+    await page.goto(input.path, { waitUntil: input.navigationWaitUntil ?? 'networkidle' });
     await expect(page.locator('main')).toBeVisible();
     if (input.states) await input.states(page);
     const axe = await new AxeBuilder({ page })
@@ -354,6 +361,15 @@ test.describe('Phase 08 Part 04-05 quality verification', () => {
   test('[P08-QV-005] P0 screens pass accessibility, keyboard and responsive checks', async ({
     browser,
   }) => {
+    let markProgressRequestStarted!: () => void;
+    let releaseProgressResponse!: () => void;
+    const progressRequestStarted = new Promise<void>((resolve) => {
+      markProgressRequestStarted = resolve;
+    });
+    const progressResponseReleased = new Promise<void>((resolve) => {
+      releaseProgressResponse = resolve;
+    });
+
     await inspectSurface(browser, {
       id: 'public-login',
       path: '/login',
@@ -386,9 +402,11 @@ test.describe('Phase 08 Part 04-05 quality verification', () => {
       viewport: { width: 390, height: 844 },
       email: 'student.active@example.test',
       expectedPath: /\/student\/dashboard/u,
+      navigationWaitUntil: 'domcontentloaded',
       setup: async (page) => {
         await page.route('**/api/v1/students/me/progress/courses*', async (route) => {
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          markProgressRequestStarted();
+          await progressResponseReleased;
           const response = await route.fetch();
           const body = await response.json();
           body.data.items = [];
@@ -404,7 +422,9 @@ test.describe('Phase 08 Part 04-05 quality verification', () => {
         });
       },
       states: async (page) => {
+        await progressRequestStarted;
         await expect(page.getByText('Đang tải tiến độ khóa học...')).toBeVisible();
+        releaseProgressResponse();
         await expect(page.getByText('Không có khóa học phù hợp với bộ lọc')).toBeVisible();
         await page.unroute('**/api/v1/students/me/progress/courses*');
         await page.route('**/api/v1/students/me/progress/courses*', (route) =>
