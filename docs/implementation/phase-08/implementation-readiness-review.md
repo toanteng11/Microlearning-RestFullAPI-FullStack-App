@@ -9,7 +9,7 @@
 | Gate design | `PASS` | G5 PRE_RELEASE and G8 FINAL remove circular acceptance |
 | Solo governance | `PASS` | One actor/multiple roles is permitted without false independent approval |
 | Work decomposition | `PASS` | Part 00-13 and P08-PR00..06 have dependencies, tests, evidence and exit rules |
-| Current implementation | `PART 00-02 DONE; PART 03 LOCAL PASS` | G0/G1 are actual Pass; dedicated System Test is 6/6 Pass with identity/scan summaries; GitHub Part 03 artifact and Part 04-13 remain pending |
+| Current implementation | `PART 00-03 DONE; PART 04-05 LOCAL PASS` | G0/G1 and Part 03 remote evidence are actual Pass; Part 04-05 tooling is implemented and locally validated, with exact-candidate workflow evidence pending; Part 06-13 remain pending |
 
 **Overall:** documentation is `READY_TO_IMPLEMENT`; Phase 08 execution is not complete.
 
@@ -37,9 +37,9 @@
 
 ## Remaining code/config work
 
-1. Run `phase-08-system-test.yml` with the exact candidate inputs and retain the GitHub artifact for `P08-EV-010/015/016`.
-2. After the remote run passes, mark Part 03/G2 `DONE/PASS`; any changed runtime identity requires a new candidate and G0/G1 revalidation.
-3. Implement Part 04 security/privacy/API/data review and Part 05 performance/accessibility/responsive evidence.
+1. Merge Part 04-05 tooling and wait for CI/Build/Deploy/Cloud E2E to identify the exact new candidate.
+2. Run the updated `phase-08-system-test.yml` with that candidate and retain its combined System Test/quality artifact for `P08-EV-010/015/016`.
+3. Mark Part 04-05 `DONE` only when security/data, p95, accessibility, keyboard, responsive and final-redaction results all Pass; any changed runtime identity requires a new candidate and G0/G1 revalidation.
 4. Execute role-based UAT and close defects.
 5. Complete Production Terraform/Atlas/recovery readiness for the selected profile.
 6. Add protected Production APPLY after G5, then deploy/smoke/observe/handover/exit.
@@ -48,4 +48,4 @@ These are implementation tasks, not missing planning. They must remain `PENDING`
 
 ## Start authorization
 
-Part 00-02 are `DONE`; Part 03 is `LOCAL_PASS_REMOTE_PENDING`. The next safe action is review plus a GitHub workflow run for the exact candidate, then Part 04-05. Production remains `PLAN_ONLY` until P08-PR05 and an exact G5 GO.
+Part 00-03 are `DONE`; Part 04-05 are `LOCAL_PASS_REMOTE_PENDING`. The next safe action is PR review, required checks and one updated System Test workflow run for the exact post-merge candidate. Production remains `PLAN_ONLY` until P08-PR05 and an exact G5 GO.

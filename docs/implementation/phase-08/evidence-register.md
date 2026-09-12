@@ -47,3 +47,11 @@ Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, act
 - Source workflow URLs use CI `34671825515`, Build `34671963167`, Deploy `34672098531` and Cloud E2E `34672249300`; each is `success` for exact commit `299c45ac2ddcdb4bb4f2d7f1c733baf5fb9c008a`.
 - `P08-EV-010/015/016` are retained by System Test run `34672788211` in artifact `phase-08-system-test-P08-RC-20260912-299c45a` (ID `10290549499`, digest `sha256:9a2ec4d046ae953ca4473f4de4a764a774acc7530a608f039a13437350608528`).
 - Artifact expiry is `2026-12-11T04:21:29Z`; final redaction report is `PASS` with zero findings.
+
+## Part 04-05 implementation snapshot
+
+- Status: `LOCAL_PASS_REMOTE_PENDING`; this records implemented controls, not release Pass evidence.
+- Runner: `tests/e2e/phase-08-quality.spec.ts` through the existing exact-candidate `phase-08-system-test.yml` workflow.
+- Raw outputs: `security-performance/quality-observations.json`, Playwright JSON/JUnit/HTML, retry traces and failure media.
+- Derived outputs: `security-performance/quality-summary.json` and `quality-summary-validation.json`; p95 is recalculated from raw samples by contract code.
+- Required remote closure: workflow URL/run ID, artifact ID/digest/expiry and exact post-merge release identity. Until recorded, Part 04-05 remain `LOCAL_PASS_REMOTE_PENDING`.

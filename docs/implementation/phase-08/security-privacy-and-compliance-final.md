@@ -19,9 +19,13 @@ npm run sbom:production
 npm run terraform:security
 npm run cloud:security:verify -- <service_url> <app_version> <commit_sha> <image_ref> <revision> <report.json>
 npm run e2e:artifacts:scan -- artifacts/phase-08 <report.json>
+npm run phase-08:quality:tooling:test
+npm run phase-08:quality:validate -- <quality-summary.json> <validation-report.json>
 ```
 
 Run only with actual image/path values. These commands produce evidence; a command definition alone is not a Pass.
+
+The Part 04 quality runner uses only synthetic identities and writes status codes, bounded timing samples and redacted findings. It never writes access/refresh tokens, passwords, invitation tokens or full connection strings into evidence.
 
 ## Security gate
 

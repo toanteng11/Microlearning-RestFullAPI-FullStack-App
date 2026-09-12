@@ -8,11 +8,11 @@ Staging Terraform config currently uses Cloud Run `max_instances = 2`, `containe
 
 | Area | Target/evidence | Status |
 |---|---|---|
-| Simple read API | p95 <= 800 ms | `PENDING` |
-| List/report API | p95 <= 1000 ms | `PENDING` |
-| Mutation API | p95 <= 1200 ms | `PENDING` |
-| Dashboard API | p95 <= 1500 ms | `PENDING` |
-| Frontend initial load | <= 3 seconds on documented good Staging network | `PENDING` |
+| Simple read API | p95 <= 800 ms | `AUTOMATED / REMOTE_PENDING` |
+| List/report API | p95 <= 1000 ms | `AUTOMATED / REMOTE_PENDING` |
+| Mutation API | p95 <= 1200 ms | `AUTOMATED / REMOTE_PENDING` |
+| Dashboard API | p95 <= 1500 ms | `AUTOMATED / REMOTE_PENDING` |
+| Frontend initial load | <= 3 seconds on documented good Staging network | `AUTOMATED / REMOTE_PENDING` |
 | Cloud Run | instances, concurrency, startup/cold-start and errors | `PENDING` |
 | Atlas | pool, selection/connect/socket timeout and capacity | `PENDING` |
 | Data/reporting | pagination, refresh/reconciliation and integrity under expected load | `PENDING` |
