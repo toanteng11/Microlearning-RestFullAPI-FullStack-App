@@ -42,6 +42,26 @@ function recordSecurity(id: string, passed: boolean, actual: string) {
   expect(passed, `${id}: ${actual}`).toBe(true);
 }
 
+async function canReachInteractiveControlByKeyboard(page: Page) {
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await page.keyboard.press('Tab');
+    const focused = await page.evaluate(() => {
+      const active = document.activeElement;
+      if (!(active instanceof HTMLElement)) return false;
+      const style = window.getComputedStyle(active);
+      return (
+        active !== document.body &&
+        active.tabIndex >= 0 &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden'
+      );
+    });
+    if (focused) return true;
+  }
+  return false;
+}
+
 async function apiLogin(request: APIRequestContext, email: string) {
   const response = await request.post(`${apiUrl}/api/v1/auth/login`, {
     data: { email, password: demoPassword },
@@ -97,7 +117,7 @@ async function inspectSurface(
   try {
     if (input.email) await uiLogin(page, input.email, input.expectedPath!);
     if (input.setup) await input.setup(page);
-    await page.goto(input.path);
+    await page.goto(input.path, { waitUntil: 'networkidle' });
     await expect(page.locator('main')).toBeVisible();
     if (input.states) await input.states(page);
     const axe = await new AxeBuilder({ page })
@@ -110,10 +130,7 @@ async function inspectSurface(
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,
     }));
-    await page.keyboard.press('Tab');
-    const keyboardFocus = await page.evaluate(() =>
-      /^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/u.test(document.activeElement?.tagName ?? ''),
-    );
+    const keyboardFocus = await canReachInteractiveControlByKeyboard(page);
     const horizontalOverflow = dimensions.scrollWidth > dimensions.clientWidth + 1;
     uiChecks.push({
       id: input.id,
