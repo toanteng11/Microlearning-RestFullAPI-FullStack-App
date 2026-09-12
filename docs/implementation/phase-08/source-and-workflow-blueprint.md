@@ -28,6 +28,9 @@ G8 PASS = G6 ACTUAL + P08-AC-001..014 PASS + complete evidence + no blocker
 | `playwright.phase-08.config.ts` | Chạy exact Staging URL, project theo persona/viewport, trace khi retry, không ghi credential |
 | `tests/e2e/phase-08-system.spec.ts` | Health/version/CORS/SPA/auth/RBAC và P0 cross-domain journeys |
 | `tests/e2e/phase-08-uat.spec.ts` | Hỗ trợ scenario 001-032; automation là evidence hỗ trợ, không tự tạo business sign-off |
+| `playwright.phase-08-uat.config.ts` | UAT chạy serial, retry một lần và giữ trace/screenshot/video khi lỗi |
+| `scripts/lib/phase-08-uat.mjs` | Khóa 32 scenario, 8 persona, defect linkage, solo sign-off và exact candidate identity |
+| `scripts/generate-phase-08-uat-summary.mjs` | Tạo `P08-EV-003/020/025/026` machine-readable từ raw observations và explicit acceptance |
 | `tests/e2e/phase-08-accessibility.spec.ts` | Axe trên trang P0, keyboard/focus/status-not-color checks |
 | `scripts/run-phase-08-performance.mjs` | Bounded synthetic requests, warm-up, p50/p95/error rate, dataset/run metadata |
 | `scripts/lib/phase-08-system-test.mjs` | Chuẩn hóa case ID, counts, identity, scan result và fail-closed summary |

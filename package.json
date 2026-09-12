@@ -27,6 +27,7 @@
     "test:e2e:cloud": "playwright test --config playwright.cloud.config.ts",
     "test:e2e:phase-08": "playwright test --config playwright.phase-08.config.ts",
     "test:e2e:phase-08:quality": "playwright test --config playwright.phase-08-quality.config.ts",
+    "test:e2e:phase-08:uat": "playwright test --config playwright.phase-08-uat.config.ts",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
     "reporting:rebuild": "npm run reporting:rebuild --workspace @microlearning/api --",
     "reporting:reconcile": "npm run reporting:reconcile --workspace @microlearning/api --",
@@ -66,6 +67,8 @@
     "phase-08:scan-summary:create": "node scripts/create-phase-08-scan-summary.mjs",
     "phase-08:system-test:summary": "node scripts/generate-phase-08-system-test-summary.mjs",
     "phase-08:uat:validate": "node scripts/validate-phase-08-uat.mjs",
+    "phase-08:uat:summary": "node scripts/generate-phase-08-uat-summary.mjs",
+    "phase-08:uat:tooling:test": "node scripts/test-phase-08-uat-tooling.mjs",
     "phase-08:decision:validate": "node scripts/validate-phase-08-decision.mjs",
     "phase-08:readiness:validate": "node scripts/validate-phase-08-readiness.mjs",
     "phase-08:exit:validate": "node scripts/validate-phase-08-exit.mjs",
@@ -84,8 +87,8 @@
     "verify:web-bundle": "node scripts/verify-web-bundle.mjs",
     "verify:negative-gate": "node scripts/verify-negative-lint-gate.mjs",
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run build",
-    "check:ci": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test:coverage && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run build"
+    "check": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run build",
+    "check:ci": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test:coverage && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run build"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
