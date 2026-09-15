@@ -1,1 +1,15 @@
 image_ref = "asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+app_version = "0.1.0"
+commit_sha = "0000000000000000000000000000000000000000"
+build_time = "2026-09-12T00:00:00.000Z"
+
+mongodb_uri_secret_version           = "1"
+access_token_secret_version          = "1"
+auth_identity_pepper_secret_version  = "1"
+classroom_code_pepper_secret_version = "1"
+
+# Part 08 plans these together. Keep false until the reviewed plan is ready.
+provision_service           = false
+provision_secret_containers = false
+provision_monitoring        = false
+allow_public_invoker        = true

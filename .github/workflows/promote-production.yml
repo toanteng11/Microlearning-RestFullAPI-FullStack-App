@@ -1,4 +1,4 @@
-name: Validate Production Promotion
+name: Validate Phase 08 Production Promotion (PLAN_ONLY)
 
 on:
   workflow_dispatch:
@@ -7,12 +7,16 @@ on:
         description: Type PROMOTE_PRODUCTION to authorize the protected dry-run
         required: true
         type: string
+      release_id:
+        description: Exact Phase 08 release ID (P08-RC-YYYYMMDD-shortsha)
+        required: true
+        type: string
       source_cloud_e2e_run_id:
         description: Successful Cloud Smoke And E2E run containing the stable Staging record
         required: true
         type: string
       uat_status:
-        description: Phase 08 UAT result; Phase 07 validation requires PASS
+        description: PENDING for G4 readiness; PASS is mandatory when decision is GO
         required: true
         type: string
       uat_decision_id:
@@ -20,11 +24,24 @@ on:
         required: true
         type: string
       go_no_go_decision:
-        description: Go/No-Go decision; must be GO only in the future approved release
+        description: NO_GO for G4 readiness; GO only after the signed G5 decision
         required: true
         type: string
       go_no_go_decision_id:
         description: Go/No-Go decision record ID
+        required: true
+        type: string
+      apply_mode:
+        description: Must remain PLAN_ONLY; any apply request fails validation
+        required: true
+        default: PLAN_ONLY
+        type: string
+      app_version:
+        description: Exact semantic version from the selected release manifest
+        required: true
+        type: string
+      build_time:
+        description: Exact ISO-8601 UTC build time from the selected release manifest
         required: true
         type: string
 
@@ -33,7 +50,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: phase-07-production-promotion-validation
+  group: phase-08-production-promotion-validation
   cancel-in-progress: false
 
 jobs:
@@ -50,12 +67,19 @@ jobs:
       GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       GCP_REGION: asia-southeast1
       PROMOTION_CONFIRMATION: ${{ inputs.confirmation }}
-      PROMOTION_APPLY_MODE: PLAN_ONLY
+      PROMOTION_APPLY_MODE: ${{ inputs.apply_mode }}
       SOURCE_CLOUD_E2E_RUN_ID: ${{ inputs.source_cloud_e2e_run_id }}
       UAT_STATUS: ${{ inputs.uat_status }}
       UAT_DECISION_ID: ${{ inputs.uat_decision_id }}
       GO_NO_GO_DECISION: ${{ inputs.go_no_go_decision }}
       GO_NO_GO_DECISION_ID: ${{ inputs.go_no_go_decision_id }}
+      PHASE08_ARTIFACT_ROOT: artifacts/phase-08/${{ inputs.release_id }}/production-plan
+      TF_VAR_app_version: ${{ inputs.app_version }}
+      TF_VAR_build_time: ${{ inputs.build_time }}
+      TF_VAR_mongodb_uri_secret_version: ${{ vars.GCP_SECRET_VERSION_MONGODB_URI_PRODUCTION }}
+      TF_VAR_access_token_secret_version: ${{ vars.GCP_SECRET_VERSION_ACCESS_TOKEN_PRODUCTION }}
+      TF_VAR_auth_identity_pepper_secret_version: ${{ vars.GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_PRODUCTION }}
+      TF_VAR_classroom_code_pepper_secret_version: ${{ vars.GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_PRODUCTION }}
 
     steps:
       - name: Checkout trusted main source
@@ -113,7 +137,7 @@ jobs:
           node scripts/validate-production-promotion.mjs
           "$STABLE_RECORD"
           "$GITHUB_REPOSITORY"
-          artifacts/phase-07/production/promotion-validation.json
+          "$PHASE08_ARTIFACT_ROOT/promotion-validation.json"
 
       - name: Authenticate using protected Production WIF
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
@@ -130,29 +154,73 @@ jobs:
           terraform_version: 1.15.8
           terraform_wrapper: false
 
+      - name: Validate exact Production Terraform inputs
+        shell: bash
+        env:
+          APP_VERSION: ${{ inputs.app_version }}
+          BUILD_TIME: ${{ inputs.build_time }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          CANDIDATE_COMMIT: ${{ steps.stable.outputs.commit_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_ID" =~ ^P08-RC-[0-9]{8}-[a-f0-9]{7,12}$ ]]
+          short_sha="${RELEASE_ID##*-}"
+          test "$short_sha" = "${CANDIDATE_COMMIT:0:${#short_sha}}"
+          [[ "$APP_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]
+          [[ "$BUILD_TIME" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$ ]]
+          for version in \
+            "$TF_VAR_mongodb_uri_secret_version" \
+            "$TF_VAR_access_token_secret_version" \
+            "$TF_VAR_auth_identity_pepper_secret_version" \
+            "$TF_VAR_classroom_code_pepper_secret_version"; do
+            [[ "$version" =~ ^[1-9][0-9]*$ ]]
+          done
+
       - name: Create Production validation plan only
         working-directory: infrastructure/terraform/environments/production
         env:
           IMAGE_REF: ${{ steps.stable.outputs.image_ref }}
+          TF_VAR_image_ref: ${{ steps.stable.outputs.image_ref }}
+          TF_VAR_commit_sha: ${{ steps.stable.outputs.commit_sha }}
+          TF_VAR_provision_service: 'true'
+          TF_VAR_provision_secret_containers: 'true'
+          TF_VAR_provision_monitoring: 'true'
         run: |
-          terraform init -backend=false -input=false
-          terraform plan -input=false -out=production-promotion.tfplan -var="image_ref=$IMAGE_REF"
+          set -euo pipefail
+          terraform fmt -check -recursive ../..
+          terraform init -input=false -reconfigure
+          terraform validate
+          terraform plan -input=false -out=production-promotion.tfplan
 
       - name: Enforce Production plan policy and upload report
         env:
           IMAGE_REF: ${{ steps.stable.outputs.image_ref }}
         run: |
-          mkdir -p artifacts/phase-07/production/terraform
+          set -euo pipefail
+          mkdir -p "$PHASE08_ARTIFACT_ROOT/terraform"
           terraform -chdir=infrastructure/terraform/environments/production show -json production-promotion.tfplan \
-            > artifacts/phase-07/production/terraform/production-promotion-plan.json
-          TF_SECRET_CANARY="PHASE_07_STATE_CANARY_DO_NOT_STORE" \
+            > "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json"
+          TF_SECRET_CANARY="PHASE_08_STATE_CANARY_DO_NOT_STORE" \
             EXPECTED_TERRAFORM_ENV=production \
+            ALLOW_PUBLIC_CLOUD_RUN_INVOKER=true \
             node scripts/check-terraform-plan.mjs \
-            artifacts/phase-07/production/terraform/production-promotion-plan.json \
-            artifacts/phase-07/production/terraform/production-promotion-policy.json
-          rm artifacts/phase-07/production/terraform/production-promotion-plan.json
+            "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json" \
+            "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-policy.json"
+          rm "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json"
           cp "$RUNNER_TEMP/cloud-e2e/cloud-e2e/stable-deployment-record.json" \
-            artifacts/phase-07/production/stable-deployment-record.json
+            "$PHASE08_ARTIFACT_ROOT/stable-deployment-record.json"
+          plan_hash="$(sha256sum infrastructure/terraform/environments/production/production-promotion.tfplan | cut -d' ' -f1)"
+          jq -n \
+            --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg release_id "${{ inputs.release_id }}" \
+            --arg release_commit "${{ steps.stable.outputs.commit_sha }}" \
+            --arg image "${{ steps.stable.outputs.image_ref }}" \
+            --arg staging_revision "${{ steps.stable.outputs.revision }}" \
+            --arg staging_url "${{ steps.stable.outputs.service_url }}" \
+            --arg plan_hash "sha256:$plan_hash" \
+            '{schemaVersion:1,phase:"08",recordType:"PRODUCTION_TERRAFORM_READINESS",recordedAtUtc:$recorded_at,status:"PASS",applyMode:"PLAN_ONLY",productionApplyExecuted:false,releaseIdentity:{releaseId:$release_id,commitSha:$release_commit,imageDigest:$image,stagingRevision:$staging_revision,stagingUrl:$staging_url,productionRevision:"NOT_RUN",productionUrl:"NOT_RUN"},terraform:{formatStatus:"PASS",validateStatus:"PASS",planStatus:"PASS",policyStatus:"PASS",planHash:$plan_hash,backendPrefix:"phase-08/production",imageRef:$image},nextGate:"Atlas backup/isolated restore and operations evidence remain mandatory for Part 08 PASS."}' \
+            > "$PHASE08_ARTIFACT_ROOT/terraform-readiness.json"
+          rm infrastructure/terraform/environments/production/production-promotion.tfplan
 
       - name: Confirm no Production apply was executed
         run: test ! -f infrastructure/terraform/environments/production/production-apply.executed
@@ -161,16 +229,17 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: phase-07-production-promotion-validation
-          path: artifacts/phase-07/production
+          name: phase-08-production-plan-${{ inputs.release_id }}
+          path: ${{ env.PHASE08_ARTIFACT_ROOT }}
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 90
 
       - name: Publish protected dry-run summary
         if: always()
         run: |
           {
-            echo "## Phase 07 Production promotion validation"
+            echo "## Phase 08 Production promotion validation (PLAN_ONLY)"
+            echo "- Release: \`${{ inputs.release_id }}\`"
             echo "- Stable Staging digest: \`${{ steps.stable.outputs.image_ref }}\`"
             echo "- Stable revision: \`${{ steps.stable.outputs.revision }}\`"
             echo "- Apply mode: \`PLAN_ONLY\`"

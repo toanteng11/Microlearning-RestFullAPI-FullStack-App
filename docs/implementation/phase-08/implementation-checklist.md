@@ -26,7 +26,10 @@
 
 ## G4-G5 — Production Readiness and Decision
 
-- [ ] Production Terraform plan/identity/state/secret/database tách Staging; root `provision=false` chỉ đổi qua reviewed PR.
+- [x] Local Production Terraform parity, fail-closed readiness validator and Production-aware plan-policy tests pass.
+- [x] Protected workflow remains plan-only and records exact digest/commit/plan hash without uploading plan binary or secret values.
+
+- [ ] Production Terraform plan/identity/state/secret/database tách Staging; provision variables mặc định `false` và chỉ được workflow được review bật cho plan/apply đúng gate.
 - [ ] Atlas database/user/network/backup/restore đáp ứng selected profile; managed PITR `APPROVED_NA` có decision nếu academic.
 - [ ] Prior revision/digest, rollback owner, monitoring, alert route, quota và budget ready.
 - [ ] `PRE_RELEASE` AC-001..010 Pass; Critical/High = 0; G5 decision khớp exact identity.

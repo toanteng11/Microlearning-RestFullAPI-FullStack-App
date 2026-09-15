@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-8dc74d8` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `34702722300` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production readiness/deployment, hypercare và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-08 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-8dc74d8` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `34702722300` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT và Production-readiness tooling đã hoàn thiện cục bộ, nhưng G3/G4 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -77,7 +77,7 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 
 1. G0/G1/G2 được thỏa mãn cho candidate `P08-RC-20260912-8dc74d8`, khóa bằng exact commit, immutable digest, Staging revision và bốn workflow nguồn cùng commit.
 2. Deployment, Cloud E2E, provider observation và runtime hiện cùng ghi `microlearning-staging-00024-vzw`; mọi thay đổi runtime/deployment identity tiếp theo phải tạo candidate mới và chạy lại các gate bị ảnh hưởng.
-3. Production Terraform root đang `provision = false`; production workflow là plan-only (`G4/G5`).
+3. Production Terraform provision variables mặc định `false`; workflow hiện tại chỉ bật chúng để tạo plan tại `G4/G5`, không apply.
 4. Mâu thuẫn `APPLY`/Production `ACTUAL` và vòng lặp G0/G5/G8 đã được sửa; protected workflow/G5 evidence vẫn pending.
 5. Atlas/recovery decision phải theo selected profile; real data luôn là blocker với academic profile.
 6. UAT execution/sign-off, Production readiness, defect closure, Production deployment và hypercare records đều `PENDING` cho đến khi execution tạo raw evidence.

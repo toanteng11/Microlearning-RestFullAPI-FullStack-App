@@ -28,6 +28,8 @@ Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, act
 | P08-EV-050 | Final acceptance | PO/TL | criteria decision and residuals | `PENDING` |
 | P08-EV-055 | Exit report | TL/BA | closure, lessons, follow-up | `PENDING` |
 
+Part 08 validator and Terraform baseline are `LOCAL_PASS_REMOTE_PENDING`; this does not change `P08-EV-004/006/007/008` to `PASS`. Those rows change only after the protected plan artifact, logical backup, isolated restore, measured RPO/RTO and tested operations route are retained for the exact release candidate.
+
 ## Integrity checks
 
 - [x] Part 00-05 entries point to raw release-scoped artifacts and the successful G2 workflow URL.

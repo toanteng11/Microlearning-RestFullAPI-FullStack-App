@@ -36,7 +36,10 @@ const report = {
   stableRevision: stableRecord.revision,
   uatDecisionId: input.uatDecisionId,
   goNoGoDecisionId: input.goNoGoDecisionId,
+  goNoGoDecision: input.goNoGoDecision,
+  uatStatus: input.uatStatus,
   status: 'VALIDATED_PLAN_ONLY',
+  promotionAuthorized: input.goNoGoDecision === 'GO' && input.uatStatus === 'PASS',
   productionApplyExecuted: false,
 };
 const outputPath = resolve(outputPathValue);
