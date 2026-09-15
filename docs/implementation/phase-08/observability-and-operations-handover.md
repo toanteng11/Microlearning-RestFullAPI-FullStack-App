@@ -2,7 +2,7 @@
 
 ## Baseline and boundary
 
-Terraform module `infrastructure/terraform/modules/monitoring` and Staging workflow define Cloud Monitoring resources. Production monitoring root currently has `provision = false`; Production observability is therefore `PENDING` until an approved apply/evidence exists.
+Terraform module `infrastructure/terraform/modules/monitoring` and Staging workflow define Cloud Monitoring resources. Production monitoring defaults to disabled and is enabled together with service/secrets for the reviewed Part 08 plan; Production observability remains `PENDING` until remote plan and provider evidence exist.
 
 ## Minimum signals
 

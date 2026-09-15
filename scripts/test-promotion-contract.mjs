@@ -30,10 +30,24 @@ const valid = {
 };
 
 assert.deepEqual(validateProductionPromotionInput(valid, { repository }), []);
+assert.deepEqual(
+  validateProductionPromotionInput(
+    {
+      ...valid,
+      uatStatus: 'PENDING',
+      uatDecisionId: 'P08-G3-PENDING',
+      goNoGoDecision: 'NO_GO',
+      goNoGoDecisionId: 'P08-G4-NO-GO',
+    },
+    { repository },
+  ),
+  [],
+);
 for (const mutation of [
   { confirmation: 'PROMOTE', message: 'confirmation' },
   { applyMode: 'APPLY', message: 'PLAN_ONLY' },
-  { goNoGoDecision: 'NO_GO', message: 'goNoGoDecision' },
+  { goNoGoDecision: 'CONDITIONAL_GO', message: 'goNoGoDecision' },
+  { uatStatus: 'PENDING', message: 'GO requires' },
   {
     stableRecord: { ...stableRecord, imageRef: `${image.split('@')[0]}:latest` },
     message: 'imageRef',
@@ -45,4 +59,4 @@ for (const mutation of [
     mutation.message,
   );
 }
-process.stdout.write(`${JSON.stringify({ event: 'promotion.contract.tests_passed', cases: 5 })}\n`);
+process.stdout.write(`${JSON.stringify({ event: 'promotion.contract.tests_passed', cases: 7 })}\n`);

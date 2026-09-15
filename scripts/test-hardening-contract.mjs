@@ -47,7 +47,7 @@ requireText(
   /environment:\s*production/u,
   'Production promotion must use the protected production environment.',
 );
-requireText(promotion, /PLAN_ONLY/u, 'Phase 07 production promotion must be plan-only.');
+requireText(promotion, /PLAN_ONLY/u, 'Pre-G5 Production promotion must be plan-only.');
 requireText(
   promotion,
   /PROMOTE_PRODUCTION/u,
@@ -57,15 +57,30 @@ if (
   /terraform\s+apply/iu.test(promotion) ||
   /gcloud\s+run\s+services\s+update-traffic/iu.test(promotion)
 ) {
-  failures.push(
-    'Phase 07 promotion workflow must not execute a Production apply or traffic change.',
-  );
+  failures.push('Pre-G5 promotion workflow must not execute a Production apply or traffic change.');
 }
 
 const productionTerraform = read('infrastructure/terraform/environments/production/main.tf');
-if ((productionTerraform.match(/provision\s*=\s*false/gu) ?? []).length < 3) {
+const productionVariables = read('infrastructure/terraform/environments/production/variables.tf');
+for (const variable of [
+  'provision_service',
+  'provision_secret_containers',
+  'provision_monitoring',
+]) {
+  requireText(
+    productionVariables,
+    new RegExp(`variable "${variable}" \\{[\\s\\S]*?default\\s*=\\s*false[\\s\\S]*?\\}`, 'u'),
+    `${variable} must default to false.`,
+  );
+  requireText(
+    productionTerraform,
+    new RegExp(`provision\\s*=\\s*var\\.${variable}`, 'u'),
+    `Production Terraform must bind ${variable} explicitly.`,
+  );
+}
+if (!/production_resources_move_together/u.test(productionTerraform)) {
   failures.push(
-    'Production Terraform must keep Cloud Run, secret and monitoring provisioning disabled in Phase 07.',
+    'Production Cloud Run, secret and monitoring resources must be enabled as one reviewed unit.',
   );
 }
 

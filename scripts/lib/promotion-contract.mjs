@@ -15,10 +15,19 @@ export function validateProductionPromotionInput(input, { repository } = {}) {
   }
   if (input.schemaVersion !== 1) errors.push('schemaVersion must equal 1.');
   if (input.environment !== 'production') errors.push('environment must equal production.');
-  if (input.applyMode !== 'PLAN_ONLY') errors.push('applyMode must equal PLAN_ONLY in Phase 07.');
+  if (input.applyMode !== 'PLAN_ONLY') {
+    errors.push('applyMode must equal PLAN_ONLY before the protected Phase 08 APPLY workflow.');
+  }
   if (input.confirmation !== 'PROMOTE_PRODUCTION') errors.push('confirmation phrase is invalid.');
-  if (input.uatStatus !== 'PASS') errors.push('uatStatus must equal PASS.');
-  if (input.goNoGoDecision !== 'GO') errors.push('goNoGoDecision must equal GO.');
+  if (!['NO_GO', 'GO'].includes(input.goNoGoDecision)) {
+    errors.push('goNoGoDecision must equal NO_GO for G4 readiness or GO after G5 approval.');
+  }
+  if (!['PENDING', 'PASS'].includes(input.uatStatus)) {
+    errors.push('uatStatus must equal PENDING or PASS.');
+  }
+  if (input.goNoGoDecision === 'GO' && input.uatStatus !== 'PASS') {
+    errors.push('GO requires uatStatus PASS.');
+  }
   if (repository && input.repository !== repository)
     errors.push('repository does not match the trusted repository.');
 
@@ -27,6 +36,9 @@ export function validateProductionPromotionInput(input, { repository } = {}) {
   }
   for (const field of ['uatDecisionId', 'goNoGoDecisionId']) {
     if (!SAFE_DECISION_ID.test(input[field] ?? '')) errors.push(`${field} format is invalid.`);
+  }
+  if (input.uatStatus === 'PENDING' && input.goNoGoDecision !== 'NO_GO') {
+    errors.push('Pending UAT must preserve the NO_GO decision.');
   }
   if (!/^[1-9][0-9]*$/u.test(String(input.sourceCloudE2eRunId ?? ''))) {
     errors.push('sourceCloudE2eRunId must be a positive workflow run ID.');

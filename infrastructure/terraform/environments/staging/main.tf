@@ -211,7 +211,6 @@ module "workload_identity" {
     "${var.github_repository}/.github/workflows/identity-diagnostic.yml@refs/heads/main",
     "${var.github_repository}/.github/workflows/infrastructure-plan.yml@refs/heads/main",
     "${var.github_repository}/.github/workflows/first-deploy-staging.yml@refs/heads/main",
-    "${var.github_repository}/.github/workflows/release-staging.yml@refs/heads/main",
   ]
 }
 

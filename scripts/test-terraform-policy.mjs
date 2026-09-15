@@ -101,6 +101,30 @@ try {
     { allowPublicInvoker: true },
   );
   execute(
+    'approved-production-cloud-run-public-invoker',
+    [
+      resource('google_cloud_run_v2_service_iam_member', ['create'], {
+        name: 'microlearning-production',
+        role: 'roles/run.invoker',
+        member: 'allUsers',
+      }),
+    ],
+    0,
+    { environment: 'production', allowPublicInvoker: true },
+  );
+  execute(
+    'production-public-invoker-without-approval',
+    [
+      resource('google_cloud_run_v2_service_iam_member', ['create'], {
+        name: 'microlearning-production',
+        role: 'roles/run.invoker',
+        member: 'allUsers',
+      }),
+    ],
+    1,
+    { environment: 'production' },
+  );
+  execute(
     'wrong-service-public-invoker',
     [
       resource('google_cloud_run_v2_service_iam_member', ['create'], {
@@ -136,6 +160,16 @@ try {
       }),
     ],
     1,
+  );
+  execute(
+    'production-cross-environment',
+    [
+      resource('google_secret_manager_secret', ['create'], {
+        secret_id: 'ml-staging-mongodb-uri',
+      }),
+    ],
+    1,
+    { environment: 'production' },
   );
   execute('secret-canary', [], 1, { canary: 'PHASE_07_STATE_CANARY_DO_NOT_STORE' });
 } finally {

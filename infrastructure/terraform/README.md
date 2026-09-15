@@ -10,7 +10,7 @@ runbook; Terraform không lưu Atlas credential hoặc Secret Manager secret val
 - `bootstrap/`: enable API và tạo private versioned GCS state bucket;
 - `modules/`: module nội bộ có contract và least-privilege guard;
 - `environments/staging/`: Artifact Registry, Staging identities và WIF;
-- `environments/production/`: Production identity/WIF definition, không apply trong Phase 07.
+- `environments/production/`: Phase 08 Production state, identity/WIF, runtime, secret-container and monitoring contract. Provision flags default to `false`; Part 08 only creates a reviewed plan.
 
 ## Safe Execution Order
 
@@ -21,4 +21,4 @@ runbook; Terraform không lưu Atlas credential hoặc Secret Manager secret val
 5. chạy Staging plan, xuất JSON và kiểm tra bằng `npm run terraform:plan:check`;
 6. chỉ apply sau khi plan không có delete/public IAM/secret value/service-account key.
 
-Không chạy Production apply trong Phase 07. Không commit `.tfvars`, state, plan binary hoặc credential.
+Không chạy Production apply trước G5 và protected Part 10 workflow. Không commit `.tfvars`, state, plan binary, raw plan JSON hoặc credential.

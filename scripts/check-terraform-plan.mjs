@@ -15,6 +15,11 @@ const stagingHealthUptimeAddress =
   'module.monitoring_contract.google_monitoring_uptime_check_config.health[0]';
 const legacyStagingCanonicalHost = 'microlearning-staging-759791798260.asia-southeast1.run.app';
 const currentStagingCanonicalHost = 'microlearning-staging-bu73wlfj5a-as.a.run.app';
+const environmentNames = new Set(['staging', 'production']);
+
+if (expectedEnvironment && !environmentNames.has(expectedEnvironment)) {
+  throw new Error('EXPECTED_TERRAFORM_ENV must be staging or production.');
+}
 
 if (!existsSync(planPath)) throw new Error(`Terraform plan JSON not found: ${planPath}`);
 
@@ -92,11 +97,11 @@ for (const resource of plan.resource_changes ?? []) {
   );
   const approvedPublicInvoker =
     allowPublicCloudRunInvoker &&
-    expectedEnvironment === 'staging' &&
+    environmentNames.has(expectedEnvironment) &&
     resource.type === 'google_cloud_run_v2_service_iam_member' &&
     after?.role === 'roles/run.invoker' &&
     after?.member === 'allUsers' &&
-    after?.name?.endsWith('microlearning-staging');
+    after?.name === `microlearning-${expectedEnvironment}`;
 
   if (actions.includes('delete') && !approvedStagingHealthUptimeReplacement) {
     addViolation('DESTRUCTIVE_CHANGE', address, `Plan actions are ${actions.join(',')}.`);
@@ -132,20 +137,24 @@ for (const resource of plan.resource_changes ?? []) {
         `Mutable image reference at ${path.join('.')}.`,
       );
     }
-    if (
-      expectedEnvironment === 'staging' &&
-      typeof value === 'string' &&
-      [
+    if (expectedEnvironment && typeof value === 'string') {
+      const protectedIdentityField = [
         'account_id',
         'environment',
         'name',
+        'prefix',
         'resource_prefix',
         'secret_id',
         'service_name',
-      ].includes(key) &&
-      value.toLowerCase().includes('production')
-    ) {
-      addViolation('CROSS_ENVIRONMENT_MUTATION', address, `Production value at ${path.join('.')}.`);
+      ].includes(key);
+      const otherEnvironment = expectedEnvironment === 'staging' ? 'production' : 'staging';
+      if (protectedIdentityField && value.toLowerCase().includes(otherEnvironment)) {
+        addViolation(
+          'CROSS_ENVIRONMENT_MUTATION',
+          address,
+          `${otherEnvironment} value at ${path.join('.')}.`,
+        );
+      }
     }
   });
 }
