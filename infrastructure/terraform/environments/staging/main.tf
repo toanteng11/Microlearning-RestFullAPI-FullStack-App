@@ -211,6 +211,9 @@ module "workload_identity" {
     "${var.github_repository}/.github/workflows/identity-diagnostic.yml@refs/heads/main",
     "${var.github_repository}/.github/workflows/infrastructure-plan.yml@refs/heads/main",
     "${var.github_repository}/.github/workflows/first-deploy-staging.yml@refs/heads/main",
+    # The bootstrap-managed provider still contains this legacy claim. Rotate it only
+    # with Project Owner credentials; the recurring deploy identity cannot mutate WIF.
+    "${var.github_repository}/.github/workflows/release-staging.yml@refs/heads/main",
   ]
 }
 

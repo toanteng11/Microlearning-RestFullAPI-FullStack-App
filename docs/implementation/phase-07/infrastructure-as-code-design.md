@@ -57,6 +57,11 @@ Bootstrap được chạy thủ công bởi project owner, có log/evidence riê
 Bootstrap root khởi tạo state bucket bằng local state trong một cửa sổ ngắn, sau đó phải migrate chính
 bootstrap state vào GCS prefix `bootstrap` và xóa local state an toàn. Không commit bootstrap state.
 
+Workload Identity Pool/Provider là tài nguyên bootstrap-owned. Deployment plan thường xuyên phải giữ nguyên
+trust contract hiện hữu và policy gate sẽ chặn mọi create/update/delete đối với hai loại tài nguyên này. Khi cần
+thu hẹp hoặc mở rộng OIDC condition, Project Owner thực hiện một owner-reviewed rotation riêng, lưu evidence đã
+redact, rồi mới đồng bộ cấu hình Terraform; không cấp quyền quản trị WIF cho deploy service account.
+
 ## 4. Managed resources
 
 Terraform quản lý tối thiểu:

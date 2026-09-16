@@ -189,6 +189,25 @@ try {
     1,
   );
   execute(
+    'workload-identity-provider-update',
+    [
+      resource('google_iam_workload_identity_pool_provider', ['update'], {
+        attribute_condition: "assertion.repository == 'owner/repository'",
+      }),
+    ],
+    1,
+  );
+  execute(
+    'workload-identity-pool-create',
+    [resource('google_iam_workload_identity_pool', ['create'], {})],
+    1,
+  );
+  execute(
+    'workload-identity-provider-no-op',
+    [resource('google_iam_workload_identity_pool_provider', ['no-op'], {})],
+    0,
+  );
+  execute(
     'mutable-image',
     [
       resource('google_cloud_run_v2_service', ['update'], {
