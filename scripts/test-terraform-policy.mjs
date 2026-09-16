@@ -9,6 +9,8 @@ const temp = mkdtempSync(join(tmpdir(), 'microlearning-terraform-policy-'));
 const digestRef =
   'asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:' +
   'a'.repeat(64);
+const publicInvokerAddress =
+  'module.cloud_run_service.google_cloud_run_v2_service_iam_member.public_invoker[0]';
 
 function resource(type, actions, after = {}, address = `test.${type}`, before = null) {
   return { address, mode: 'managed', type, change: { actions, before, after } };
@@ -94,7 +96,7 @@ try {
           role: 'roles/run.invoker',
           member: 'allUsers',
         },
-        'module.cloud_run.google_cloud_run_v2_service_iam_member.public_invoker',
+        publicInvokerAddress,
       ),
     ],
     0,
@@ -103,14 +105,36 @@ try {
   execute(
     'approved-production-cloud-run-public-invoker',
     [
-      resource('google_cloud_run_v2_service_iam_member', ['create'], {
-        name: 'microlearning-production',
-        role: 'roles/run.invoker',
-        member: 'allUsers',
-      }),
+      resource(
+        'google_cloud_run_v2_service_iam_member',
+        ['create'],
+        {
+          name: 'projects/microlearning-platform-502716/locations/asia-southeast1/services/microlearning-production',
+          role: 'roles/run.invoker',
+          member: 'allUsers',
+        },
+        publicInvokerAddress,
+      ),
     ],
     0,
     { environment: 'production', allowPublicInvoker: true },
+  );
+  execute(
+    'approved-cloud-run-public-invoker-with-computed-name',
+    [
+      resource(
+        'google_cloud_run_v2_service_iam_member',
+        ['create'],
+        {
+          name: null,
+          role: 'roles/run.invoker',
+          member: 'allUsers',
+        },
+        publicInvokerAddress,
+      ),
+    ],
+    0,
+    { allowPublicInvoker: true },
   );
   execute(
     'production-public-invoker-without-approval',
@@ -127,11 +151,33 @@ try {
   execute(
     'wrong-service-public-invoker',
     [
-      resource('google_cloud_run_v2_service_iam_member', ['create'], {
-        name: 'unexpected-service',
-        role: 'roles/run.invoker',
-        member: 'allUsers',
-      }),
+      resource(
+        'google_cloud_run_v2_service_iam_member',
+        ['create'],
+        {
+          name: 'unexpected-service',
+          role: 'roles/run.invoker',
+          member: 'allUsers',
+        },
+        publicInvokerAddress,
+      ),
+    ],
+    1,
+    { allowPublicInvoker: true },
+  );
+  execute(
+    'wrong-address-public-invoker',
+    [
+      resource(
+        'google_cloud_run_v2_service_iam_member',
+        ['create'],
+        {
+          name: 'microlearning-staging',
+          role: 'roles/run.invoker',
+          member: 'allUsers',
+        },
+        'module.untrusted.google_cloud_run_v2_service_iam_member.public_invoker[0]',
+      ),
     ],
     1,
     { allowPublicInvoker: true },
