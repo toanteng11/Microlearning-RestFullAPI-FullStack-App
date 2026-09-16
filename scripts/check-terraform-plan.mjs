@@ -18,6 +18,10 @@ const currentStagingCanonicalHost = 'microlearning-staging-bu73wlfj5a-as.a.run.a
 const environmentNames = new Set(['staging', 'production']);
 const cloudRunPublicInvokerAddress =
   'module.cloud_run_service.google_cloud_run_v2_service_iam_member.public_invoker[0]';
+const bootstrapOwnedResourceTypes = new Set([
+  'google_iam_workload_identity_pool',
+  'google_iam_workload_identity_pool_provider',
+]);
 
 if (expectedEnvironment && !environmentNames.has(expectedEnvironment)) {
   throw new Error('EXPECTED_TERRAFORM_ENV must be staging or production.');
@@ -131,6 +135,16 @@ for (const resource of plan.resource_changes ?? []) {
       'SECRET_VALUE_IN_TERRAFORM',
       address,
       'Terraform must not manage secret payload versions.',
+    );
+  }
+  if (
+    bootstrapOwnedResourceTypes.has(resource.type) &&
+    actions.some((action) => action !== 'no-op')
+  ) {
+    addViolation(
+      'BOOTSTRAP_IDENTITY_MUTATION',
+      address,
+      'Recurring deployment plans must not mutate bootstrap-owned Workload Identity pools or providers.',
     );
   }
 
