@@ -33,6 +33,8 @@
 - [ ] Atlas database/user/network/backup/restore đáp ứng selected profile; managed PITR `APPROVED_NA` có decision nếu academic.
 - [ ] Prior revision/digest, rollback owner, monitoring, alert route, quota và budget ready.
 - [ ] `PRE_RELEASE` AC-001..010 Pass; Critical/High = 0; G5 decision khớp exact identity.
+- [x] Part 09 generator/validator khóa G2/G3/G4, deployment window và checksum; local tests Pass.
+- [ ] Chạy generator bằng actual G2/G3/G4 artifacts và lưu package `P08-EV-030`; không dùng fixture/test data làm evidence.
 
 ## G6-G8 — Release and closure
 

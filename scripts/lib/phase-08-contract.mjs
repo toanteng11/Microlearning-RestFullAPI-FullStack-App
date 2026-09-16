@@ -1,6 +1,7 @@
 const FULL_SHA = /^[a-f0-9]{40}$/iu;
 const IMAGE_DIGEST = /^[^\s@]+(?:\/[^\s@]+)*@sha256:[a-f0-9]{64}$/iu;
 const HTTPS_URL = /^https:\/\/[^\s]+$/iu;
+const SHA256 = /^sha256:[a-f0-9]{64}$/iu;
 const RELEASE_ID = /^P08-RC-\d{8}-[a-f0-9]{7,12}$/iu;
 const PLACEHOLDER =
   /pending-value|replace-me|example-only|<[^>]+>|\btodo\b|\btbd\b|\bplaceholder\b/iu;
@@ -683,6 +684,26 @@ export function validatePhase08Decision(input) {
   addRequiredString(input, 'rationale', errors, { actual: input.decision !== 'PENDING' });
   if (input.decision !== 'PENDING') {
     addUtcTimestamp(input, 'decidedAtUtc', errors, { actual: true });
+    if (!SHA256.test(input.acceptanceRecordSha256 ?? '')) {
+      errors.push('acceptanceRecordSha256 must be a SHA-256 digest.');
+    }
+    if (!isObject(input.approvedDeploymentWindow)) {
+      errors.push('approvedDeploymentWindow must be an object.');
+    } else {
+      addUtcTimestamp(input.approvedDeploymentWindow, 'startsAtUtc', errors, {
+        actual: true,
+        path: 'approvedDeploymentWindow.startsAtUtc',
+      });
+      addUtcTimestamp(input.approvedDeploymentWindow, 'endsAtUtc', errors, {
+        actual: true,
+        path: 'approvedDeploymentWindow.endsAtUtc',
+      });
+      const startsAt = Date.parse(input.approvedDeploymentWindow.startsAtUtc);
+      const endsAt = Date.parse(input.approvedDeploymentWindow.endsAtUtc);
+      if (!Number.isNaN(startsAt) && !Number.isNaN(endsAt) && startsAt >= endsAt) {
+        errors.push('approvedDeploymentWindow must end after it starts.');
+      }
+    }
   }
   validateGovernance(input.governance, errors, { recommendations: true });
   if (!isObject(input.recommendations)) {
@@ -734,6 +755,15 @@ export function validatePhase08Decision(input) {
     rejectPlaceholderFinal(input, errors);
   }
   if (input.decision === 'CONDITIONAL_GO') {
+    if (
+      input.systemTestStatus !== 'PASS' ||
+      input.uatStatus !== 'PASS' ||
+      input.preReleaseAcceptanceStatus !== 'PASS'
+    ) {
+      errors.push(
+        'CONDITIONAL_GO requires System Test, UAT and PRE_RELEASE acceptance status PASS.',
+      );
+    }
     if (!Array.isArray(input.conditions) || input.conditions.length === 0) {
       errors.push('CONDITIONAL_GO requires explicit conditions.');
     }
@@ -742,15 +772,42 @@ export function validatePhase08Decision(input) {
         errors.push(`conditions[${index}] must be an object.`);
         continue;
       }
-      for (const field of ['owner', 'expiryUtc', 'mitigation', 'communication']) {
+      for (const field of [
+        'issueId',
+        'owner',
+        'expiryUtc',
+        'workaround',
+        'mitigation',
+        'communication',
+      ]) {
         addRequiredString(condition, field, errors, {
           actual: true,
           path: `conditions[${index}].${field}`,
         });
       }
+      if (!['MEDIUM', 'LOW'].includes(condition.severity)) {
+        errors.push(`conditions[${index}].severity must be MEDIUM or LOW.`);
+      }
+      if (
+        !['USABILITY', 'PERFORMANCE', 'DOCUMENTATION', 'OPERATIONS'].includes(condition.category)
+      ) {
+        errors.push(`conditions[${index}].category must be a waivable non-integrity category.`);
+      }
+      const expiry = Date.parse(condition.expiryUtc);
+      const windowEnd = Date.parse(input.approvedDeploymentWindow?.endsAtUtc);
+      if (!Number.isNaN(expiry) && !Number.isNaN(windowEnd) && expiry <= windowEnd) {
+        errors.push(`conditions[${index}].expiryUtc must be after the deployment window.`);
+      }
     }
     if (input.criticalDefects > 0 || input.highDefects > 0) {
       errors.push('CONDITIONAL_GO cannot contain Critical or High defects.');
+    }
+    if (
+      ['technicalLead', 'qa', 'devOps'].some(
+        (field) => !['GO', 'CONDITIONAL_GO'].includes(input.recommendations?.[field]),
+      )
+    ) {
+      errors.push('CONDITIONAL_GO requires GO or CONDITIONAL_GO recommendations from every role.');
     }
     rejectPlaceholderFinal(input, errors);
   }

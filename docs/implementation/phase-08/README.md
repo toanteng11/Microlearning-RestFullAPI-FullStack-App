@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-08 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-8dc74d8` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `34702722300` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT và Production-readiness tooling đã hoàn thiện cục bộ, nhưng G3/G4 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-09 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-8dc74d8` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `34702722300` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness và G5 package tooling đã hoàn thiện cục bộ, nhưng G3/G4/G5 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -55,7 +55,7 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 | Readiness review | `implementation-readiness-review.md` |
 | Plan/scope/work | `phase-plan.md`, `scope-and-deliverables.md`, `work-breakdown-structure.md` |
 | Execution/code map | `execution-parts/README.md`, `source-and-workflow-blueprint.md` |
-| Governance/acceptance | `phase-08-governance-and-go-no-go.md`, `acceptance-criteria.md`, `ba-alignment-and-decisions.md` |
+| Governance/acceptance | `phase-08-governance-and-go-no-go.md`, `pre-release-go-no-go-runbook.md`, `acceptance-criteria.md`, `ba-alignment-and-decisions.md` |
 | Test/UAT/evidence | `system-test-and-uat-strategy.md`, `uat-test-catalog.md`, `uat-execution-matrix.md`, `test-and-evidence-contract.md` |
 | Release/operations | `production-readiness-and-promotion.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
 | Recovery/security | `backup-restore-and-disaster-recovery-final.md`, `rollback-and-incident-response-final.md`, `security-privacy-and-compliance-final.md`, `performance-capacity-and-cost-final.md` |
@@ -97,6 +97,9 @@ npm run phase-08:identity:validate -- <identity.json> [other-record.json ...] [-
 npm run phase-08:system-test:validate -- <system-test-summary.json> [report.json]
 npm run phase-08:uat:validate -- <uat-summary.json> [report.json]
 npm run phase-08:decision:validate -- <go-no-go.json> [report.json]
+npm run phase-08:pre-release:generate -- <identity.json> <system-test.json> <uat.json> <production-readiness.json> <evidence-index.json> <decision-request.json> <output-directory>
+npm run phase-08:pre-release:verify -- <pre-release-acceptance.json> <go-no-go-decision.json> <g5-decision-lock.json>
+npm run phase-08:pre-release:tooling:test
 npm run phase-08:exit:validate -- <exit-record.json> [report.json]
 npm run phase-08:readiness:validate -- <readiness-pack.json> [report.json]
 npm run phase-08:system-test:tooling:test
