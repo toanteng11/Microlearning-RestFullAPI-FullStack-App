@@ -1,12 +1,21 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-const [serviceUrlInput, expectedVersion, expectedCommit, expectedImageInput, reportInput] =
-  process.argv.slice(2);
+const [
+  serviceUrlInput,
+  expectedVersion,
+  expectedCommit,
+  expectedImageInput,
+  reportInput,
+  expectedEnvironment = 'staging',
+] = process.argv.slice(2);
 if (!serviceUrlInput || !expectedVersion || !expectedCommit || !expectedImageInput) {
   throw new Error(
-    'Usage: node scripts/verify-staging-deployment.mjs <https-url> <version> <40-char-sha> <sha256:digest> [report.json]',
+    'Usage: node scripts/verify-staging-deployment.mjs <https-url> <version> <40-char-sha> <sha256:digest> [report.json] [staging|production]',
   );
+}
+if (!['staging', 'production'].includes(expectedEnvironment)) {
+  throw new Error('Expected environment must be staging or production.');
 }
 
 const serviceUrl = new URL(serviceUrlInput);
@@ -19,7 +28,7 @@ if (
   serviceUrl.search ||
   serviceUrl.hash
 ) {
-  throw new Error('Staging service URL must be an HTTPS origin.');
+  throw new Error('Cloud service URL must be an HTTPS origin.');
 }
 if (!/^[a-f0-9]{40}$/u.test(expectedCommit))
   throw new Error('Expected commit must be a full Git SHA.');
@@ -35,7 +44,7 @@ function record(name, status, detail) {
 async function request(path, expectedContentType) {
   const response = await fetch(new URL(path, serviceUrl), {
     redirect: 'follow',
-    headers: { 'user-agent': 'microlearning-phase-07-smoke' },
+    headers: { 'user-agent': `microlearning-${expectedEnvironment}-smoke` },
     signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
@@ -62,7 +71,7 @@ async function waitUntilReady() {
     }
     await new Promise((resolvePromise) => setTimeout(resolvePromise, 5_000));
   }
-  throw new Error(`Staging did not become ready: ${lastError}`);
+  throw new Error(`${expectedEnvironment} did not become ready: ${lastError}`);
 }
 
 async function main() {
@@ -82,7 +91,7 @@ async function main() {
         actual?.version === expectedVersion &&
         actual?.commitSha === expectedCommit &&
         actual?.imageDigest === expectedDigest &&
-        actual?.environment === 'staging'
+        actual?.environment === expectedEnvironment
       ) {
         versionMatched = true;
         break;
@@ -119,13 +128,16 @@ async function main() {
       version: expectedVersion,
       commitSha: expectedCommit,
       imageDigest: expectedDigest,
+      environment: expectedEnvironment,
     },
     status: 'PASS',
     checks,
   };
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-  process.stdout.write(`${JSON.stringify({ event: 'staging.smoke.passed', reportPath })}\n`);
+  process.stdout.write(
+    `${JSON.stringify({ event: `${expectedEnvironment}.smoke.passed`, reportPath })}\n`,
+  );
 }
 
 main().catch((error) => {
@@ -139,6 +151,8 @@ main().catch((error) => {
   };
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-  process.stderr.write(`${JSON.stringify({ event: 'staging.smoke.failed', reportPath })}\n`);
+  process.stderr.write(
+    `${JSON.stringify({ event: `${expectedEnvironment}.smoke.failed`, reportPath })}\n`,
+  );
   process.exitCode = 1;
 });

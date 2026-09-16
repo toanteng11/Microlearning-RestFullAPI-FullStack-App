@@ -15,18 +15,31 @@ export function validateProductionPromotionInput(input, { repository } = {}) {
   }
   if (input.schemaVersion !== 1) errors.push('schemaVersion must equal 1.');
   if (input.environment !== 'production') errors.push('environment must equal production.');
-  if (input.applyMode !== 'PLAN_ONLY') {
-    errors.push('applyMode must equal PLAN_ONLY before the protected Phase 08 APPLY workflow.');
+  if (!['PLAN_ONLY', 'APPLY'].includes(input.applyMode)) {
+    errors.push('applyMode must equal PLAN_ONLY or APPLY.');
   }
-  if (input.confirmation !== 'PROMOTE_PRODUCTION') errors.push('confirmation phrase is invalid.');
-  if (!['NO_GO', 'GO'].includes(input.goNoGoDecision)) {
-    errors.push('goNoGoDecision must equal NO_GO for G4 readiness or GO after G5 approval.');
+  const expectedConfirmation =
+    input.applyMode === 'APPLY' ? 'APPLY_PHASE_08_PRODUCTION' : 'PROMOTE_PRODUCTION';
+  if (input.confirmation !== expectedConfirmation) errors.push('confirmation phrase is invalid.');
+  if (!['NO_GO', 'GO', 'CONDITIONAL_GO'].includes(input.goNoGoDecision)) {
+    errors.push(
+      'goNoGoDecision must equal NO_GO for G4 readiness or GO/CONDITIONAL_GO after G5 approval.',
+    );
   }
   if (!['PENDING', 'PASS'].includes(input.uatStatus)) {
     errors.push('uatStatus must equal PENDING or PASS.');
   }
   if (input.goNoGoDecision === 'GO' && input.uatStatus !== 'PASS') {
     errors.push('GO requires uatStatus PASS.');
+  }
+  if (input.goNoGoDecision === 'CONDITIONAL_GO' && input.uatStatus !== 'PASS') {
+    errors.push('CONDITIONAL_GO requires uatStatus PASS.');
+  }
+  if (
+    input.applyMode === 'APPLY' &&
+    (input.uatStatus !== 'PASS' || !['GO', 'CONDITIONAL_GO'].includes(input.goNoGoDecision))
+  ) {
+    errors.push('APPLY requires UAT PASS and an approved GO or CONDITIONAL_GO decision.');
   }
   if (repository && input.repository !== repository)
     errors.push('repository does not match the trusted repository.');
@@ -42,6 +55,14 @@ export function validateProductionPromotionInput(input, { repository } = {}) {
   }
   if (!/^[1-9][0-9]*$/u.test(String(input.sourceCloudE2eRunId ?? ''))) {
     errors.push('sourceCloudE2eRunId must be a positive workflow run ID.');
+  }
+  if (input.applyMode === 'APPLY') {
+    if (!/^[1-9][0-9]*$/u.test(String(input.sourceG5RunId ?? ''))) {
+      errors.push('sourceG5RunId must be a positive workflow run ID for APPLY.');
+    }
+    if (input.protectedEnvironment !== true) {
+      errors.push('APPLY requires protectedEnvironment=true.');
+    }
   }
 
   const stable = input.stableRecord;

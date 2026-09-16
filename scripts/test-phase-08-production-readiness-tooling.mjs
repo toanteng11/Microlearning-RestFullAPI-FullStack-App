@@ -169,7 +169,9 @@ const workflow = readFileSync('.github/workflows/promote-production.yml', 'utf8'
 assert.match(workflow, /EXPECTED_TERRAFORM_ENV=production/u);
 assert.match(workflow, /ALLOW_PUBLIC_CLOUD_RUN_INVOKER=true/u);
 assert.match(workflow, /terraform init -input=false -reconfigure/u);
-assert.doesNotMatch(workflow, /terraform apply/u);
+assert.match(workflow, /if: inputs\.apply_mode == 'APPLY'/u);
+assert.match(workflow, /phase-08:pre-release:verify/u);
+assert.match(workflow, /APPLY_PHASE_08_PRODUCTION/u);
 assert.match(workflow, /productionApplyExecuted:false/u);
 assert.match(workflow, /retention-days: 90/u);
 assert.match(workflow, /artifacts\/phase-08\/\$\{\{ inputs\.release_id \}\}/u);

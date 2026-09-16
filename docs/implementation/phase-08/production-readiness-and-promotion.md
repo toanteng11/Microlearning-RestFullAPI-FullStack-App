@@ -22,11 +22,11 @@ The selected planning profile is `ACADEMIC_DEMO_RELEASE`; see `release-profile-a
 
 ## Current workflow boundary
 
-`.github/workflows/promote-production.yml` is currently a protected **plan-only validation** workflow. It does not prove a real Production apply. Part 02 fixes the validator boundary; Part 08 prepares the plan; Part 09 records G5; Part 10 adds/uses protected `APPLY` with workflow review, plan artifact, WIF permissions, post-deploy evidence and `npm run promotion:contract:test`.
+`.github/workflows/promote-production.yml` supports protected `PLAN_ONLY` and `APPLY` modes. `PLAN_ONLY` remains the default and proves readiness only. `APPLY` is fail-closed behind the protected Production environment, exact immutable G5 artifact, approved deployment window, WIF, reviewed plan, post-deploy identity/smoke/drift checks and rollback capture. The presence of the APPLY code path does not prove a Production apply; G6 remains Pending until the remote workflow produces valid `P08-EV-031/037`.
 
 At Part 08/G4, invoke the workflow with `uat_status=PENDING` (or `PASS` if G3 is already complete) and `go_no_go_decision=NO_GO`. A `GO` input is valid only together with UAT `PASS`; this removes the G4/G5 dependency loop without authorizing deployment.
 
-The Part 08 workflow requires Production Environment variables for four exact numeric secret versions: `GCP_SECRET_VERSION_MONGODB_URI_PRODUCTION`, `GCP_SECRET_VERSION_ACCESS_TOKEN_PRODUCTION`, `GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_PRODUCTION` and `GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_PRODUCTION`. It reads no secret payload and uploads no raw Terraform plan JSON or plan binary.
+The workflow requires Production Environment variables for four exact numeric secret versions: `GCP_SECRET_VERSION_MONGODB_URI_PRODUCTION`, `GCP_SECRET_VERSION_ACCESS_TOKEN_PRODUCTION`, `GCP_SECRET_VERSION_AUTH_IDENTITY_PEPPER_PRODUCTION` and `GCP_SECRET_VERSION_CLASSROOM_CODE_PEPPER_PRODUCTION`. It verifies version state without reading secret payload and uploads no raw Terraform plan JSON or plan binary.
 
 ## Promotion sequence
 

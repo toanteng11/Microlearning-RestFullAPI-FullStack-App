@@ -34,6 +34,19 @@ assert.deepEqual(
   validateProductionPromotionInput(
     {
       ...valid,
+      applyMode: 'APPLY',
+      confirmation: 'APPLY_PHASE_08_PRODUCTION',
+      sourceG5RunId: '67890',
+      protectedEnvironment: true,
+    },
+    { repository },
+  ),
+  [],
+);
+assert.deepEqual(
+  validateProductionPromotionInput(
+    {
+      ...valid,
       uatStatus: 'PENDING',
       uatDecisionId: 'P08-G3-PENDING',
       goNoGoDecision: 'NO_GO',
@@ -45,8 +58,7 @@ assert.deepEqual(
 );
 for (const mutation of [
   { confirmation: 'PROMOTE', message: 'confirmation' },
-  { applyMode: 'APPLY', message: 'PLAN_ONLY' },
-  { goNoGoDecision: 'CONDITIONAL_GO', message: 'goNoGoDecision' },
+  { applyMode: 'INVALID', message: 'PLAN_ONLY or APPLY' },
   { uatStatus: 'PENDING', message: 'GO requires' },
   {
     stableRecord: { ...stableRecord, imageRef: `${image.split('@')[0]}:latest` },
@@ -59,4 +71,31 @@ for (const mutation of [
     mutation.message,
   );
 }
-process.stdout.write(`${JSON.stringify({ event: 'promotion.contract.tests_passed', cases: 7 })}\n`);
+for (const mutation of [
+  { confirmation: 'PROMOTE_PRODUCTION', sourceG5RunId: '67890', message: 'confirmation' },
+  { confirmation: 'APPLY_PHASE_08_PRODUCTION', sourceG5RunId: '', message: 'sourceG5RunId' },
+  {
+    confirmation: 'APPLY_PHASE_08_PRODUCTION',
+    sourceG5RunId: '67890',
+    protectedEnvironment: false,
+    message: 'protectedEnvironment',
+  },
+  {
+    confirmation: 'APPLY_PHASE_08_PRODUCTION',
+    sourceG5RunId: '67890',
+    goNoGoDecision: 'NO_GO',
+    message: 'APPLY requires',
+  },
+]) {
+  const errors = validateProductionPromotionInput(
+    { ...valid, applyMode: 'APPLY', protectedEnvironment: true, ...mutation },
+    { repository },
+  );
+  assert.ok(
+    errors.some((error) => error.includes(mutation.message)),
+    mutation.message,
+  );
+}
+process.stdout.write(
+  `${JSON.stringify({ event: 'promotion.contract.tests_passed', cases: 12 })}\n`,
+);

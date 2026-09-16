@@ -50,15 +50,34 @@ requireText(
 requireText(promotion, /PLAN_ONLY/u, 'Pre-G5 Production promotion must be plan-only.');
 requireText(
   promotion,
+  /APPLY_PHASE_08_PRODUCTION/u,
+  'Production APPLY must use an explicit confirmation phrase.',
+);
+requireText(
+  promotion,
   /PROMOTE_PRODUCTION/u,
   'Production promotion must require the explicit confirmation phrase.',
 );
-if (
-  /terraform\s+apply/iu.test(promotion) ||
-  /gcloud\s+run\s+services\s+update-traffic/iu.test(promotion)
-) {
-  failures.push('Pre-G5 promotion workflow must not execute a Production apply or traffic change.');
-}
+requireText(
+  promotion,
+  /if:\s*inputs\.apply_mode == 'APPLY'/u,
+  'Production apply must be guarded by the explicit APPLY mode.',
+);
+requireText(
+  promotion,
+  /phase-08:pre-release:verify/u,
+  'Production apply must verify the immutable G5 package.',
+);
+requireText(
+  promotion,
+  /terraform apply -input=false -auto-approve production-promotion\.tfplan/u,
+  'Production apply must consume the exact reviewed plan.',
+);
+requireText(
+  promotion,
+  /Roll back after a post-apply failure/u,
+  'Production promotion must retain an automatic rollback path.',
+);
 
 const productionTerraform = read('infrastructure/terraform/environments/production/main.tf');
 const productionVariables = read('infrastructure/terraform/environments/production/variables.tf');

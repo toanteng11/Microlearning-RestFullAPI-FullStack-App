@@ -16,7 +16,7 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 | 07 | P08-PR03 | UAT 001-032, defect/retest và sign-off | G3/G4 | `LOCAL_PASS_REMOTE_PENDING` |
 | 08 | P08-PR04 | Production plan, separation, recovery and operations readiness | G4/G5 | `LOCAL_PASS_REMOTE_PENDING` |
 | 09 | P08-PR05 | Pre-release acceptance và protected Go/No-Go | G5 | `LOCAL_PASS_REMOTE_PENDING` |
-| 10 | P08-PR05 | Immutable Production deployment và smoke | G6 | `NOT_STARTED` |
+| 10 | P08-PR05 | Immutable Production deployment và smoke | G6 | `LOCAL_PASS_REMOTE_PENDING` |
 | 11 | P08-PR06 | Observation, incident/rollback và hypercare | G7 | `NOT_STARTED` |
 | 12 | P08-PR06 | Training, support, communication và handover | G7 | `NOT_STARTED` |
 | 13 | P08-PR06 | Final acceptance, evidence integrity và project exit | G8 | `NOT_STARTED` |
@@ -30,6 +30,8 @@ Nhánh triển khai Phase 08 dùng mẫu `phase-08-part-<nn>-<scope>`; không th
 Part 04-05 dùng quality suite riêng nhưng chạy bên trong cùng workflow System Test để giữ nguyên release identity. Hai part đã `DONE` qua run `35078334825` trên candidate `P08-RC-20260916-8489623`; artifact 90 ngày chứa raw observations, quality summary, validation report và final redaction report.
 
 Part 06-07 tooling runs as an explicit option in the same trusted workflow. Final G3 execution deliberately waits for Part 08 operations/recovery evidence because Must scenarios `P08-UT-031/032` cannot pass from a plan or placeholder.
+
+Part 10 protected deployment tooling supports `PLAN_ONLY` by default and a separate fail-closed `APPLY` path. The APPLY path requires the exact immutable G5 artifact, active approved deployment window, protected `production` environment, Production WIF, reviewed Terraform plan, exact Staging digest, Production smoke, drift check and rollback evidence. Tooling completion does not make G6 Pass; only a successful protected remote APPLY can change Part 10 to `DONE`.
 
 Part 08 local code/config is complete and validated. After merge, run `Validate Phase 08 Production Promotion (PLAN_ONLY)` with the exact stable Staging record, then combine its plan artifact with actual Atlas backup/isolated-restore and operations records. Validate the final redacted record with `npm run phase-08:production-readiness:validate -- <record.json> <validation-report.json>` before changing Part 08 to `DONE`.
 
