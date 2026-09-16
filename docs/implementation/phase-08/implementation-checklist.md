@@ -20,9 +20,9 @@
 - [x] Candidate source workflows xác nhận locked install, CI, OpenAPI và Cloud E2E đều `success` trên exact commit.
 - [x] Part 03 System Test rows có actor/tool, exact identity, expected/actual, evidence và UTC status.
 - [x] Part 03 summary xác nhận Critical/High = 0, retry/flaky = 0; UAT defect closure vẫn thuộc Part 07.
-- [x] Remote System Test run `34702722300` Pass và artifact `10301290616` lưu `P08-EV-010/015/016` trong 90 ngày.
+- [x] Remote System Test run `35078334825` Pass và artifact `10438877244` lưu `P08-EV-010/015/016` trong 90 ngày.
 - [x] BA latency targets, axe/keyboard/focus và desktop/mobile P0 states được kiểm tra với methodology; performance 5/5 và accessibility/responsive 5/5 Pass trên exact candidate.
-- [x] `npm run operations:contract:test`, `observability:contract:test`, `promotion:contract:test`, `hardening:contract:test`, `exit:contract:test`, `handoff:contract:test` pass trong CI `34701986045`.
+- [x] `npm run operations:contract:test`, `observability:contract:test`, `promotion:contract:test`, `hardening:contract:test`, `exit:contract:test`, `handoff:contract:test` pass trong CI `35068954040`.
 
 ## G4-G5 — Production Readiness and Decision
 

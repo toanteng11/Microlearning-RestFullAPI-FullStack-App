@@ -38,9 +38,9 @@ All Must System Test rows Pass, Critical/High = 0, identity matches and `P08-EV-
 - `P08-EV-015`: negative/RBAC/ownership/integrity rows in the System Test summary plus final redaction report.
 - `P08-EV-016`: `security-performance/scan-summary.json`, Terraform/Trivy output and checksums; retention is 90 days.
 - Live identity verification and stale-record reconciliation both pass for the locked candidate.
-- GitHub workflow run: `34702722300` (`success`) on commit `8dc74d8b169c480c22be47fd58b4b530505f9e7c`.
-- Release: `P08-RC-20260912-8dc74d8`; Staging revision: `microlearning-staging-00024-vzw`; immutable image digest: `sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2`.
-- Uploaded artifact: `phase-08-system-test-P08-RC-20260912-8dc74d8`, ID `10301290616`, digest `sha256:207c1526bcb92fadf3a0d739312a27756a19e92fe915e0bea02f72fa355d0851`, retention expiry `2026-12-11T15:36:07Z`.
+- GitHub workflow run: `35078334825` (`success`) on commit `8489623b41d1603bbbe0693749b5fa31cabfad10`.
+- Release: `P08-RC-20260916-8489623`; Staging revision: `microlearning-staging-00028-wgq`; immutable image digest: `sha256:1c3d8b3f0c9d768e1bafdb0414ae9a929189fdd3b503a2d4a4a7ec4c2c98db6b`.
+- Uploaded artifact: `phase-08-system-test-P08-RC-20260916-8489623`, ID `10438877244`, digest `sha256:5e420a4329b31e361d880bbdbd4aa7225444a0736b2ccc84de0f5b4d3ae72332`, retention expiry `2026-12-15T09:14:59Z`.
 - Machine-readable summary records 6/6 Must Pass, retry/flaky/Critical/High = 0, redaction reviewed and `P08-EV-010/015/016` present.
 
 The remote completion condition is satisfied. A changed deployed commit, image or revision starts a new candidate at G0 and invalidates reuse of this G2 decision.

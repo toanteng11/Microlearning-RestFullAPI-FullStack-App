@@ -10,7 +10,7 @@ Tất cả criteria ban đầu là `PENDING`. `PASS` chỉ được ghi trong ex
 |---|---|---|---|---|
 | P08-AC-001 | P07 handoff accepted và production decision còn `NO_GO` trước khi đủ gate | handoff + G0 decision | TL | `PENDING` |
 | P08-AC-002 | Exact commit/digest/revision/URL nhất quán từ Staging test đến promotion | manifest, deployment/stable record | DevOps | `PASS - Staging/G2 identity locked; promotion pending G5` |
-| P08-AC-003 | System Test chạy toàn bộ Must technical/integration/API/data/security scope | test report + raw artifact | QA | `PASS - G2 run 34702722300` |
+| P08-AC-003 | System Test chạy toàn bộ Must technical/integration/API/data/security scope | test report + raw artifact | QA | `PASS - G2 run 35078334825` |
 | P08-AC-004 | UAT Must scenarios cho Student/Teacher/Admin (và Super Admin nếu in scope) đạt expected business outcome | UAT matrix + evidence | QA/BA | `PENDING` |
 | P08-AC-005 | Critical/High defect bằng 0; Medium/Low có disposition hợp lệ | defect/retest/waiver | QA/TL | `PENDING` |
 | P08-AC-006 | Production service/IAM/WIF, Secret Manager, Terraform state và database user/name tách khỏi Staging | plan, IAM/secret/data evidence | DevOps/Security | `PENDING` |

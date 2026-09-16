@@ -27,7 +27,7 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 
 Nhánh triển khai Phase 08 dùng mẫu `phase-08-part-<nn>-<scope>`; không thêm tiền tố `codex/`. Part 03 được triển khai trên `phase-08-part-03-system-test`.
 
-Part 04-05 dùng quality suite riêng nhưng chạy bên trong cùng workflow System Test để giữ nguyên release identity. Hai part đã `DONE` qua run `34702722300` trên candidate `P08-RC-20260912-8dc74d8`; artifact 90 ngày chứa raw observations, quality summary, validation report và final redaction report.
+Part 04-05 dùng quality suite riêng nhưng chạy bên trong cùng workflow System Test để giữ nguyên release identity. Hai part đã `DONE` qua run `35078334825` trên candidate `P08-RC-20260916-8489623`; artifact 90 ngày chứa raw observations, quality summary, validation report và final redaction report.
 
 Part 06-07 tooling runs as an explicit option in the same trusted workflow. Final G3 execution deliberately waits for Part 08 operations/recovery evidence because Must scenarios `P08-UT-031/032` cannot pass from a plan or placeholder.
 

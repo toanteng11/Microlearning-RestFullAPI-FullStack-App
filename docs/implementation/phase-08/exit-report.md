@@ -15,12 +15,12 @@ This file is a closure template. Historical NO_GO results remain in their releas
 | Field | Actual value |
 | --- | --- |
 | Release profile | `ACADEMIC_DEMO_RELEASE` |
-| Release ID | `P08-RC-20260912-8dc74d8` |
-| Full commit SHA | `8dc74d8b169c480c22be47fd58b4b530505f9e7c` |
-| Immutable image reference | `asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2` |
-| Staging revision/URL | `microlearning-staging-00024-vzw` / `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
+| Release ID | `P08-RC-20260916-8489623` |
+| Full commit SHA | `8489623b41d1603bbbe0693749b5fa31cabfad10` |
+| Immutable image reference | `asia-southeast1-docker.pkg.dev/microlearning-platform-502716/microlearning/microlearning-app@sha256:1c3d8b3f0c9d768e1bafdb0414ae9a929189fdd3b503a2d4a4a7ec4c2c98db6b` |
+| Staging revision/URL | `microlearning-staging-00028-wgq` / `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
 | Production revision/URL | `PENDING` |
-| Deployment workflow/run | CI `34701986045`; Build `34702140794`; Staging `34702271579`; Cloud E2E `34702418131`; G2 `34702722300` |
+| Deployment workflow/run | CI `35068954040`; Build `35069210543`; Staging `35069452869`; Cloud E2E `35069714047`; G2 `35078334825` |
 
 ## Gate summary
 
