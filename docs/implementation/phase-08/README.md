@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-09 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260916-8489623` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `35078334825` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness và G5 package tooling đã hoàn thiện cục bộ, nhưng G3/G4/G5 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-10 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260916-8489623` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `35078334825` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness, G5 package và protected Production APPLY tooling đã hoàn thiện cục bộ, nhưng G3/G4/G5/G6 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 

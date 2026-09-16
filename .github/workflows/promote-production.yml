@@ -1,10 +1,10 @@
-name: Validate Phase 08 Production Promotion (PLAN_ONLY)
+name: Phase 08 Production Promotion
 
 on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Type PROMOTE_PRODUCTION to authorize the protected dry-run
+        description: PLAN_ONLY uses PROMOTE_PRODUCTION; APPLY uses APPLY_PHASE_08_PRODUCTION
         required: true
         type: string
       release_id:
@@ -15,27 +15,34 @@ on:
         description: Successful Cloud Smoke And E2E run containing the stable Staging record
         required: true
         type: string
-      uat_status:
-        description: PENDING for G4 readiness; PASS is mandatory when decision is GO
-        required: true
+      source_g5_run_id:
+        description: Successful Phase 08 Pre-release G5 run; mandatory for APPLY
+        required: false
         type: string
+      uat_status:
+        description: PENDING for G4 readiness; PASS is mandatory for APPLY
+        required: true
+        type: choice
+        options: [PENDING, PASS]
       uat_decision_id:
         description: UAT decision record ID
         required: true
         type: string
       go_no_go_decision:
-        description: NO_GO for G4 readiness; GO only after the signed G5 decision
+        description: NO_GO for readiness; GO or CONDITIONAL_GO only from the exact G5 artifact
         required: true
-        type: string
+        type: choice
+        options: [NO_GO, GO, CONDITIONAL_GO]
       go_no_go_decision_id:
-        description: Go/No-Go decision record ID
+        description: Exact G5 decision record ID
         required: true
         type: string
       apply_mode:
-        description: Must remain PLAN_ONLY; any apply request fails validation
+        description: PLAN_ONLY validates readiness; APPLY deploys after exact G5 verification
         required: true
         default: PLAN_ONLY
-        type: string
+        type: choice
+        options: [PLAN_ONLY, APPLY]
       app_version:
         description: Exact semantic version from the selected release manifest
         required: true
@@ -50,30 +57,34 @@ permissions:
   actions: read
 
 concurrency:
-  group: phase-08-production-promotion-validation
+  group: phase-08-production-promotion
   cancel-in-progress: false
 
 jobs:
-  validate:
-    name: Protected Production plan only
+  promote:
+    name: Protected Production plan or apply
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     environment: production
     permissions:
       contents: read
       actions: read
       id-token: write
     env:
+      ALLOW_PUBLIC_CLOUD_RUN_INVOKER: 'true'
+      EXPECTED_TERRAFORM_ENV: production
+      TF_IN_AUTOMATION: 'true'
       GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       GCP_REGION: asia-southeast1
       PROMOTION_CONFIRMATION: ${{ inputs.confirmation }}
       PROMOTION_APPLY_MODE: ${{ inputs.apply_mode }}
       SOURCE_CLOUD_E2E_RUN_ID: ${{ inputs.source_cloud_e2e_run_id }}
+      SOURCE_G5_RUN_ID: ${{ inputs.source_g5_run_id }}
       UAT_STATUS: ${{ inputs.uat_status }}
       UAT_DECISION_ID: ${{ inputs.uat_decision_id }}
       GO_NO_GO_DECISION: ${{ inputs.go_no_go_decision }}
       GO_NO_GO_DECISION_ID: ${{ inputs.go_no_go_decision_id }}
-      PHASE08_ARTIFACT_ROOT: artifacts/phase-08/${{ inputs.release_id }}/production-plan
+      PHASE08_ARTIFACT_ROOT: artifacts/phase-08/${{ inputs.release_id }}
       TF_VAR_app_version: ${{ inputs.app_version }}
       TF_VAR_build_time: ${{ inputs.build_time }}
       TF_VAR_mongodb_uri_secret_version: ${{ vars.GCP_SECRET_VERSION_MONGODB_URI_PRODUCTION }}
@@ -94,12 +105,16 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
+      - name: Install locked dependencies
+        run: npm ci
+
       - name: Resolve trusted Cloud E2E run
         id: trust
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           [[ "$SOURCE_CLOUD_E2E_RUN_ID" =~ ^[1-9][0-9]*$ ]]
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_CLOUD_E2E_RUN_ID" > "$RUNNER_TEMP/cloud-e2e-run.json"
           node scripts/resolve-trusted-workflow-run.mjs \
@@ -114,6 +129,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           mkdir -p "$RUNNER_TEMP/cloud-e2e"
           gh run download "$SOURCE_CLOUD_E2E_RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
@@ -121,23 +137,89 @@ jobs:
             --dir "$RUNNER_TEMP/cloud-e2e"
           test -f "$RUNNER_TEMP/cloud-e2e/cloud-e2e/stable-deployment-record.json"
 
-      - name: Validate stable Staging record and extract exact digest
+      - name: Validate stable Staging record and exact release metadata
         id: stable
+        shell: bash
         env:
+          APP_VERSION: ${{ inputs.app_version }}
+          BUILD_TIME: ${{ inputs.build_time }}
+          RELEASE_ID: ${{ inputs.release_id }}
           STABLE_RECORD: ${{ runner.temp }}/cloud-e2e/cloud-e2e/stable-deployment-record.json
-        run: >-
-          node scripts/validate-stable-deployment-record.mjs
-          "$STABLE_RECORD"
-          "$GITHUB_REPOSITORY"
+        run: |
+          set -euo pipefail
+          node scripts/validate-stable-deployment-record.mjs "$STABLE_RECORD" "$GITHUB_REPOSITORY"
+          candidate_commit="$(jq -r '.commitSha' "$STABLE_RECORD")"
+          short_sha="${RELEASE_ID##*-}"
+          [[ "$RELEASE_ID" =~ ^P08-RC-[0-9]{8}-[a-f0-9]{7,12}$ ]]
+          test "$short_sha" = "${candidate_commit:0:${#short_sha}}"
+          jq -e --arg version "$APP_VERSION" --arg build "$BUILD_TIME" \
+            '.releaseManifest.appVersion == $version and .releaseManifest.buildTime == $build' \
+            "$STABLE_RECORD" >/dev/null
+          echo "commit_sha=$candidate_commit" >> "$GITHUB_OUTPUT"
+          echo "image_ref=$(jq -r '.imageRef' "$STABLE_RECORD")" >> "$GITHUB_OUTPUT"
+          echo "revision=$(jq -r '.revision' "$STABLE_RECORD")" >> "$GITHUB_OUTPUT"
+          echo "service_url=$(jq -r '.serviceUrl' "$STABLE_RECORD")" >> "$GITHUB_OUTPUT"
 
-      - name: Validate UAT, Go decision and no-apply promotion contract
+      - name: Validate promotion mode boundary
         env:
           STABLE_RECORD: ${{ runner.temp }}/cloud-e2e/cloud-e2e/stable-deployment-record.json
         run: >-
           node scripts/validate-production-promotion.mjs
           "$STABLE_RECORD"
           "$GITHUB_REPOSITORY"
-          "$PHASE08_ARTIFACT_ROOT/promotion-validation.json"
+          "$PHASE08_ARTIFACT_ROOT/production-plan/promotion-validation.json"
+
+      - name: Resolve and verify exact G5 artifact
+        if: inputs.apply_mode == 'APPLY'
+        id: g5
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          G5_RUN_ID: ${{ inputs.source_g5_run_id }}
+          STABLE_RECORD: ${{ runner.temp }}/cloud-e2e/cloud-e2e/stable-deployment-record.json
+        run: |
+          set -euo pipefail
+          [[ "$G5_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$G5_RUN_ID" > "$RUNNER_TEMP/g5-run.json"
+          node scripts/resolve-trusted-workflow-run.mjs \
+            "$RUNNER_TEMP/g5-run.json" \
+            "Phase 08 Pre-release G5" \
+            "$GITHUB_REPOSITORY" \
+            "workflow_dispatch" \
+            "$RUNNER_TEMP/trusted-g5-run.json"
+          mkdir -p "$RUNNER_TEMP/g5"
+          gh run download "$G5_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "phase-08-g5-$RELEASE_ID" \
+            --dir "$RUNNER_TEMP/g5"
+          acceptance="$(find "$RUNNER_TEMP/g5" -type f -name pre-release-acceptance.json -print -quit)"
+          decision="$(find "$RUNNER_TEMP/g5" -type f -name go-no-go-decision.json -print -quit)"
+          lock="$(find "$RUNNER_TEMP/g5" -type f -name g5-decision-lock.json -print -quit)"
+          test -f "$acceptance" && test -f "$decision" && test -f "$lock"
+          npm run phase-08:pre-release:verify -- "$acceptance" "$decision" "$lock"
+          jq -e \
+            --arg release "$RELEASE_ID" \
+            --arg commit "$(jq -r '.commitSha' "$STABLE_RECORD")" \
+            --arg image "$(jq -r '.imageRef' "$STABLE_RECORD")" \
+            --arg revision "$(jq -r '.revision' "$STABLE_RECORD")" \
+            --arg url "$(jq -r '.serviceUrl' "$STABLE_RECORD")" \
+            --arg decision_id "$GO_NO_GO_DECISION_ID" \
+            --arg decision_value "$GO_NO_GO_DECISION" \
+            '.releaseId == $release and .decisionId == $decision_id and .decision == $decision_value and
+             (.decision == "GO" or .decision == "CONDITIONAL_GO") and
+             .releaseIdentity.commitSha == $commit and .releaseIdentity.imageDigest == $image and
+             .releaseIdentity.stagingRevision == $revision and .releaseIdentity.stagingUrl == $url' \
+            "$lock" >/dev/null
+          now="$(date -u +%s)"
+          starts="$(date -u -d "$(jq -r '.approvedDeploymentWindow.startsAtUtc' "$lock")" +%s)"
+          ends="$(date -u -d "$(jq -r '.approvedDeploymentWindow.endsAtUtc' "$lock")" +%s)"
+          test "$now" -ge "$starts" && test "$now" -le "$ends"
+          mkdir -p "$PHASE08_ARTIFACT_ROOT/deployment/g5"
+          cp "$acceptance" "$PHASE08_ARTIFACT_ROOT/deployment/g5/pre-release-acceptance.json"
+          cp "$decision" "$PHASE08_ARTIFACT_ROOT/deployment/g5/go-no-go-decision.json"
+          cp "$lock" "$PHASE08_ARTIFACT_ROOT/deployment/g5/g5-decision-lock.json"
+          echo "decision_sha=$(jq -r '.decisionRecordSha256' "$lock")" >> "$GITHUB_OUTPUT"
 
       - name: Authenticate using protected Production WIF
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
@@ -148,38 +230,56 @@ jobs:
           create_credentials_file: true
           export_environment_variables: true
 
+      - name: Verify exact Production secret versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          declare -A versions=(
+            [ml-production-mongodb-uri]="$TF_VAR_mongodb_uri_secret_version"
+            [ml-production-access-token-secret]="$TF_VAR_access_token_secret_version"
+            [ml-production-auth-identity-pepper]="$TF_VAR_auth_identity_pepper_secret_version"
+            [ml-production-classroom-code-pepper]="$TF_VAR_classroom_code_pepper_secret_version"
+          )
+          for secret_id in "${!versions[@]}"; do
+            version="${versions[$secret_id]}"
+            [[ "$version" =~ ^[1-9][0-9]*$ ]]
+            gcloud secrets versions describe "$version" \
+              --project "$GCP_PROJECT_ID" \
+              --secret "$secret_id" \
+              --format='value(state)' | grep -qx ENABLED
+          done
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.0
         with:
           terraform_version: 1.15.8
           terraform_wrapper: false
 
-      - name: Validate exact Production Terraform inputs
+      - name: Capture previous Production revision
+        id: prior
         shell: bash
-        env:
-          APP_VERSION: ${{ inputs.app_version }}
-          BUILD_TIME: ${{ inputs.build_time }}
-          RELEASE_ID: ${{ inputs.release_id }}
-          CANDIDATE_COMMIT: ${{ steps.stable.outputs.commit_sha }}
         run: |
           set -euo pipefail
-          [[ "$RELEASE_ID" =~ ^P08-RC-[0-9]{8}-[a-f0-9]{7,12}$ ]]
-          short_sha="${RELEASE_ID##*-}"
-          test "$short_sha" = "${CANDIDATE_COMMIT:0:${#short_sha}}"
-          [[ "$APP_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]
-          [[ "$BUILD_TIME" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$ ]]
-          for version in \
-            "$TF_VAR_mongodb_uri_secret_version" \
-            "$TF_VAR_access_token_secret_version" \
-            "$TF_VAR_auth_identity_pepper_secret_version" \
-            "$TF_VAR_classroom_code_pepper_secret_version"; do
-            [[ "$version" =~ ^[1-9][0-9]*$ ]]
-          done
+          service_json="$RUNNER_TEMP/prior-production-service.json"
+          if gcloud run services describe microlearning-production --project "$GCP_PROJECT_ID" --region "$GCP_REGION" --format=json > "$service_json" 2>/dev/null; then
+            revision="$(jq -r '.status.latestReadyRevisionName // empty' "$service_json")"
+            url="$(jq -r '.status.url // empty' "$service_json")"
+            image="$(jq -r '.spec.template.spec.containers[0].image // empty' "$service_json")"
+            echo "has_previous=$([ -n "$revision" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+            echo "revision=$revision" >> "$GITHUB_OUTPUT"
+            echo "url=$url" >> "$GITHUB_OUTPUT"
+            echo "image=$image" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_previous=false" >> "$GITHUB_OUTPUT"
+            echo "revision=" >> "$GITHUB_OUTPUT"
+            echo "url=" >> "$GITHUB_OUTPUT"
+            echo "image=" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Create Production validation plan only
+      - name: Create reviewed Production plan
+        id: plan
         working-directory: infrastructure/terraform/environments/production
         env:
-          IMAGE_REF: ${{ steps.stable.outputs.image_ref }}
           TF_VAR_image_ref: ${{ steps.stable.outputs.image_ref }}
           TF_VAR_commit_sha: ${{ steps.stable.outputs.commit_sha }}
           TF_VAR_provision_service: 'true'
@@ -191,25 +291,30 @@ jobs:
           terraform init -input=false -reconfigure
           terraform validate
           terraform plan -input=false -out=production-promotion.tfplan
+          echo "plan_hash=sha256:$(sha256sum production-promotion.tfplan | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
-      - name: Enforce Production plan policy and upload report
+      - name: Enforce Production plan policy
         env:
           IMAGE_REF: ${{ steps.stable.outputs.image_ref }}
         run: |
           set -euo pipefail
-          mkdir -p "$PHASE08_ARTIFACT_ROOT/terraform"
+          mkdir -p "$PHASE08_ARTIFACT_ROOT/production-plan/terraform"
           terraform -chdir=infrastructure/terraform/environments/production show -json production-promotion.tfplan \
-            > "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json"
+            > "$PHASE08_ARTIFACT_ROOT/production-plan/terraform/production-promotion-plan.json"
           TF_SECRET_CANARY="PHASE_08_STATE_CANARY_DO_NOT_STORE" \
             EXPECTED_TERRAFORM_ENV=production \
             ALLOW_PUBLIC_CLOUD_RUN_INVOKER=true \
             node scripts/check-terraform-plan.mjs \
-            "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json" \
-            "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-policy.json"
-          rm "$PHASE08_ARTIFACT_ROOT/terraform/production-promotion-plan.json"
+            "$PHASE08_ARTIFACT_ROOT/production-plan/terraform/production-promotion-plan.json" \
+            "$PHASE08_ARTIFACT_ROOT/production-plan/terraform/production-promotion-policy.json"
+          rm "$PHASE08_ARTIFACT_ROOT/production-plan/terraform/production-promotion-plan.json"
           cp "$RUNNER_TEMP/cloud-e2e/cloud-e2e/stable-deployment-record.json" \
-            "$PHASE08_ARTIFACT_ROOT/stable-deployment-record.json"
-          plan_hash="$(sha256sum infrastructure/terraform/environments/production/production-promotion.tfplan | cut -d' ' -f1)"
+            "$PHASE08_ARTIFACT_ROOT/production-plan/stable-deployment-record.json"
+
+      - name: Record PLAN_ONLY readiness
+        if: inputs.apply_mode == 'PLAN_ONLY'
+        shell: bash
+        run: |
           jq -n \
             --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --arg release_id "${{ inputs.release_id }}" \
@@ -217,32 +322,180 @@ jobs:
             --arg image "${{ steps.stable.outputs.image_ref }}" \
             --arg staging_revision "${{ steps.stable.outputs.revision }}" \
             --arg staging_url "${{ steps.stable.outputs.service_url }}" \
-            --arg plan_hash "sha256:$plan_hash" \
-            '{schemaVersion:1,phase:"08",recordType:"PRODUCTION_TERRAFORM_READINESS",recordedAtUtc:$recorded_at,status:"PASS",applyMode:"PLAN_ONLY",productionApplyExecuted:false,releaseIdentity:{releaseId:$release_id,commitSha:$release_commit,imageDigest:$image,stagingRevision:$staging_revision,stagingUrl:$staging_url,productionRevision:"NOT_RUN",productionUrl:"NOT_RUN"},terraform:{formatStatus:"PASS",validateStatus:"PASS",planStatus:"PASS",policyStatus:"PASS",planHash:$plan_hash,backendPrefix:"phase-08/production",imageRef:$image},nextGate:"Atlas backup/isolated restore and operations evidence remain mandatory for Part 08 PASS."}' \
-            > "$PHASE08_ARTIFACT_ROOT/terraform-readiness.json"
-          rm infrastructure/terraform/environments/production/production-promotion.tfplan
+            --arg plan_hash "${{ steps.plan.outputs.plan_hash }}" \
+            '{schemaVersion:1,phase:"08",recordType:"PRODUCTION_TERRAFORM_READINESS",recordedAtUtc:$recorded_at,status:"PASS",applyMode:"PLAN_ONLY",productionApplyExecuted:false,releaseIdentity:{releaseId:$release_id,commitSha:$release_commit,imageDigest:$image,stagingRevision:$staging_revision,stagingUrl:$staging_url,productionRevision:"NOT_RUN",productionUrl:"NOT_RUN"},terraform:{formatStatus:"PASS",validateStatus:"PASS",planStatus:"PASS",policyStatus:"PASS",planHash:$plan_hash,backendPrefix:"phase-08/production",imageRef:$image},nextGate:"Atlas backup/isolated restore and operations evidence remain mandatory before G5."}' \
+            > "$PHASE08_ARTIFACT_ROOT/production-plan/terraform-readiness.json"
 
-      - name: Confirm no Production apply was executed
-        run: test ! -f infrastructure/terraform/environments/production/production-apply.executed
+      - name: Apply exact reviewed Production plan
+        if: inputs.apply_mode == 'APPLY'
+        id: apply
+        working-directory: infrastructure/terraform/environments/production
+        run: terraform apply -input=false -auto-approve production-promotion.tfplan
 
-      - name: Upload Production promotion validation evidence
+      - name: Capture and verify deployed Production identity
+        if: inputs.apply_mode == 'APPLY'
+        id: production
+        shell: bash
+        run: |
+          set -euo pipefail
+          service_json="$RUNNER_TEMP/production-service.json"
+          gcloud run services describe microlearning-production \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --format=json > "$service_json"
+          url="$(jq -r '.status.url' "$service_json")"
+          revision="$(jq -r '.status.latestReadyRevisionName' "$service_json")"
+          traffic_revision="$(jq -r '[.status.traffic[]? | select((.percent // 0) == 100) | .revisionName][0] // empty' "$service_json")"
+          image="$(jq -r '.spec.template.spec.containers[0].image' "$service_json")"
+          commit="$(jq -r '[.spec.template.spec.containers[0].env[]? | select(.name == "COMMIT_SHA") | .value][0] // empty' "$service_json")"
+          test "$traffic_revision" = "$revision"
+          test "$image" = "${{ steps.stable.outputs.image_ref }}"
+          test "$commit" = "${{ steps.stable.outputs.commit_sha }}"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Run exact-release Production smoke
+        if: inputs.apply_mode == 'APPLY'
+        run: >-
+          node scripts/verify-staging-deployment.mjs
+          "${{ steps.production.outputs.url }}"
+          "${{ inputs.app_version }}"
+          "${{ steps.stable.outputs.commit_sha }}"
+          "${{ steps.stable.outputs.image_ref }}"
+          "$PHASE08_ARTIFACT_ROOT/deployment/production-smoke.json"
+          production
+
+      - name: Install Chromium for Production role smoke
+        if: inputs.apply_mode == 'APPLY'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run read-only Student, Teacher, Admin and Super Admin smoke
+        if: inputs.apply_mode == 'APPLY'
+        env:
+          E2E_CLOUD_MODE: 'true'
+          E2E_WEB_URL: ${{ steps.production.outputs.url }}
+          E2E_API_URL: ${{ steps.production.outputs.url }}
+          E2E_DEMO_PASSWORD: ${{ secrets.E2E_DEMO_PASSWORD_PRODUCTION }}
+          E2E_RUN_ID: ${{ github.run_id }}
+          E2E_PHASE08_RELEASE_ID: ${{ inputs.release_id }}
+          E2E_EXPECTED_COMMIT: ${{ steps.stable.outputs.commit_sha }}
+          E2E_EXPECTED_IMAGE: ${{ steps.stable.outputs.image_ref }}
+          E2E_EXPECTED_REVISION: ${{ steps.production.outputs.revision }}
+        run: |
+          test -n "$E2E_DEMO_PASSWORD"
+          npm run test:e2e:phase-08:production
+
+      - name: Verify post-apply drift is empty
+        if: inputs.apply_mode == 'APPLY'
+        working-directory: infrastructure/terraform/environments/production
+        env:
+          TF_VAR_image_ref: ${{ steps.stable.outputs.image_ref }}
+          TF_VAR_commit_sha: ${{ steps.stable.outputs.commit_sha }}
+          TF_VAR_provision_service: 'true'
+          TF_VAR_provision_secret_containers: 'true'
+          TF_VAR_provision_monitoring: 'true'
+        run: |
+          terraform apply -input=false -auto-approve -refresh-only
+          terraform plan -input=false -detailed-exitcode
+
+      - name: Create and validate Production deployment record
+        if: inputs.apply_mode == 'APPLY'
+        shell: bash
+        env:
+          PREVIOUS_REVISION: ${{ steps.prior.outputs.revision }}
+          PREVIOUS_IMAGE: ${{ steps.prior.outputs.image }}
+        run: |
+          set -euo pipefail
+          smoke="$PHASE08_ARTIFACT_ROOT/deployment/production-smoke.json"
+          smoke_hash="sha256:$(sha256sum "$smoke" | cut -d' ' -f1)"
+          role_smoke="$PHASE08_ARTIFACT_ROOT/deployment/role-smoke/playwright-results.json"
+          test -f "$role_smoke"
+          role_smoke_hash="sha256:$(sha256sum "$role_smoke" | cut -d' ' -f1)"
+          previous_revision="${PREVIOUS_REVISION:-}"
+          previous_image="${PREVIOUS_IMAGE:-}"
+          if [[ -n "$previous_image" && ! "$previous_image" =~ @sha256:[a-f0-9]{64}$ ]]; then
+            previous_image=""
+          fi
+          jq -n \
+            --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg actor "${{ github.actor }} / GitHub Actions" \
+            --arg release_id "${{ inputs.release_id }}" \
+            --arg commit "${{ steps.stable.outputs.commit_sha }}" \
+            --arg image "${{ steps.stable.outputs.image_ref }}" \
+            --arg staging_revision "${{ steps.stable.outputs.revision }}" \
+            --arg staging_url "${{ steps.stable.outputs.service_url }}" \
+            --arg production_revision "${{ steps.production.outputs.revision }}" \
+            --arg production_url "${{ steps.production.outputs.url }}" \
+            --arg decision "${{ inputs.go_no_go_decision }}" \
+            --arg decision_id "${{ inputs.go_no_go_decision_id }}" \
+            --arg decision_sha "${{ steps.g5.outputs.decision_sha }}" \
+            --arg g5_run "${{ inputs.source_g5_run_id }}" \
+            --arg plan_hash "${{ steps.plan.outputs.plan_hash }}" \
+            --arg previous_revision "$previous_revision" \
+            --arg previous_image "$previous_image" \
+            --arg smoke_report "artifacts/phase-08/${{ inputs.release_id }}/deployment/production-smoke.json" \
+            --arg smoke_hash "$smoke_hash" \
+            --arg role_smoke_report "artifacts/phase-08/${{ inputs.release_id }}/deployment/role-smoke/playwright-results.json" \
+            --arg role_smoke_hash "$role_smoke_hash" \
+            '{schemaVersion:1,phase:"08",recordType:"PRODUCTION_DEPLOYMENT",status:"ACTUAL",applyMode:"APPLY",protectedEnvironment:true,redactionReviewed:true,releaseId:$release_id,actor:$actor,recordedAtUtc:$recorded_at,releaseIdentity:{releaseId:$release_id,commitSha:$commit,imageDigest:$image,stagingRevision:$staging_revision,stagingUrl:$staging_url,productionRevision:$production_revision,productionUrl:$production_url},approval:{decision:$decision,decisionId:$decision_id,decisionRecordSha256:$decision_sha,sourceG5RunId:$g5_run},terraform:{planStatus:"PASS",policyStatus:"PASS",applyStatus:"PASS",postApplyDriftStatus:"PASS",planHash:$plan_hash,destroyCount:0},cloudRun:{serviceName:"microlearning-production",revision:$production_revision,url:$production_url,trafficPercent:100,observedImageDigest:$image,observedCommitSha:$commit,previousRevision:(if $previous_revision == "" then null else $previous_revision end),previousImageDigest:(if $previous_image == "" then null else $previous_image end)},smoke:{status:"PASS",report:$smoke_report,reportSha256:$smoke_hash},roleSmoke:{status:"PASS",personas:4,report:$role_smoke_report,reportSha256:$role_smoke_hash},evidenceIds:["P08-EV-031","P08-EV-037"]}' \
+            > "$PHASE08_ARTIFACT_ROOT/deployment/production-deployment.json"
+          npm run phase-08:production-deployment:validate -- \
+            "$PHASE08_ARTIFACT_ROOT/deployment/production-deployment.json" \
+            "$PHASE08_ARTIFACT_ROOT/deployment/production-deployment-validation.json"
+
+      - name: Roll back after a post-apply failure
+        if: failure() && inputs.apply_mode == 'APPLY' && steps.apply.outcome == 'success' && steps.prior.outputs.has_previous == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud run services update-traffic microlearning-production \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --to-revisions "${{ steps.prior.outputs.revision }}=100"
+          curl --fail --silent --show-error --max-time 20 "${{ steps.prior.outputs.url }}/ready" >/dev/null
+          mkdir -p "$PHASE08_ARTIFACT_ROOT/deployment"
+          jq -n \
+            --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg revision "${{ steps.prior.outputs.revision }}" \
+            --arg image "${{ steps.prior.outputs.image }}" \
+            --arg failed_run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '{schemaVersion:1,phase:"08",recordType:"PRODUCTION_ROLLBACK",status:"ROLLED_BACK",recordedAtUtc:$recorded_at,restoredRevision:$revision,restoredImageDigest:$image,failedRunUrl:$failed_run,reason:"POST_APPLY_GATE_FAILURE",evidenceIds:["P08-EV-039"]}' \
+            > "$PHASE08_ARTIFACT_ROOT/deployment/rollback-record.json"
+
+      - name: Remove Terraform plan binary
         if: always()
+        run: rm -f infrastructure/terraform/environments/production/production-promotion.tfplan
+
+      - name: Final evidence redaction scan
+        if: always()
+        id: redaction
+        env:
+          E2E_SECRET_CANARY: ${{ secrets.E2E_DEMO_PASSWORD_PRODUCTION }}
+        run: >-
+          npm run e2e:artifacts:scan --
+          "$PHASE08_ARTIFACT_ROOT"
+          "$PHASE08_ARTIFACT_ROOT/deployment/final-redaction-report.json"
+
+      - name: Upload Production promotion evidence
+        if: always() && steps.redaction.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: phase-08-production-plan-${{ inputs.release_id }}
+          name: phase-08-production-${{ inputs.apply_mode }}-${{ inputs.release_id }}
           path: ${{ env.PHASE08_ARTIFACT_ROOT }}
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 90
 
-      - name: Publish protected dry-run summary
+      - name: Publish protected promotion summary
         if: always()
         run: |
           {
-            echo "## Phase 08 Production promotion validation (PLAN_ONLY)"
+            echo "## Phase 08 Production promotion"
             echo "- Release: \`${{ inputs.release_id }}\`"
             echo "- Stable Staging digest: \`${{ steps.stable.outputs.image_ref }}\`"
-            echo "- Stable revision: \`${{ steps.stable.outputs.revision }}\`"
-            echo "- Apply mode: \`PLAN_ONLY\`"
-            echo "- Production apply executed: \`false\`"
-            echo "- Phase 08 UAT/Go gate remains required before any real promotion"
+            echo "- Apply mode: \`${{ inputs.apply_mode }}\`"
+            echo "- G5 source run: \`${{ inputs.source_g5_run_id || 'NOT_REQUIRED' }}\`"
+            echo "- Production revision: \`${{ steps.production.outputs.revision || 'NOT_RUN' }}\`"
+            echo "- Four-role smoke: \`${{ inputs.apply_mode == 'APPLY' && 'REQUIRED' || 'NOT_RUN' }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
