@@ -23,11 +23,11 @@ Measured report contains methodology and raw result. Any miss has defect/risk an
 
 ## Implementation status
 
-`DONE` on exact candidate `P08-RC-20260912-8dc74d8`.
+`DONE` on exact candidate `P08-RC-20260916-8489623`.
 
 - The quality suite records one warm-up plus five measured samples at bounded concurrency `1` for simple read, list/report, mutation, dashboard and frontend initial load.
 - `scripts/lib/phase-08-quality.mjs` calculates nearest-rank p95 from raw samples and enforces BA thresholds of `800/1000/1200/1500/3000 ms` with zero request errors.
 - Chromium verifies public Login, Student dashboard/progress states, Teacher Gradebook and Admin governance at desktop/mobile viewports using axe WCAG A/AA, keyboard focus and horizontal-overflow checks.
 - The report records environment, Staging region, network path, deterministic dataset, sample count and tool. It is a release acceptance measurement, not a universal SLA or capacity claim.
 
-System Test workflow `34702722300` stored machine-readable quality reports with final redaction Pass. Measured p95 values were `215.49 ms` simple read, `591.35 ms` list/report, `948.25 ms` dashboard, `942.28 ms` mutation and `234.30 ms` frontend load; all were below their documented thresholds with zero request errors. Five P0 viewport/state checks passed with zero serious/critical axe violations, no horizontal overflow and keyboard focus/state checks Pass.
+System Test workflow `35078334825` stored machine-readable quality reports with final redaction Pass. Measured p95 values were `192.48 ms` simple read, `652.43 ms` list/report, `989.33 ms` dashboard, `634.55 ms` mutation and `210.90 ms` frontend load; all were below their documented thresholds with zero request errors. Five P0 viewport/state checks passed with zero serious/critical axe violations, no horizontal overflow and keyboard focus/state checks Pass.

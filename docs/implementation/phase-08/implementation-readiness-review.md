@@ -37,7 +37,7 @@
 
 ## Remaining code/config work
 
-1. Prepare Part 06 UAT personas, deterministic data, environment checks and evidence workspace against candidate `P08-RC-20260912-8dc74d8`.
+1. Prepare Part 06 UAT personas, deterministic data, environment checks and evidence workspace against candidate `P08-RC-20260916-8489623`.
 2. Execute role-based UAT Part 07 and close or disposition defects without changing the locked candidate.
 3. If a fix changes runtime identity, create a new candidate and rerun affected G0-G2 evidence before UAT sign-off.
 4. Complete Production Terraform/Atlas/recovery readiness for the selected profile.
@@ -47,4 +47,4 @@ These are implementation tasks, not missing planning. They must remain `PENDING`
 
 ## Start authorization
 
-Part 00-05 are `DONE` and G2 is `PASS` through workflow `34702722300`. The next safe action is Part 06-07 UAT readiness/execution on the same locked candidate, followed by G3 evidence and defect closure. Production remains `PLAN_ONLY` until P08-PR05 and an exact G5 GO.
+Part 00-05 are `DONE` and G2 is `PASS` through workflow `35078334825`. The next safe action is Part 08 owner bootstrap and remote readiness evidence, then Part 06-07 UAT execution on the same locked candidate with reviewed operations/recovery evidence. Production remains `PLAN_ONLY` until an exact G5 GO.

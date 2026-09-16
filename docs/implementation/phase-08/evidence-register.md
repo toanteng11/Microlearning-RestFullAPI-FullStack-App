@@ -41,14 +41,14 @@ Part 08 validator and Terraform baseline are `LOCAL_PASS_REMOTE_PENDING`; this d
 
 ## Actual evidence snapshot - Part 00-05
 
-- Release ID: `P08-RC-20260912-8dc74d8`.
-- Release root: `artifacts/phase-08/P08-RC-20260912-8dc74d8/` inside the uploaded GitHub artifact.
+- Release ID: `P08-RC-20260916-8489623`.
+- Release root: `artifacts/phase-08/P08-RC-20260916-8489623/` inside the uploaded GitHub artifact.
 - G0/G1 and lineage evidence: `identity/release-identity.json`, `identity/provider-observation.json`, `identity/workflow-lineage.json` and `identity/staging-identity-reconciliation.json`; P07 handoff acceptance remains `P08-EV-001`.
 - System Test: `system-test/playwright-results.json`, `system-test/junit.xml`, `system-test/html-report/` and `system-test/system-test-summary.json`.
 - Security/IaC/dependency: `security-performance/scan-summary.json`, `security-performance/terraform-trivy.json` and `security-performance/final-redaction-report.json`.
-- Source workflow URLs use CI `34701986045`, Build `34702140794`, Deploy `34702271579` and Cloud E2E `34702418131`; each is `success` for exact commit `8dc74d8b169c480c22be47fd58b4b530505f9e7c`.
-- `P08-EV-010/015/016` are retained by [System Test run `34702722300`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/34702722300) in artifact `phase-08-system-test-P08-RC-20260912-8dc74d8` (ID `10301290616`, digest `sha256:207c1526bcb92fadf3a0d739312a27756a19e92fe915e0bea02f72fa355d0851`).
-- Artifact expiry is `2026-12-11T15:36:07Z`; final redaction report is `PASS` after scanning 35 files with zero findings.
+- Source workflow URLs use CI `35068954040`, Build `35069210543`, Deploy `35069452869` and Cloud E2E `35069714047`; each is `success` for exact commit `8489623b41d1603bbbe0693749b5fa31cabfad10`.
+- `P08-EV-010/015/016` are retained by [System Test run `35078334825`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/35078334825) in artifact `phase-08-system-test-P08-RC-20260916-8489623` (ID `10438877244`, digest `sha256:5e420a4329b31e361d880bbdbd4aa7225444a0736b2ccc84de0f5b4d3ae72332`).
+- Artifact expiry is `2026-12-15T09:14:59Z`; final redaction report is `PASS` after scanning 35 files with zero findings.
 
 ## Part 04-05 actual result
 
@@ -57,4 +57,4 @@ Part 08 validator and Terraform baseline are `LOCAL_PASS_REMOTE_PENDING`; this d
 - Raw outputs: `security-performance/quality-observations.json`, Playwright JSON/JUnit/HTML, retry traces and failure media.
 - Derived outputs: `security-performance/quality-summary.json` and `quality-summary-validation.json`; p95 is recalculated from raw samples by contract code.
 - Security/data: 11/11 Pass. Performance: 5/5 categories below threshold with zero errors. Accessibility/responsive: 5/5 screens Pass with zero serious/critical violations and no horizontal overflow.
-- Release identity: revision `microlearning-staging-00024-vzw`, immutable image `sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2`, runtime/provider/source records all match.
+- Release identity: revision `microlearning-staging-00028-wgq`, immutable image `sha256:1c3d8b3f0c9d768e1bafdb0414ae9a929189fdd3b503a2d4a4a7ec4c2c98db6b`, runtime/provider/source records all match.

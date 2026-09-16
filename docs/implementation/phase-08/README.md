@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-09 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260912-8dc74d8` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `34702722300` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness và G5 package tooling đã hoàn thiện cục bộ, nhưng G3/G4/G5 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-09 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260916-8489623` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `35078334825` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness và G5 package tooling đã hoàn thiện cục bộ, nhưng G3/G4/G5 vẫn chờ workflow/evidence thực tế; Production deployment, hypercare và final sign-off chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -75,8 +75,8 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 
 ## Blocking findings cần theo dõi
 
-1. G0/G1/G2 được thỏa mãn cho candidate `P08-RC-20260912-8dc74d8`, khóa bằng exact commit, immutable digest, Staging revision và bốn workflow nguồn cùng commit.
-2. Deployment, Cloud E2E, provider observation và runtime hiện cùng ghi `microlearning-staging-00024-vzw`; mọi thay đổi runtime/deployment identity tiếp theo phải tạo candidate mới và chạy lại các gate bị ảnh hưởng.
+1. G0/G1/G2 được thỏa mãn cho candidate `P08-RC-20260916-8489623`, khóa bằng exact commit, immutable digest, Staging revision và bốn workflow nguồn cùng commit.
+2. Deployment, Cloud E2E, provider observation và runtime hiện cùng ghi `microlearning-staging-00028-wgq`; mọi thay đổi runtime/deployment identity tiếp theo phải tạo candidate mới và chạy lại các gate bị ảnh hưởng.
 3. Production Terraform provision variables mặc định `false`; workflow hiện tại chỉ bật chúng để tạo plan tại `G4/G5`, không apply.
 4. Mâu thuẫn `APPLY`/Production `ACTUAL` và vòng lặp G0/G5/G8 đã được sửa; protected workflow/G5 evidence vẫn pending.
 5. Atlas/recovery decision phải theo selected profile; real data luôn là blocker với academic profile.
@@ -115,13 +115,13 @@ Final `PASS`/`GO` records cannot contain placeholders and require actual evidenc
 
 | Thuộc tính | Actual |
 |---|---|
-| Release ID | `P08-RC-20260912-8dc74d8` |
-| Commit | `8dc74d8b169c480c22be47fd58b4b530505f9e7c` |
+| Release ID | `P08-RC-20260916-8489623` |
+| Commit | `8489623b41d1603bbbe0693749b5fa31cabfad10` |
 | Staging URL | `https://microlearning-staging-bu73wlfj5a-as.a.run.app` |
-| Ready revision | `microlearning-staging-00024-vzw` (100% traffic) |
-| Image digest | `sha256:43c2c73406bfabbba6a75bd37c8e618d6260820d118cb8d8ee72c9a36f130fa2` |
-| Source workflows | CI `34701986045`; Build `34702140794`; Deploy `34702271579`; Cloud E2E `34702418131` - cùng commit, `success` |
-| System Test/G2 | Run `34702722300`; 6/6 Must, security/data 11/11, UI 5/5, performance 5/5 Pass; retry/flaky/Critical/High = 0 |
+| Ready revision | `microlearning-staging-00028-wgq` (100% traffic) |
+| Image digest | `sha256:1c3d8b3f0c9d768e1bafdb0414ae9a929189fdd3b503a2d4a4a7ec4c2c98db6b` |
+| Source workflows | CI `35068954040`; Build `35069210543`; Deploy `35069452869`; Cloud E2E `35069714047` - cùng commit, `success` |
+| System Test/G2 | Run `35078334825`; 6/6 Must, security/data 11/11, UI 5/5, performance 5/5 Pass; retry/flaky/Critical/High = 0 |
 | Runtime checks | `/health`, `/ready`, `/api/v1/system/version`, provider image/commit/revision và 100% traffic đều khớp |
 
-Raw evidence nằm trong GitHub artifact `phase-08-system-test-P08-RC-20260912-8dc74d8` của [run `34702722300`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/34702722300) (artifact ID `10301290616`, digest `sha256:207c1526bcb92fadf3a0d739312a27756a19e92fe915e0bea02f72fa355d0851`, hết hạn `2026-12-11T15:36:07Z`). Final redaction scan đã kiểm tra 35 file và không có finding. Thư mục local `artifacts/phase-08/<release-id>/` được ignore có chủ đích để không commit raw artifacts/secret-adjacent output.
+Raw evidence nằm trong GitHub artifact `phase-08-system-test-P08-RC-20260916-8489623` của [run `35078334825`](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/35078334825) (artifact ID `10438877244`, digest `sha256:5e420a4329b31e361d880bbdbd4aa7225444a0736b2ccc84de0f5b4d3ae72332`, hết hạn `2026-12-15T09:14:59Z`). Final redaction scan đã kiểm tra 35 file và không có finding. Thư mục local `artifacts/phase-08/<release-id>/` được ignore có chủ đích để không commit raw artifacts/secret-adjacent output.

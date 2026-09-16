@@ -9,8 +9,8 @@ Một release cuối có thể nghiệm thu và vận hành có kiểm soát, v�
 | ID | Deliverable | Owner | Acceptance evidence | Status |
 |---|---|---|---|---|
 | P08-D01 | Accepted P07 handoff | Technical Lead | signed `P08-G0-*`, valid handoff record | `PENDING` |
-| P08-D02 | Release identity lock | TL/DevOps | commit, digest, revision, URL, manifest | `ACTUAL - P08-RC-20260912-8dc74d8` |
-| P08-D03 | System Test report | QA | catalog counts, raw reports, defects | `ACTUAL - G2 run 34702722300 PASS` |
+| P08-D02 | Release identity lock | TL/DevOps | commit, digest, revision, URL, manifest | `ACTUAL - P08-RC-20260916-8489623` |
+| P08-D03 | System Test report | QA | catalog counts, raw reports, defects | `ACTUAL - G2 run 35078334825 PASS` |
 | P08-D04 | UAT execution/sign-off | BA/QA/PO | matrix, defect/retest, decision | `PENDING` |
 | P08-D05 | Production readiness pack | DevOps/Security | plan, IAM, secrets, Atlas, recovery | `PENDING` |
 | P08-D06 | Production deployment record | Release Owner | exact digest, revision, traffic, smoke | `PENDING` |
