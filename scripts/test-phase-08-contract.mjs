@@ -236,6 +236,11 @@ function createDecision(identity = BASE_IDENTITY) {
     evidenceIds: ['P08-EV-030'],
     conditions: [],
     productionApplyMode: 'PLAN_ONLY',
+    acceptanceRecordSha256: `sha256:${'d'.repeat(64)}`,
+    approvedDeploymentWindow: {
+      startsAtUtc: '2026-09-16T01:00:00.000Z',
+      endsAtUtc: '2026-09-16T02:00:00.000Z',
+    },
   };
 }
 
@@ -410,6 +415,35 @@ const cases = [
       const decision = createDecision();
       decision.recommendations.qa = 'NO_GO';
       expectError(validatePhase08Decision(decision), 'GO recommendations');
+    },
+  ],
+  [
+    'rejects a deployment window with reversed timestamps',
+    () => {
+      const decision = createDecision();
+      decision.approvedDeploymentWindow.endsAtUtc = '2026-09-16T00:00:00.000Z';
+      expectError(validatePhase08Decision(decision), 'end after it starts');
+    },
+  ],
+  [
+    'rejects a Conditional Go waiver for a forbidden category',
+    () => {
+      const decision = createDecision();
+      decision.decision = 'CONDITIONAL_GO';
+      decision.recommendations.qa = 'CONDITIONAL_GO';
+      decision.conditions = [
+        {
+          issueId: 'P08-DEF-020',
+          severity: 'LOW',
+          category: 'SECURITY',
+          owner: ACTOR,
+          expiryUtc: '2026-09-17T02:00:00.000Z',
+          workaround: 'Use the reviewed fallback path.',
+          mitigation: 'Apply the documented low-risk correction.',
+          communication: 'Record the condition in the release communication.',
+        },
+      ];
+      expectError(validatePhase08Decision(decision), 'non-integrity category');
     },
   ],
   [

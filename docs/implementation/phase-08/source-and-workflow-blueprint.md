@@ -13,6 +13,9 @@ Tài liệu này chỉ rõ thay đổi code/config cần thực hiện. Tên fil
 | `scripts/lib/phase-08-contract.mjs` | Cho phép `applyMode=APPLY` chỉ trong record production/exit sau G5 `GO`; trước G5 chỉ `PLAN_ONLY` | negative + positive contract tests |
 | `scripts/validate-phase-08-*.mjs` | Giữ fail-closed, redaction và identity consistency; report không chứa URI/token/password | CLI tests + secret scan |
 | `scripts/test-phase-08-contract.mjs` | Thêm test chống vòng lặp gate, APPLY trước GO, digest mismatch, placeholder và solo governance giả | local/CI Pass |
+| `scripts/lib/phase-08-pre-release.mjs` | Tổng hợp G2/G3/G4 cùng exact identity, tạo PRE_RELEASE acceptance, G5 decision và checksum lock bất biến | `npm run phase-08:pre-release:tooling:test` |
+| `scripts/generate-phase-08-pre-release.mjs` | Tạo package G5 mới, không ghi đè decision đã phát hành | CLI + overwrite negative test |
+| `scripts/verify-phase-08-pre-release.mjs` | Xác minh acceptance/decision checksum và identity trước Part 10 | tamper negative test |
 
 Contract đích:
 
