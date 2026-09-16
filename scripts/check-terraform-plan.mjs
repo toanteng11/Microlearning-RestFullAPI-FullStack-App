@@ -16,6 +16,8 @@ const stagingHealthUptimeAddress =
 const legacyStagingCanonicalHost = 'microlearning-staging-759791798260.asia-southeast1.run.app';
 const currentStagingCanonicalHost = 'microlearning-staging-bu73wlfj5a-as.a.run.app';
 const environmentNames = new Set(['staging', 'production']);
+const cloudRunPublicInvokerAddress =
+  'module.cloud_run_service.google_cloud_run_v2_service_iam_member.public_invoker[0]';
 
 if (expectedEnvironment && !environmentNames.has(expectedEnvironment)) {
   throw new Error('EXPECTED_TERRAFORM_ENV must be staging or production.');
@@ -66,6 +68,16 @@ function isApprovedStagingHealthUptimeReplacement(resource, actions) {
   );
 }
 
+function isExpectedCloudRunServiceName(name) {
+  const expectedName = `microlearning-${expectedEnvironment}`;
+  return (
+    name === null ||
+    name === undefined ||
+    name === expectedName ||
+    (typeof name === 'string' && name.endsWith(`/services/${expectedName}`))
+  );
+}
+
 function visit(value, callback, path = []) {
   if (Array.isArray(value)) {
     value.forEach((entry, index) => visit(entry, callback, [...path, String(index)]));
@@ -99,9 +111,10 @@ for (const resource of plan.resource_changes ?? []) {
     allowPublicCloudRunInvoker &&
     environmentNames.has(expectedEnvironment) &&
     resource.type === 'google_cloud_run_v2_service_iam_member' &&
+    resource.address === cloudRunPublicInvokerAddress &&
     after?.role === 'roles/run.invoker' &&
     after?.member === 'allUsers' &&
-    after?.name === `microlearning-${expectedEnvironment}`;
+    isExpectedCloudRunServiceName(after?.name);
 
   if (actions.includes('delete') && !approvedStagingHealthUptimeReplacement) {
     addViolation('DESTRUCTIVE_CHANGE', address, `Plan actions are ${actions.join(',')}.`);
