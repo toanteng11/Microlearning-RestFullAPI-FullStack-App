@@ -17,9 +17,9 @@ Thực hiện theo thứ tự dependency. Mỗi part chỉ chuyển `DONE` khi c
 | 08 | P08-PR04 | Production plan, separation, recovery and operations readiness | G4/G5 | `LOCAL_PASS_REMOTE_PENDING` |
 | 09 | P08-PR05 | Pre-release acceptance và protected Go/No-Go | G5 | `LOCAL_PASS_REMOTE_PENDING` |
 | 10 | P08-PR05 | Immutable Production deployment và smoke | G6 | `LOCAL_PASS_REMOTE_PENDING` |
-| 11 | P08-PR06 | Observation, incident/rollback và hypercare | G7 | `NOT_STARTED` |
-| 12 | P08-PR06 | Training, support, communication và handover | G7 | `NOT_STARTED` |
-| 13 | P08-PR06 | Final acceptance, evidence integrity và project exit | G8 | `NOT_STARTED` |
+| 11 | P08-PR06 | Observation, incident/rollback và hypercare | G7 | `LOCAL_PASS_REMOTE_PENDING` |
+| 12 | P08-PR06 | Training, support, communication và handover | G7 | `LOCAL_PASS_REMOTE_PENDING` |
+| 13 | P08-PR06 | Final acceptance, evidence integrity và project exit | G8 | `LOCAL_PASS_REMOTE_PENDING` |
 
 ## Status vocabulary
 
@@ -32,6 +32,8 @@ Part 04-05 dùng quality suite riêng nhưng chạy bên trong cùng workflow Sy
 Part 06-07 tooling runs as an explicit option in the same trusted workflow. Final G3 execution deliberately waits for Part 08 operations/recovery evidence because Must scenarios `P08-UT-031/032` cannot pass from a plan or placeholder.
 
 Part 10 protected deployment tooling supports `PLAN_ONLY` by default and a separate fail-closed `APPLY` path. The APPLY path requires the exact immutable G5 artifact, active approved deployment window, protected `production` environment, Production WIF, reviewed Terraform plan, exact Staging digest, Production smoke, drift check and rollback evidence. Tooling completion does not make G6 Pass; only a successful protected remote APPLY can change Part 10 to `DONE`.
+
+Parts 11-13 now provide local contracts for the five actual T+0..T+72h checkpoints, alert/log/recovery evidence, bounded academic-demo handover and a hash-linked FINAL closure package. Their gates remain remote pending: G7 requires the Production observation window and real handover evidence; G8 additionally requires all final evidence to validate against the actual G6/G7 records.
 
 Part 08 local code/config is complete and validated. After merge, run `Validate Phase 08 Production Promotion (PLAN_ONLY)` with the exact stable Staging record, then combine its plan artifact with actual Atlas backup/isolated-restore and operations records. Validate the final redacted record with `npm run phase-08:production-readiness:validate -- <record.json> <validation-report.json>` before changing Part 08 to `DONE`.
 
