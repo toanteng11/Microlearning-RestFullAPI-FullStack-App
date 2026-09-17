@@ -78,6 +78,10 @@
     "phase-08:pre-release:tooling:test": "node scripts/test-phase-08-pre-release-tooling.mjs",
     "phase-08:production-deployment:validate": "node scripts/validate-phase-08-production-deployment.mjs",
     "phase-08:production-deployment:tooling:test": "node scripts/test-phase-08-production-deployment-tooling.mjs",
+    "phase-08:post-release:validate": "node scripts/validate-phase-08-post-release.mjs",
+    "phase-08:handover:record:validate": "node scripts/validate-phase-08-handover-record.mjs",
+    "phase-08:final-closure:validate": "node scripts/validate-phase-08-final-closure.mjs",
+    "phase-08:post-release-exit:tooling:test": "node scripts/test-phase-08-post-release-exit-tooling.mjs",
     "phase-08:readiness:validate": "node scripts/validate-phase-08-readiness.mjs",
     "phase-08:exit:validate": "node scripts/validate-phase-08-exit.mjs",
     "cloud:security:verify": "node scripts/verify-cloud-security.mjs",
@@ -95,8 +99,8 @@
     "verify:web-bundle": "node scripts/verify-web-bundle.mjs",
     "verify:negative-gate": "node scripts/verify-negative-lint-gate.mjs",
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run phase-08:production-readiness:tooling:test && npm run phase-08:pre-release:tooling:test && npm run phase-08:production-deployment:tooling:test && npm run build",
-    "check:ci": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test:coverage && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run phase-08:production-readiness:tooling:test && npm run phase-08:pre-release:tooling:test && npm run phase-08:production-deployment:tooling:test && npm run build"
+    "check": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run phase-08:production-readiness:tooling:test && npm run phase-08:pre-release:tooling:test && npm run phase-08:production-deployment:tooling:test && npm run phase-08:post-release-exit:tooling:test && npm run build",
+    "check:ci": "npm run lint && npm run verify:negative-gate && npm run format:check && npm run typecheck && npm run test:coverage && npm run operations:contract:test && npm run observability:contract:test && npm run promotion:contract:test && npm run hardening:contract:test && npm run exit:contract:test && npm run handoff:contract:test && npm run phase-08:contract:test && npm run phase-08:system-test:tooling:test && npm run phase-08:quality:tooling:test && npm run phase-08:uat:tooling:test && npm run phase-08:production-readiness:tooling:test && npm run phase-08:pre-release:tooling:test && npm run phase-08:production-deployment:tooling:test && npm run phase-08:post-release-exit:tooling:test && npm run build"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",

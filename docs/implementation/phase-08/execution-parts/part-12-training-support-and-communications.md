@@ -1,5 +1,7 @@
 # Part 12 - Training, Support and Communications
 
+**Implementation status:** `LOCAL_PASS_REMOTE_PENDING`
+
 ## Outcome
 
 Intended users know how to access the release and the owner can support, diagnose and recover it.
@@ -20,3 +22,11 @@ Intended users know how to access the release and the owner can support, diagnos
 ## Exit
 
 Training/support/comms artifacts are reviewed, redacted and linked to `P08-EV-044`. Every known issue has workaround/owner/target or blocks G8.
+
+## Implemented tooling
+
+- `phase-08:handover:record:validate` requires acknowledgement for Student, Teacher, Admin, Super Admin/Operations and Support materials, plus six operational capabilities from release identity through rollback escalation.
+- The handover record requires actual release/support communications, a named bounded academic-demo support window and tracks every known issue with a workaround, owner and UTC target.
+- It rejects a claimed 24/7 organizational SLA, unresolved Critical/High known issues, placeholders and secret-like fields.
+
+The code is locally verified. Part 12 becomes `DONE` only when the actual material acknowledgements and communications are attached to `P08-EV-044`.
