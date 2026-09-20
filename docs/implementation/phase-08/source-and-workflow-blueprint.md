@@ -14,6 +14,7 @@ Tài liệu này chỉ rõ thay đổi code/config cần thực hiện. Tên fil
 | `scripts/validate-phase-08-*.mjs` | Giữ fail-closed, redaction và identity consistency; report không chứa URI/token/password | CLI tests + secret scan |
 | `scripts/test-phase-08-contract.mjs` | Thêm test chống vòng lặp gate, APPLY trước GO, digest mismatch, placeholder và solo governance giả | local/CI Pass |
 | `scripts/lib/phase-08-pre-release.mjs` | Tổng hợp G2/G3/G4 cùng exact identity, tạo PRE_RELEASE acceptance, G5 decision và checksum lock bất biến | `npm run phase-08:pre-release:tooling:test` |
+| `scripts/lib/phase-08-pre-release-sources.mjs` | Khóa System Test/UAT/readiness vào cùng candidate và đối chiếu plan hash với protected `PLAN_ONLY` artifact | identity/plan-hash positive and negative tests |
 | `scripts/generate-phase-08-pre-release.mjs` | Tạo package G5 mới, không ghi đè decision đã phát hành | CLI + overwrite negative test |
 | `scripts/verify-phase-08-pre-release.mjs` | Xác minh acceptance/decision checksum và identity trước Part 10 | tamper negative test |
 
@@ -70,6 +71,14 @@ Terraform checks: `fmt`, `init -backend=false`, `validate`, plan with approved v
 - Upload raw + summary artifacts with bounded retention.
 
 Accessibility, responsive and performance evidence are added by Part 05; they are intentionally not claimed by Part 03.
+
+### `phase-08-pre-release.yml`
+
+- Chạy thủ công sau khi G2/G3/G4 actual records của cùng release đã được review.
+- Chỉ tin cậy artifact từ successful `Phase 08 System Test` và `Phase 08 Production Promotion` `PLAN_ONLY` trên `main`.
+- Đối chiếu identity, Production plan hash và evidence index trước khi tạo package G5 bất biến.
+- Chạy trong protected `production` environment nhưng không xác thực GCP, không đọc secret payload và không chạy Terraform apply.
+- Upload `phase-08-g5-<release-id>` trong 90 ngày để `promote-production.yml` kiểm tra lại trước `APPLY`.
 
 ### `promote-production.yml`
 

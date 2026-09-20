@@ -25,6 +25,7 @@ A deployment decision is made from pre-release evidence without depending on pos
 - `scripts/generate-phase-08-pre-release.mjs` writes a release-scoped package and refuses overwrite.
 - `scripts/verify-phase-08-pre-release.mjs` verifies the package checksums before Part 10 consumes it.
 - `scripts/test-phase-08-pre-release-tooling.mjs` covers successful generation, missing evidence, identity mismatch, tampering and overwrite protection.
+- `.github/workflows/phase-08-pre-release.yml` is the protected `Phase 08 Pre-release G5` workflow required by Part 10. It downloads the exact System Test/UAT and Production `PLAN_ONLY` artifacts, validates the identity and plan hash against reviewed redacted records, creates the immutable G5 package and retains it for 90 days.
 - [Pre-release G5 runbook](../pre-release-go-no-go-runbook.md) defines the actual evidence inputs and operator procedure.
 
 Implementation status: `LOCAL_PASS_REMOTE_PENDING`. Code and contract tests are complete; actual G5 remains `PENDING` until G3 UAT and G4 Production readiness artifacts exist for the exact candidate.

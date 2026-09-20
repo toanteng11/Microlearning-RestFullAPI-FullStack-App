@@ -97,6 +97,7 @@ npm run phase-08:identity:validate -- <identity.json> [other-record.json ...] [-
 npm run phase-08:system-test:validate -- <system-test-summary.json> [report.json]
 npm run phase-08:uat:validate -- <uat-summary.json> [report.json]
 npm run phase-08:decision:validate -- <go-no-go.json> [report.json]
+npm run phase-08:pre-release:sources:verify -- <identity.json> <system-test.json> <uat.json> <production-readiness.json> <plan-only.json> <report.json>
 npm run phase-08:pre-release:generate -- <identity.json> <system-test.json> <uat.json> <production-readiness.json> <evidence-index.json> <decision-request.json> <output-directory>
 npm run phase-08:pre-release:verify -- <pre-release-acceptance.json> <go-no-go-decision.json> <g5-decision-lock.json>
 npm run phase-08:pre-release:tooling:test

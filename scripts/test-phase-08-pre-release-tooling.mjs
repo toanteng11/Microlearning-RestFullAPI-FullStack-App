@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -10,6 +10,7 @@ import {
   validatePhase08PreReleasePackage,
   writePhase08PreReleasePackage,
 } from './lib/phase-08-pre-release.mjs';
+import { verifyPhase08PreReleaseSources } from './lib/phase-08-pre-release-sources.mjs';
 
 const at = '2026-09-15T08:00:00.000Z';
 const actor = 'Trần Đức Toàn / Release Owner';
@@ -197,6 +198,24 @@ const productionReadiness = {
   },
   evidenceIds: ['P08-EV-004', 'P08-EV-006', 'P08-EV-007', 'P08-EV-008'],
 };
+const productionTerraformReadiness = {
+  schemaVersion: 1,
+  phase: '08',
+  recordType: 'PRODUCTION_TERRAFORM_READINESS',
+  status: 'PASS',
+  applyMode: 'PLAN_ONLY',
+  productionApplyExecuted: false,
+  releaseIdentity: identity,
+  terraform: {
+    formatStatus: 'PASS',
+    validateStatus: 'PASS',
+    planStatus: 'PASS',
+    policyStatus: 'PASS',
+    planHash: productionReadiness.terraform.planHash,
+    backendPrefix: 'phase-08/production',
+    imageRef: imageDigest,
+  },
+};
 const evidenceIndex = PHASE08_PRE_RELEASE_EVIDENCE.map((id) => ({
   id,
   status: 'PASS',
@@ -246,6 +265,47 @@ assert.equal(
 );
 assert.equal(records.acceptance.evidence.filter(({ status }) => status === 'PASS').length, 14);
 assert.deepEqual(validatePhase08PreReleasePackage(records), []);
+assert.equal(
+  verifyPhase08PreReleaseSources({
+    releaseIdentity: validInput.releaseIdentity,
+    systemTest,
+    uat,
+    productionReadiness,
+    productionTerraformReadiness,
+  }).status,
+  'PASS',
+);
+assert.throws(
+  () =>
+    verifyPhase08PreReleaseSources({
+      releaseIdentity: validInput.releaseIdentity,
+      systemTest,
+      uat,
+      productionReadiness,
+      productionTerraformReadiness: {
+        ...productionTerraformReadiness,
+        terraform: {
+          ...productionTerraformReadiness.terraform,
+          planHash: `sha256:${'d'.repeat(64)}`,
+        },
+      },
+    }),
+  /planHash does not match/u,
+);
+
+const g5Workflow = readFileSync(
+  new URL('../.github/workflows/phase-08-pre-release.yml', import.meta.url),
+  'utf8',
+);
+assert.match(g5Workflow, /name: Phase 08 Pre-release G5/u);
+assert.match(g5Workflow, /RECORD_PHASE_08_G5/u);
+assert.match(g5Workflow, /environment: production/u);
+assert.match(g5Workflow, /phase-08:pre-release:sources:verify/u);
+assert.match(g5Workflow, /phase-08:pre-release:generate/u);
+assert.match(g5Workflow, /phase-08:pre-release:verify/u);
+assert.match(g5Workflow, /phase-08-g5-\$\{\{ inputs\.release_id \}\}/u);
+assert.match(g5Workflow, /CONDITIONS_JSON/u);
+assert.match(g5Workflow, /jq -e 'length > 0'/u);
 
 assert.throws(
   () =>
