@@ -88,6 +88,8 @@ assert.match(runner, /provision_secret_containers=false/u);
 assert.match(runner, /provision_monitoring=false/u);
 assert.match(runner, /branch -ne 'main'/u);
 assert.match(runner, /HEAD to equal the fetched origin\/main/u);
+assert.match(runner, /Get-NativeText -Command git -Arguments/u);
+assert.doesNotMatch(runner, /Get-NativeText git -C/u);
 assert.match(runner, /GCP_WORKLOAD_IDENTITY_PROVIDER_PRODUCTION/u);
 assert.match(runner, /secretValuesRead = \$false/u);
 assert.doesNotMatch(runner, /secrets versions access/u);
