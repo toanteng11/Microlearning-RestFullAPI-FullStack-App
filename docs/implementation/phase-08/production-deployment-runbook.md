@@ -2,7 +2,7 @@
 
 ## Scope and safety
 
-Runbook này chỉ được thực thi sau G5 `GO`/approved `CONDITIONAL_GO`, UAT sign-off và Production readiness evidence. Hiện workflow `promote-production.yml` là `PLAN_ONLY`; nếu chưa có Change Control cho apply thật, kết quả phải ghi `NOT RUN`.
+Runbook này chỉ được thực thi sau G5 `GO`/approved `CONDITIONAL_GO`, UAT sign-off và Production readiness evidence. Workflow `promote-production.yml` mặc định `PLAN_ONLY`; đường `APPLY` chỉ được dùng với exact G5 artifact và protected `production` environment. Nếu chưa đủ điều kiện apply thật, kết quả phải ghi `NOT RUN`.
 
 ## Pre-deploy
 

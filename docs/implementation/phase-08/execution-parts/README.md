@@ -35,9 +35,9 @@ Part 10 protected deployment tooling supports `PLAN_ONLY` by default and a separ
 
 Parts 11-13 now provide local contracts for the five actual T+0..T+72h checkpoints, alert/log/recovery evidence, bounded academic-demo handover and a hash-linked FINAL closure package. Their gates remain remote pending: G7 requires the Production observation window and real handover evidence; G8 additionally requires all final evidence to validate against the actual G6/G7 records.
 
-Part 08 local code/config is complete and validated. After merge, run `Validate Phase 08 Production Promotion (PLAN_ONLY)` with the exact stable Staging record, then combine its plan artifact with actual Atlas backup/isolated-restore and operations records. Validate the final redacted record with `npm run phase-08:production-readiness:validate -- <record.json> <validation-report.json>` before changing Part 08 to `DONE`.
+Part 08 local code/config is complete and validated. The owner bootstrap is intentionally separate from application deployment: follow `../production-bootstrap-runbook.md`, inspect the 14-resource IAM/WIF plan and obtain explicit Apply authorization. After bootstrap and numeric Production secret-version configuration, run `Validate Phase 08 Production Promotion (PLAN_ONLY)` with the exact stable Staging record, then combine its plan artifact with actual Atlas backup/isolated-restore and operations records. Validate the final redacted record with `npm run phase-08:production-readiness:validate -- <record.json> <validation-report.json>` before changing Part 08 to `DONE`.
 
-Part 09 generator, checksum lock and verifier pass locally. Actual G5 remains pending until Part 06-08 actual evidence passes for the same candidate; then follow `pre-release-go-no-go-runbook.md` and retain the generated package as `P08-EV-030`.
+Part 09 workflow, generator, checksum lock and verifier were merged in PR `#60`; main CI run `35513772156` passed all required jobs. Actual G5 remains pending until Part 06-08 actual evidence passes for the same candidate; then follow `pre-release-go-no-go-runbook.md` and retain the generated package as `P08-EV-030`.
 
 ## Global stop conditions
 
