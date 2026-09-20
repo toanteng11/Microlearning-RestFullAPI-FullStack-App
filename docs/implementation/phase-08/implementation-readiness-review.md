@@ -40,11 +40,11 @@
 1. Prepare Part 06 UAT personas, deterministic data, environment checks and evidence workspace against candidate `P08-RC-20260916-8489623`.
 2. Execute role-based UAT Part 07 and close or disposition defects without changing the locked candidate.
 3. If a fix changes runtime identity, create a new candidate and rerun affected G0-G2 evidence before UAT sign-off.
-4. Complete Production Terraform/Atlas/recovery readiness for the selected profile.
-5. Add protected Production APPLY after G5, then deploy/smoke/observe/handover/exit.
+4. Run and explicitly authorize the bounded Production IAM/WIF bootstrap, then complete Terraform/Atlas/recovery readiness for the selected profile.
+5. Use the existing protected Production APPLY path only after G5, then deploy/smoke/observe/handover/exit.
 
 These are implementation tasks, not missing planning. They must remain `PENDING` until actual evidence exists.
 
 ## Start authorization
 
-Part 00-05 are `DONE` and G2 is `PASS` through workflow `35078334825`. The next safe action is Part 08 owner bootstrap and remote readiness evidence, then Part 06-07 UAT execution on the same locked candidate with reviewed operations/recovery evidence. Production remains `PLAN_ONLY` until an exact G5 GO.
+Part 00-05 are `DONE` and G2 is `PASS` through workflow `35078334825`. Part 09 protected workflow code was merged in PR `#60` and main CI run `35513772156` passed, but no actual G5 decision exists. The next safe action is the bounded Part 08 owner bootstrap and remote readiness evidence, then Part 06-07 UAT execution on the same locked candidate with reviewed operations/recovery evidence. Production remains `PLAN_ONLY` until an exact G5 GO.

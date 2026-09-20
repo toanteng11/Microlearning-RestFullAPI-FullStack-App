@@ -22,7 +22,7 @@ Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase 
 - Root scripts cung cấp `npm run check:ci`, `npm run test:openapi`, `npm run test:e2e:cloud`, các contract tests, release-lineage, deployment, rollback, observability và Terraform validation.
 - CI dùng Node/npm theo `package.json`, workflow `.github/workflows/ci.yml` và `npm ci`; Cloud baseline là Cloud Run, Artifact Registry, Secret Manager, Cloud Monitoring, GitHub Actions WIF và MongoDB Atlas.
 - Phase 07 report **tự ghi nhận** `66/66` Must, image/revision/Staging URL và một số cloud run IDs. P08 xem đây là `BASELINE_REPORTED`, không chuyển thành P08 `ACTUAL` nếu chưa kiểm tra raw artifact và exact digest.
-- `promote-production.yml` hiện đặt `PROMOTION_APPLY_MODE=PLAN_ONLY`; production apply thật chưa được suy ra từ workflow này.
+- `promote-production.yml` mặc định `PLAN_ONLY` và có đường `APPLY` fail-closed sau exact G5; sự tồn tại của code path không chứng minh Production đã được deploy.
 - P07 ghi Atlas network waiver hết hạn `2026-09-13`; waiver cũ phải được thay bằng decision hiện hành. Với profile academic, Production demo chỉ dùng synthetic data, database/user riêng, logical backup và isolated restore; managed PITR có thể `APPROVED_NA` nhưng không được ghi `PASS`.
 
 ## Mục tiêu, phạm vi và non-goal
@@ -110,7 +110,7 @@ npm run phase-08:system-test:summary -- <identity.json> <playwright.json> <ident
 npm run phase-08:scan-summary:create -- <identity.json> <release-artifact-root> <output.json>
 ```
 
-Final `PASS`/`GO` records cannot contain placeholders and require actual evidence. Reports redact secret keys, MongoDB URIs, bearer credentials and private keys. The validator permits `APPLY` only in an actual protected Production/exit record with G5 decision provenance; the deployment workflow itself remains `PLAN_ONLY` until Part 09-10.
+Final `PASS`/`GO` records cannot contain placeholders and require actual evidence. Reports redact secret keys, MongoDB URIs, bearer credentials and private keys. The validator and workflow permit `APPLY` only through the protected Production path with exact G5 decision provenance; default execution remains `PLAN_ONLY` and no actual apply is inferred from tooling completion.
 
 ## Candidate G0/G1/G2 đã xác nhận
 
