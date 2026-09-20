@@ -104,10 +104,10 @@ if ([string]::IsNullOrWhiteSpace($activeAccount)) {
 }
 
 if ($Mode -eq 'Apply') {
-  $branch = Get-NativeText git -C $repositoryRoot branch '--show-current'
-  $status = Get-NativeText git -C $repositoryRoot status '--porcelain'
-  $head = Get-NativeText git -C $repositoryRoot rev-parse HEAD
-  $originMain = Get-NativeText git -C $repositoryRoot rev-parse origin/main
+  $branch = Get-NativeText -Command git -Arguments @('-C', $repositoryRoot, 'branch', '--show-current')
+  $status = Get-NativeText -Command git -Arguments @('-C', $repositoryRoot, 'status', '--porcelain')
+  $head = Get-NativeText -Command git -Arguments @('-C', $repositoryRoot, 'rev-parse', 'HEAD')
+  $originMain = Get-NativeText -Command git -Arguments @('-C', $repositoryRoot, 'rev-parse', 'origin/main')
 
   if ($branch -ne 'main') {
     throw "Bootstrap apply must run from main; observed $branch."
