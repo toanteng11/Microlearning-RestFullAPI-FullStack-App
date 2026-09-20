@@ -1,0 +1,253 @@
+name: Phase 08 Pre-release G5
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type RECORD_PHASE_08_G5 after reviewing the exact evidence inputs
+        required: true
+        type: string
+      release_id:
+        description: Exact Phase 08 release ID (P08-RC-YYYYMMDD-shortsha)
+        required: true
+        type: string
+      source_system_test_run_id:
+        description: Successful Phase 08 System Test run containing the PASS System Test and UAT artifacts
+        required: true
+        type: string
+      source_production_plan_run_id:
+        description: Successful Phase 08 Production Promotion PLAN_ONLY run for this candidate
+        required: true
+        type: string
+      decision:
+        description: Reviewed G5 decision; APPLY remains unavailable until a GO or CONDITIONAL_GO package exists
+        required: true
+        type: choice
+        options: [GO, CONDITIONAL_GO, NO_GO]
+      decision_id:
+        description: Immutable G5 decision ID (for example P08-G5-YYYYMMDD-01)
+        required: true
+        type: string
+      rationale:
+        description: Redacted, evidence-based reason for the decision; never include secrets or personal data
+        required: true
+        type: string
+      conditions_json:
+        description: JSON array of reviewed Medium/Low conditions; use [] for GO or NO_GO
+        required: false
+        default: '[]'
+        type: string
+      deployment_window_starts_at_utc:
+        description: Approved UTC window start (ISO-8601, for example 2026-09-18T10:00:00Z)
+        required: true
+        type: string
+      deployment_window_ends_at_utc:
+        description: Approved UTC window end (ISO-8601, for example 2026-09-18T11:00:00Z)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: phase-08-pre-release-g5-${{ inputs.release_id }}
+  cancel-in-progress: false
+
+jobs:
+  pre-release:
+    name: Protected G5 pre-release decision
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - name: Checkout trusted main source and reviewed evidence
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Validate immutable G5 inputs
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          DECISION: ${{ inputs.decision }}
+          DECISION_ID: ${{ inputs.decision_id }}
+          RATIONALE: ${{ inputs.rationale }}
+          CONDITIONS_JSON: ${{ inputs.conditions_json }}
+          WINDOW_START: ${{ inputs.deployment_window_starts_at_utc }}
+          WINDOW_END: ${{ inputs.deployment_window_ends_at_utc }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = "RECORD_PHASE_08_G5"
+          [[ "$RELEASE_ID" =~ ^P08-RC-[0-9]{8}-[a-f0-9]{7,12}$ ]]
+          [[ "$DECISION_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._:-]{2,99}$ ]]
+          test -n "$RATIONALE"
+          jq -e 'type == "array"' <<< "$CONDITIONS_JSON" >/dev/null
+          if [ "$DECISION" = "CONDITIONAL_GO" ]; then
+            jq -e 'length > 0' <<< "$CONDITIONS_JSON" >/dev/null
+          else
+            jq -e 'length == 0' <<< "$CONDITIONS_JSON" >/dev/null
+          fi
+          date -u -d "$WINDOW_START" >/dev/null
+          date -u -d "$WINDOW_END" >/dev/null
+          test "$(date -u -d "$WINDOW_START" +%s)" -lt "$(date -u -d "$WINDOW_END" +%s)"
+          artifact_root="artifacts/phase-08/$RELEASE_ID"
+          test -f "$artifact_root/production-plan/production-readiness.json"
+          test -f "$artifact_root/exit/pre-release-evidence-index.json"
+          test ! -e "$artifact_root/exit/g5"
+          {
+            echo "PHASE08_ARTIFACT_ROOT=$artifact_root"
+            echo "PHASE08_ACTOR=${{ github.actor }} / GitHub Actions"
+          } >> "$GITHUB_ENV"
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify trusted source workflow runs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SYSTEM_TEST_RUN_ID: ${{ inputs.source_system_test_run_id }}
+          PLAN_RUN_ID: ${{ inputs.source_production_plan_run_id }}
+        run: |
+          set -euo pipefail
+          for run_id in "$SYSTEM_TEST_RUN_ID" "$PLAN_RUN_ID"; do
+            [[ "$run_id" =~ ^[1-9][0-9]*$ ]]
+          done
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SYSTEM_TEST_RUN_ID" > "$RUNNER_TEMP/system-test-run.json"
+          node scripts/resolve-trusted-workflow-run.mjs \
+            "$RUNNER_TEMP/system-test-run.json" \
+            "Phase 08 System Test" \
+            "$GITHUB_REPOSITORY" \
+            "workflow_dispatch" \
+            "$RUNNER_TEMP/trusted-system-test-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PLAN_RUN_ID" > "$RUNNER_TEMP/production-plan-run.json"
+          node scripts/resolve-trusted-workflow-run.mjs \
+            "$RUNNER_TEMP/production-plan-run.json" \
+            "Phase 08 Production Promotion" \
+            "$GITHUB_REPOSITORY" \
+            "workflow_dispatch" \
+            "$RUNNER_TEMP/trusted-production-plan-run.json"
+
+      - name: Download exact System Test, UAT and PLAN_ONLY evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          SYSTEM_TEST_RUN_ID: ${{ inputs.source_system_test_run_id }}
+          PLAN_RUN_ID: ${{ inputs.source_production_plan_run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/system-test" "$RUNNER_TEMP/production-plan"
+          gh run download "$SYSTEM_TEST_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "phase-08-system-test-$RELEASE_ID" \
+            --dir "$RUNNER_TEMP/system-test"
+          gh run download "$PLAN_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "phase-08-production-PLAN_ONLY-$RELEASE_ID" \
+            --dir "$RUNNER_TEMP/production-plan"
+          system_test="$(find "$RUNNER_TEMP/system-test" -type f -path '*/system-test/system-test-summary.json' -print -quit)"
+          uat="$(find "$RUNNER_TEMP/system-test" -type f -path '*/uat/uat-summary.json' -print -quit)"
+          identity="$(find "$RUNNER_TEMP/system-test" -type f -path '*/identity/release-identity.json' -print -quit)"
+          plan_only="$(find "$RUNNER_TEMP/production-plan" -type f -path '*/production-plan/terraform-readiness.json' -print -quit)"
+          test -f "$system_test" && test -f "$uat" && test -f "$identity" && test -f "$plan_only"
+          {
+            echo "SYSTEM_TEST_SUMMARY=$system_test"
+            echo "UAT_SUMMARY=$uat"
+            echo "RELEASE_IDENTITY=$identity"
+            echo "PLAN_ONLY_RECORD=$plan_only"
+          } >> "$GITHUB_ENV"
+
+      - name: Verify G5 sources have one exact identity and PLAN_ONLY hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$PHASE08_ARTIFACT_ROOT/exit/g5-source"
+          npm run phase-08:pre-release:sources:verify -- \
+            "$RELEASE_IDENTITY" \
+            "$SYSTEM_TEST_SUMMARY" \
+            "$UAT_SUMMARY" \
+            "$PHASE08_ARTIFACT_ROOT/production-plan/production-readiness.json" \
+            "$PLAN_ONLY_RECORD" \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5-source/source-verification.json"
+
+      - name: Build an immutable decision request
+        shell: bash
+        env:
+          DECISION: ${{ inputs.decision }}
+          DECISION_ID: ${{ inputs.decision_id }}
+          RATIONALE: ${{ inputs.rationale }}
+          CONDITIONS_JSON: ${{ inputs.conditions_json }}
+          WINDOW_START: ${{ inputs.deployment_window_starts_at_utc }}
+          WINDOW_END: ${{ inputs.deployment_window_ends_at_utc }}
+        run: |
+          set -euo pipefail
+          jq -n \
+            --arg actor "$PHASE08_ACTOR" \
+            --arg recorded_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg decision "$DECISION" \
+            --arg decision_id "$DECISION_ID" \
+            --arg rationale "$RATIONALE" \
+            --argjson conditions "$CONDITIONS_JSON" \
+            --arg starts_at "$WINDOW_START" \
+            --arg ends_at "$WINDOW_END" \
+            '{actor:$actor,recordedAtUtc:$recorded_at,decision:$decision,decisionId:$decision_id,rationale:$rationale,decidedAtUtc:$recorded_at,recommendations:{technicalLead:(if $decision == "GO" then "GO" else $decision end),qa:(if $decision == "GO" then "GO" else $decision end),devOps:(if $decision == "GO" then "GO" else $decision end)},governance:{soloProject:true,independentReview:false,actor:$actor},conditions:$conditions,approvedDeploymentWindow:{startsAtUtc:$starts_at,endsAtUtc:$ends_at}}' \
+            > "$PHASE08_ARTIFACT_ROOT/exit/g5-decision-request.json"
+
+      - name: Generate and verify locked G5 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run phase-08:pre-release:generate -- \
+            "$RELEASE_IDENTITY" \
+            "$SYSTEM_TEST_SUMMARY" \
+            "$UAT_SUMMARY" \
+            "$PHASE08_ARTIFACT_ROOT/production-plan/production-readiness.json" \
+            "$PHASE08_ARTIFACT_ROOT/exit/pre-release-evidence-index.json" \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5-decision-request.json" \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5"
+          npm run phase-08:pre-release:verify -- \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5/pre-release-acceptance.json" \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5/go-no-go-decision.json" \
+            "$PHASE08_ARTIFACT_ROOT/exit/g5/g5-decision-lock.json"
+
+      - name: Final G5 evidence redaction scan
+        id: redaction
+        run: >-
+          npm run e2e:artifacts:scan --
+          "$PHASE08_ARTIFACT_ROOT"
+          "$PHASE08_ARTIFACT_ROOT/exit/g5-final-redaction-report.json"
+
+      - name: Upload immutable G5 package
+        if: always() && steps.redaction.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phase-08-g5-${{ inputs.release_id }}
+          path: ${{ env.PHASE08_ARTIFACT_ROOT }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish G5 decision summary
+        if: always()
+        run: |
+          {
+            echo "## Phase 08 Pre-release G5"
+            echo "- Release: \`${{ inputs.release_id }}\`"
+            echo "- System Test source run: \`${{ inputs.source_system_test_run_id }}\`"
+            echo "- Production PLAN_ONLY source run: \`${{ inputs.source_production_plan_run_id }}\`"
+            echo "- Decision: \`${{ inputs.decision }}\`"
+            echo "- G5 package: \`phase-08-g5-${{ inputs.release_id }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

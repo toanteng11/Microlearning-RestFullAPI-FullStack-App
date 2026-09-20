@@ -74,6 +74,7 @@
     "phase-08:production-readiness:validate": "node scripts/validate-phase-08-production-readiness.mjs",
     "phase-08:production-readiness:tooling:test": "node scripts/test-phase-08-production-readiness-tooling.mjs",
     "phase-08:pre-release:generate": "node scripts/generate-phase-08-pre-release.mjs",
+    "phase-08:pre-release:sources:verify": "node scripts/verify-phase-08-pre-release-sources.mjs",
     "phase-08:pre-release:verify": "node scripts/verify-phase-08-pre-release.mjs",
     "phase-08:pre-release:tooling:test": "node scripts/test-phase-08-pre-release-tooling.mjs",
     "phase-08:production-deployment:validate": "node scripts/validate-phase-08-production-deployment.mjs",

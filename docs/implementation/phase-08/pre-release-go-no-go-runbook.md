@@ -19,6 +19,21 @@ Prepare these six JSON files under the release-scoped evidence workspace:
 
 Each `artifact` in the evidence index must include the exact release ID. An evidence row must include `id`, `status`, `artifact`, `recordedAtUtc`, `actor`, `expectedResult`, `actualResult` and `redactionReviewed: true`.
 
+## Protected workflow procedure
+
+After the redacted Part 08 readiness record and evidence index have been reviewed on `main`, run **Phase 08 Pre-release G5** through Actions with:
+
+- `confirmation=RECORD_PHASE_08_G5`.
+- The exact release ID.
+- The successful **Phase 08 System Test** run that includes both `system-test/system-test-summary.json` and `uat/uat-summary.json` for that release.
+- The successful **Phase 08 Production Promotion** `PLAN_ONLY` run for that release.
+- A reviewed decision, decision ID, rationale and a future UTC deployment window.
+- `conditions_json=[]` for `GO`/`NO_GO`; for `CONDITIONAL_GO`, a non-empty JSON array containing only reviewed Medium/Low, waivable conditions with owner, expiry, workaround, mitigation and communication.
+
+The workflow downloads those two retained artifacts, checks their provenance, verifies every identity field and the Terraform plan hash, then reads only the reviewed redacted files from `artifacts/phase-08/<release-id>/`: `production-plan/production-readiness.json` and `exit/pre-release-evidence-index.json`. It creates `g5-decision-request.json` from the dispatch inputs, produces `exit/g5/` and uploads `phase-08-g5-<release-id>` for 90 days. It does not authenticate to Google Cloud, read Secret Manager payloads, or apply Terraform.
+
+Do not run G5 with a local fixture, a copied old artifact, or an evidence index whose records are not bound to the same release identity. A failed source verification is a stop condition, not an invitation to edit the generated G5 package.
+
 ## Decision request
 
 Use this shape and replace every angle-bracket value with reviewed actual data:
