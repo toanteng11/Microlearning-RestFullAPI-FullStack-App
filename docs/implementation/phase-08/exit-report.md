@@ -4,7 +4,7 @@
 
 - Phase: `08 - Final System Acceptance and Production Release`
 - Planning status: `READY_TO_IMPLEMENT`
-- Execution status: `IN_PROGRESS - G0/G1/G2 PASS; Part 00-05 DONE`
+- Execution status: `IN_PROGRESS - G0/G1/G2 PASS; Part 00-05 DONE; Production bootstrap verified`
 - Final decision: `PENDING`
 - Production deployment: `PENDING`
 
@@ -30,7 +30,7 @@ This file is a closure template. Historical NO_GO results remain in their releas
 | G1 | System Test/UAT ready | `PASS` | `P08-EV-003` |
 | G2 | System Test Pass | `PASS - 6/6 Must; security/data 11/11; UI 5/5; performance 5/5` | `P08-EV-005/010/015/016` |
 | G3 | UAT Pass | `PENDING` | `P08-EV-020/025` |
-| G4 | Defects + Production readiness Pass | `PENDING` | `P08-EV-004/006..008/026` |
+| G4 | Defects + Production readiness Pass | `PENDING - IAM/WIF/state bootstrap verified` | `P08-EV-004/006..008/026` |
 | G5 | PRE_RELEASE acceptance and GO | `PENDING` | `P08-EV-030` |
 | G6 | Production Actual and smoke Pass | `PENDING` | `P08-EV-031/037` |
 | G7 | Observation/handover Pass | `PENDING` | `P08-EV-038..044` |

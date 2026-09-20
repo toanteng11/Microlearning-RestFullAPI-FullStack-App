@@ -1,6 +1,6 @@
 # Part 08 - Production Readiness and Recovery
 
-**Implementation status:** `LOCAL_PASS_REMOTE_PENDING`
+**Implementation status:** `IN_PROGRESS - PRODUCTION BOOTSTRAP VERIFIED`
 
 ## Outcome
 
@@ -40,4 +40,9 @@ Plan/policy/recovery/operations evidence is complete with no unexpected destroy 
 
 ## Remaining remote evidence
 
-Part 08 is not `DONE` yet. Follow `../production-bootstrap-runbook.md`, review and explicitly authorize the owner bootstrap, then run the protected plan-only workflow for the exact candidate. Retain the 90-day artifact, complete the Atlas logical backup and isolated restore rehearsal, test the alert route, and validate the assembled readiness record. No Production application apply is authorized in Part 08.
+The guarded owner bootstrap was applied and verified on `2026-09-20`; see
+`../production-bootstrap-actual-evidence.md`. IAM/WIF/state separation is actual and the repeated plan is
+idempotent. Part 08 is not `DONE` yet: create and verify the Production secret/database identities, run
+the protected plan-only workflow for the exact candidate, retain its 90-day artifact, complete the Atlas
+logical backup and isolated restore rehearsal, test the alert route, and validate the assembled readiness
+record. No Production application apply is authorized in Part 08.

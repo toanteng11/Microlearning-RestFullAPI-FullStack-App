@@ -28,6 +28,9 @@
 
 - [x] Local Production Terraform parity, fail-closed readiness validator and Production-aware plan-policy tests pass.
 - [x] Protected workflow remains plan-only and records exact digest/commit/plan hash without uploading plan binary or secret values.
+- [x] Owner bootstrap Apply giữ đúng boundary 14 IAM/WIF/state resources; `14 add / 0 change / 0 destroy`.
+- [x] Read-only remote verification xác nhận hai service accounts, WIF provider `ACTIVE` và bảy GitHub environment variables không chứa secret.
+- [x] Post-apply Terraform plan báo `No changes` với `14 no-op`; secret values không được đọc và Cloud Run chưa được provision.
 
 - [ ] Production Terraform plan/identity/state/secret/database tách Staging; provision variables mặc định `false` và chỉ được workflow được review bật cho plan/apply đúng gate.
 - [ ] Atlas database/user/network/backup/restore đáp ứng selected profile; managed PITR `APPROVED_NA` có decision nếu academic.
