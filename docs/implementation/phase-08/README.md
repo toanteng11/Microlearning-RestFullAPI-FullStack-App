@@ -1,5 +1,13 @@
 ﻿# Phase 08 — Final System Acceptance and Production Release
 
+> **Current delivery scope (2026-09-21): local-only academic acceptance.** The owner no longer requires
+> a Production deployment for this project. Follow `local-acceptance-runbook.md` and its L0-L4 gates.
+> The Cloud release plan below is retained as historical/deferred scope: its G3-G8 gates are not `PASS`,
+> and no further Production Apply is authorized by the local-only decision.
+
+**Local acceptance status:** `IN_PROGRESS`; L0-L4 require fresh evidence from the local runner and owner
+UAT. The status and gate table below describe the deferred Cloud release track.
+
 ## Executive summary
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
@@ -57,7 +65,8 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 | Execution/code map | `execution-parts/README.md`, `source-and-workflow-blueprint.md` |
 | Governance/acceptance | `phase-08-governance-and-go-no-go.md`, `pre-release-go-no-go-runbook.md`, `acceptance-criteria.md`, `ba-alignment-and-decisions.md` |
 | Test/UAT/evidence | `system-test-and-uat-strategy.md`, `uat-test-catalog.md`, `uat-execution-matrix.md`, `test-and-evidence-contract.md` |
-| Release/operations | `production-readiness-and-promotion.md`, `production-bootstrap-runbook.md`, `production-secret-bootstrap-runbook.md`, `production-secret-bootstrap-plan-evidence.md`, `production-bootstrap-actual-evidence.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
+| Current local acceptance | `local-acceptance-runbook.md` |
+| Deferred Cloud release/operations | `production-readiness-and-promotion.md`, `production-bootstrap-runbook.md`, `production-secret-bootstrap-runbook.md`, `production-secret-bootstrap-plan-evidence.md`, `production-bootstrap-actual-evidence.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
 | Recovery/security | `backup-restore-and-disaster-recovery-final.md`, `rollback-and-incident-response-final.md`, `security-privacy-and-compliance-final.md`, `performance-capacity-and-cost-final.md` |
 | People/change | `defect-and-change-management.md`, `support-and-maintenance-model.md`, `training-and-user-handover.md`, `release-communications.md` |
 | Evidence/exit | `traceability-matrix.md`, `evidence-register.md`, `phase-exit-evidence.md`, `exit-report.md` |

@@ -49,9 +49,9 @@ services:
       BUILD_TIME: ${BUILD_TIME:-local}
       PORT: 4000
       MONGODB_URI: mongodb://mongodb:27017/${MONGODB_DATABASE:-microlearning}?replicaSet=rs0
-      PUBLIC_WEB_URL: http://localhost:3000
-      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
-      ACCESS_TOKEN_SECRET: local-development-access-token-secret-not-production
+      PUBLIC_WEB_URL: http://localhost:${LOCAL_WEB_PORT:-3000}
+      ALLOWED_ORIGINS: http://localhost:${LOCAL_WEB_PORT:-3000},http://127.0.0.1:${LOCAL_WEB_PORT:-3000}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-local-development-access-token-secret-not-production}
       ACCESS_TOKEN_ISSUER: microlearning-api
       ACCESS_TOKEN_AUDIENCE: microlearning-web
       ACCESS_TOKEN_TTL_SECONDS: 900
@@ -59,9 +59,9 @@ services:
       REFRESH_REUSE_GRACE_SECONDS: 5
       REFRESH_COOKIE_NAME: ml_refresh
       REFRESH_COOKIE_SECURE: 'false'
-      AUTH_IDENTITY_PEPPER: local-development-identity-pepper-not-production
+      AUTH_IDENTITY_PEPPER: ${AUTH_IDENTITY_PEPPER:-local-development-identity-pepper-not-production}
       TEACHER_INVITATION_TTL_DAYS: 7
-      CLASSROOM_CODE_PEPPER: local-development-classroom-code-pepper-not-production
+      CLASSROOM_CODE_PEPPER: ${CLASSROOM_CODE_PEPPER:-local-development-classroom-code-pepper-not-production}
       CLASSROOM_CODE_LENGTH: 8
       CLASSROOM_INVITE_TOKEN_BYTES: 32
       CLASSROOM_INVITE_DEFAULT_TTL_DAYS: 30
@@ -95,7 +95,7 @@ services:
       BOOTSTRAP_ADMIN_ENABLED: 'false'
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
-      - '127.0.0.1:4000:4000'
+      - '127.0.0.1:${LOCAL_API_PORT:-4000}:4000'
     depends_on:
       mongodb:
         condition: service_healthy
@@ -121,10 +121,10 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
-        VITE_API_BASE_URL: http://localhost:4000
+        VITE_API_BASE_URL: http://localhost:${LOCAL_API_PORT:-4000}
     restart: unless-stopped
     ports:
-      - '127.0.0.1:3000:80'
+      - '127.0.0.1:${LOCAL_WEB_PORT:-3000}:80'
     depends_on:
       api:
         condition: service_healthy

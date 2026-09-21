@@ -26,6 +26,7 @@
     "test:e2e:ci": "playwright test --reporter=line,html",
     "test:e2e:cloud": "playwright test --config playwright.cloud.config.ts",
     "test:e2e:phase-08": "playwright test --config playwright.phase-08.config.ts",
+    "phase-08:local:accept": "node scripts/invoke-phase-08-local-acceptance.mjs",
     "test:e2e:phase-08:quality": "playwright test --config playwright.phase-08-quality.config.ts",
     "test:e2e:phase-08:uat": "playwright test --config playwright.phase-08-uat.config.ts",
     "test:e2e:phase-08:production": "playwright test --config playwright.phase-08-production.config.ts",
