@@ -6,7 +6,7 @@
 | WP-01 | Test/evidence readiness | Part 02/06: contracts, Staging, personas, data, catalog, artifact store | QA/BA | G1; EV-003 | `IN_PROGRESS - G1 PASS; Part 06 pending` |
 | WP-02 | System Test | Part 03-05: CI/E2E/API/data/security/performance/a11y/responsive | QA/TL | G2; EV-005/010/015/016 | `DONE` |
 | WP-03 | UAT | Part 07: scenario 001-032, persona sessions, actual result/sign-off | BA/QA/PO | G3; EV-020/025 | `PENDING` |
-| WP-04 | Closure/readiness | Part 07-08: defects/retest/CR plus Production plan/recovery/ops | QA/TL/DevOps | G4; EV-004/006..008/026 | `PENDING` |
+| WP-04 | Closure/readiness | Part 07-08: defects/retest/CR plus Production plan/recovery/ops | QA/TL/DevOps | G4; EV-004/006..008/026 | `IN_PROGRESS - IAM/WIF/state bootstrap verified; secret/DB/recovery/ops pending` |
 | WP-05 | Release decision | Part 09: PRE_RELEASE acceptance and Go/Conditional Go/No-Go | PO/TL | G5; EV-030 | `PENDING` |
 | WP-06 | Production promotion | Part 10: protected APPLY, exact digest, deployment and smoke | DevOps | G6; EV-031/037 | `PENDING` |
 | WP-07 | Operations | Part 11: observation, alert, incident/rollback and hypercare | DevOps/Support | G7; EV-038..040 | `PENDING` |

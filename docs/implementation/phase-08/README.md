@@ -4,7 +4,7 @@
 
 Phase 08 là **final phase** của Microlearning Classroom LMS. Đây là phase kiểm chứng và phát hành, không phải phase phát triển feature. Mục tiêu là đưa release candidate của Phase 07 qua System Test, UAT, quyết định Go/No-Go, production release có kiểm soát, hypercare, bàn giao vận hành và đóng dự án bằng evidence có thể truy nguyên.
 
-**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PART 06-13 LOCAL_PASS_REMOTE_PENDING / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260916-8489623` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `35078334825` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. UAT, Production-readiness, G5 package, protected Production APPLY, hypercare/handover and final-exit tooling đã hoàn thiện cục bộ, nhưng G3-G8 vẫn chờ workflow/evidence thực tế; Production deployment, 72-hour observation và final sign-off chưa hoàn tất.
+**Phase status:** `IMPLEMENTATION IN PROGRESS / PART 00-05 DONE / PRODUCTION BOOTSTRAP VERIFIED / G2 PASS`. G0/G1 đã được xác nhận; release candidate `P08-RC-20260916-8489623` đã hoàn tất System Test và quality verification trên exact Staging identity. Workflow `35078334825` ghi nhận 6/6 Must System Test, 11/11 security/data checks, 5/5 accessibility/responsive screens và 5/5 performance categories Pass; Critical/High, retry và flaky đều bằng 0. Production IAM/WIF/state bootstrap đã được Apply trong boundary 14 resources và hậu kiểm `No changes`; không đọc secret value và chưa deploy Cloud Run. UAT, phần còn lại của Production-readiness, G5 package, protected Production APPLY, hypercare/handover and final-exit vẫn chờ evidence thực tế; G3-G8 chưa hoàn tất.
 
 ### Quy ước trạng thái
 
@@ -57,7 +57,7 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 | Execution/code map | `execution-parts/README.md`, `source-and-workflow-blueprint.md` |
 | Governance/acceptance | `phase-08-governance-and-go-no-go.md`, `pre-release-go-no-go-runbook.md`, `acceptance-criteria.md`, `ba-alignment-and-decisions.md` |
 | Test/UAT/evidence | `system-test-and-uat-strategy.md`, `uat-test-catalog.md`, `uat-execution-matrix.md`, `test-and-evidence-contract.md` |
-| Release/operations | `production-readiness-and-promotion.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
+| Release/operations | `production-readiness-and-promotion.md`, `production-bootstrap-runbook.md`, `production-bootstrap-actual-evidence.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
 | Recovery/security | `backup-restore-and-disaster-recovery-final.md`, `rollback-and-incident-response-final.md`, `security-privacy-and-compliance-final.md`, `performance-capacity-and-cost-final.md` |
 | People/change | `defect-and-change-management.md`, `support-and-maintenance-model.md`, `training-and-user-handover.md`, `release-communications.md` |
 | Evidence/exit | `traceability-matrix.md`, `evidence-register.md`, `phase-exit-evidence.md`, `exit-report.md` |
@@ -81,6 +81,7 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 4. Mâu thuẫn `APPLY`/Production `ACTUAL` và vòng lặp G0/G5/G8 đã được sửa; protected workflow/G5 evidence vẫn pending.
 5. Atlas/recovery decision phải theo selected profile; real data luôn là blocker với academic profile.
 6. UAT execution/sign-off, Production readiness, defect closure, Production deployment và hypercare records đều `PENDING` cho đến khi execution tạo raw evidence.
+7. Production bootstrap đã hoàn tất thực tế: 14 IAM/WIF/state resources được Apply, read-only verification Pass và post-apply plan `No changes`; secret/database/recovery/observability vẫn là blocker của G4.
 
 ## Executable Phase 08 controls
 

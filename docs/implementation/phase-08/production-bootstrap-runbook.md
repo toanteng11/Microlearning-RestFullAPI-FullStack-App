@@ -93,3 +93,17 @@ Bootstrap completion unlocks, but does not complete, Part 08. Next create the fo
 containers/versions through the approved owner procedure, configure numeric secret-version variables,
 then run protected Production Promotion in `PLAN_ONLY`. Actual G4 additionally requires Atlas logical
 backup, isolated restore with measured RPO/RTO and a tested alert route.
+
+## Actual execution record
+
+The owner-approved bootstrap was applied on `2026-09-20` from trusted `main` commit
+`2111ed4e084c77000561591849a8384239aa4b33`.
+
+- guarded Apply: `14 added, 0 changed, 0 destroyed`;
+- post-apply plan: Terraform `No changes`, `0 create / 14 no-op / 0 update / 0 delete`;
+- both Production service accounts exist and the WIF provider is `ACTIVE`;
+- all seven non-secret GitHub Production environment variables are present;
+- `secretValuesRead=false` and `productionServiceProvisioned=false`.
+
+The redacted record is retained in `production-bootstrap-actual-evidence.md`. This closes only the
+bootstrap procedure; G4 remains `PENDING`.
