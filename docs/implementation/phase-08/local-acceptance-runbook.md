@@ -1,5 +1,7 @@
 # Phase 08 - Local-Only Academic Acceptance
 
+Current gate observations are recorded in [local-acceptance-evidence.md](local-acceptance-evidence.md).
+
 ## Scope decision
 
 On `2026-09-21`, the solo project owner changed the Phase 08 delivery target from a public Cloud Run
