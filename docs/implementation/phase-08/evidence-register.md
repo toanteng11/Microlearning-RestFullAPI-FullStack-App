@@ -36,6 +36,11 @@ reviewed Apply and read-only remote verification are retained in
 14 no-op and the WIF provider is active. `P08-EV-007` remains `PENDING` until Production secret and Atlas
 database identities are also evidenced without secret values.
 
+The merged secret-container guard and owner-only `PLAN_PASS / APPLY_PENDING` result are recorded in
+`production-secret-bootstrap-plan-evidence.md`. The reviewed plan has eight creates, 14 prerequisite
+no-ops and no update/delete action; read-only metadata found no Production secret container. This is
+supporting plan evidence only and does not change `P08-EV-004/007/031` or G4 from `PENDING`.
+
 ## Integrity checks
 
 - [x] Part 00-05 entries point to raw release-scoped artifacts and the successful G2 workflow URL.
