@@ -9,6 +9,7 @@ export default defineConfig({
     'phase-03-critical-journeys.spec.ts',
     'phase-05-critical-journeys.spec.ts',
     'phase-06-*.spec.ts',
+    'phase-08-local.spec.ts',
   ],
   fullyParallel: false,
   workers: 1,

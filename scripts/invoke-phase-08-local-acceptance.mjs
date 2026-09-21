@@ -27,6 +27,7 @@ let stackStarted = false;
 let errorMessage = null;
 let playwrightStats = null;
 let sourceDirty = true;
+let composeEnv;
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -46,7 +47,12 @@ function run(command, args, options = {}) {
 
 function step(name, command, args, options = {}) {
   process.stdout.write(`[${name}] starting\n`);
-  run(command, args, { stdio: 'inherit', ...options });
+  try {
+    run(command, args, { stdio: 'inherit', ...options });
+  } catch (error) {
+    checks[name] = 'FAIL';
+    throw error;
+  }
   checks[name] = 'PASS';
   process.stdout.write(`[${name}] passed\n`);
 }
@@ -90,10 +96,12 @@ try {
 
   const commitSha = run('git', ['rev-parse', 'HEAD']).stdout.trim();
   sourceDirty = run('git', ['status', '--porcelain']).stdout.trim() !== '';
+  checks.cleanSource = sourceDirty ? 'FAIL' : 'PASS';
+  step('dockerDaemon', 'docker', ['info', '--format', '{{.ServerVersion}}'], { timeout: 15_000 });
   const webUrl = `http://localhost:${ports.web}`;
   const apiUrl = `http://localhost:${ports.api}`;
   const password = `${randomBytes(24).toString('hex')}Aa1!`;
-  const composeEnv = {
+  composeEnv = {
     ...process.env,
     NODE_ENV: 'test',
     APP_ENV: 'test',
@@ -124,6 +132,8 @@ try {
     E2E_DEMO_PASSWORD: password,
     E2E_WEB_URL: webUrl,
     E2E_API_URL: apiUrl,
+    E2E_EXPECTED_COMMIT: commitSha,
+    E2E_PHASE08_LOCAL_MODE: 'true',
     PHASE08_LOCAL_ARTIFACT_ROOT: artifactRoot,
   };
   checks.composeConfiguration = 'PASS';
@@ -181,6 +191,8 @@ try {
     try {
       run('docker', [...composeArgs, 'down', '--volumes', '--remove-orphans'], {
         stdio: 'inherit',
+        env: composeEnv,
+        timeout: 30_000,
       });
       checks.cleanup = 'PASS';
     } catch {

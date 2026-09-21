@@ -184,6 +184,8 @@ jobs:
       LOG_LEVEL: silent
       E2E_WEB_URL: http://localhost:3000
       E2E_API_URL: http://localhost:4000
+      E2E_EXPECTED_COMMIT: ${{ github.sha }}
+      E2E_PHASE08_LOCAL_MODE: 'true'
 
     steps:
       - name: Checkout source

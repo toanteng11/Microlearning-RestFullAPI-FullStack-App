@@ -19,7 +19,7 @@ retention review are separate owner decisions. Do not delete them implicitly whi
 | L0 - Source | exact commit, clean checkout, CI result | source identity recorded; no uncommitted changes in final run |
 | L1 - Quality | `npm run check` | lint, formatting, types, unit tests, contracts and build pass |
 | L2 - Runtime | isolated Docker Compose + seeded synthetic data | MongoDB replica set, API `/ready`, Web `/health` and API commit identity pass |
-| L3 - Browser | Phase 03/05/06 Playwright journeys | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit/trace retained |
+| L3 - Browser | Phase 03/05/06 journeys plus Phase 08 local identity, negative and four-role tests | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit/trace retained |
 | L4 - Owner UAT | Student, Teacher, Admin, Super Admin sessions and defect log | expected/actual recorded for core tasks; no open Critical/High defect; owner signs off |
 
 Only L0-L4 may establish `LOCAL_ACADEMIC_ACCEPTANCE`. This is **not** a public deployment or
@@ -36,8 +36,8 @@ npx playwright install chromium
 npm run phase-08:local:accept
 ```
 
-The command runs the full quality gate, builds an isolated Compose project, waits for Web/API readiness,
-seeds deterministic demo accounts with a random in-memory password, runs the local Phase 03/05/06 browser
+The command checks Docker availability, runs the full quality gate, builds an isolated Compose project, waits for Web/API readiness,
+seeds deterministic demo accounts with a random in-memory password, runs the local Phase 03/05/06/08 browser
 journeys and removes only its own temporary containers and volume. It does not stop or reset the normal
 `microlearning-local` stack. The default temporary host ports are `3300` (Web), `4300` (API) and `27019`
 (MongoDB). Override with `PHASE08_LOCAL_WEB_PORT`, `PHASE08_LOCAL_API_PORT` and
@@ -72,3 +72,7 @@ The main-branch CI remains automatic. Build/publish, Staging deploy and Cloud E2
 automatically after CI or one another; their guarded `workflow_dispatch` paths remain available for an
 explicit future scope change. Phase 08 Production promotion remains guarded and is not part of the local
 acceptance route.
+
+The existing integrated browser CI job enables `E2E_PHASE08_LOCAL_MODE` and runs the six local Phase 08
+cases alongside the earlier critical journeys. A green CI check verifies that runner's seeded stack; it
+does not substitute for a successful `summary.json` from the owner's own local acceptance run or L4 UAT.
