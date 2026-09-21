@@ -2,6 +2,10 @@
 
 Evidence raw artifacts phải có release ID, exact identity, UTC timestamp, actor/tool, retention location và redaction review. `LOCAL_PASS_REMOTE_PENDING` nghĩa là raw evidence đã Pass tại máy thực thi nhưng GitHub artifact bền vững chưa được workflow upload; trạng thái này chưa đủ để đóng gate remote.
 
+**Current scope:** `local-acceptance-runbook.md` defines separate L0-L4 local-only gates. The rows below
+belong to the earlier Cloud release track and remain factual historical/deferred evidence. In particular,
+`P08-EV-004/006/007/008/031` and G3-G8 are not promoted to `PASS` by changing scope.
+
 | ID | Evidence | Owner | Required content | Status |
 |---|---|---|---|---|
 | P08-EV-001 | P07 handoff acceptance | TL | valid record, signatures/decision, UTC | `PASS` |

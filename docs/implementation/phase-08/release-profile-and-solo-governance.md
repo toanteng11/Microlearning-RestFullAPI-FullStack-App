@@ -1,5 +1,9 @@
 # Phase 08 - Release Profile and Solo Governance
 
+> **Scope update 2026-09-21:** The two profiles below describe the earlier Cloud release plan. The
+> current deliverable is `LOCAL_ACADEMIC_ACCEPTANCE`, defined in `local-acceptance-runbook.md`. It does
+> not claim public deployment or reuse the old Cloud candidate's G3-G8 decisions.
+
 ## 1. Release profile
 
 Phase 08 hỗ trợ hai mức phát hành. Mỗi release candidate phải chọn đúng một profile tại G0 và giữ nguyên đến G8, trừ khi có Change Request.

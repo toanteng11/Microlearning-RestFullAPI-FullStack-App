@@ -4,6 +4,10 @@ Nền tảng Microlearning hỗ trợ hoạt động giảng dạy nội bộ ch
 
 Repository đã hoàn thành Phase 01-04. Phase 04 Learning Content đạt `66/66` Must acceptance criteria; implementation đã merge qua [PR #10](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/pull/10) tại `a6cd37b`, PR CI và post-merge `main` CI đều xanh đủ 6 job. Hai Conditional Resource/GCS criteria được defer có phê duyệt sang Phase 07.
 
+**Current Phase 08 delivery scope:** local-only academic acceptance. The earlier Cloud/Production plan
+is retained as historical/deferred work, not a condition for completing the local project. See
+[Phase 08 Local Acceptance](docs/implementation/phase-08/local-acceptance-runbook.md).
+
 ## Prerequisites
 
 - Node.js `24.14.0`.
@@ -86,6 +90,15 @@ npm run check:ci
 `npm run check` là quality gate đầy đủ dành cho local. `npm run check:ci` thay test thông thường bằng coverage test, áp dụng coverage threshold, kiểm tra negative lint gate và là lệnh được Pull Request CI sử dụng.
 
 `npm run test:integration` yêu cầu `MONGODB_INTEGRATION_URI` trỏ tới test database trên replica set. `npm run test:e2e` yêu cầu Web/API/MongoDB đang healthy và `E2E_DEMO_PASSWORD` trùng với password dùng cho synthetic seed; xem [Phase 03 DevOps Guide](docs/implementation/phase-03/devops-environment-and-seeding.md).
+
+Run the isolated Phase 08 local acceptance suite without changing the normal Compose database:
+
+```powershell
+npm run phase-08:local:accept
+```
+
+The command writes machine-readable reports under `artifacts/phase-08/local-acceptance/`. CI remains
+automatic; Cloud build/publish, Staging deploy and Cloud E2E require manual dispatch.
 
 ## Environment Variables
 

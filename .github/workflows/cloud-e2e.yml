@@ -1,10 +1,6 @@
 name: Cloud Smoke And E2E
 
 on:
-  workflow_run:
-    workflows: [Deploy Staging]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
     inputs:
       confirmation:
