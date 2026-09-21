@@ -5,25 +5,27 @@ param(
 
   [string]$Confirmation = '',
 
-  [switch]$ConfigureGitHubEnvironment,
-
-  [string]$OutputDirectory = 'artifacts/phase-08/production-bootstrap'
+  [string]$OutputDirectory = 'artifacts/phase-08/production-secret-bootstrap'
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $expectedProject = 'microlearning-platform-502716'
-$expectedRegion = 'asia-southeast1'
-$expectedRepository = 'toanteng11/Microlearning-RestFullAPI-FullStack-App'
-$applyConfirmation = 'APPLY_PHASE_08_PRODUCTION_BOOTSTRAP'
+$applyConfirmation = 'APPLY_PHASE_08_PRODUCTION_SECRET_CONTAINERS'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $terraformDirectory = Join-Path $repositoryRoot 'infrastructure/terraform/environments/production'
 $resolvedOutputDirectory = Join-Path $repositoryRoot $OutputDirectory
-$planPath = Join-Path $terraformDirectory 'phase-08-production-bootstrap.tfplan'
+$planPath = Join-Path $terraformDirectory 'phase-08-production-secret-bootstrap.tfplan'
 $planJsonPath = Join-Path $resolvedOutputDirectory 'plan.json'
 $policyReportPath = Join-Path $resolvedOutputDirectory 'policy-report.json'
 $summaryPath = Join-Path $resolvedOutputDirectory 'summary.json'
+$secretIds = @(
+  'ml-production-access-token-secret',
+  'ml-production-auth-identity-pepper',
+  'ml-production-classroom-code-pepper',
+  'ml-production-mongodb-uri'
+)
 
 function Invoke-Native {
   param(
@@ -73,9 +75,6 @@ function Resolve-ToolPath {
 if ($Mode -eq 'Apply' -and $Confirmation -ne $applyConfirmation) {
   throw "Apply requires -Confirmation $applyConfirmation."
 }
-if ($Mode -eq 'Plan' -and $ConfigureGitHubEnvironment) {
-  throw '-ConfigureGitHubEnvironment is only valid with -Mode Apply.'
-}
 
 $gcloud = Resolve-ToolPath 'gcloud' @(
   "$env:LOCALAPPDATA\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
@@ -95,7 +94,7 @@ if ($projectState -ne 'ACTIVE') {
 
 $billingEnabled = Get-NativeText $gcloud billing projects describe $expectedProject '--format=value(billingEnabled)'
 if ($billingEnabled -ne 'True') {
-  throw 'Google Cloud billing must be enabled before Production bootstrap.'
+  throw 'Google Cloud billing must be enabled before Production secret bootstrap.'
 }
 
 $activeAccount = Get-NativeText $gcloud auth list '--filter=status:ACTIVE' '--format=value(account)'
@@ -110,13 +109,13 @@ if ($Mode -eq 'Apply') {
   $originMain = Get-NativeText -Command git -Arguments @('-C', $repositoryRoot, 'rev-parse', 'origin/main')
 
   if ($branch -ne 'main') {
-    throw "Bootstrap apply must run from main; observed $branch."
+    throw "Secret bootstrap apply must run from main; observed $branch."
   }
   if (-not [string]::IsNullOrWhiteSpace($status)) {
-    throw 'Bootstrap apply requires a clean working tree.'
+    throw 'Secret bootstrap apply requires a clean working tree.'
   }
   if ($head -ne $originMain) {
-    throw 'Bootstrap apply requires HEAD to equal the fetched origin/main commit.'
+    throw 'Secret bootstrap apply requires HEAD to equal the fetched origin/main commit.'
   }
 }
 
@@ -127,7 +126,7 @@ try {
   Invoke-Native $terraform fmt '-check' '-recursive'
   Invoke-Native $terraform init '-input=false' '-reconfigure'
   Invoke-Native $terraform validate
-  Invoke-Native $terraform plan '-input=false' '-out=phase-08-production-bootstrap.tfplan' '-var-file=terraform.tfvars.example' '-var=provision_service=false' '-var=provision_secret_containers=false' '-var=bootstrap_secret_containers=false' '-var=provision_monitoring=false'
+  Invoke-Native $terraform plan '-input=false' '-out=phase-08-production-secret-bootstrap.tfplan' '-var-file=terraform.tfvars.example' '-var=provision_service=false' '-var=provision_secret_containers=false' '-var=bootstrap_secret_containers=true' '-var=provision_monitoring=false'
 
   $planJson = Get-NativeText $terraform show '-json' $planPath
   [System.IO.File]::WriteAllText(
@@ -141,7 +140,7 @@ finally {
 }
 
 try {
-  Invoke-Native $node (Join-Path $PSScriptRoot 'check-phase-08-production-bootstrap-plan.mjs') $planJsonPath $policyReportPath
+  Invoke-Native $node (Join-Path $PSScriptRoot 'check-phase-08-production-secret-bootstrap-plan.mjs') $planJsonPath $policyReportPath
   $policy = Get-Content -LiteralPath $policyReportPath -Raw | ConvertFrom-Json
 }
 catch {
@@ -150,33 +149,15 @@ catch {
 }
 
 $applied = $false
-$githubConfigured = $false
-$provider = $null
-$deployer = $null
-
 try {
   if ($Mode -eq 'Apply') {
     Push-Location $terraformDirectory
     try {
-      Invoke-Native $terraform apply '-input=false' 'phase-08-production-bootstrap.tfplan'
-      $provider = Get-NativeText $terraform output '-raw' 'workload_identity_provider'
-      $deployer = Get-NativeText $terraform output '-raw' 'deployer_service_account'
+      Invoke-Native $terraform apply '-input=false' 'phase-08-production-secret-bootstrap.tfplan'
       $applied = $true
     }
     finally {
       Pop-Location
-    }
-
-    if ($ConfigureGitHubEnvironment) {
-      $gh = Resolve-ToolPath 'gh' @('C:\Program Files\GitHub CLI\gh.exe')
-      Invoke-Native $gh variable set 'GCP_PROJECT_ID' '--env' 'production' '--repo' $expectedRepository '--body' $expectedProject
-      Invoke-Native $gh variable set 'GCP_REGION' '--env' 'production' '--repo' $expectedRepository '--body' $expectedRegion
-      Invoke-Native $gh variable set 'GAR_REPOSITORY' '--env' 'production' '--repo' $expectedRepository '--body' 'microlearning'
-      Invoke-Native $gh variable set 'CLOUD_RUN_SERVICE' '--env' 'production' '--repo' $expectedRepository '--body' 'microlearning-production'
-      Invoke-Native $gh variable set 'TF_STATE_PREFIX' '--env' 'production' '--repo' $expectedRepository '--body' 'phase-08/production'
-      Invoke-Native $gh variable set 'GCP_WORKLOAD_IDENTITY_PROVIDER_PRODUCTION' '--env' 'production' '--repo' $expectedRepository '--body' $provider
-      Invoke-Native $gh variable set 'GCP_DEPLOY_SERVICE_ACCOUNT_PRODUCTION' '--env' 'production' '--repo' $expectedRepository '--body' $deployer
-      $githubConfigured = $true
     }
   }
 }
@@ -187,21 +168,21 @@ finally {
 $summary = [ordered]@{
   schemaVersion = 1
   phase = '08'
-  recordType = 'PRODUCTION_BOOTSTRAP'
+  recordType = 'PRODUCTION_SECRET_CONTAINER_BOOTSTRAP'
   recordedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
   mode = $Mode.ToUpperInvariant()
   projectId = $expectedProject
-  region = $expectedRegion
   actor = $activeAccount
   policyStatus = $policy.status
   planSha256 = $policy.planSha256
   counts = $policy.counts
   applied = $applied
-  githubEnvironmentConfigured = $githubConfigured
-  workloadIdentityProvider = $provider
-  deployerServiceAccount = $deployer
+  secretContainerIds = $secretIds
+  secretContainersProvisioned = $applied
+  secretVersionsCreated = $false
   secretValuesRead = $false
   productionServiceProvisioned = $false
+  monitoringProvisioned = $false
 }
 
 [System.IO.File]::WriteAllText(
@@ -210,4 +191,4 @@ $summary = [ordered]@{
   [System.Text.UTF8Encoding]::new($false)
 )
 
-Write-Output "Phase 08 Production bootstrap $Mode completed. Summary: $summaryPath"
+Write-Output "Phase 08 Production secret bootstrap $Mode completed. Summary: $summaryPath"

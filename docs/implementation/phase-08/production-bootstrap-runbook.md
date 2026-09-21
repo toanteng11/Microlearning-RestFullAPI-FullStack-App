@@ -90,7 +90,8 @@ MongoDB credentials or application secrets in GitHub variables.
 ## Next gate
 
 Bootstrap completion unlocks, but does not complete, Part 08. Next create the four Production secret
-containers/versions through the approved owner procedure, configure numeric secret-version variables,
+containers through `production-secret-bootstrap-runbook.md`, add versions through the approved protected
+owner procedure, configure numeric secret-version variables,
 then run protected Production Promotion in `PLAN_ONLY`. Actual G4 additionally requires Atlas logical
 backup, isolated restore with measured RPO/RTO and a tested alert route.
 
