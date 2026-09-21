@@ -8,8 +8,11 @@ access_token_secret_version          = "1"
 auth_identity_pepper_secret_version  = "1"
 classroom_code_pepper_secret_version = "1"
 
-# Part 08 plans these together. Keep false until the reviewed plan is ready.
+# Full Production promotion plans these three resources groups together. Keep them false until the
+# reviewed promotion plan is ready. The owner-only secret bootstrap script controls only the separate
+# bootstrap_secret_containers flag and still keeps these three normal flags false.
 provision_service           = false
 provision_secret_containers = false
+bootstrap_secret_containers = false
 provision_monitoring        = false
 allow_public_invoker        = true

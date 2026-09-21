@@ -220,7 +220,7 @@ module "secret_contract" {
     ]
   }
   labels    = var.labels
-  provision = var.provision_secret_containers
+  provision = var.provision_secret_containers || var.bootstrap_secret_containers
 }
 
 module "monitoring" {
@@ -241,5 +241,16 @@ check "production_resources_move_together" {
   assert {
     condition     = var.provision_service == var.provision_secret_containers && var.provision_service == var.provision_monitoring
     error_message = "Production service, secret containers and monitoring must be planned together."
+  }
+}
+
+check "secret_container_bootstrap_isolated" {
+  assert {
+    condition = !var.bootstrap_secret_containers || (
+      !var.provision_service &&
+      !var.provision_secret_containers &&
+      !var.provision_monitoring
+    )
+    error_message = "Secret-container bootstrap must not provision the Production service, normal secret path or monitoring."
   }
 }

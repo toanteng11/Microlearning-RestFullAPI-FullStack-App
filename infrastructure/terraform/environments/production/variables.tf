@@ -104,6 +104,12 @@ variable "provision_secret_containers" {
   default     = false
 }
 
+variable "bootstrap_secret_containers" {
+  description = "Owner-only bootstrap for Production secret containers and runtime accessor bindings without provisioning Cloud Run or monitoring."
+  type        = bool
+  default     = false
+}
+
 variable "provision_monitoring" {
   description = "Plan Production dashboard, uptime checks and alert policies."
   type        = bool

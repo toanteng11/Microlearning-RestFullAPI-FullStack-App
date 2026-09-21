@@ -1,7 +1,13 @@
 # Production Terraform Root
 
-This root is validation-only in Phase 07. It defines a separate state prefix, service accounts, WIF provider
-and immutable image contract so Phase 08 can promote the exact Staging-verified digest.
+This root owns the isolated Production state, service accounts, Workload Identity Federation, Secret
+Manager contract, immutable Cloud Run image contract and monitoring resources used by Phase 08.
 
-Do not run `terraform apply` during Phase 07. Production requires the protected `production` GitHub
-environment, manual confirmation and Phase 08 Go/No-Go evidence.
+Do not run raw `terraform apply` commands. The owner-only Phase 08 bootstrap scripts constrain and verify
+the identity and secret-container prerequisites independently. Full Production promotion still requires
+the protected `production` GitHub environment, the exact Staging-verified digest, manual confirmation and
+Phase 08 Go/No-Go evidence.
+
+The secret-container bootstrap never creates or reads secret versions. Production values must be added
+through the approved protected procedure and must not appear in Terraform variables, source code, logs or
+evidence.
