@@ -5,8 +5,10 @@
 > The Cloud release plan below is retained as historical/deferred scope: its G3-G8 gates are not `PASS`,
 > and no further Production Apply is authorized by the local-only decision.
 
-**Local acceptance status:** `IN_PROGRESS`; L0-L4 require fresh evidence from the local runner and owner
-UAT. The status and gate table below describe the deferred Cloud release track.
+**Local acceptance status:** `IN_PROGRESS`; L0-L3 passed on the merged application commit, while
+L4 owner UAT and sign-off remain `PENDING`. See [actual local evidence](local-acceptance-evidence.md)
+and the [owner UAT matrix](local-uat-matrix.md). The G0-G8 status and gate table below describe the
+deferred Cloud release track, not the local completion criteria.
 
 ## Executive summary
 
@@ -65,7 +67,8 @@ Một gate `NO_GO` dừng các gate sau; không được dùng placeholder để
 | Execution/code map | `execution-parts/README.md`, `source-and-workflow-blueprint.md` |
 | Governance/acceptance | `phase-08-governance-and-go-no-go.md`, `pre-release-go-no-go-runbook.md`, `acceptance-criteria.md`, `ba-alignment-and-decisions.md` |
 | Test/UAT/evidence | `system-test-and-uat-strategy.md`, `uat-test-catalog.md`, `uat-execution-matrix.md`, `test-and-evidence-contract.md` |
-| Current local acceptance | `local-acceptance-runbook.md` |
+| Current local acceptance | `local-acceptance-runbook.md`, `local-uat-matrix.md` |
+| Local instructor demo | `local-demo-video-script.md` |
 | Deferred Cloud release/operations | `production-readiness-and-promotion.md`, `production-bootstrap-runbook.md`, `production-secret-bootstrap-runbook.md`, `production-secret-bootstrap-plan-evidence.md`, `production-bootstrap-actual-evidence.md`, `production-deployment-runbook.md`, `post-release-validation.md`, `observability-and-operations-handover.md` |
 | Recovery/security | `backup-restore-and-disaster-recovery-final.md`, `rollback-and-incident-response-final.md`, `security-privacy-and-compliance-final.md`, `performance-capacity-and-cost-final.md` |
 | People/change | `defect-and-change-management.md`, `support-and-maintenance-model.md`, `training-and-user-handover.md`, `release-communications.md` |
