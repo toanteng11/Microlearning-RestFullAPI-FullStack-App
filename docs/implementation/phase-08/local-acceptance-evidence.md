@@ -1,24 +1,30 @@
-# Phase 08 - Local Acceptance Evidence (2026-09-21)
+# Phase 08 - Local Acceptance Evidence (2026-09-22)
 
 This record tracks the **local-only academic** scope. It does not change the historical Cloud G3-G8
 statuses or claim a Production deployment.
 
 | Gate | Current observation | Status |
 | --- | --- | --- |
-| L0 - Source | PR #66 is open against `main`; CI ran on the PR. The owner-machine acceptance attempt had uncommitted test changes at the time and is not final source evidence. | `PENDING` until merge and a clean local run |
-| L1 - Quality | `npm run check` passed locally: 238 API tests, 126 Web tests, contract tests and both builds. The PR quality job passed. | `PASS` for the PR candidate |
-| L2 - Runtime | CI started the seeded integrated Compose stack and passed MongoDB integration and browser jobs. The owner-machine isolated runner could not reach Docker Desktop Linux Engine. | `CI_PASS / OWNER_LOCAL_PENDING` |
-| L3 - Browser | [CI run 35616519846](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/35616519846) reported 40 passed and 22 skipped. The six new local identity/security/four-role cases were in the passing set; Cloud-only suites were skipped. The owner-machine JSON/JUnit run remains pending. | `CI_PASS / OWNER_LOCAL_PENDING` |
-| L4 - Owner UAT | No signed four-role manual walkthrough or defect closure for this local candidate has been recorded. | `PENDING` |
+| L0 - Source | PR #66 merged as `d01f7b08a731c344950644382a4727787a8bad04`; [main CI run 35618029671](https://github.com/toanteng11/Microlearning-RestFullAPI-FullStack-App/actions/runs/35618029671) succeeded. The local run used the same commit with `sourceDirty=false`. | `PASS` |
+| L1 - Quality | `npm run check` passed on the merged commit: 238 API tests, 126 Web tests, contract tests and both builds. | `PASS` |
+| L2 - Runtime | The isolated Compose project `microlearning-phase08-b0922b24` started a MongoDB replica set, API and Web. Readiness, exact API commit identity, synthetic seed and cleanup all passed. | `PASS` |
+| L3 - Browser | The owner-machine Playwright run passed 40/40 selected Phase 03/05/06/08 tests with zero unexpected, flaky or skipped; JSON, JUnit and HTML reports were retained locally. | `PASS` |
+| L4 - Owner UAT | Four-role manual walkthrough, defect closure and solo-owner sign-off have not yet been recorded. Use the [local UAT matrix](local-uat-matrix.md). | `PENDING` |
 
-The local runner failed before building containers. Its ignored raw summary is
-`artifacts/phase-08/local-acceptance/P08-LOCAL-20260921T150111Z-3c65d1/summary.json` with
-`docker could not start: spawnSync docker ETIMEDOUT`. Docker Desktop's backend error on this machine
-reported an inaccessible `dockerInference` socket while starting services; `wsl --list --verbose`
-showed `docker-desktop` stopped. This is an environment blocker, not a passing application test.
+## Raw local run
 
-To resume, use Docker Desktop's **Troubleshoot > Restart Docker Desktop**, wait until its engine
-reports running, then check `docker info`. Do not manually delete Docker's `run` files, WSL
-distributions or volumes. From a clean checkout of the merged commit, run
-`npm run phase-08:local:accept` and retain a `PASS` summary with 40 expected tests, zero unexpected
-and zero flaky. Complete and sign L4 separately before marking local Phase 08 complete.
+- Run ID: `P08-LOCAL-20260922T033616Z-18ded4`.
+- Time: `2026-09-22T03:36:16Z` to `2026-09-22T03:42:40Z`.
+- Retention: ignored `artifacts/phase-08/local-acceptance/P08-LOCAL-20260922T033616Z-18ded4/`
+  in the clean checkout and a checksum-matching local copy under the main workspace's `artifacts/`
+  directory. Raw reports are not published without redaction review.
+- `summary.json` SHA-256: `586e5fd3ccce6f0ed9c12c09eba11c9ef4713569a68f28b58200c6d7ad031dcf`.
+- `playwright-results.json` SHA-256: `26052eada95c3b9722dd10e17075cb902938f36d1fc22d7a0a742f21bec05fec`.
+- `junit.xml` SHA-256: `fd3c3887c1da6b0c985425e5403d96429c31722e902184ca169223d03dce71fe`.
+- Summary status: `PASS`; every automated check including cleanup is `PASS`;
+  `productionDeployment=NOT_RUN` and `secretValuesRecorded=false`.
+
+The earlier Docker timeout run is retained as a failed environmental attempt, not counted as acceptance.
+The normal stack at `http://localhost:3000` currently reports `commitSha=local-dev`, so its health
+checks are not evidence for the exact merged commit. L4 must use a runtime built from the candidate
+commit and must be signed by the solo owner; automated role journeys do not replace that decision.

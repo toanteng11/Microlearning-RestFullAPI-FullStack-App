@@ -1,6 +1,7 @@
 # Phase 08 - Local-Only Academic Acceptance
 
 Current gate observations are recorded in [local-acceptance-evidence.md](local-acceptance-evidence.md).
+The remaining owner review is tracked in [local-uat-matrix.md](local-uat-matrix.md).
 
 ## Scope decision
 
