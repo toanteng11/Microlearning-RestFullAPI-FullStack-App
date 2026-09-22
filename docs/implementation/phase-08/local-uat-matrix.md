@@ -10,15 +10,19 @@ results are supporting evidence, not an owner decision.
 | --- | --- |
 | UAT run ID | `P08-LOCAL-UAT-<UTC date>-<sequence>` |
 | Candidate commit | `d01f7b08a731c344950644382a4727787a8bad04` |
-| Runtime commit from `/api/v1/system/version` | `PENDING` |
-| Web and API URLs | `PENDING` |
+| Runtime commit from `/api/v1/system/version` | `d01f7b08a731c344950644382a4727787a8bad04` at technical preflight; owner must recheck before sign-off |
+| Web and API URLs | `http://localhost:3300`, `http://localhost:4300` (isolated UAT stack) |
 | Data mode | `SYNTHETIC` |
 | Actor | Trần Đức Toàn, solo owner |
 | Start/end UTC | `PENDING` |
 
 The browser sessions and database must point to a runtime built from the candidate commit. The
-currently running `localhost:3000` stack reports `local-dev`; do not sign against it until rebuilt
-and its version identity is verified. Use separate browser profiles/contexts for each persona.
+`localhost:3000` stack reports `local-dev`; do not use it for this sign-off. The isolated UAT stack
+passed readiness, four-role API login and guest `401` checks on `2026-09-22`, but those technical
+checks do not fill in the owner's scenario results. Use separate browser profiles/contexts for each
+persona. The active accounts are `student.active@example.test`, `teacher.active@example.test`,
+`admin.active@example.test` and `superadmin.active@example.test`. Obtain the synthetic-data password
+from the local owner handoff; do not record it in this file or screenshots.
 
 ## Scenarios
 

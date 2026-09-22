@@ -9,7 +9,7 @@ statuses or claim a Production deployment.
 | L1 - Quality | `npm run check` passed on the merged commit: 238 API tests, 126 Web tests, contract tests and both builds. | `PASS` |
 | L2 - Runtime | The isolated Compose project `microlearning-phase08-b0922b24` started a MongoDB replica set, API and Web. Readiness, exact API commit identity, synthetic seed and cleanup all passed. | `PASS` |
 | L3 - Browser | The owner-machine Playwright run passed 40/40 selected Phase 03/05/06/08 tests with zero unexpected, flaky or skipped; JSON, JUnit and HTML reports were retained locally. | `PASS` |
-| L4 - Owner UAT | Four-role manual walkthrough, defect closure and solo-owner sign-off have not yet been recorded. Use the [local UAT matrix](local-uat-matrix.md). | `PENDING` |
+| L4 - Owner UAT | Exact-commit UAT runtime and four-role technical preflight are ready. The owner's manual walkthrough, defect closure and solo-owner sign-off have not yet been recorded. Use the [local UAT matrix](local-uat-matrix.md). | `PENDING` |
 
 ## Raw local run
 
@@ -28,3 +28,17 @@ The earlier Docker timeout run is retained as a failed environmental attempt, no
 The normal stack at `http://localhost:3000` currently reports `commitSha=local-dev`, so its health
 checks are not evidence for the exact merged commit. L4 must use a runtime built from the candidate
 commit and must be signed by the solo owner; automated role journeys do not replace that decision.
+
+## Local UAT technical preflight
+
+On `2026-09-22` at approximately `06:23 UTC`, the isolated Compose project
+`microlearning-phase08-uat` was built from a clean `main` checkout at candidate commit
+`d01f7b08a731c344950644382a4727787a8bad04`. It bound Web/API/MongoDB to loopback ports
+`3300`/`4300`/`27019`, leaving `microlearning-local` untouched. Web and API were healthy, the API
+version endpoint returned the candidate commit and `environment=test`, and the synthetic demo seed
+created 10 identities plus Phase 03-05 classroom/content/assessment fixtures.
+
+API logins succeeded for `student.active@example.test`, `teacher.active@example.test`,
+`admin.active@example.test` and `superadmin.active@example.test`, each returning the intended role.
+An unauthenticated `/api/v1/users/me` request returned `401`. This is a technical availability check,
+**not** a completed owner UAT scenario or sign-off. No demo password or access token is recorded here.
