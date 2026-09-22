@@ -5,8 +5,10 @@
 > The Cloud release plan below is retained as historical/deferred scope: its G3-G8 gates are not `PASS`,
 > and no further Production Apply is authorized by the local-only decision.
 
-**Local acceptance status:** `IN_PROGRESS`; L0-L4 require fresh evidence from the local runner and owner
-UAT. The status and gate table below describe the deferred Cloud release track.
+**Local acceptance status:** `IN_PROGRESS`; L0-L3 passed on the merged application commit, while
+L4 owner UAT and sign-off remain `PENDING`. See [actual local evidence](local-acceptance-evidence.md)
+and the [owner UAT matrix](local-uat-matrix.md). The G0-G8 status and gate table below describe the
+deferred Cloud release track, not the local completion criteria.
 
 ## Executive summary
 

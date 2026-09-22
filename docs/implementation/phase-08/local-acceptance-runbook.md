@@ -22,7 +22,7 @@ retention review are separate owner decisions. Do not delete them implicitly whi
 | L0 - Source | exact commit, clean checkout, CI result | source identity recorded; no uncommitted changes in final run |
 | L1 - Quality | `npm run check` | lint, formatting, types, unit tests, contracts and build pass |
 | L2 - Runtime | isolated Docker Compose + seeded synthetic data | MongoDB replica set, API `/ready`, Web `/health` and API commit identity pass |
-| L3 - Browser | Phase 03/05/06 journeys plus Phase 08 local identity, negative and four-role tests | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit/trace retained |
+| L3 - Browser | Phase 03/05/06 journeys plus Phase 08 local identity, negative and four-role tests | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit retained, trace on retry |
 | L4 - Owner UAT | Student, Teacher, Admin, Super Admin sessions and defect log | expected/actual recorded for core tasks; no open Critical/High defect; owner signs off |
 
 Only L0-L4 may establish `LOCAL_ACADEMIC_ACCEPTANCE`. This is **not** a public deployment or

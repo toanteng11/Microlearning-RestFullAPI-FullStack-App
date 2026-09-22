@@ -24,6 +24,29 @@ persona. The active accounts are `student.active@example.test`, `teacher.active@
 `admin.active@example.test` and `superadmin.active@example.test`. Obtain the synthetic-data password
 from the local owner handoff; do not record it in this file or screenshots.
 
+## Fixture and execution order
+
+1. Open `http://localhost:4300/api/v1/system/version` and confirm `environment=test` and
+   `commitSha=d01f7b08a731c344950644382a4727787a8bad04`. Record the UTC start time. Use
+   `http://localhost:3300` for every browser session.
+2. Use a private or separate browser context for each role. The seeded Teacher owns classroom
+   `640000000000000000000001` and published course `650000000000000000000001`; the primary Student
+   is already enrolled there. Use those fixtures for lesson, assessment, grade and report checks.
+3. For `LOCAL-UAT-02`, the Teacher first creates a **new** classroom and copies its one-time Class
+   Code. Then `student.active.4@example.test` joins it and repeats the join. The seeded classroom's
+   code cannot be recovered from its masked value; do not treat that as a product failure.
+4. For `LOCAL-UAT-03/04`, return to `student.active@example.test` in the seeded course. That Student
+   already has some completed work and one attempt on the published `HTTP Status Code Check` quiz;
+   compare before/after values and use the remaining attempt or create a fresh quiz as Teacher.
+   The published `Thiết kế REST Endpoint` assignment has a returned grade for regrade inspection.
+5. Perform mutations before reading their projections: publish content before checking Student
+   visibility; grade/regrade before checking Gradebook; then execute the negative/duplicate cases.
+   Use distinct synthetic names/emails for any new classroom, content or invitation.
+
+The owner records a local screenshot or redacted API response for each row. Store the evidence path,
+observed result and UTC time in `Actual/evidence`; keep the role password, tokens, one-time Class Code
+and invitation link out of screenshots and committed files. An automated pass does not fill these cells.
+
 ## Scenarios
 
 For every row, record actual behavior, UTC time and a local screenshot or API evidence path.
@@ -43,6 +66,25 @@ tokens into evidence.
 | LOCAL-UAT-09 | Student/Teacher | Try a forbidden role route and another owner's resource | `403` or intentional `404`; no foreign data leaks | `PENDING` | `PENDING` |
 | LOCAL-UAT-10 | Guest/Student | Submit malformed input and retry a completed operation | Validation error is clear; retry does not create duplicate data | `PENDING` | `PENDING` |
 
+## Technical coverage cross-check
+
+The earlier clean-commit local runner passed `40/40` tests in
+`P08-LOCAL-20260922T033616Z-18ded4/playwright-results.json`. These tests support, but do not
+replace, the owner's actual observations above. All mappings below refer to that same report.
+
+| Manual scenario | Related automated journey |
+| --- | --- |
+| `LOCAL-UAT-01` | Phase 03 Student register, login, profile and logout |
+| `LOCAL-UAT-02` | Phase 03 Teacher creates Classroom and Student joins by Class Code idempotently |
+| `LOCAL-UAT-03` | Phase 04 Student studies Flashcard and completes Lesson; Phase 06 Student reporting |
+| `LOCAL-UAT-04` | Phase 05 Student saves, resumes and submits Quiz; Assignment draft and resubmission |
+| `LOCAL-UAT-05` | Phase 04 Teacher publishes Course/Module/Lesson/Flashcard and manages roster |
+| `LOCAL-UAT-06` | Phase 05 Teacher regrades returned work; Phase 06 Gradebook cell refresh |
+| `LOCAL-UAT-07` | Phase 03 Admin invitation; Phase 06 governance metadata and privacy |
+| `LOCAL-UAT-08` | Phase 08 local Admin/Super Admin governance separation |
+| `LOCAL-UAT-09` | Phase 08 local role/ownership boundaries; Phase 06 foreign-course denial |
+| `LOCAL-UAT-10` | Phase 08 local invalid request and duplicate logout; Phase 03 idempotent join |
+
 ## Defects and decision
 
 | Defect ID | Scenario | Severity | Expected/actual | Fix commit | Retest evidence | Status |
@@ -52,3 +94,13 @@ tokens into evidence.
 L4 may be `PASS` only when all applicable scenarios pass, no Critical/High defect remains open,
 the candidate identity matches, and the owner records a UTC sign-off with
 `soloProject=true` and `independentReview=false`. Otherwise keep L4 `PENDING` or `FAIL`.
+
+| Final owner decision | Value |
+| --- | --- |
+| Decision (`PASS`/`FAIL`) | `PENDING` |
+| Owner name and role | `PENDING` |
+| Signed at UTC | `PENDING` |
+| Final candidate/runtime commit | `PENDING` |
+| Open Critical/High defect count | `PENDING` |
+| `soloProject` | `true` |
+| `independentReview` | `false` |

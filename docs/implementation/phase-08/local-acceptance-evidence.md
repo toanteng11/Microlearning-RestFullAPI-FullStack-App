@@ -42,3 +42,11 @@ API logins succeeded for `student.active@example.test`, `teacher.active@example.
 `admin.active@example.test` and `superadmin.active@example.test`, each returning the intended role.
 An unauthenticated `/api/v1/users/me` request returned `401`. This is a technical availability check,
 **not** a completed owner UAT scenario or sign-off. No demo password or access token is recorded here.
+
+A separate non-business-mutating Playwright smoke against that persistent UAT stack passed `6/6` on
+`2026-09-22` (`0` unexpected, `0` flaky, `0` skipped). Its ignored local report is
+`artifacts/phase-08/local-uat-technical-preflight-20260922/playwright-results.json`
+(SHA-256 `a8bac5df14f35936acfa54c21558f63a8d7716c3b5123bc5825f72e6a8bb135b`);
+the JUnit report SHA-256 is
+`d322cd4f5664cbb4b49737454f990ab056b7610e7f6b7ad1c9ca57789e4f0b87`.
+The report remains local and is not a substitute for the owner's ten manual observations.
