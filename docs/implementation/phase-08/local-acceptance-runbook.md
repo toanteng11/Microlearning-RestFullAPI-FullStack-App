@@ -1,6 +1,7 @@
 # Phase 08 - Local-Only Academic Acceptance
 
 Current gate observations are recorded in [local-acceptance-evidence.md](local-acceptance-evidence.md).
+The remaining owner review is tracked in [local-uat-matrix.md](local-uat-matrix.md).
 
 ## Scope decision
 
@@ -21,7 +22,7 @@ retention review are separate owner decisions. Do not delete them implicitly whi
 | L0 - Source | exact commit, clean checkout, CI result | source identity recorded; no uncommitted changes in final run |
 | L1 - Quality | `npm run check` | lint, formatting, types, unit tests, contracts and build pass |
 | L2 - Runtime | isolated Docker Compose + seeded synthetic data | MongoDB replica set, API `/ready`, Web `/health` and API commit identity pass |
-| L3 - Browser | Phase 03/05/06 journeys plus Phase 08 local identity, negative and four-role tests | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit/trace retained |
+| L3 - Browser | Phase 03/05/06 journeys plus Phase 08 local identity, negative and four-role tests | all selected tests pass, zero unexpected and zero flaky; JSON/JUnit retained, trace on retry |
 | L4 - Owner UAT | Student, Teacher, Admin, Super Admin sessions and defect log | expected/actual recorded for core tasks; no open Critical/High defect; owner signs off |
 
 Only L0-L4 may establish `LOCAL_ACADEMIC_ACCEPTANCE`. This is **not** a public deployment or
@@ -53,9 +54,15 @@ repository.
 
 ## Manual owner UAT
 
-The automated run uses a temporary database and cleans it after testing. For interactive review use the
-normal local stack at `http://localhost:3000` and `http://localhost:4000`, with your own local demo seed
-password. In separate browser sessions, verify:
+The automated run uses a temporary database and cleans it after testing. For the current owner review,
+use the isolated, synthetic-data UAT stack at `http://localhost:3300` (Web) and
+`http://localhost:4300` (API). On `2026-09-22`, its API reported candidate commit
+`d01f7b08a731c344950644382a4727787a8bad04` with `environment=test`; all four active
+persona logins and an unauthenticated `401` preflight passed. Recheck `/api/v1/system/version`
+before signing, because a later restart or rebuild may change the runtime. The normal
+`localhost:3000` stack reports `local-dev` and is not acceptance evidence for this candidate.
+The local-only demo password is supplied to the owner separately, never committed or pasted into
+screenshots. In separate browser sessions, verify:
 
 1. Student: sign in, join/view classroom, open lesson, submit assessment, inspect result and progress.
 2. Teacher: sign in, manage classroom/content, review submissions, grade and inspect gradebook/report.
@@ -67,6 +74,16 @@ password. In separate browser sessions, verify:
 Record each scenario's expected result, actual result, persona, UTC time and screenshot/API evidence.
 Log every mismatch and retest after fixing it. A single-person project may sign as PO/QA/Technical Lead
 with `soloProject=true` and `independentReview=false`; never claim an independent approval.
+
+The UAT Compose project is `microlearning-phase08-uat`, separate from `microlearning-local`. To stop
+only this UAT stack while preserving its synthetic database, run from the same checkout:
+
+```powershell
+docker compose -p microlearning-phase08-uat -f docker-compose.yml -f infrastructure/ci/docker-compose.integration.yml -f infrastructure/ci/docker-compose.e2e.yml stop
+```
+
+Do not run `down --volumes` until the owner has finished UAT and explicitly decided to discard its
+test data.
 
 ## Cloud workflow policy
 
